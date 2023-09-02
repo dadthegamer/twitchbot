@@ -1,5 +1,4 @@
 import NodeCache from 'node-cache';
-import { writeToLogFile } from '../utils/logging.js';
 
 
 export class CacheService  extends NodeCache{
