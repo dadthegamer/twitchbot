@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+
+<body>
+    <div class="container">
+        <div class="img-container">
+            <img id="user-img"
+                src=""
+                alt="">
+        </div>
+        <div class="alert-details">
+            <div class="alert-icon"></div>
+            <div class="alert-details-inner">
+                <span id="alert-type"></span>
+                <span id="alert-info"></span>
+            </div>
+        </div>
+
+        <div>
+            <h1 id="connecting">Alerts Connecting...</h1>
+        </div>
+    </div>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cabin&family=Montserrat:ital,wght@1,900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            width: 1920px;
+            height: 1080px;
+        }
+
+        .container {
+            width: 800px;
+            height: 500px;
+            display: none;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container.show {
+            display: flex;
+            animation: popIn .25s ease-in-out;
+        }
+
+        .img-container {
+            width: 150px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 5px;
+            animation: popIn .25s ease-in-out;
+            z-index: 10;
+        }
+
+        .img-container img {
+            border-radius: 50%;
+            height: 100px;
+        }
+
+        .alert-details {
+            width: 600px;
+            height: 150px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            background-color: white;
+            border-radius: 5px;
+            margin-left: 10px;
+            z-index: 1;
+        }
+
+        .alert-details-inner {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-direction: column;
+            border-radius: 5px;
+        }
+
+        #alert-info {
+            font-size: 18px;
+            font-style: italic;
+            background-color: red;
+            width: 100%;
+            height: 50%;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+            border-radius: 0 0 5px 0;
+        }
+
+        .alert-icon {
+            width: 100px;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: red;
+            border-radius: 5px 0 0 5px;
+        }
+
+        .alert-icon i {
+            font-size: 50px;
+            color: white;
+        }
+
+        #alert-type {
+            font-size: 30px;
+            font-weight: 900;
+            color: black;
+            width: 100%;
+            height: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-transform: uppercase;
+        }
+
+        #connecting {
+            display: block;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            font-size: 60px;
+            font-weight: bold;
+            align-items: center;
+            text-align: center;
+            color: rgb(255, 0, 0);
+            animation: flash 1s ease-in-out infinite;
+        }
+
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+            }
+
+            80% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes popOut {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(0);
+            }
+        }
+
+        @keyframes slideRight {
+            0% {
+                transform: translateX(-100%);
+            }
+
+            100% {
+                transform: translateX(0%);
+            }
+        }
+
+        @keyframes flash {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+
+    <script type="module" src="../js/alert.js"></script>
+</body>
+
+</html>

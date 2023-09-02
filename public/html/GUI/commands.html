@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commands</title>
+    <link rel="stylesheet" href="../../css/gui/commands.css">
+    <link rel="stylesheet" href="../../css/gui/dashboard.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+
+    <div class="main-container">
+        <div class="top-nav-bar">
+            <div>
+                <h2>Commands</h2>
+            </div>
+            <div>
+                <h2>STREAM OFFLINE</h2>
+            </div>
+            <div class="connection-status">
+                <i class="fa-brands fa-twitch"></i>
+                <i class="fa-brands fa-tiktok"></i>
+            </div>
+        </div>
+
+        <div class="left-nav-bar">
+            <ul>
+                <li>
+                    <a href="/">
+                        <i class="fa-solid fa-gauge"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/commands" class="active">
+                        <i class="fa-solid fa-terminal"></i>
+                        <span>Commands</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="dashboard.php">
+                        <i class="fa-solid fa-bars-staggered"></i>
+                        <span>Stream</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/users">
+                        <i class="fa-solid fa-users"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="dashboard.php">
+                        <i class="fa-solid fa-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="commands-container">
+            <div class="commands-inner">
+                <button id="new-command-btn">New Command</button>
+                <div class="search-commands-container">
+                    <input id="search-commands" type="text" placeholder="Search Commands">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="new-command" id="new-command-window">
+        <div class="new-command-inner">
+            <div class="new-command-header">
+                <h2>New Command</h2>
+                <button id="close-new-command"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="new-command-body">
+                <div class="new-command-name">
+                    <label for="command-name">Command Name</label>
+                    <input type="text" id="command-name" placeholder="Command Name">
+                </div>
+                <div class="new-command-response">
+                    <label for="command-response">Command Response</label>
+                    <input type="text" id="command-response" placeholder="Command Response">
+                </div>
+                <div class="new-command-permissions">
+                    <label for="command-permissions">Command Permissions</label>
+                    <select id="command-permissions">
+                        <option value="everyone">Everyone</option>
+                        <option value="moderator">Moderator</option>
+                        <option value="vip">VIP</option>
+                        <option value="subscriber">Subscriber</option>
+                    </select>
+                </div>
+                <div class="new-command-user-cooldown">
+                    <label for="command-user-cooldown">User Cooldown</label>
+                    <input type="text" id="command-user-cooldown" placeholder="Command Cooldown" value="0">
+                </div>
+                <div class="new-command-global-cooldown">
+                    <label for="command-global-cooldown">Global Cooldown</label>
+                    <input type="text" id="command-global-cooldown" placeholder="Command Cooldown" value="0">
+                </div>
+                <div class="new-command-description">
+                    <label for="command-description">Command Description</label>
+                    <input type="text" id="command-description" placeholder="Command Description">
+                </div>
+            </div>
+            <div class="actions-container">
+                <h2>Actions</h2>
+                <div class="action-button">
+                    <i class="fa-solid fa-plus"></i>
+                    <span>Add new action</span>
+                </div>
+                <div class="action-button">
+                    <i class="fa-solid fa-comment"></i>
+                    <div class="action-button-desc">
+                        <span>Chat</span>
+                        <span>Sends a chat message to your channel</span>
+                    </div>
+                    <i class="fa-solid fa-trash"></i>
+                </div>
+            </div>
+            <div class="new-command-footer">
+                <button id="save-new-command">Save</button>
+            </div>
+            <span id="error-message"></span>
+        </div>
+    </div>
+
+    <script type="module" src="../../js/GUI/commands.js"></script>
+
+</body>
+
+</html>

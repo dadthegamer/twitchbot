@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin&family=Montserrat:ital,wght@1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Cabin', sans-serif;
+}
+
+:root {
+    --primary-color: #eeeeee;
+    --secondary-color: #333533;
+    --tertiary-color: #db3a34;
+    --font-color: #000000;
+}
+
+.search-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    border-right: none;
+    margin-left: 250px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+}
+
+.search-container input {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    background-color: var(--primary-color);
+    border: 1px solid var(--font-color);
+    color: var(--font-color);
+    width: 25%;
+}
+
+.search-container input::placeholder {
+    color: var(--font-color);
+}
+
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-left: 250px;
+}
+
+th, td {
+    /* border: 1px solid #000000; */
+    padding: 8px;
+    text-align: center;
+    max-width: fit-content;
+}
+
+
+th {
+    /* background-color: #f2f2f2; */
+    font-weight: bold;
+}
+
+/* tr:nth-child(even) {
+    background-color: #f2f2f2;
+} */
+
+/* tr:hover {
+    background-color: #ddd;
+} */
+
+td img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    border-right: none;
+}
+
+.user-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    border-right: none;
+    margin-left: 250px;
+    padding: 10px 20px;
+    background-color: var(--primary-color);
+}

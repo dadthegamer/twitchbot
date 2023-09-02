@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../../css/gui/main.css">
+    <link rel="stylesheet" href="../../css/gui/users.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="top-nav-bar">
+        <span>User Management</span>
+    </div>
+    <div class="left-nav-bar">
+        <ul>
+            <li>
+                <a href="settings.html">
+                    <i class="fa-solid fa-gauge"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                    <span>Stream</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.html">
+                    <i class="fa-solid fa-users"></i>
+                    <span>User Management</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php">
+                    <i class="fa-solid fa-terminal"></i>
+                    <span>Commands</span>
+                </a>
+            </li>
+            <li>
+                <a href="dashboard.php">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="search-container">
+        <input type="text" placeholder="Search for a user">
+    </div>
+
+    <table class="table-container">
+        <tr>
+            <th>User</th>
+            <th>Points</th>
+            <th>View Time</th>
+            <th>Bits</th>
+            <th>Subs</th>
+            <th>Donations</th>
+            <th>Likes</th>
+        </tr>
+
+        <tr>
+            <td>
+                <div class="user-info">
+                    <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/99ea2ed4-a642-45bd-b33b-d72a59e05d80-profile_image-70x70.png"
+                        alt="">
+                    <span>Some user</span>
+                </div>
+            </td>
+            <td>
+                100
+            </td>
+            <td>
+                <span>100</span>
+                <span>100</span>
+                <span>100</span>
+                <span>100</span>
+            </td>
+            <td>
+                <span>100</span>
+                <span>100</span>
+                <span>100</span>
+                <span>100</span>
+            </td>
+            <td>
+                <span>100</span>
+                <span>100</span>
+                <span>100</span>
+                <span>100</span>
+            </td>
+            <td>
+                <span>100</span>
+                <span>100</span>
+                <span>100</span>
+                <span>100</span>
+            </td>
+        </tr>
+    </table>
+
+    <script>
+        const table = document.querySelector('.table-container');
+
+        // function to get all the users from the database
+        async function getUsers() {
+            const res = await fetch('/api/users');
+            const data = await res.json();
+            return data;
+        }
+
+        // Function to create a table row for each user
+        function createTableRow(user) {
+            const tr = document.createElement('tr');
+            const td = document.createElement('td');
+            const div = document.createElement('div');
+            const img = document.createElement('img');
+            const span = document.createElement('span');
+
+            img.src = user.profile_image_url;
+            span.textContent = user.display_name;
+
+            div.appendChild(img);
+            div.appendChild(span);
+            td.appendChild(div);
+            tr.appendChild(td);
+
+            table.appendChild(tr);
+        }
+
+        getUsers();
+    </script>
+
+</body>
+
+</html>
