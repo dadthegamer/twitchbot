@@ -2,7 +2,7 @@ import { Bot } from '@twurple/easy-bot';
 import { ChatClient } from '@twurple/chat';
 import { environment } from '../config/environmentVars.js';
 import { onMessage } from '../handlers/twitch/chatHandlers/onMessage.js';
-import { writeToLogFile } from '../utils/logging.js';
+import { writeToLogFile } from '../utilities/logging.js';
 
 // Class to connect to Twitch chat
 export class TwitchChatClient {

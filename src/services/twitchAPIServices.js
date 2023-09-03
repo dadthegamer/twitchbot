@@ -1,5 +1,5 @@
 import { ApiClient } from '@twurple/api';
-import { writeToLogFile } from '../utils/logging.js';
+import { writeToLogFile } from '../utilities/logging.js';
 
 // Class for the Twitch API client
 export class TwitchApiClient {
@@ -38,6 +38,7 @@ export class TwitchApiClient {
                 id: vip.id,
                 display_name: vip.displayName,
             }));
+            console.log(vips);
             return vips;
         }
         catch (error) {

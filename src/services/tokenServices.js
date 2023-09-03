@@ -1,4 +1,4 @@
-import { writeToLogFile } from '../utils/logging.js';
+import { writeToLogFile } from '../utilities/logging.js';
 
 
 // Class for token data

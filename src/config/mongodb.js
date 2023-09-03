@@ -1,6 +1,6 @@
 // Import cache
 import { MongoClient } from 'mongodb';
-import { writeToLogFile } from '../utils/logging.js'
+import { writeToLogFile } from '../utilities/logging.js'
 import { config } from 'dotenv';
 
 config();

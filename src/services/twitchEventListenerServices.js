@@ -1,6 +1,6 @@
 import { EventSubWsListener } from '@twurple/eventsub-ws';
 import { onPredictionStart, onPredictionEnd, onPredictionLock, onPredictionProgress } from '../handlers/twitch/eventHandlers/predictionHanders.js';
-import { writeToLogFile } from '../utils/logging.js';
+import { writeToLogFile } from '../utilities/logging.js';
 
 // Event listener for Twitch events
 export class TwitchEventListenersServices {
