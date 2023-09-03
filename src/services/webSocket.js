@@ -70,7 +70,7 @@ export class WebSocket {
     }
 
     // Method to send a new TTS message
-    newTTS(data) {
+    TTS(data) {
         const payload = {
             id,
             img: data.img,

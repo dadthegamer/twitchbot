@@ -5,7 +5,10 @@ import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
-import { usersDB } from './config/initializers.js'
+import { twitchApi } from './config/initializers.js';
+
+twitchApi.createPrediction('Test Prediction', ['Yes', 'No']);
+twitchApi.getCurrentPrediction();
 
 config();
 

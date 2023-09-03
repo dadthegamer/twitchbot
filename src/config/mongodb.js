@@ -22,11 +22,9 @@ export class MongoDBConnection {
     async connect() {
         try {
             await this.client.connect();
-
             console.log('Connected to MongoDB');
-
             this.dbConnection = this.client.db(this.dbName);
-
+            await this.createCollections();
         } catch (error) {
             console.error('Error connecting to MongoDB', error);
             throw error;
@@ -53,13 +51,13 @@ export class MongoDBConnection {
                 'sessions',
                 'tokens',
                 'streams',
+                'streamData',
                 'users',
                 'currency',
                 'commands',
                 'settings',
                 'quotes',
                 'roasts',
-                'games',
             ]
             const collectionPromises = collections.map(collection =>
                 this.dbConnection.createCollection(collection)

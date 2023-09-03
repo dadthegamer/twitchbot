@@ -190,4 +190,30 @@ export class UsersDB {
             writeToLogFile('error', `Error retrieving leaderboard by ${property}: ${error}`);
         }
     }
+
+    // Method to reset all the users arrived property to false
+    async resetArrived() {
+        try {
+            await this.dbConnection.collection('userData').updateMany(
+                {},
+                { $set: { arrived: false } }
+            );
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in resetArrived: ${error}`);
+        }
+    }
+
+    // Method to reset a property for all users to 0
+    async resetProperty(property) {
+        try {
+            await this.dbConnection.collection('userData').updateMany(
+                {},
+                { $set: { [property]: 0 } }
+            );
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in resetProperty: ${error}`);
+        }
+    }
 }

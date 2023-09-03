@@ -3,10 +3,17 @@ import { writeToLogFile } from '../utilities/logging.js';
 
 // Class for the Twitch API client
 export class TwitchApiClient {
-    constructor(authProvider, userId) {
+    constructor(authProvider, userId, cache) {
         this.apiClient = new ApiClient({ authProvider: authProvider });
         this.userId = userId;
+        this.cache = cache;
     }
+
+    // Method to return the api client
+    getApiClient() {
+        return this.apiClient;
+    }
+
 
     // Method to get all the users the channel follows
     async getChannelFollowers() {
@@ -39,6 +46,7 @@ export class TwitchApiClient {
                 display_name: vip.displayName,
             }));
             console.log(vips);
+            this.cache.set('channel_vips', vips);
             return vips;
         }
         catch (error) {
@@ -57,6 +65,7 @@ export class TwitchApiClient {
                 tier: sub.tier,
                 is_gift: sub.isGift,
             }));
+            this.cache.set('channel_subs', subs);
             return subs;
         }
         catch (error) {
@@ -98,8 +107,179 @@ export class TwitchApiClient {
         }
     }
 
-    // Method to return the api client
-    getApiClient() {
-        return this.apiClient;
+    // Method to get all the chatter's in the channel
+    async getChatters() {
+        try {
+            const data = await this.apiClient.chat.getChattersPaginated(this.userId).getAll();
+            const chatters = data.allChatters;
+            this.cache.set('chatters', chatters);
+            return chatters;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error getting chatters: ${error}`);
+        }
+    }
+
+    // Method to send an announcement to the channel
+    async sendChannelAnnouncement(message, color = 'primary') {
+        try {
+            await this.apiClient.chat.sendAnnouncement(this.userId, { message: message, color: color });
+        }
+        catch (error) {
+            writeToLogFile('error', `Error sending channel announcement: ${error}`);
+        }
+    }
+
+    // Method to shoutout a user in the channel
+    async shoutoutUser(userId) {
+        try {
+            await this.apiClient.chat.shoutoutUser(this.userId, userId);
+        }
+        catch (error) {
+            writeToLogFile('error', `Error shouting out user: ${error}`);
+        }
+    }
+
+    // Method to create a prediction
+    async createPrediction(title, outcomes, predictionWindow = 120) {
+        try {
+            const data = {
+                autoLockAfter: predictionWindow,
+                outcomes: outcomes,
+                title: title,
+            };
+            const response = await this.apiClient.predictions.createPrediction(this.userId, data);
+            this.cache.set('prediction', predictionData);
+            return response;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error creating prediction: ${error}`);
+        }
+    }
+
+    // Method to end a prediction
+    async endPrediction(outcome) {
+        try {
+            const outcomeId = this.cache.get('prediction').outcomes.find((o) => o.title === outcome).id;
+            const response = await this.apiClient.predictions.resolvePrediction(this.userId, outcomeId);
+            this.cache.delete('prediction');
+            return response;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error ending prediction: ${error}`);
+        }
+    }
+
+    // Method to get the current prediction
+    async getCurrentPrediction() {
+        try {
+            const data = await this.apiClient.predictions.getPredictions(this.userId);
+            const prediction = data.data[0];
+            const predictionData = {
+                id: prediction.id,
+                title: prediction.title,
+                outcomes: prediction.outcomes.map((outcome) => ({
+                    id: outcome.id,
+                    color: outcome.color,
+                    title: outcome.title,
+                    users: outcome.users,
+                    channel_points: outcome.totalChannelPoints,
+                    top_predictors: outcome.topPredictors.map((predictor) => ({
+                        user_id: predictor.userId,
+                        user_name: predictor.userName,
+                        display_name: predictor.userDisplayName,
+                        channel_points_used: predictor.channelPointsUsed,
+                        channel_points_won: predictor.channelPointsWon,
+                    })),
+                })),
+                started_at: prediction.startDate,
+                duration: prediction.durationInSeconds,
+                status: prediction.status,
+            };
+            this.cache.set('prediction', predictionData);
+            return predictionData;
+        }
+        catch (error) {
+            console.log(error);
+            writeToLogFile('error', `Error getting current prediction: ${error}`);
+        }
+    }
+
+    // Method to cancel a prediction
+    async cancelPrediction() {
+        try {
+            const predictionId = this.cache.get('prediction').id;
+            const response = await this.apiClient.predictions.cancelPrediction(this.userId, predictionId);
+            this.cache.delete('prediction');
+            return response;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error canceling prediction: ${error}`);
+        }
+    }
+
+    // Method to create a poll
+    async createPoll(title, choices, duration = 120) {
+        try {
+            const data = {
+                title: title,
+                choices: choices,
+                duration: duration,
+            };
+            const response = await this.apiClient.polls.createPoll(this.userId, data);
+            this.cache.set('poll', response);
+            return response;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error creating poll: ${error}`);
+        }
+    }
+
+    // Method to end a poll
+    async endPoll() {
+        try {
+            const pollData = await this.getLatestPoll();
+            const response = await this.apiClient.polls.endPoll(this.userId, pollData.id);
+            this.cache.delete('poll');
+            return response;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error ending poll: ${error}`);
+        }
+    }
+
+    // Method to get a list of polls
+    async getPolls() {
+        try {
+            const data = await this.apiClient.polls.getPolls(this.userId);
+            const polls = data.data;
+            return polls;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error getting polls: ${error}`);
+        }
+    }
+
+    // Method to get the latest poll
+    async getLatestPoll() {
+        try {
+            const data = await this.getPolls();
+            const latestPoll = data[0];
+            const choices = latestPoll.choices.map((choice) => ({
+                id: choice.id,
+                title: choice.title,
+                votes: choice.totalVotes,
+            }));
+            const pollData = {
+                id: latestPoll.id,
+                title: latestPoll.title,
+                choices,
+            };
+            return pollData;
+        }
+        catch (error) {
+            console.log(error);
+            writeToLogFile('error', `Error getting latest poll: ${error}`);
+        }
     }
 }
