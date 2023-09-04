@@ -26,7 +26,7 @@ await twitchApiClient.initializeAuthProvider();
 await twitchApiClient.addUserToAuthProvider('64431397');
 await twitchApiClient.addUserToAuthProvider('671284746');
 const authProvider = twitchApiClient.getAuthProvider();
-const twitchApi = new TwitchApiClient(authProvider, '64431397');
+const twitchApi = new TwitchApiClient(authProvider, '64431397', cache);
 
 // Twitch event listeners initialization
 const twitchEventListeners = new TwitchEventListenersServices(twitchApi.getApiClient(), '64431397', '671284746');

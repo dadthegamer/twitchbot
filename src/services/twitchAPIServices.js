@@ -16,7 +16,7 @@ export class TwitchApiClient {
 
 
     // Method to get all the users the channel follows
-    async getChannelFollowers() {
+    async getFollowers() {
         try {
             let followers = [];
             const data = await this.apiClient.channels.getChannelFollowersPaginated(this.userId).getAll();
@@ -29,6 +29,7 @@ export class TwitchApiClient {
                 }
                 followers.push(d);
             }
+            console.log(followers);
             return followers;
         }
         catch (error) {
@@ -83,9 +84,11 @@ export class TwitchApiClient {
                 username: mod.userName,
                 display_name: mod.userDisplayName,
             }));
+            this.cache.set('channel_mods', mods);
             return mods;
         }
         catch (error) {
+            console.log(error);
             writeToLogFile('error', `Error getting channel moderators: ${error}`);
         }
     }
@@ -110,12 +113,20 @@ export class TwitchApiClient {
     // Method to get all the chatter's in the channel
     async getChatters() {
         try {
-            const data = await this.apiClient.chat.getChattersPaginated(this.userId).getAll();
-            const chatters = data.allChatters;
+            let chatters = [];
+            const response = await this.apiClient.chat.getChattersPaginated(this.userId).getAll();
+            const data = response.map((chatter) => ({
+                id: chatter.userId,
+                login: chatter.userName,
+                display_name: chatter.userDisplayName,
+            }));
+            chatters = [...chatters, ...data];
+            console.log(chatters);
             this.cache.set('chatters', chatters);
             return chatters;
         }
         catch (error) {
+            console.log(error);
             writeToLogFile('error', `Error getting chatters: ${error}`);
         }
     }

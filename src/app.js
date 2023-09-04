@@ -7,9 +7,6 @@ import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
 import { twitchApi } from './config/initializers.js';
 
-twitchApi.createPrediction('Test Prediction', ['Yes', 'No']);
-twitchApi.getCurrentPrediction();
-
 config();
 
 const __filename = fileURLToPath(import.meta.url);
