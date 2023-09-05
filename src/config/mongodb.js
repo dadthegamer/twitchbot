@@ -13,7 +13,7 @@ export class MongoDBConnection {
         this.port = process.env.MONGO_INITDB_DATABASE_PORT;
         this.uri = `mongodb://${this.host}:${this.port}`;
         this.client = new MongoClient(uri);
-        this.dbName = 'website';
+        this.dbName = 'twitchBot';
         this.dbConnection = null;
         return MongoDBConnection.instance;
     }
@@ -87,6 +87,16 @@ export class MongoDBConnection {
         }
         catch (error) {
             writeToLogFile('error', `Error checking MongoDB connection: ${error}`);
+        }
+    }
+
+    // Method to rename a collection
+    async renameCollection(oldName, newName) {
+        try {
+            await this.dbConnection.collection(oldName).rename(newName);
+        }
+        catch (error) {
+            writeToLogFile('error', `Error renaming collection: ${error}`);
         }
     }
 }

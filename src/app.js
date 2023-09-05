@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
-import { cache } from './config/initializers.js';
+import { twitchApi, usersDB } from './config/initializers.js';
 
 config();
 
@@ -46,12 +46,21 @@ app.use(
 
 // Import routes
 import commandsRouter from './routes/apiRoutes/commands.js';
-
+import currencyRouter from './routes/apiRoutes/currency.js';
+import leaderboardRouter from './routes/apiRoutes/leaderboard.js';
+import ttsRouter from './routes/apiRoutes/tts.js';
+import overlayRouter from './routes/overlayRoute.js';
 
 // Api routes
 app.use('/api/commands', commandsRouter);
+app.use('/api/currency', currencyRouter);
+app.use('/api/leaderboard', leaderboardRouter);
+app.use('/api/tts', ttsRouter);
 
-app.use(express.static(path.join(__dirname, 'public')));
+
+// Overlay routes
+app.use('/overlay', overlayRouter);
+app.use(express.static(path.join(__dirname, '../public')));
 
 
 

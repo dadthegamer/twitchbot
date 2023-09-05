@@ -1,3 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin&family=Montserrat:ital,wght@1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    width: 1920px;
+    height: 1080px;
+}
+
 .container {
     width: 800px;
     height: 500px;
@@ -10,10 +24,6 @@
 .container.show {
     display: flex;
     animation: popIn .25s ease-in-out;
-}
-
-.container.hide {
-    animation: popOut .25s ease-out;
 }
 
 .img-container {
@@ -132,7 +142,7 @@
     }
 
     80% {
-        transform: scale(1.2);
+        transform: scale(1.1);
     }
 
     100% {

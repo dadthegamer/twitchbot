@@ -8,13 +8,20 @@ export class WebSocket {
     constructor() {
         this.wss = new WebSocketServer({ port: 8080 });
         this.wss.on('connection', (ws) => {
+            this.alert({
+                alertType: 'New Follower',
+                alertMessage: 'Connected to WebSocket server',
+                userImg: 'https://static-cdn.jtvnw.net/jtv_user_pictures/f8caf03d-99c8-440f-863a-da08a88ce97c-profile_image-70x70.png',
+                sound: 'http://localhost:3001/audio/cheer.mp3',
+                alertTime: 5000,
+            })
+            console.log('Client connected');
             ws.on('message', (message) => {
                 console.log(`Received message => ${message}`);
             });
             ws.on('close', () => {
                 console.log('Client disconnected');
             });
-            this.sendMessage(ws);
         });
     }
 
@@ -22,16 +29,14 @@ export class WebSocket {
     broadcastMessage(type, payload) {
         const message = JSON.stringify({ type, payload });
         this.wss.clients.forEach((client) => {
-            if (client.readyState === WebSocket.OPEN) {
-                client.send(message);
-            }
+            client.send(message);
         });
     }
 
     // Method to send a message to the client
     startWebSocketServer() {
         this.wss.on('listening', () => {
-            console.log('WebSocket server started...');
+            console.log('WebSocket server started on port 8080...');
             writeToLogFile('info', 'WebSocket server started...');
         });
     }

@@ -29,7 +29,6 @@ export class TwitchApiClient {
                 }
                 followers.push(d);
             }
-            console.log(followers);
             return followers;
         }
         catch (error) {
@@ -103,6 +102,7 @@ export class TwitchApiClient {
                 display_name: data.displayName,
                 profile_image_url: data.profilePictureUrl,
             };
+            console.log(user);
             return user;
         }
         catch (error) {
@@ -291,6 +291,28 @@ export class TwitchApiClient {
         catch (error) {
             console.log(error);
             writeToLogFile('error', `Error getting latest poll: ${error}`);
+        }
+    }
+
+    // Method to get the bits leaderboard
+    async getBitsLeaderboard() {
+        try {
+            const data = await this.apiClient.bits.getLeaderboard(this.userId, {
+                period: 'all',
+                count: 100,
+            });
+            const leaderboard = data.entries.map((entry) => ({
+                rank: entry.rank,
+                displayName: entry.userDisplayName,
+                userId: entry.userId,
+                amount: entry.amount,
+            }));
+            console.log(leaderboard);
+            return leaderboard;
+        }
+        catch (error) {
+            console.log(error);
+            writeToLogFile('error', `Error getting bits leaderboard: ${error}`);
         }
     }
 }

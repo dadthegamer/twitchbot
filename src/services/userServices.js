@@ -5,6 +5,7 @@ export class UsersDB {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
+        this.collectionName = 'users';
     }
 
     // Method to return all users
@@ -14,7 +15,7 @@ export class UsersDB {
             if (users) {
                 return users;
             } else {
-                users = await this.dbConnection.collection('userData').find({}).toArray();
+                users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
                 this.cache.set('users', users);
                 return users;
             }
@@ -35,7 +36,7 @@ export class UsersDB {
             if (user) {
                 return user;
             } else {
-                user = await this.dbConnection.collection('userData').findOne({ id: userId });
+                user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
                 this.cache.set(userId, user);
                 console.log(user);
                 return user;
@@ -69,7 +70,36 @@ export class UsersDB {
                 }
             };
             const options = { upsert: true };
-            await this.dbConnection.collection('userData').findOneAndUpdate(query, update, options);
+            await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
+            this.cache.set(userData.id, userData);
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in addUser: ${error}`);
+        }
+    }
+
+    // Method to add a user manually
+    async addUserManually(userData) {
+        try {
+            const date = new Date();
+            const query = { id: userData.id };
+            const update = {
+                $set: {
+                    id: userData.id,
+                    display_name: userData.display_name,
+                    login: userData.login,
+                    profile_image_url: null,
+                    follow_date: userData.follow_date,
+                    leaderboard_points: 0,
+                    arrived: true,
+                    view_time: 0,
+                    stream_view_time: 0,
+                    monthly_view_time: 0,
+                    weekly_view_time: 0,
+                }
+            };
+            const options = { upsert: true };
+            await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
             this.cache.set(userData.id, userData);
         }
         catch (error) {
@@ -102,9 +132,10 @@ export class UsersDB {
             } else {
                 user[property] = value;
             }
-            await this.dbConnection.collection('userData').updateOne(
+            await this.dbConnection.collection(this.collectionName).updateOne(
                 { id: userId },
-                { $set: { [property]: user[property] } }
+                { $set: { [property]: user[property] } },
+                { upsert: true }
             );
             this.cache.set(userId, user);
         } catch (error) {
@@ -117,10 +148,10 @@ export class UsersDB {
         try {
             let user = this.cache.get(userId);
             if (!user) {
-                user = await this.getUser(userId);
+                user = await this.getUserByUserId(userId);
             }
             user[property] = value;
-            await this.dbConnection.collection('userData').updateOne(
+            await this.dbConnection.collection(this.collectionName).updateOne(
                 { id: userId },
                 { $set: { [property]: user[property] } },
                 { upsert: true }
@@ -138,7 +169,7 @@ export class UsersDB {
             userId = userId.toString();
         }
         try {
-            const collection = this.dbConnection.collection("userData");
+            const collection = this.dbConnection.collection(this.collectionName);
             const result = await collection
                 .find({})
                 .sort({ [property]: -1 })
@@ -154,7 +185,7 @@ export class UsersDB {
     // Method to return the userId of the user with the highest value of a property
     async getHighestUserByProperty(property) {
         try {
-            const collection = this.dbConnection.collection("userData");
+            const collection = this.dbConnection.collection(this.collectionName);
             const result = await collection
                 .find({})
                 .sort({ [property]: -1 })
@@ -168,7 +199,7 @@ export class UsersDB {
     // Method to get user data by a property
     async getUserByProperty(property, value) {
         try {
-            const collection = this.dbConnection.collection("userData");
+            const collection = this.dbConnection.collection(this.collectionName);
             const result = await collection.findOne({ [property]: value });
             return result;
         } catch (error) {
@@ -179,7 +210,7 @@ export class UsersDB {
     // Method to get a leaderboard by a property
     async getLeaderboardByProperty(property, count = 10) {
         try {
-            const collection = this.dbConnection.collection("userData");
+            const collection = this.dbConnection.collection(this.collectionName);
             const result = await collection
                 .find({})
                 .sort({ [property]: -1 })
@@ -194,7 +225,7 @@ export class UsersDB {
     // Method to reset all the users arrived property to false
     async resetArrived() {
         try {
-            await this.dbConnection.collection('userData').updateMany(
+            await this.dbConnection.collection(this.collectionName).updateMany(
                 {},
                 { $set: { arrived: false } }
             );
@@ -207,7 +238,7 @@ export class UsersDB {
     // Method to reset a property for all users to 0
     async resetProperty(property) {
         try {
-            await this.dbConnection.collection('userData').updateMany(
+            await this.dbConnection.collection(this.collectionName).updateMany(
                 {},
                 { $set: { [property]: 0 } }
             );
