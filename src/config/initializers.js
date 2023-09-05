@@ -11,10 +11,13 @@ import { TwitchBotClient } from '../services/twitchBotServices.js';
 import { WebSocket } from '../services/webSocket.js';
 import { startWelcomeAlerts } from '../handlers/welcomeHandler.js';
 import { startAlertsHandler } from '../handlers/alertHandler.js';
-
+import { setInitialCacheValues } from './varInitializers.js';
+import { ActiveUsersHandler } from '../handlers/twitch/chatHandlers/activeUsersHandler.js';
+import { Commands } from '../services/commandServices.js';
+import { CommandHandler } from '../handlers/twitch/chatHandlers/commandHandlers/commandHandler.js';
 
 // Cache initialization
-const cache = new CacheService();
+const cache = new CacheService('mainCache');
 
 // MongoDB initialization
 const db = new MongoDBConnection();
@@ -46,10 +49,18 @@ await twitchBotClient.connectToBotChat();
 const webSocket = new WebSocket();
 webSocket.startWebSocketServer();
 
+// Active users cache initialization
+const activeUsersCache = new ActiveUsersHandler();
+
+// CommandDB initialization
+const commands = new Commands(db.dbConnection);
+
+// Command cache initialization
+const commandHandler = new CommandHandler(commands.cache);
+
+setInitialCacheValues();
 startAlertsHandler();
 startWelcomeAlerts();
-
-
 
 export {
     db,
@@ -62,4 +73,7 @@ export {
     chatClient,
     twitchBotClient,
     webSocket,
+    activeUsersCache,
+    commands,
+    commandHandler
 };

@@ -1,8 +1,9 @@
 import { cache } from "../../../config/initializers.js";
-import { commandHandler } from "./commandHandlers/commandHandler.js";
 import { writeToLogFile } from "../../../utilities/logging.js";
 import { environment } from "../../../config/environmentVars.js";
 import { firstMessageHandler } from "./firstMessageHandler.js";
+import { activeUsersCache } from "../../../config/initializers.js";
+import { commandHandler } from "../../../config/initializers.js";
 
 // Message Handler
 export async function onMessageHandler(channel, user, message, msg, bot) {
@@ -14,7 +15,7 @@ export async function onMessageHandler(channel, user, message, msg, bot) {
         const command = parts[0];
         if (command.startsWith(prefix)) {
             // handleCommand(command, parts, channel, user, message, msg, bot);
-            commandHandler(command, parts, channel, user, message, msg, bot);
+            commandHandler.commandHandler(command, parts, channel, user, message, msg, bot);
         }
         if (environment === 'production') {
             if (knownBots.has(userId)) {
@@ -24,35 +25,10 @@ export async function onMessageHandler(channel, user, message, msg, bot) {
                 firstMessageHandler({ bot, msg, user, userDisplayName: displayName, userId, messageId: id });
             }
         }
-        const date = new Date();
-        if (activeUsers.has(userId)) {
-            activeUsers.ttl(userId, 900);
-        } else {
-            activeUsers.set(userId, {
-                displayName: displayName,
-                username: user,
-                color: color,
-                userId: userId,
-                lastSeen: date.getTime(),
-            });
-        }
-        if (await userIsViewer(user) === false) {
-            if (process.env.NODE_ENV === 'production') {
-                await addViewer(user);
-            }
-            // Add the viewer to the viewers cache
-            cache.set('viewers', [...viewers, user]);
-            setWelcomeMessage(userId, displayName);
-            if (!firstArrived) {
-                if (await getHighestUserByProperty('leaderboard_points') === userId) {
-                    const points = await getUserProperty(userId, 'leaderboard_points');
-                    bot.announce('dadthegam3r', `@${displayName} has arrived and is the current leaderboard points leader! with ${numberWithCommas(points)} points!`);
-                    firstArrived = true;
-                }
-            }
-            if (isFirst) {
-                console.log('First message');
-            }
+
+        // Add the user to the active users cache if they are not already in it
+        if (!activeUsersCache.getActiveUser(userId)) {
+            activeUsersCache.addActiveUser(userId, displayName, color, user);
         }
     }
     catch (err) {

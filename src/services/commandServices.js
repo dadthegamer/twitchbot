@@ -1,156 +1,195 @@
 import { writeToLogFile } from '../utilities/logging.js';
+import NodeCache from 'node-cache';
+
 
 // Command Class
-
-export class CommandDB {
-    constructor(dbConnection, cache) {
+export class Commands {
+    constructor(dbConnection) {
         this.dbConnection = dbConnection;
-        this.cache = cache;
+        this.cache = new NodeCache();
+        this.listenForExpiredKeys();
+        this.setInitialCacheValues();
     }
 
-    // Method to return all commands
-    async getAllCommands() {
+    // Method to get all the commands from the database and add them to the cache
+    async setInitialCacheValues() {
         try {
-            let commands = this.cache.get('commands');
-            if (commands) {
-                return commands;
-            } else {
-                commands = await this.dbConnection.collection('commands').find({}).toArray();
-                this.cache.set('commands', commands);
-                return commands;
-            }
+            const commands = await this.getAllCommandsFromDB();
+            commands.forEach(command => {
+                this.cache.set(command.name, command)
+            });
         }
-        catch (error) {
-            writeToLogFile('error', `Error in getAllCommands: ${error}`);
-            return null;
+        catch (err) {
+            writeToLogFile('error', `Error in setInitialCacheValues: ${err}`)
+            console.error('Error in setInitialCacheValues:', err);
         }
     }
 
-    // Method to return command data
-    async getCommandByCommandName(commandName) {
+    // Method to listen for expired keys
+    listenForExpiredKeys() {
+        this.cache.on('expired', (key, value) => {
+            console.log(`${key} expired`);
+            this.removeCommand(key);
+        });
+    }
+
+
+    // Method to get all commands from the database
+    async getAllCommandsFromDB() {
         try {
-            if (typeof commandName !== 'string') {
-                commandName = commandName.toString();
-            }
-            let command = this.cache.get(commandName);
-            if (command) {
-                return command;
+            const commandsCollection = this.dbConnection.collection('commands');
+            const result = await commandsCollection.find({}).toArray();
+            return result;
+        }
+        catch (err) {
+            writeToLogFile('error', `Error in getAllCommands: ${err}`);
+            console.error('Error in getAllCommands:', err);
+        }
+    }
+
+    // Method to get all commands from the cache
+    async getAllCommandsFromCache() {
+        try {
+            // Return all the commands from the cache to include the command data
+            return this.cache.mget(this.cache.keys());
+        }
+        catch (err) {
+            writeToLogFile('error', `Error in getAllCommandsFromCache: ${err}`);
+            console.error('Error in getAllCommandsFromCache:', err);
+        }
+    }
+
+    // Method to get a command from the database
+    async getCommand(command) {
+        try {
+            // Check if the command is in the cache if it is return it and if it is not get it from the database and add it to the cache
+            if (this.cache.has(command)) {
+                return this.cache.get(command);
             } else {
-                command = await this.dbConnection.collection('commands').findOne({ commandName: commandName });
+                const commandsCollection = this.dbConnection.collection('commands');
+                const result = await commandsCollection.findOne({ name: command });
+                this.cache.set(command, result);
+                return result;
+            }
+        }
+        catch (err) {
+            writeToLogFile('error', `Error in getCommand: ${err}`);
+            console.error('Error in getCommand:', err);
+        }
+    }
+
+    // Method to add a command to the database
+    async createCommand(commandName, commandHandlers, commandDescription, commandPermissions, commandEnabled, userCooldown, globalCooldown, liveOnly) {
+        try {
+            if (typeof commandHandlers === 'string') {
+                commandHandlers = [commandHandlers];
+            }
+            if (typeof globalCooldown === 'string') {
+                globalCooldown = parseInt(globalCooldown);
+            }
+            if (typeof userCooldown === 'string') {
+                userCooldown = parseInt(userCooldown);
+            }
+            if (await getCommand(commandName) !== null) {
+                updateCommand(commandName, commandHandlers, commandDescription, commandPermissions, commandEnabled, userCooldown, globalCooldown, liveOnly);
+                return;
+            } else {
+                const commandsCollection = this.dbConnection.collection('commands');
+                const command = {
+                    name: commandName,
+                    handlers: commandHandlers,
+                    description: commandDescription,
+                    permissions: commandPermissions,
+                    enabled: commandEnabled,
+                    created: new Date(),
+                    userCooldown: userCooldown,
+                    globalCooldown: globalCooldown,
+                    enabled: true,
+                    liveOnly: liveOnly,
+                };
                 this.cache.set(commandName, command);
-                return command;
+                const result = await commandsCollection.insertOne(command);
+                writeToLogFile('info', `Command created: ${result.name}`);
+                return result;
             }
-        }
-        catch (error) {
-            writeToLogFile('error', `Error in getCommand: ${error}`);
-            return null;
+        } catch (error) {
+            writeToLogFile('error', `Error in createCommand: ${error}`)
         }
     }
 
-    // Method to add a command
-    async addCommand(commandName, commandHandler, commandDescription, commandPermissions, commandEnabled, userCooldown, globalCooldown, liveOnly) {
+    // Method to update a command in the database
+    async updateCommand(commandName, commandHandlers, commandDescription, commandPermissions, commandEnabled, userCooldown, globalCooldown, liveOnly) {
         try {
-            const date = new Date();
-            const query = { commandName: commandName };
-            const update = {
+            if (typeof commandHandlers === 'string') {
+                commandHandlers = [commandHandlers];
+            }
+            if (typeof globalCooldown === 'string') {
+                globalCooldown = parseInt(globalCooldown);
+            }
+            if (typeof userCooldown === 'string') {
+                userCooldown = parseInt(userCooldown);
+            }
+            const commandsCollection = this.dbConnection.collection('commands');
+            const result = await commandsCollection.updateOne({ name: commandName }, {
                 $set: {
-                    commandName: commandName,
-                    commandHandler: commandHandler,
-                    commandDescription: commandDescription,
-                    commandPermissions: commandPermissions,
-                    commandEnabled: commandEnabled,
+                    handlers: commandHandlers,
+                    description: commandDescription,
+                    permissions: commandPermissions,
+                    enabled: commandEnabled,
                     userCooldown: userCooldown,
                     globalCooldown: globalCooldown,
                     liveOnly: liveOnly,
-                    dateAdded: date,
                 }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection('commands').updateOne(query, update, options);
-            // Add the command to the cache
-            this.cache.set(commandName, update);
-            let commands = this.cache.get('commands');
-            commands.push(update);
-            this.cache.set('commands', commands);
-            return true;
-        }
-        catch (error) {
-            writeToLogFile('error', `Error in addCommand: ${error}`);
-            return false;
+            });
+            this.cache.set(commandName, result);
+            writeToLogFile('info', `Command updated: ${result.name}`);
+            return result;
+        } catch (error) {
+            writeToLogFile('error', `Error in updateCommand: ${error}`)
         }
     }
 
-    // Method to remove a command
-    async removeCommand(commandName) {
+    // Method to delete a command from the database
+    async deleteCommand(commandName) {
         try {
-            const query = { commandName: commandName };
-            await this.dbConnection.collection('commands').deleteOne(query);
-            // Remove the command from the cache
+            const commandsCollection = this.dbConnection.collection('commands');
+            const result = await commandsCollection.deleteOne({ name: commandName });
             this.cache.del(commandName);
-            let commands = this.cache.get('commands');
-            commands = commands.filter(command => command.commandName !== commandName);
-            this.cache.set('commands', commands);
+            writeToLogFile('info', `Command deleted: ${result.name}`);
             return true;
-        }
-        catch (error) {
-            writeToLogFile('error', `Error in removeCommand: ${error}`);
+        } catch (error) {
+            writeToLogFile('error', `Error in deleteCommand: ${error}`)
             return false;
         }
     }
 
-    // Method to update a command
-    async updateCommand(commandName, commandHandler, commandDescription, commandPermissions, commandEnabled, userCooldown, globalCooldown, liveOnly) {
+    // Method to toggle a command
+    async toggleCommand(commandName, commandStatus) {
         try {
-            const date = new Date();
-            const query = { commandName: commandName };
-            const update = {
+            const commandsCollection = this.dbConnection.collection('commands');
+            const result = await commandsCollection.updateOne({ name: commandName }, {
                 $set: {
-                    commandName: commandName,
-                    commandHandler: commandHandler,
-                    commandDescription: commandDescription,
-                    commandPermissions: commandPermissions,
-                    commandEnabled: commandEnabled,
-                    userCooldown: userCooldown,
-                    globalCooldown: globalCooldown,
-                    liveOnly: liveOnly,
-                    dateAdded: date,
+                    enabled: commandStatus,
                 }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection('commands').updateOne(query, update, options);
-            // Update the command in the cache
-            this.cache.set(commandName, update);
-            let commands = this.cache.get('commands');
-            commands = commands.filter(command => command.commandName !== commandName);
-            commands.push(update);
-            this.cache.set('commands', commands);
-            return true;
-        }
-        catch (error) {
-            writeToLogFile('error', `Error in updateCommand: ${error}`);
+            });
+            this.cache.set(commandName, result);
+            writeToLogFile('info', `Command toggled: ${result.name}`);
+            return result;
+        } catch (error) {
+            writeToLogFile('error', `Error in toggleCommand: ${error}`)
             return false;
         }
     }
 
-    // Method to enable/disable a command
-    async enableCommand(commandName, commandEnabled) {
+    // Method to flush the cache and reload all commands from the database
+    async reloadCommands() {
         try {
-            const query = { commandName: commandName };
-            const update = { $set: { commandEnabled: commandEnabled } };
-            await this.dbConnection.collection('commands').updateOne(query, update);
-            // Update the command in the cache
-            const command = this.cache.get(commandName);
-            command.commandEnabled = commandEnabled;
-            this.cache.set(commandName, command);
-            let commands = this.cache.get('commands');
-            commands = commands.filter(command => command.commandName !== commandName);
-            commands.push(command);
-            this.cache.set('commands', commands);
-            return true;
+            this.cache.flushAll();
+            this.setInitialCacheValues();
         }
-        catch (error) {
-            writeToLogFile('error', `Error in enableCommand: ${error}`);
-            return false;
+        catch (err) {
+            writeToLogFile('error', `Error in reloadCommands: ${err}`)
+            console.error('Error in reloadCommands:', err);
         }
     }
 }

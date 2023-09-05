@@ -1,4 +1,4 @@
-import { cache } from "./initializers";
+import { cache } from "./initializers.js";
 import { writeToLogFile } from "../utilities/logging.js";
 
 // Function to set initial values for the cache
@@ -37,6 +37,7 @@ export async function setInitialCacheValues() {
         cache.set('currentSceneSources', []);
         cache.set('currentSceneItems', []);
         cache.set('currentSceneItemProperties', []);
+        console.log('Cache values set successfully')
     }
     catch (err) {
         writeToLogFile('error', `Error in setInitialCacheValues: ${err}`)

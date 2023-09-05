@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
-import { twitchApi } from './config/initializers.js';
+import { cache } from './config/initializers.js';
 
 config();
 
@@ -29,6 +29,8 @@ const store = new MongoDBStoreSession({
 store.on('error', (error) => {
     console.error('Session store error:', error);
 });
+
+
 app.use(
     session({
         secret: 'XRxs!4ins3E!8NK6jM@LehijGsHmSQ',
@@ -40,6 +42,14 @@ app.use(
         },
     })
 );
+
+
+// Import routes
+import commandsRouter from './routes/apiRoutes/commands.js';
+
+
+// Api routes
+app.use('/api/commands', commandsRouter);
 
 app.use(express.static(path.join(__dirname, 'public')));
 
