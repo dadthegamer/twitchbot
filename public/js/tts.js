@@ -24,6 +24,7 @@ async function playAudio() {
             audio.play();
             showMessage(data.img, data.message);
             audio.onended = () => {
+                console.log('Audio ended');
                 setTimeout(() => {
                     container.style.display = 'none';
                     setTimeout(() => {
@@ -68,6 +69,10 @@ function addMessage(word) {
 function showMessage(img, message) {
     try {
         userImg.src = img;
+        userImg.addEventListener('error', () => {
+            console.log('Error loading image');
+            userImg.src = 'https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png';
+        });
         addMessage(message);
     }
     catch (err) {
@@ -162,4 +167,5 @@ document.addEventListener('DOMContentLoaded', () => {
     reconnect();
     autoScroll();
     queueHandler();
+    addToTTSQueue({ img: 'https://static-cdn.jtvnw.net/jtv_user_pictures/4a9a2b4a-0a9b-4b4c-8d0b-8f1a1f3d7e2f-profile_image-70x70.png', message: 'Hello, welcome to the stream' })
 });
