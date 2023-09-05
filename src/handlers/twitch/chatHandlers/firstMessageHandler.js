@@ -1,6 +1,6 @@
 
 import { writeToLogFile } from "../../../utilities/logging.js";
-import { cache, usersDB } from "../../../config/initializers";
+import { cache, usersDB } from "../../../config/initializers.js";
 
 // First message handler
 export async function firstMessageHandler(context) {

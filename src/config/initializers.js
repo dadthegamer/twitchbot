@@ -9,6 +9,8 @@ import { TwitchEventListenersServices } from '../services/twitchEventListenerSer
 import { TwitchChatClient } from '../services/twitchChatClientServices.js';
 import { TwitchBotClient } from '../services/twitchBotServices.js';
 import { WebSocket } from '../services/webSocket.js';
+import { startWelcomeAlerts } from '../handlers/welcomeHandler.js';
+import { startAlertsHandler } from '../handlers/alertHandler.js';
 
 
 // Cache initialization
@@ -44,7 +46,8 @@ await twitchBotClient.connectToBotChat();
 const webSocket = new WebSocket();
 webSocket.startWebSocketServer();
 
-
+startAlertsHandler();
+startWelcomeAlerts();
 
 
 

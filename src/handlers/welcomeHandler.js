@@ -1,5 +1,5 @@
-import { writeToLogFile } from "../utilities/logging";
-import { webSocket } from "../config/initializers";
+import { writeToLogFile } from "../utilities/logging.js";
+import { webSocket } from "../config/initializers.js";
 
 export let alertQueue = [];
 let alertShowing = false;

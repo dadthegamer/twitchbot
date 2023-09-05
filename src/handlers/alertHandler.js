@@ -1,6 +1,6 @@
-import { webSocket } from '../../config/initializers.js';
-import { writeToLogFile } from '../../utilities/logging.js';
-import { environment } from '../../config/environmentVars.js';
+import { webSocket } from '../config/initializers.js';
+import { writeToLogFile } from '../utilities/logging.js';
+import { environment } from '../config/environmentVars.js';
 
 let alertQueue = [];
 let alertShowing = false;
@@ -79,6 +79,6 @@ export function clearAlerts() {
 export async function startAlertsHandler() {
     alertHandler();
     setTimeout(() => {
-        startAlerts();
+        startAlertsHandler();
     }, 500);
 }
