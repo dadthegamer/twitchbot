@@ -1,7 +1,6 @@
 import { serverip, serverWSport, serverPort } from './config.js';
 
 
-const { ip: serverip, port: serverPort } = await getServerIpAndPort();
 const predictionContainer = document.getElementById('prediction-container');
 const outcomesContainer = document.querySelector('.outcomes-container');
 const predictionTitle = document.getElementById('prediction-title');
@@ -15,7 +14,7 @@ let totalPointsValue = 0;
 async function getPredictionData() {
     const response = await fetch(`http://${serverip}:${serverPort}/api/prediction`);
     const data = await response.json();
-    return data;
+    return data.prediction;
 }
 
 // Function to create an outcome
@@ -170,7 +169,11 @@ function clearPrediction() {
 
 setInterval(async () => {
     const data = await getPredictionData();
-    if (data.status === 'active') {
+    if (data === null) {
+        return;
+    }
+    console.log(data);
+    if (data.locked === false) {
         if (!outcomeStarted) {
             outcomeStarted = true;
             createPrediction(data.title, data.outcomes, data.predictionWindow);
@@ -181,17 +184,11 @@ setInterval(async () => {
             updateTotalVotes(uniqueVotes);
             updateTotalPoints(totalPoints);
         }
-    } else if (data.status === 'locked') {
-        if (outcomeStarted) {
-            clearPrediction();
-            outcomeStarted = false;
-            totalPointsValue = 0;
-        }
-    } else if (data.status === 'inactive') {
+    } else if (data.locked === true) {
         if (outcomeStarted) {
             clearPrediction();
             outcomeStarted = false;
             totalPointsValue = 0;
         }
     }
-}, 1000);
+}, 2000);

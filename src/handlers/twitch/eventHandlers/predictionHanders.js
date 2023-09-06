@@ -27,8 +27,6 @@ export async function onPredictionStart(e) {
             locked: false,
             predictionWindow: lockDate - startDate,
         });
-        //Console log the prediction from the cache
-        console.log(cache.get('prediction'));
     }
     catch (error) {
         console.log(error);
@@ -50,9 +48,9 @@ export async function onPredictionProgress(e) {
 export async function onPredictionLock(e) {
     try {
         cache.set('prediction', { ...cache.get('prediction'), locked: true });
-        for (const outcome of e.outcomes) {
-            console.log(`Outcome ${outcome.title} has ${outcome.channelPoints} points`);
-        }
+        // for (const outcome of e.outcomes) {
+        //     console.log(`Outcome ${outcome.title} has ${outcome.channelPoints} points`);
+        // }
     }
     catch (error) {
         writeToLogFile('error', `Error in onPredictionLock: ${error}`);
@@ -62,9 +60,9 @@ export async function onPredictionLock(e) {
 export async function onPredictionEnd(e) {
     try {
         cache.set('prediction', null);
-        for (const outcome of e.outcomes) {
-            console.log(`Outcome ${outcome.title} has ${outcome.channelPoints} points`);
-        }
+        // for (const outcome of e.outcomes) {
+        //     console.log(`Outcome ${outcome.title} has ${outcome.channelPoints} points`);
+        // }
     }
     catch (error) {
         writeToLogFile('error', `Error in onPredictionEnd: ${error}`);
