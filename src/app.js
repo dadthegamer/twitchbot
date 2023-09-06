@@ -16,6 +16,9 @@ export { __dirname };
 const app = express();
 const port = 3001;
 
+const twitchURI =process.env.TWITCH_REDIRECT_URI;
+console.log(twitchURI);
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -43,6 +46,10 @@ app.use(
     })
 );
 
+// Twitch authentication
+import twitchAuthRouter from './routes/authRoutes/twitchAuth.js';
+import twitchCallbackRouter from './routes/authRoutes/twitchCallback.js';
+import twitchAdminAuthRouter from './routes/authRoutes/twitchAuth.js';
 
 // Import overlay routes
 import overlayRouter from './routes/overlayRoute.js';
@@ -67,6 +74,11 @@ app.use('/api/prediction', predictionRouter);
 app.use('/overlay', overlayRouter);
 app.use(express.static(path.join(__dirname, '../public')));
 
+
+// Twitch authentication
+app.use('/auth/twitch', twitchAuthRouter);
+app.use('/auth/twitch/callback', twitchCallbackRouter);
+app.use('/auth/twitch/admin', twitchAdminAuthRouter);
 
 
 app.listen(port, () => {

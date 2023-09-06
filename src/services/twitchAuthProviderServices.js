@@ -1,5 +1,6 @@
 import { ApiClient } from '@twurple/api';
 import { RefreshingAuthProvider } from '@twurple/auth';
+import { writeToLogFile } from '../utilities/logging.js';
 
 
 // Class for the Twitch API client
@@ -23,11 +24,12 @@ export class AuthProviderManager  {
                 clientId: this.clientId,
                 clientSecret: this.clientSecret,
                 onRefresh: async (userId, newTokenData) =>
-                    await this.storeUserAuthToken(userId, newTokenData.accessToken, newTokenData.refreshToken, newTokenData.expiresIn),
+                    await this.tokenDB.storeUserAuthToken(userId, newTokenData.accessToken, newTokenData.refreshToken, newTokenData.expiresIn),
             }); 
         }
         catch (error) {
             console.log(error);
+            writeToLogFile('error', `Error initializing auth provider: ${error}`);
         }
     }
 
@@ -36,6 +38,7 @@ export class AuthProviderManager  {
         try {
             const tokenData = await this.tokenDB.getUserAuthToken(userId);
             if (tokenData === null) {
+                writeToLogFile('error', `No token data found for user ${userId}.`);
                 console.log('No token data found.');
                 return;
             }
@@ -44,12 +47,6 @@ export class AuthProviderManager  {
             } catch (error) {
                 console.log(`Error adding user for token: ${error}`);
             }
-            // if (userId === '671284746') {
-            //     this.connectToBotChat(this.authProvider);
-            // } else if (userId === '64431397') {
-            //     this.api = new ApiClient({ authProvider: this.authProvider });
-            //     // this.startEventListener(this.api);
-            // }
         }
         catch (error) {
             console.log(error);

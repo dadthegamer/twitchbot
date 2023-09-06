@@ -1,3 +1,8 @@
+import { usersDB, streamDB } from "../../../config/initializers.js";
+import { writeToLogFile } from "../../../utilities/logging.js"
+import { addAlert } from "../../../handlers/alertHandler.js";
+
+// Follow events handler
 export async function onFollow(e) {
     try {
         const user = e.userDisplayName;
@@ -11,9 +16,13 @@ export async function onFollow(e) {
             login: userName,
             profile_image_url: profileImage,
         };
-        console.log(newFollowerData);
+        await usersDB.newFollower(newFollowerData);
+        await streamDB.setLatestEvent('latest_follower', newFollowerData);
+        addAlert('follow', `${user} followed!`, profileImage);
+        await streamDB.addFollower(user);
+        writeToLogFile('info', `User ${user} followed`);
     }
     catch (error) {
-        console.log(error);
+        writeToLogFile('error', `Error in onFollow: ${error}`);
     }
 }

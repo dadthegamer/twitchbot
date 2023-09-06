@@ -3,6 +3,7 @@ import { writeToLogFile } from "../../../utilities/logging.js"
 import { addAlert } from "../../../handlers/alertHandler.js";
 
 
+// Cheer events handler
 export async function onBits(e) {
     try {
         const userDisplayName = e.userDisplayName;

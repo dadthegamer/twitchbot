@@ -1,4 +1,4 @@
-async function onDonation(data) {
+export async function onDonation(data) {
     try {
         const { username, amount } = data.data;
         const userData = await getUserDataByName(username);

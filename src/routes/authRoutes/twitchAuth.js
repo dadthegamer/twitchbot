@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { twitchClientId, twitchClientSecret } from '../../config/environmentVars';
+import { twitchClientId, twitchClientSecret } from '../../config/environmentVars.js';
 
 const router = Router();
 

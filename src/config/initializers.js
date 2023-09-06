@@ -16,6 +16,7 @@ import { ActiveUsersHandler } from '../handlers/twitch/chatHandlers/activeUsersH
 import { Commands } from '../services/commandServices.js';
 import { CommandHandler } from '../handlers/twitch/chatHandlers/commandHandlers/commandHandler.js';
 import { StreamDB } from '../services/streamServices.js';
+import { subscribeToDonationEvents } from '../services/streamElementsService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -62,6 +63,9 @@ const commands = new Commands(db.dbConnection);
 // Command cache initialization
 const commandHandler = new CommandHandler(commands.cache);
 
+// Subscribe to donation events
+subscribeToDonationEvents();
+
 setInitialCacheValues();
 startAlertsHandler();
 startWelcomeAlerts();
@@ -80,5 +84,5 @@ export {
     activeUsersCache,
     commands,
     commandHandler,
-    streamDB
+    streamDB,
 };

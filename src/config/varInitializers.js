@@ -31,6 +31,12 @@ export async function setInitialCacheValues() {
         cache.set('streamDonations', 0);
         cache.set('streamFollowers', 0);
 
+        //Monthly values
+        cache.set('monthlySubs', 0);
+        cache.set('monthlySubGoal', 100);
+        cache.set('monthlyBits', 0);
+        cache.set('monthlyDonations', 0);
+
         //OBS values
         cache.set('currentScene', null);
         cache.set('currentSceneSources', []);

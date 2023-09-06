@@ -14,7 +14,6 @@ export class TwitchApiClient {
         return this.apiClient;
     }
 
-
     // Method to get all the users the channel follows
     async getFollowers() {
         try {
@@ -34,6 +33,23 @@ export class TwitchApiClient {
         catch (error) {
             console.log(error);
             writeToLogFile('error', `Error getting channel followers: ${error}`);
+        }
+    }
+
+    // Method to get user information by token
+    async getUserDataByToken(token) {
+        try {
+            const data = await this.apiClient.getUserDataByToken(token);
+            const user = {
+                id: data.id,
+                login: data.login,
+                display_name: data.displayName,
+                profile_image_url: data.profilePictureUrl,
+            };
+            return user;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error getting user data by token: ${error}`);
         }
     }
 
