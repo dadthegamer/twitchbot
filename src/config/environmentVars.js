@@ -15,7 +15,7 @@ const streamingPCIP = process.env.STREAMING_PC_IP;
 const rapidAPIKey = process.env.RAPID_API_KEY;
 const apiNinjaKey = process.env.API_NINJA_KEY;
 const amazonAccessKey = process.env.AMAZON_ACCESS_KEY_ID;
-const amazonSecretKey = process.env.AMAZON_SECRET_ACCESS_KEY;
+const amazonSecretKey = process.env.AMAZON_SECRET_KEY;
 
 export {
     uri,

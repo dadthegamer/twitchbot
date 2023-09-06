@@ -1,5 +1,6 @@
 import { EventSubWsListener } from '@twurple/eventsub-ws';
 import { onPredictionStart, onPredictionEnd, onPredictionLock, onPredictionProgress } from '../handlers/twitch/eventHandlers/predictionHanders.js';
+import { onRedemptionAdd } from '../handlers/twitch/eventHandlers/redemptionHandler.js';
 import { writeToLogFile } from '../utilities/logging.js';
 
 // Event listener for Twitch events
@@ -17,6 +18,12 @@ export class TwitchEventListenersServices {
     
             // Event listeners for predictions
             listener.onChannelPredictionBegin(this.userId, onPredictionStart);
+            listener.onChannelPredictionProgress(this.userId, onPredictionProgress);
+            listener.onChannelPredictionLock(this.userId, onPredictionLock);
+            listener.onChannelPredictionEnd(this.userId, onPredictionEnd);
+
+            // Event listeners for channel points
+            listener.onChannelRedemptionAdd(this.userId, onRedemptionAdd);
         }
         catch (error) {
             writeToLogFile('error', `Error starting event listener: ${error}`);

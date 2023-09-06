@@ -2,6 +2,7 @@ import AWS from 'aws-sdk';
 import { amazonAccessKey, amazonSecretKey } from '../config/environmentVars.js';
 import { writeToLogFile } from '../utilities/logging.js';
 
+
 const polly = new AWS.Polly({
     region: 'us-east-1',
     accessKeyId: amazonAccessKey,

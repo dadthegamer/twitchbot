@@ -167,5 +167,5 @@ document.addEventListener('DOMContentLoaded', () => {
     reconnect();
     autoScroll();
     queueHandler();
-    addToTTSQueue({ img: 'https://static-cdn.jtvnw.net/jtv_user_pictures/4a9a2b4a-0a9b-4b4c-8d0b-8f1a1f3d7e2f-profile_image-70x70.png', message: 'Hello, welcome to the stream' })
+    addToTTSQueue({ img: 'https://static-cdn.jtvnw.net/jtv_user_pictures/6b06e8e0-1ef8-4ee0-8dc0-f7d3190045b3-profile_image-70x70.png', message: 'Hello, welcome to the stream' })
 });

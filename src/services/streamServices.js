@@ -5,6 +5,7 @@ export class StreamDB {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
+        this.getJackpot();
     }
 
     // Method to start a stream
@@ -199,6 +200,54 @@ export class StreamDB {
         }
         catch (error) {
             writeToLogFile('error', `Error in getStreamData: ${error}`);
+            return null;
+        }
+    }
+
+    // Method to get the current jackpot amount from the database and store it in the cache
+    async getJackpot() {
+        try {
+            const data = await this.dbConnection.collection('streamData').findOne({ id: 'jackpot' });
+            const jackpot = data.jackpot;
+            this.cache.set('jackpot', jackpot);
+            return jackpot;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in getJackpot: ${error}`);
+            return null;
+        }
+    }
+
+    // Method to increase the jackpot amount in the database and cache
+    async increaseJackpot(amount) {
+        try {
+            const jackpot = this.cache.get('jackpot');
+            const newJackpot = jackpot + amount;
+            await this.dbConnection.collection('streamData').updateOne(
+                { id: 'jackpot' },
+                { $set: { jackpot: newJackpot } }
+            );
+            this.cache.set('jackpot', newJackpot);
+            return newJackpot;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in increaseJackpot: ${error}`);
+            return null;
+        }
+    }
+
+    // Method to set the jackpot amount in the database and cache
+    async setJackpot(amount) {
+        try {
+            await this.dbConnection.collection('streamData').updateOne(
+                { id: 'jackpot' },
+                { $set: { jackpot: amount } }
+            );
+            this.cache.set('jackpot', amount);
+            return amount;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in setJackpot: ${error}`);
             return null;
         }
     }

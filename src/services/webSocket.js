@@ -1,20 +1,13 @@
 // server.js
 import { WebSocketServer } from 'ws';
 import { writeToLogFile } from '../utilities/logging.js';
-
+import { getRandomInt } from '../utilities/utils.js';
 
 // Calss for the WebSocket server
 export class WebSocket {
     constructor() {
         this.wss = new WebSocketServer({ port: 8080 });
         this.wss.on('connection', (ws) => {
-            this.alert({
-                alertType: 'New Follower',
-                alertMessage: 'Connected to WebSocket server',
-                userImg: 'https://static-cdn.jtvnw.net/jtv_user_pictures/f8caf03d-99c8-440f-863a-da08a88ce97c-profile_image-70x70.png',
-                sound: 'http://localhost:3001/audio/cheer.mp3',
-                alertTime: 5000,
-            })
             console.log('Client connected');
             ws.on('message', (message) => {
                 console.log(`Received message => ${message}`);
@@ -77,7 +70,7 @@ export class WebSocket {
     // Method to send a new TTS message
     TTS(data) {
         const payload = {
-            id,
+            id: getRandomInt(100000, 999999),
             img: data.img,
             message: data.message,
         }
