@@ -15,6 +15,7 @@ import { setInitialCacheValues } from './varInitializers.js';
 import { ActiveUsersHandler } from '../handlers/twitch/chatHandlers/activeUsersHandler.js';
 import { Commands } from '../services/commandServices.js';
 import { CommandHandler } from '../handlers/twitch/chatHandlers/commandHandlers/commandHandler.js';
+import { StreamDB } from '../services/streamServices.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -44,6 +45,9 @@ await chatClient.connectToBotChat();
 // Twitch bot initialization
 const twitchBotClient = new TwitchBotClient(authProvider);
 await twitchBotClient.connectToBotChat();
+
+// StreamDB initialization
+const streamDB = new StreamDB(db.dbConnection, cache);
 
 // Websocket initialization
 const webSocket = new WebSocket();
@@ -75,5 +79,6 @@ export {
     webSocket,
     activeUsersCache,
     commands,
-    commandHandler
+    commandHandler,
+    streamDB
 };

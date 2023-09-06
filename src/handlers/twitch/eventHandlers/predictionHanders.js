@@ -1,10 +1,13 @@
+import { cache } from "../../../config/initializers.js";
+import { writeToLogFile } from "../../../utilities/logging.js"
+import { addAlert } from "../../../handlers/alertHandler.js";
+
+
 // Prediction events
 export async function onPredictionStart(e) {
     try {
         const outcomeArray = [];
         e.outcomes.forEach((outcome) => {
-            console.log(outcome.title);
-            console.log(outcome.id);
             outcomeArray.push({
                 id: outcome.id,
                 title: outcome.title,
@@ -16,7 +19,16 @@ export async function onPredictionStart(e) {
         const startDate = e.startDate;
         const lockDate = e.lockDate;
         const predictionTitle = e.title;
-        console.log(`Prediction started: ${predictionTitle}`);
+        cache.set('prediction', {
+            title: predictionTitle,
+            outcomes: outcomeArray,
+            startDate: startDate,
+            lockDate: lockDate,
+            locked: false,
+            predictionWindow: lockDate - startDate,
+        });
+        //Console log the prediction from the cache
+        console.log(cache.get('prediction'));
     }
     catch (error) {
         console.log(error);
@@ -37,7 +49,7 @@ export async function onPredictionProgress(e) {
 
 export async function onPredictionLock(e) {
     try {
-        lockPrediction();
+        cache.set('prediction', { ...cache.get('prediction'), locked: true });
         for (const outcome of e.outcomes) {
             console.log(`Outcome ${outcome.title} has ${outcome.channelPoints} points`);
         }
@@ -49,12 +61,28 @@ export async function onPredictionLock(e) {
 
 export async function onPredictionEnd(e) {
     try {
-        endPrediction();
+        cache.set('prediction', null);
         for (const outcome of e.outcomes) {
             console.log(`Outcome ${outcome.title} has ${outcome.channelPoints} points`);
         }
     }
     catch (error) {
         writeToLogFile('error', `Error in onPredictionEnd: ${error}`);
+    }
+}
+
+
+// Helper functions
+// Function to update the prediction
+async function updatePrediction(outcomeId, channelPoints, users) {
+    try {
+        const prediction = cache.get('prediction');
+        const outcomeIndex = prediction.outcomes.findIndex((outcome) => outcome.id === outcomeId);
+        prediction.outcomes[outcomeIndex].channelPoints = channelPoints;
+        prediction.outcomes[outcomeIndex].users = users;
+        cache.set('prediction', prediction);
+    }
+    catch (error) {
+        writeToLogFile('error', `Error in updatePrediction: ${error}`);
     }
 }

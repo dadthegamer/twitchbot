@@ -1,4 +1,5 @@
-
+import { writeToLogFile } from "../utilities/logging.js";
+import { msToMinutes } from "../utilities/utils.js";
 
 // Class to handle all stream related services
 export class StreamDB {
@@ -6,6 +7,7 @@ export class StreamDB {
         this.dbConnection = dbConnection;
         this.cache = cache;
         this.getJackpot();
+        this.getLatestEvents();
     }
 
     // Method to start a stream
@@ -22,6 +24,7 @@ export class StreamDB {
                     followers: [],
                     new_subs: [],
                     gifted_subs: 0,
+                    total_subs: 0,
                     bits: 0,
                     raids: 0,
                     donations: [],
@@ -44,8 +47,7 @@ export class StreamDB {
     // Method to end a stream and store the stream data in the streams collection
     async endStream() {
         try {
-            // Get the stream data from the database
-            const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
+            await this.insertNewStream();
             const query = { status: 'online' };
             const update = {
                 $set: {
@@ -54,7 +56,6 @@ export class StreamDB {
             };
             const options = { upsert: true };
             await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            await this.dbConnection.collection('streams').insertOne(streamData);
             this.cache.del('stream');
             return true;
         }
@@ -64,10 +65,65 @@ export class StreamDB {
         }
     }
 
+    // Check if a stream has been started within the last hour
+    async checkStream() {
+        try {
+            const date = new Date();
+            const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
+            if (streamData) {
+                const streamDate = streamData.date;
+                const difference = date - streamDate;
+                const minutes = msToMinutes(difference);
+                if (minutes < 60) {
+                    return streamData;
+                } else {
+                    return null;
+                }
+            }
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in checkStream: ${error}`);
+            return null;
+        }
+    }
+
+    // Method to copy the stream data from the streamData collection to the streams collection. Remove the status field from the streamData collection and insert
+    // an uptime field that is calculated from the date field. Format the uptime field to be a string in the format of HH:MM:SS
+    async insertNewStream() {
+        try {
+            const date = new Date();
+            const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
+            const uptime = msToMinutes(date - streamData.date);
+            const stream = {
+                title: streamData.title,
+                category: streamData.category,
+                date: streamData.date,
+                followers: streamData.followers,
+                new_subs: streamData.new_subs,
+                gifted_subs: streamData.gifted_subs,
+                total_subs: streamData.total_subs,
+                bits: streamData.bits,
+                raids: streamData.raids,
+                donations: streamData.donations,
+                max_viewers: streamData.max_viewers,
+                average_viewers: streamData.average_viewers,
+                viewers: streamData.viewers,
+                uptime: uptime,
+            };
+            await this.dbConnection.collection('streams').insertOne(stream);
+            return true;
+            }
+        catch (error) {
+            writeToLogFile('error', `Error in insertNewStream: ${error}`);
+            return false;
+        }
+    }
+
     // Method to get the current stream data from the database and store it in the cache
     async getStreamData() {
         try {
             const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
+            console.log(`Stream data: ${streamData}`)
             this.cache.set('stream', streamData);
             return streamData;
         }
@@ -175,7 +231,7 @@ export class StreamDB {
             };
             const options = { upsert: true };
             await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            this.cache.set('stream', stream);
+            this.getLatestEvents();
         }
         catch (error) {
             writeToLogFile('error', `Error in setLatestEvent: ${error}`);
@@ -183,23 +239,22 @@ export class StreamDB {
     }
 
     // Method to get the latest event from the database in one query
-    async getLatestEvent() {
+    async getLatestEvents() {
         try {
             let events = [];
             const latestFollower = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_follower' });
             const latestSub = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_sub' });
             const latestCheer = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_cheer' });
             const latestDonation = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_donation' });
-
             events.push(latestFollower);
             events.push(latestSub);
             events.push(latestCheer);
             events.push(latestDonation);
-            this.cache.set('events', events);
+            this.cache.set('latestEvents', events);
             return events;
         }
         catch (error) {
-            writeToLogFile('error', `Error in getStreamData: ${error}`);
+            writeToLogFile('error', `Error in getLatestEvents: ${error}`);
             return null;
         }
     }

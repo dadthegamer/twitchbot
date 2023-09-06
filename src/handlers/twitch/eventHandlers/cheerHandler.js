@@ -1,6 +1,10 @@
+import { usersDB, cache, streamDB } from "../../../config/initializers.js";
+import { writeToLogFile } from "../../../utilities/logging.js"
+import { addAlert } from "../../../handlers/alertHandler.js";
+
+
 export async function onBits(e) {
     try {
-        const userName = e.userName;
         const userDisplayName = e.userDisplayName;
         const userId = e.userId;
         const bits = e.bits;
@@ -9,13 +13,12 @@ export async function onBits(e) {
         const newCheerData = {
             id: userId,
             display_name: userDisplayName,
-            login: userName,
             profile_image_url: profileImage,
         };
-        await setLatestEvent('latest_cheer', newCheerData);
+        await streamDB.setLatestEvent('latest_cheer', newCheerData);
         await addAlert('cheer', `${userDisplayName} cheered ${bits} bits!`, profileImage);
-        await addBits(userId, userDisplayName, bits);
-        await increaseStreamProperty('bits', bits);
+        await usersDB.increaseBits(userId, bits);
+        await streamDB.increaseStreamProperty('bits', bits);
     }
     catch (error) {
         writeToLogFile('error', `Error in onBits: ${error}`);

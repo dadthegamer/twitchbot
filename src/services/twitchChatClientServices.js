@@ -18,7 +18,7 @@ export class TwitchChatClient {
             this.chatClient.connect();
             this.chatClient.join('dadthegam3r');
             this.chatClient.onConnect(() => {
-                if (environment !== 'production'){
+                if (environment === 'production'){
                     writeToLogFile('info','The Dadb0t is online!');
                     this.chatClient.say('dadthegam3r', 'The Dadb0t is online!');
                 } else {

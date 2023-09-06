@@ -44,18 +44,23 @@ app.use(
 );
 
 
-// Import routes
+// Import overlay routes
+import overlayRouter from './routes/overlayRoute.js';
+
+
+// Import API routes
 import commandsRouter from './routes/apiRoutes/commands.js';
 import currencyRouter from './routes/apiRoutes/currency.js';
 import leaderboardRouter from './routes/apiRoutes/leaderboard.js';
 import ttsRouter from './routes/apiRoutes/tts.js';
-import overlayRouter from './routes/overlayRoute.js';
+import predictionRouter from './routes/apiRoutes/prediction.js';
 
 // Api routes
 app.use('/api/commands', commandsRouter);
 app.use('/api/currency', currencyRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/tts', ttsRouter);
+app.use('/api/prediction', predictionRouter);
 
 
 // Overlay routes

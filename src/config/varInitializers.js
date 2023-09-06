@@ -25,12 +25,11 @@ export async function setInitialCacheValues() {
 
         // Stream values
         cache.set('streamStartedAt', null);
-        cache.set('streaSubs', 0);
-        cache.set('streamSubGoal', 0);
+        cache.set('streamSubs', 0);
+        cache.set('streamSubGoal', 10);
         cache.set('streamBits', 0);
         cache.set('streamDonations', 0);
         cache.set('streamFollowers', 0);
-        cache.set('streamViewers', 0);
 
         //OBS values
         cache.set('currentScene', null);
