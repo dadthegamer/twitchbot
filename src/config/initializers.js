@@ -28,16 +28,12 @@ const usersDB = new UsersDB(db.dbConnection, cache);
 const tokenDB = new TokenDB(db.dbConnection);
 
 // Twitch API initialization
-const twitchApiClient = new AuthProviderManager(tokenDB, twitchClientId, twitchClientSecret, '64431397', '671284746');
-await twitchApiClient.initializeAuthProvider();
-await twitchApiClient.addUserToAuthProvider('64431397');
-await twitchApiClient.addUserToAuthProvider('671284746');
-const authProvider = twitchApiClient.getAuthProvider();
+const twitchApiClient = new AuthProviderManager(tokenDB, '64431397');
+const authProvider = await twitchApiClient.getAuthProvider();
 const twitchApi = new TwitchApiClient(authProvider, '64431397', cache);
 
 // Twitch event listeners initialization
-const twitchEventListeners = new TwitchEventListenersServices(twitchApi.getApiClient(), '64431397', '671284746');
-await twitchEventListeners.startEventListener();
+const twitchEventListeners = new TwitchEventListenersServices(twitchApi.getApiClient());
 
 // Twitch chat initialization
 const chatClient = new TwitchChatClient(authProvider)

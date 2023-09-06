@@ -1,5 +1,6 @@
 import { ApiClient } from '@twurple/api';
 import { writeToLogFile } from '../utilities/logging.js';
+import axios from 'axios';
 
 // Class for the Twitch API client
 export class TwitchApiClient {
@@ -39,16 +40,17 @@ export class TwitchApiClient {
     // Method to get user information by token
     async getUserDataByToken(token) {
         try {
-            const data = await this.apiClient.getUserDataByToken(token);
-            const user = {
-                id: data.id,
-                login: data.login,
-                display_name: data.displayName,
-                profile_image_url: data.profilePictureUrl,
-            };
-            return user;
+            const response = await axios.get('https://api.twitch.tv/helix/users', {
+                headers: {
+                    'Client-ID': process.env.TWITCH_CLIENT_ID,
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            const data = response.data.data[0];
+            return data;
         }
         catch (error) {
+            console.log(error);
             writeToLogFile('error', `Error getting user data by token: ${error}`);
         }
     }

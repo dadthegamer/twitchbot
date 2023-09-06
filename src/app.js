@@ -49,7 +49,7 @@ app.use(
 // Twitch authentication
 import twitchAuthRouter from './routes/authRoutes/twitchAuth.js';
 import twitchCallbackRouter from './routes/authRoutes/twitchCallback.js';
-import twitchAdminAuthRouter from './routes/authRoutes/twitchAuth.js';
+import twitchAdminAuthRouter from './routes/authRoutes/twitchAdminAuth.js';
 
 // Import overlay routes
 import overlayRouter from './routes/overlayRoute.js';
@@ -83,4 +83,5 @@ app.use('/auth/twitch/admin', twitchAdminAuthRouter);
 
 app.listen(port, () => {
     console.log(`Server is running`);
+    console.log(`Authorize twitch account at http://localhost:${port}/auth/twitch/admin`)
 });

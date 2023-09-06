@@ -9,10 +9,11 @@ import { onFollow } from '../handlers/twitch/eventHandlers/followHandler.js';
 
 // Event listener for Twitch events
 export class TwitchEventListenersServices {
-    constructor(APIClient, userId, botUserId) {
+    constructor(APIClient) {
         this.apiClient = APIClient;
-        this.userId = userId;
-        this.botUserId = botUserId;
+        this.userId = '64431397';
+        this.botUserId = '671284746';
+        this.startEventListener();
     }
 
     async startEventListener() {
