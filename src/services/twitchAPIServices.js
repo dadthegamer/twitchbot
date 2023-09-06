@@ -1,6 +1,7 @@
 import { ApiClient } from '@twurple/api';
 import { writeToLogFile } from '../utilities/logging.js';
 import axios from 'axios';
+import { startEventListener } from '../services/twitchEventListenerServices.js';
 
 // Class for the Twitch API client
 export class TwitchApiClient {

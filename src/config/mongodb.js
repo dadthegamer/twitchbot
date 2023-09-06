@@ -15,7 +15,6 @@ export class MongoDBConnection {
         this.client = new MongoClient(uri);
         this.dbName = 'twitchBot';
         this.dbConnection = null;
-        return MongoDBConnection.instance;
     }
 
     // Method to connect to MongoDB

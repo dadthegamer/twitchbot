@@ -5,6 +5,7 @@ export class TwitchBotClient {
     constructor(authProvider) {
         this.authProvider = authProvider;
         this.bot = null;
+        this.connectToBotChat();
     }
 
     // Method to connect to Twitch chat

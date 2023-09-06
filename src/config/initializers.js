@@ -5,7 +5,7 @@ import { TokenDB } from '../services/tokenServices.js';
 import { AuthProviderManager  } from '../services/twitchAuthProviderServices.js';
 import { TwitchApiClient } from '../services/twitchApiServices.js';
 import { twitchClientId, twitchClientSecret } from './environmentVars.js';
-import { TwitchEventListenersServices } from '../services/twitchEventListenerServices.js';
+import { startEventListener } from '../services/twitchEventListenerServices.js';
 import { TwitchChatClient } from '../services/twitchChatClientServices.js';
 import { TwitchBotClient } from '../services/twitchBotServices.js';
 import { WebSocket } from '../services/webSocket.js';
@@ -24,24 +24,22 @@ const cache = new CacheService('mainCache');
 // MongoDB initialization
 const db = new MongoDBConnection();
 await db.connect();
+
 const usersDB = new UsersDB(db.dbConnection, cache);
 const tokenDB = new TokenDB(db.dbConnection);
 
 // Twitch API initialization
-const twitchApiClient = new AuthProviderManager(tokenDB, '64431397');
+const twitchApiClient = new AuthProviderManager(tokenDB);
 const authProvider = await twitchApiClient.getAuthProvider();
 const twitchApi = new TwitchApiClient(authProvider, '64431397', cache);
 
-// Twitch event listeners initialization
-const twitchEventListeners = new TwitchEventListenersServices(twitchApi.getApiClient());
-
 // Twitch chat initialization
 const chatClient = new TwitchChatClient(authProvider)
-await chatClient.connectToBotChat();
+// await chatClient.connectToBotChat();
 
-// Twitch bot initialization
-const twitchBotClient = new TwitchBotClient(authProvider);
-await twitchBotClient.connectToBotChat();
+// // Twitch bot initialization
+// const twitchBotClient = new TwitchBotClient(authProvider);
+// await twitchBotClient.connectToBotChat();
 
 // StreamDB initialization
 const streamDB = new StreamDB(db.dbConnection, cache);
@@ -60,7 +58,7 @@ const commands = new Commands(db.dbConnection);
 const commandHandler = new CommandHandler(commands.cache);
 
 // Subscribe to donation events
-subscribeToDonationEvents();
+// subscribeToDonationEvents();
 
 setInitialCacheValues();
 startAlertsHandler();
@@ -73,9 +71,7 @@ export {
     tokenDB,
     twitchApiClient,
     twitchApi,
-    twitchEventListeners,
     chatClient,
-    twitchBotClient,
     webSocket,
     activeUsersCache,
     commands,

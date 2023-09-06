@@ -5,6 +5,7 @@ import { writeToLogFile } from '../utilities/logging.js';
 export class TokenDB {
     constructor(dbConnection) {
         this.dbConnection = dbConnection;
+        this.collectionName = 'tokens';
     }
 
     // Method to get the current token
@@ -55,10 +56,11 @@ export class TokenDB {
     //Method to get all the tokens in the database
     async getAllTokens() {
         try {
-            const collection = await this.dbConnection.collection("tokens");
+            const collection = await this.dbConnection.collection(this.collectionName);
             const result = await collection.find({}).toArray();
             return result;
         } catch (error) {
+            console.log(error);
             writeToLogFile('error', `Error getting all tokens: ${error}`);
         }
     }
