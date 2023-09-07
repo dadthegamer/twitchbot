@@ -74,10 +74,11 @@ export {
     usersDB,
     tokenDB,
     twitchApi,
-    // chatClient,
+    chatClient,
     webSocket,
     activeUsersCache,
     commands,
     commandHandler,
     streamDB,
+    botClient,
 };

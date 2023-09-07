@@ -3,6 +3,7 @@ import { ChatClient } from '@twurple/chat';
 import { environment } from '../config/environmentVars.js';
 import { onMessageHandler } from '../handlers/twitch/chatHandlers/onMessage.js';
 import { writeToLogFile } from '../utilities/logging.js';
+import { botClient } from '../config/initializers.js';
 
 // Class to connect to Twitch chat
 export class TwitchChatClient {
@@ -30,7 +31,7 @@ export class TwitchChatClient {
                 this.reconnect();
             });
             this.chatClient.onMessage(async (channel, user, message, msg) => {
-                await onMessageHandler(channel, user, message, msg)
+                await onMessageHandler(channel, user, message, msg, botClient)
             });
         }
         catch (error) {

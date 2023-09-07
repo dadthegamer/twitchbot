@@ -2,6 +2,8 @@ import NodeCache from 'node-cache';
 import { writeToLogFile } from '../../../../utilities/logging.js';
 import { cache } from '../../../../config/initializers.js';
 import { formatTimeFromMilliseconds } from '../../../../utilities/utils.js';
+import { evalulate } from '../../../evaluater.js';
+import { botClient } from '../../../../config/initializers.js';
 
 // Class to handle commands
 export class CommandHandler {
@@ -30,7 +32,6 @@ export class CommandHandler {
         try {
             const key = `${userId}-${commandName}`;
             if (this.userCooldownCache.has(key)) {
-                console.log('userCooldownCache.getTtl(key)', this.userCooldownCache.getTtl(key));
                 return this.userCooldownCache.getTtl(key);
             } else {
                 this.userCooldownCache.set(key, true, userCooldown);
@@ -72,7 +73,6 @@ export class CommandHandler {
             if (commandData) {
                 const { handlers, permissions, enabled, userCooldown, globalCooldown, liveOnly } = commandData;
                 if (!liveOnly === false && cache.get('live') === false) {
-                    console.log('Stream is not live')
                     return;
                 }
                 if (enabled === false) {
@@ -83,12 +83,12 @@ export class CommandHandler {
                 if (permissions === 'everyone') {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
                         for (const handler of handlers) {
-                            await evalulate(handler, { bot, msg, userDisplayName: displayName, userId, say: bot.say, timeout: bot.timeout, reply: bot.reply });
+                            await evalulate(handler, { bot, msg, userDisplayName: displayName, userId, messageID: id });
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
                         const timeLeft = formatTimeFromMilliseconds(userCooldownStatus - Date.now());
-                        console.log(`User cooldown: ${timeLeft} seconds left`);
+                        botClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
                         return;
                     } else if (globalCooldownStatus !== true) {
                         const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());

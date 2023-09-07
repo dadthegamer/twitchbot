@@ -61,6 +61,9 @@ import leaderboardRouter from './routes/apiRoutes/leaderboard.js';
 import ttsRouter from './routes/apiRoutes/tts.js';
 import predictionRouter from './routes/apiRoutes/prediction.js';
 
+// Import GUI routes
+import guiRouter from './routes/gui.js';
+
 // Api routes
 app.use('/api/commands', commandsRouter);
 app.use('/api/currency', currencyRouter);
@@ -78,6 +81,9 @@ app.use(express.static(path.join(__dirname, '../public')));
 app.use('/auth/twitch', twitchAuthRouter);
 app.use('/auth/twitch/callback', twitchCallbackRouter);
 app.use('/auth/twitch/admin', twitchAdminAuthRouter);
+
+// GUI routes
+app.use('/', guiRouter);
 
 
 app.listen(port, () => {

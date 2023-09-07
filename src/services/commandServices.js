@@ -50,8 +50,12 @@ export class Commands {
     // Method to get all commands from the cache
     async getAllCommandsFromCache() {
         try {
-            // Return all the commands from the cache to include the command data
-            return this.cache.mget(this.cache.keys());
+            // Return all the commands from the cache into an array
+            const commands = [];
+            this.cache.keys().forEach(key => {
+                commands.push(this.cache.get(key));
+            });
+            return commands;
         }
         catch (err) {
             writeToLogFile('error', `Error in getAllCommandsFromCache: ${err}`);
@@ -90,7 +94,7 @@ export class Commands {
             if (typeof userCooldown === 'string') {
                 userCooldown = parseInt(userCooldown);
             }
-            if (await getCommand(commandName) !== null) {
+            if (await this.getCommand(commandName) !== null) {
                 updateCommand(commandName, commandHandlers, commandDescription, commandPermissions, commandEnabled, userCooldown, globalCooldown, liveOnly);
                 return;
             } else {
@@ -113,6 +117,7 @@ export class Commands {
                 return result;
             }
         } catch (error) {
+            console.error('Error in createCommand:', error);
             writeToLogFile('error', `Error in createCommand: ${error}`)
         }
     }

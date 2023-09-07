@@ -1,7 +1,8 @@
-import { BotClient } from '../bot.js';
-import { increaseUserValue } from '../db.js';
-import { runEffectList } from '../utilities/utilis.js';
-import { connectToMongoDB } from '../db/connection.js';
+import { streamDB } from '../../config/initializers.js';
+import { replyHandler } from './replyHandler.js';
+import { cache } from '../../config/initializers.js';
+import { numberWithCommas } from '../../utilities/utils.js';
+import { usersDB } from '../../config/initializers.js';
 
 
 let pct = 750;
@@ -14,12 +15,9 @@ function getRandomInt(min, max) {
 
 // Function to increase the jackpot amount
 export async function increaseJackpot(amount) {
-    const db = await connectToMongoDB();
     try {
-        const collection = db.collection('streamInfo');
-        await collection.updateOne({ id: 'jackpot' }, { $inc: { jackpot: amount } });
-        const jackpot = await collection.findOne({ id: 'jackpot' });
-        return jackpot.jackpot;
+        streamDB.increaseJackpot(amount);
+        cache.set('jackpot', cache.get('jackpot') + amount);
     }
     catch (err) {
         console.log(err);
@@ -28,11 +26,9 @@ export async function increaseJackpot(amount) {
 
 // Function to get the jackpot amount
 export async function getJackpot() {
-    const db = await connectToMongoDB();
     try {
-        const collection = db.collection('streamInfo');
-        const jackpot = await collection.findOne({ id: 'jackpot' });
-        return jackpot.jackpot;
+        const jackpot = cache.get('jackpot');
+        return jackpot;
     }
     catch (err) {
         console.log(err);
@@ -41,12 +37,9 @@ export async function getJackpot() {
 
 // Function to set the jackpot amount
 export async function setJackpot(amount) {
-    const db = await connectToMongoDB();
     try {
-        const collection = db.collection('streamInfo');
-        await collection.updateOne({ id: 'jackpot' }, { $set: { jackpot: amount } });
-        const jackpot = await collection.findOne({ id: 'jackpot' });
-        return jackpot.jackpot;
+        const jackpot = streamDB.setJackpot(amount);
+        return jackpot;
     }
     catch (err) {
         console.log(err);
@@ -60,5 +53,24 @@ export async function spin() {
         return true;
     } else {
         return false;
+    }
+}
+
+
+// Function to handle the spin
+export async function spinHandler(userDisplayName, userId, messageID) {
+    const spinResult = await spin();
+    if (spinResult === true) {
+        const amount = await getJackpot();
+        await usersDB.increaseUserValue(userId, 'leaderboard_points', amount);
+        const formatJackpot = numberWithCommas(amount);
+        await setJackpot(25000);
+        replyHandler(`@${userDisplayName} won the jackpot and won ${formatJackpot} points!`, messageID);
+    } else {
+        let jackPotWin = await getJackpot();
+        jackPotWin = jackPotWin + getRandomInt(1000, 2000);
+        await setJackpot(jackPotWin);
+        const formatJackpot = numberWithCommas(jackPotWin);
+        replyHandler(`did not win. The jackpot is now ${formatJackpot} points!`, messageID);
     }
 }

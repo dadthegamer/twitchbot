@@ -38,6 +38,7 @@ router.post('/', async (req, res) => {
         res.json(command);
     }
     catch (err) {
+        console.log('Error in creating command from the api: ', err)
         writeToLogFile('error', `Error in creating command from the api: ${err}`);
     }
 });

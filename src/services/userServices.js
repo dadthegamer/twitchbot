@@ -1,4 +1,6 @@
 import { writeToLogFile } from '../utilities/logging.js';
+import { twitchApi } from '../config/initializers.js';
+
 
 // User class 
 export class UsersDB {
@@ -56,6 +58,11 @@ export class UsersDB {
                 return user;
             } else {
                 user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
+                if (user === null) {
+                    const twitchUser = await twitchApi.getUserDataById(userId);
+                    this.newFollower(twitchUser);
+                    user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
+                }
                 this.cache.set(userId, user);
                 return user;
             }
@@ -92,6 +99,7 @@ export class UsersDB {
             this.cache.set(userData.id, userData);
         }
         catch (error) {
+            console.log(error);
             writeToLogFile('error', `Error in addUser: ${error}`);
         }
     }
@@ -147,7 +155,7 @@ export class UsersDB {
             const last_seen = date;
             let user = this.cache.get(userId);
             if (!user) {
-                user = await this.getUser(userId);
+                user = await this.getUserByUserId(userId);
             }
             if (property in user) {
                 user[property] += value;
@@ -161,6 +169,7 @@ export class UsersDB {
             );
             this.cache.set(userId, user);
         } catch (error) {
+            console.log(error);
             writeToLogFile('error', `Error in increaseUserValue: ${error}`);
         }
     }

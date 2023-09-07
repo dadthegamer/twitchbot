@@ -183,6 +183,7 @@ async function getAllCommands() {
     fetch('/api/commands')
         .then(response => response.json())
         .then(commands => {
+            console.log(commands);
             commands.forEach(command => {
                 createCommand(command.name, command.enabled);
             });

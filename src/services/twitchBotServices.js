@@ -6,6 +6,7 @@ export class TwitchBotClient {
         this.authProvider = authProvider;
         this.bot = null;
         this.connectToBotChat();
+        this.channel = 'dadthegam3r';
     }
 
     // Method to connect to Twitch chat
@@ -27,9 +28,9 @@ export class TwitchBotClient {
         }
     }
 
-    async replyToMessage(channel, text, msg) {
+    async replyToMessage(text, msg) {
         try {
-            await this.bot.reply(channel, text, msg)
+            await this.bot.reply(this.channel, text, msg)
         }
         catch (error) {
             console.log(error);
