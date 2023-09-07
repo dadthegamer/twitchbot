@@ -9,9 +9,9 @@ export async function setInitialCacheValues() {
         cache.set('activeUsers', []);
         cache.set('firstArrived', false);
         cache.set('first', []);
-        cache.set('knownBots', []);
         cache.set('commands', []);
         cache.set('live', false);
+        cache.set('currentViewers', []);
 
         // TikTok values
         cache.set('tikTokLive', false);

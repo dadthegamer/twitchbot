@@ -26,6 +26,25 @@ export class UsersDB {
         }
     }
 
+    // Method to return rather a user is a follower or not
+    async isFollower(userId) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            const user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
+            if (user.follow_date) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in isFollower: ${error}`);
+            return null;
+        }
+    }
+
     // Method to return user data
     async getUserByUserId(userId) {
         try {
@@ -38,7 +57,6 @@ export class UsersDB {
             } else {
                 user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
                 this.cache.set(userId, user);
-                console.log(user);
                 return user;
             }
         }

@@ -5,10 +5,10 @@ import { startEventListener } from '../services/twitchEventListenerServices.js';
 
 // Class for the Twitch API client
 export class TwitchApiClient {
-    constructor(authProvider, userId, cache) {
+    constructor(authProvider, cache) {
         console.log(authProvider);
         this.apiClient = new ApiClient({ authProvider: authProvider });
-        this.userId = userId;
+        this.userId = '64431397';
         this.cache = cache;
         startEventListener(this.apiClient);
     }
@@ -147,7 +147,6 @@ export class TwitchApiClient {
                 display_name: chatter.userDisplayName,
             }));
             chatters = [...chatters, ...data];
-            console.log(chatters);
             this.cache.set('chatters', chatters);
             return chatters;
         }

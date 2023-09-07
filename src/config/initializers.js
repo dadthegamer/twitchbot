@@ -15,6 +15,8 @@ import { AuthProviderManager } from '../services/twitchAuthProviderServices.js';
 import { TwitchApiClient } from '../services/twitchApiServices.js';
 import { TwitchChatClient } from '../services/twitchChatClientServices.js';
 import { TwitchBotClient } from '../services/twitchBotServices.js';
+import { viewTimeHandler } from '../handlers/twitch/viewTimeHandler.js';
+import { addBotsToKnownBots } from '../handlers/twitch/viewTimeHandler.js';
 
 
 
@@ -30,7 +32,7 @@ const usersDB = new UsersDB(db.dbConnection, cache);
 const tokenDB = new TokenDB(db.dbConnection);
 
 const authProvider = new AuthProviderManager(tokenDB);
-const twitchApi = new TwitchApiClient(authProvider.authProvider);
+const twitchApi = new TwitchApiClient(authProvider.authProvider, cache);
 
 // Chat client initialization
 const chatClient = new TwitchChatClient(authProvider.authProvider);
@@ -59,10 +61,12 @@ const commandHandler = new CommandHandler(commands.cache);
 // Subscribe to donation events
 subscribeToDonationEvents();
 
+
+addBotsToKnownBots();
 setInitialCacheValues();
 startAlertsHandler();
 startWelcomeAlerts();
-
+setInterval(viewTimeHandler, 1000);
 
 export {
     db,
