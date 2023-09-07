@@ -7,9 +7,7 @@ export async function ttsHandler(message, userImg = 'https://static-cdn.jtvnw.ne
             message: message,
             img: userImg,
         });
-        writeToLogFile('info', `Speech generated for message: ${message}`);
     } catch (err) {
-        console.log('Error generating speech:', err);
-        writeToLogFile('error', `Error generating speech: ${err}`);
+        writeToLogFile('error', `Error in TTSHandler: ${err}`);
     }
 }

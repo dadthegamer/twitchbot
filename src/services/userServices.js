@@ -73,6 +73,42 @@ export class UsersDB {
         }
     }
 
+    // Method to return the user profile image url. If it is null then grab it from the Twitch API and update the database
+    async getUserProfileImageUrl(userId) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            let user = this.cache.get(userId);
+            if (user) {
+                if (user.profile_image_url === null) {
+                    const twitchUser = await twitchApi.getUserDataById(userId);
+                    this.setUserValue(userId, 'profile_image_url', twitchUser.profile_image_url);
+                    user = await this.getUserByUserId(userId);
+                }
+                return user.profile_image_url;
+            } else {
+                user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
+                if (user === null) {
+                    const twitchUser = await twitchApi.getUserDataById(userId);
+                    this.newFollower(twitchUser);
+                    user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
+                }
+                if (user.profile_image_url === null) {
+                    const twitchUser = await twitchApi.getUserDataById(userId);
+                    this.setUserValue(userId, 'profile_image_url', twitchUser.profile_image_url);
+                    user = await this.getUserByUserId(userId);
+                }
+                this.cache.set(userId, user);
+                return user.profile_image_url;
+            }
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in getUserProfileImageUrl: ${error}`);
+            return null;
+        }
+    }
+
     // Method to add a user
     async newFollower(userData) {
         try {
