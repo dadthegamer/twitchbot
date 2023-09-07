@@ -10,7 +10,6 @@ import { onFollow } from '../handlers/twitch/eventHandlers/followHandler.js';
 // Event listener for Twitch events
 export async function startEventListener(apiClient) {
     const userId = '64431397';
-    const botUserId = '671284746';
     try {
         const listener = new EventSubWsListener({ apiClient });
         listener.start();
@@ -37,7 +36,7 @@ export async function startEventListener(apiClient) {
         listener.onChannelCheer(userId, onBits);
 
         // Event listener for follows
-        listener.onChannelFollow(userId, botUserId, onFollow);
+        listener.onChannelFollow(userId, userId, onFollow);
         console.log('Event listener started.');
     }
     catch (error) {

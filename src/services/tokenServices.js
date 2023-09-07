@@ -31,6 +31,7 @@ export class TokenDB {
                     token,
                     refreshToken,
                     expiresIn,
+                    obtainmentTimestamp: 0
                 },
             };
             const options = { upsert: true };
@@ -39,6 +40,29 @@ export class TokenDB {
         } catch (error) {
             writeToLogFile('error', `Error storing user auth token: ${error}`);
             console.log(`Error storing user auth token: ${error}`);
+        }
+    }
+
+    // Method to update a users auth token
+    async updateUserAuthToken(userId, token, refreshToken, expiresIn, obtainmentTimestamp) {
+        try {
+            const collection = await this.dbConnection.collection("tokens");
+            const filter = { userId: userId };
+            const update = {
+                $set: {
+                    userId,
+                    token,
+                    refreshToken,
+                    expiresIn,
+                    obtainmentTimestamp
+                },
+            };
+            const options = { upsert: true };
+            await collection.updateOne(filter, update, options);
+            writeToLogFile('info', `User auth token updated for ${userId}.`);
+        } catch (error) {
+            writeToLogFile('error', `Error updating user auth token: ${error}`);
+            console.log(`Error updating user auth token: ${error}`);
         }
     }
 

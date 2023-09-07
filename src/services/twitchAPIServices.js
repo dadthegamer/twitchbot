@@ -6,14 +6,21 @@ import { startEventListener } from '../services/twitchEventListenerServices.js';
 // Class for the Twitch API client
 export class TwitchApiClient {
     constructor(authProvider, userId, cache) {
+        console.log(authProvider);
         this.apiClient = new ApiClient({ authProvider: authProvider });
         this.userId = userId;
         this.cache = cache;
+        startEventListener(this.apiClient);
     }
 
     // Method to return the api client
     getApiClient() {
         return this.apiClient;
+    }
+
+    // Method to start the event listener
+    async startEventListener() {
+        startEventListener(this.apiClient);
     }
 
     // Method to get all the users the channel follows

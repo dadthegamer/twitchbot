@@ -12,8 +12,7 @@ export class AuthProviderManager {
         this.clientSecret = process.env.TWITCH_CLIENT_SECRET;
         this.tokenDB = tokenDBInstance;
         this.authProvider = null;
-        this.twitchApi = null;
-        this.bot = null;
+        this.ApiClient = null;
         this.initializeAuthProvider();
         this.addAllUsersToAuthProvider();
     }
@@ -28,10 +27,11 @@ export class AuthProviderManager {
                 {
                     clientId: this.clientId,
                     clientSecret: this.clientSecret,
-                    onRefresh: async (userId, newTokenData) =>
-                        await this.tokenDB.storeUserAuthToken(userId, newTokenData.accessToken, newTokenData.refreshToken, newTokenData.expiresIn),
                 }
             );
+            this.authProvider.onRefresh(async (userId, tokenData) => {
+                await this.tokenDB.updateUserAuthToken(userId, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn, tokenData.obtainmentTimestamp);
+            });
         }
         catch (error) {
             console.log(error);
@@ -46,10 +46,8 @@ export class AuthProviderManager {
         }
         try {
             const tokenData = await this.tokenDB.getAllTokens();
-            console.log(`Adding ${tokenData} users to auth provider.`)
             if (tokenData === null) {
                 writeToLogFile('error', `No token data found.`);
-                console.log('No token data found.');
                 return;
             }
             try {
@@ -57,6 +55,7 @@ export class AuthProviderManager {
                     await this.addUserToAuthProvider(token);
                 }
             } catch (error) {
+                writeToLogFile('error', `Error adding user for token: ${error}`);
                 console.log(`Error adding user for token: ${error}`);
             }
         }
@@ -67,23 +66,20 @@ export class AuthProviderManager {
 
     // Method to add a user to the auth provider
     async addUserToAuthProvider(tokenData) {
-        console.log(`Adding user ${tokenData.userId} to auth provider.`);
         try {
             if (tokenData === null) {
                 writeToLogFile('error', `No token data found for user ${tokenData.userId}.`);
-                console.log('No token data found.');
                 return;
             }
             if (tokenData.userId === '671284746') {
-                await this.authProvider.addUser(tokenData.userId, tokenData, ['chat']);
-                this.bot = new TwitchBotClient(this.authProvider);
-            } else if (tokenData.userId === '64431397') {
-                await this.authProvider.addUser(tokenData.userId, tokenData);
-                this.apiClient = new ApiClient({ authProvider: this.authProvider });
-                await startEventListener(this.apiClient);
+                this.authProvider.addUser(tokenData.userId, tokenData, ['chat']);
+            } else {
+                this.authProvider.addUser(tokenData.userId, tokenData);
+                this.ApiClient = new ApiClient({ authProvider: this.authProvider });
             }
         }
         catch (error) {
+            writeToLogFile('error', `Error adding user to auth provider: ${error}`);
             console.log(error);
         }
     }
