@@ -340,4 +340,63 @@ export class TwitchApiClient {
             writeToLogFile('error', `Error getting bits leaderboard: ${error}`);
         }
     }
+
+    // Method to get all the channel rewards
+    async getChannelRewards() {
+        try {
+            const data = await this.apiClient.channelPoints.getCustomRewards(this.userId);
+            const rewards = data.map((reward) => ({
+                id: reward.id,
+                title: reward.title,
+                prompt: reward.prompt,
+                cost: reward.cost,
+                isEnabled: reward.isEnabled,
+                userInputRequired: reward.userInputRequired,
+                maxRedemptionsPerStream: reward.maxRedemptionsPerStream,
+                maxRedemptionsPerUserPerStream: reward.maxRedemptionsPerUserPerStream,
+                globalCooldown: reward.globalCooldown,
+                isPaused: reward.isPaused,
+                isInStock: reward.isInStock,
+                backgroundColor: reward.backgroundColor,
+                autoFulfill: reward.autoFulfill,
+                redemptionsThisStream: reward.redemptionsThisStream,
+                cooldownExpiryDate: reward.cooldownExpiryDate,
+            }));
+            this.cache.set('channelRewards', rewards);
+            return rewards;
+        }
+        catch (error) {
+            console.log(error);
+            writeToLogFile('error', `Error getting channel rewards: ${error}`);
+        }
+    }
+
+    // Method to get only the channel rewards that can be managed by this bot
+    async getChannelRewardsManaged() {
+        try {
+            const data = await this.apiClient.channelPoints.getCustomRewards(this.userId, true);
+            const rewards = data.map((reward) => ({
+                id: reward.id,
+                title: reward.title,
+                prompt: reward.prompt,
+                cost: reward.cost,
+                isEnabled: reward.isEnabled,
+                userInputRequired: reward.userInputRequired,
+                maxRedemptionsPerStream: reward.maxRedemptionsPerStream,
+                maxRedemptionsPerUserPerStream: reward.maxRedemptionsPerUserPerStream,
+                globalCooldown: reward.globalCooldown,
+                isPaused: reward.isPaused,
+                isInStock: reward.isInStock,
+                backgroundColor: reward.backgroundColor,
+                autoFulfill: reward.autoFulfill,
+                redemptionsThisStream: reward.redemptionsThisStream,
+                cooldownExpiryDate: reward.cooldownExpiryDate,
+            }));
+            return rewards;
+        }
+        catch (error) {
+            console.log(error);
+            writeToLogFile('error', `Error getting channel rewards: ${error}`);
+        }
+    }
 }

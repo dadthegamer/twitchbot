@@ -34,6 +34,7 @@ const tokenDB = new TokenDB(db.dbConnection);
 
 // Twitch API initialization
 const authProvider = new AuthProviderManager(tokenDB);
+await authProvider.addAllUsersToAuthProvider();
 const twitchApi = new TwitchApiClient(authProvider.authProvider, cache);
 
 // Chat client initialization
@@ -64,7 +65,6 @@ const commandHandler = new CommandHandler(commands.cache);
 
 // Subscribe to donation events
 subscribeToDonationEvents();
-
 
 addBotsToKnownBots();
 setInitialCacheValues();

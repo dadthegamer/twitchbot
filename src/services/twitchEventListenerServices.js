@@ -6,6 +6,8 @@ import { writeToLogFile } from '../utilities/logging.js';
 import { onStreamOnline, onStreamOffline, onStreamUpdate } from '../handlers/twitch/eventHandlers/streamHandler.js';
 import { onBits } from '../handlers/twitch/eventHandlers/cheerHandler.js';
 import { onFollow } from '../handlers/twitch/eventHandlers/followHandler.js';
+import { onGiftSubscription } from '../handlers/twitch/eventHandlers/giftSubscription.js';
+import { onSubscription } from '../handlers/twitch/eventHandlers/subHandler.js';
 
 // Event listener for Twitch events
 export async function startEventListener(apiClient) {
@@ -30,6 +32,10 @@ export async function startEventListener(apiClient) {
         listener.onStreamOnline(userId, onStreamOnline);
         listener.onStreamOffline(userId, onStreamOffline);
         listener.onChannelUpdate(userId, onStreamUpdate);
+
+        // Event listener for subscriptions
+        listener.onChannelSubscriptionGift(userId, onGiftSubscription);
+        listener.onChannelSubscriptionMessage(userId, onSubscription);
 
 
         // Event listerner for bits

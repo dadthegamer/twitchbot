@@ -14,7 +14,6 @@ export class AuthProviderManager {
         this.authProvider = null;
         this.ApiClient = null;
         this.initializeAuthProvider();
-        this.addAllUsersToAuthProvider();
     }
 
     // Method to initialize the auth provider
@@ -31,6 +30,10 @@ export class AuthProviderManager {
             );
             this.authProvider.onRefresh(async (userId, tokenData) => {
                 await this.tokenDB.updateUserAuthToken(userId, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn, tokenData.obtainmentTimestamp);
+            });
+            this.authProvider.onRefreshFailure(async (userId, error) => {
+                writeToLogFile('error', `Error refreshing token for user ${userId}: ${error}`);
+                console.log(`Error refreshing token for user ${userId}: ${error}`);
             });
         }
         catch (error) {
