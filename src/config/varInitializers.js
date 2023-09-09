@@ -20,8 +20,10 @@ export async function setInitialCacheValues() {
         cache.set('tikTokFollowers', 0);
 
         // Stream Info values
-        cache.set('streamTitle', '');
-        cache.set('streamGame', '');
+        cache.set('streamTitle', null);
+        cache.set('streamGame', null);
+        cache.set('streamStartedAt', null);
+        cache.set('gameBoxArt', null)
 
         // Stream values
         cache.set('streamStartedAt', null);

@@ -17,9 +17,6 @@ export async function variableHandler(context, userId) {
     try {
         const varsWithProps = context.match(/\$[a-zA-Z]+\.[a-zA-Z]+/g);
         const varsNoProps = context.match(/\$[a-zA-Z]+/g);
-        // // Use a regular expression to capture the full variable name including properties
-        // const varRegex = /\$[a-zA-Z]+\.[a-zA-Z]+/g;
-        // const variablesInMessage = context.match(varRegex);
         if (varsWithProps) {
             for (const variable of varsWithProps) {
                 const [varName, varProperty] = variable.slice(1).split('.');

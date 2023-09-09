@@ -60,6 +60,8 @@ import currencyRouter from './routes/apiRoutes/currency.js';
 import leaderboardRouter from './routes/apiRoutes/leaderboard.js';
 import ttsRouter from './routes/apiRoutes/tts.js';
 import predictionRouter from './routes/apiRoutes/prediction.js';
+import statusRoute from './routes/apiRoutes/status.js';
+import streamStatsRoute from './routes/apiRoutes/streamStats.js';
 
 // Import GUI routes
 import guiRouter from './routes/gui.js';
@@ -70,7 +72,8 @@ app.use('/api/currency', currencyRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/tts', ttsRouter);
 app.use('/api/prediction', predictionRouter);
-
+app.use('/api/status', statusRoute);
+app.use('/api/streamStats', streamStatsRoute);
 
 // Overlay routes
 app.use('/overlay', overlayRouter);
@@ -88,5 +91,4 @@ app.use('/', guiRouter);
 
 app.listen(port, () => {
     console.log(`Server is running`);
-    console.log(`Authorize twitch account at http://localhost:${port}/auth/twitch/admin`)
 });

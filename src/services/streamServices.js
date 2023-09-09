@@ -31,6 +31,10 @@ export class StreamDB {
                     max_viewers: 0,
                     average_viewers: 0,
                     viewers: [],
+                    tiktTokLive: false,
+                    tikTokLikes: 0,
+                    tikTokFollowers: 0,
+                    tikTokGifts: 0,
                 }
             };
             const options = { upsert: true };
@@ -243,7 +247,7 @@ export class StreamDB {
         try {
             let events = [];
             const latestFollower = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_follower' });
-            const latestSub = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_sub' });
+            const latestSub = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_subscriber' });
             const latestCheer = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_cheer' });
             const latestDonation = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_donation' });
             events.push(latestFollower);

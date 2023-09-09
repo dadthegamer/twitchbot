@@ -11,6 +11,7 @@ export class TwitchApiClient {
         this.userId = '64431397';
         this.cache = cache;
         startEventListener(this.apiClient);
+        this.getStreamInfo();
     }
 
     // Method to return the api client
@@ -21,6 +22,44 @@ export class TwitchApiClient {
     // Method to start the event listener
     async startEventListener() {
         startEventListener(this.apiClient);
+    }
+
+    // Method to get the current stream information
+    async getStreamInfo() {
+        try {
+            let streamInfo = {};
+            const data = await this.apiClient.streams.getStreamByUserId(this.userId);
+            if (data === null) {
+                this.cache.set('live', false);
+                this.cache.set('streamTitle', null);
+                this.cache.set('streamGame', null);
+                this.cache.set('streamStartedAt', null);
+                this.cache.set('gameBoxArt', null);
+                streamInfo = {
+                    gameName: 'Just Chatting',
+                    title: 'Offline',
+                    startDate: null,
+                    boxArtURL: 'https://static-cdn.jtvnw.net/ttv-boxart/509658-520x720.jpg',
+                };
+            } else {
+                const boxart = await data.getThumbnailUrl(520, 720);
+                streamInfo = {
+                    id: data.id,
+                    gameName: data.gameName,
+                    gameId: data.gameId,
+                    title: data.title,
+                    startDate: data.startDate,
+                    isMature: data.isMature,
+                    tags: data.tags,
+                    boxArtURL: boxart,
+                };
+            }
+            return streamInfo;
+        }
+        catch (error) {
+            console.log(error);
+            writeToLogFile('error', `Error getting stream info: ${error}`);
+        }
     }
 
     // Method to get all the users the channel follows
