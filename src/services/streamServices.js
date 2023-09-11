@@ -127,7 +127,6 @@ export class StreamDB {
     async getStreamData() {
         try {
             const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
-            console.log(`Stream data: ${streamData}`)
             this.cache.set('stream', streamData);
             return streamData;
         }

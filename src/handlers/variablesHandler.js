@@ -91,20 +91,7 @@ export async function updateVariable(variable, context, userId, property = null)
                     return null;
                 } else {
                     switch (property) {
-                        case 'balance':
-                            const balance = await getUserProperty(userId, 'currency');
-                            if (balance === null || balance === undefined) {
-                                return null;
-                            } else {
-                                return numberWithCommas(balance);
-                            }
-                        case 'bank':
-                            const bank = await getUserProperty(userId, 'bank');
-                            if (bank === null || bank === undefined) {
-                                return null;
-                            } else {
-                                return numberWithCommas(bank);
-                            }
+                        case 'leaderboard':
                     }
                 }
             case '8ball':
