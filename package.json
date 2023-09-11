@@ -9,7 +9,7 @@
     "dev": "nodemon app.js",
     "start": "node src/app.js"
   },
-  "keywords": [],
+  "keywords": ["Twitchbot"],
   "author": "",
   "license": "ISC",
   "dependencies": {
