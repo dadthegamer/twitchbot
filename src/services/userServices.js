@@ -1,6 +1,6 @@
 import { writeToLogFile } from '../utilities/logging.js';
 import { twitchApi } from '../config/initializers.js';
-
+import { environment } from '../config/environmentVars.js';
 
 // User class 
 export class UsersDB {
@@ -8,6 +8,7 @@ export class UsersDB {
         this.dbConnection = dbConnection;
         this.cache = cache;
         this.collectionName = 'users';
+        this.getAllUsers();
     }
 
     // Method to return all users
@@ -186,27 +187,32 @@ export class UsersDB {
                 writeToLogFile('error', `Error in increaseUserValue: ${error}`);
             }
         }
-        try {
-            const date = new Date();
-            const last_seen = date;
-            let user = this.cache.get(userId);
-            if (!user) {
-                user = await this.getUserByUserId(userId);
+        if (environment === 'development') {
+            console.log(`increaseUserValue: ${userId} ${property} ${value}`);
+            return;
+        } else {
+            try {
+                const date = new Date();
+                const last_seen = date;
+                let user = this.cache.get(userId);
+                if (!user) {
+                    user = await this.getUserByUserId(userId);
+                }
+                if (property in user) {
+                    user[property] += value;
+                } else {
+                    user[property] = value;
+                }
+                await this.dbConnection.collection(this.collectionName).updateOne(
+                    { id: userId },
+                    { $set: { [property]: user[property], last_seen: last_seen } },
+                    { upsert: true }
+                );
+                this.cache.set(userId, user);
+            } catch (error) {
+                console.log(error);
+                writeToLogFile('error', `Error in increaseUserValue: ${error}`);
             }
-            if (property in user) {
-                user[property] += value;
-            } else {
-                user[property] = value;
-            }
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                { $set: { [property]: user[property], last_seen: last_seen } },
-                { upsert: true }
-            );
-            this.cache.set(userId, user);
-        } catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error in increaseUserValue: ${error}`);
         }
     }
 

@@ -371,7 +371,6 @@ export class TwitchApiClient {
                 userId: entry.userId,
                 amount: entry.amount,
             }));
-            console.log(leaderboard);
             return leaderboard;
         }
         catch (error) {
@@ -431,11 +430,72 @@ export class TwitchApiClient {
                 redemptionsThisStream: reward.redemptionsThisStream,
                 cooldownExpiryDate: reward.cooldownExpiryDate,
             }));
+            this.cache.set('channelRewardsManaged', rewards);
             return rewards;
         }
         catch (error) {
             console.log(error);
             writeToLogFile('error', `Error getting channel rewards: ${error}`);
+        }
+    }
+
+    // Method to get a custom reward by ID
+    async getCustomRewardById(rewardId) {
+        try {
+            const data = await this.apiClient.channelPoints.getCustomRewardById(this.userId, rewardId);
+            const reward = {
+                id: data.id,
+                title: data.title,
+                prompt: data.prompt,
+                cost: data.cost,
+                isEnabled: data.isEnabled,
+                userInputRequired: data.userInputRequired,
+                maxRedemptionsPerStream: data.maxRedemptionsPerStream,
+                maxRedemptionsPerUserPerStream: data.maxRedemptionsPerUserPerStream,
+                globalCooldown: data.globalCooldown,
+                isPaused: data.isPaused,
+                isInStock: data.isInStock,
+                backgroundColor: data.backgroundColor,
+                autoFulfill: data.autoFulfill,
+                redemptionsThisStream: data.redemptionsThisStream,
+                cooldownExpiryDate: data.cooldownExpiryDate,
+            };
+            return reward;
+        }
+        catch (error) {
+            console.log(error);
+            writeToLogFile('error', `Error getting custom reward by ID: ${error}`);
+        }
+    }
+
+    // Method to update a custom reward
+    async updateCustomReward(rewardId, data) {
+        // Check if reward ID is in the managed rewards cache. If it isnt then return an error
+        const managedRewards = this.cache.get('channelRewardsManaged');
+        const reward = managedRewards.find((r) => r.id === rewardId);
+        if (!reward) {
+            writeToLogFile('error', `Error updating custom reward: ${rewardId} is not a managed reward.`);
+            return;
+        }
+        try {
+            const response = await this.apiClient.channelPoints.updateCustomReward(this.userId, rewardId, data);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+            writeToLogFile('error', `Error updating custom reward: ${error}`);
+        }
+    }
+
+    // Method to create a custom reward
+    async createCustomReward(data) {
+        try {
+            const response = await this.apiClient.channelPoints.createCustomReward(this.userId, data);
+            return response;
+        }
+        catch (error) {
+            console.log(error);
+            writeToLogFile('error', `Error creating custom reward: ${error}`);
         }
     }
 }

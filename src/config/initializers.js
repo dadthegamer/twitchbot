@@ -14,7 +14,6 @@ import { subscribeToDonationEvents } from '../services/streamElementsService.js'
 import { AuthProviderManager } from '../services/twitchAuthProviderServices.js';
 import { TwitchApiClient } from '../services/twitchApiServices.js';
 import { TwitchChatClient } from '../services/twitchChatClientServices.js';
-import { TwitchBotClient } from '../services/twitchBotServices.js';
 import { viewTimeHandler } from '../handlers/twitch/viewTimeHandler.js';
 import { addBotsToKnownBots } from '../handlers/twitch/viewTimeHandler.js';
 import { InteractionsDbService } from '../services/interactionsService.js';
@@ -39,13 +38,12 @@ const twitchApi = new TwitchApiClient(authProvider.authProvider, cache);
 
 // Chat client initialization
 const chatClient = new TwitchChatClient(authProvider.authProvider);
-chatClient.connectToBotChat();
+await chatClient.connectToBotChat();
 
 // Bot client initialization
-const botClient = new TwitchBotClient(authProvider.authProvider);
 
 // InteractionsDB initialization
-const interactionsDB = new InteractionsDbService(db.dbConnection);
+const interactionsDB = new InteractionsDbService(db.dbConnection, cache);
 
 // StreamDB initialization
 const streamDB = new StreamDB(db.dbConnection, cache);
@@ -72,6 +70,7 @@ startAlertsHandler();
 startWelcomeAlerts();
 setInterval(viewTimeHandler, 1000);
 
+
 export {
     db,
     cache,
@@ -84,6 +83,5 @@ export {
     commands,
     commandHandler,
     streamDB,
-    botClient,
     interactionsDB,
 };

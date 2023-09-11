@@ -16,10 +16,7 @@ export class TwitchBotClient {
                 channels: ['dadthegam3r'],
                 authProvider: this.authProvider,
                 rejoinChannelsOnReconnect: true,
-                logger: {
-                    minLevel: 'debug',
-                    colors: true,
-                },
+                isAlwaysMod: true,
             });
             this.bot = bot;
         }

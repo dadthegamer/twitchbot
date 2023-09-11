@@ -3,7 +3,7 @@ import { writeToLogFile } from '../../../../utilities/logging.js';
 import { cache } from '../../../../config/initializers.js';
 import { formatTimeFromMilliseconds } from '../../../../utilities/utils.js';
 import { evalulate } from '../../../evaluater.js';
-import { botClient } from '../../../../config/initializers.js';
+import { chatClient } from '../../../../config/initializers.js';
 
 // Class to handle commands
 export class CommandHandler {
@@ -88,7 +88,7 @@ export class CommandHandler {
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
                         const timeLeft = formatTimeFromMilliseconds(userCooldownStatus - Date.now());
-                        botClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
+                        chatClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
                         return;
                     } else if (globalCooldownStatus !== true) {
                         const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());

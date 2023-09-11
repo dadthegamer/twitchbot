@@ -3,7 +3,6 @@ import { ChatClient } from '@twurple/chat';
 import { environment } from '../config/environmentVars.js';
 import { onMessageHandler } from '../handlers/twitch/chatHandlers/onMessage.js';
 import { writeToLogFile } from '../utilities/logging.js';
-import { botClient } from '../config/initializers.js';
 
 // Class to connect to Twitch chat
 export class TwitchChatClient {
@@ -11,6 +10,12 @@ export class TwitchChatClient {
         this.authProvider = authProvider;
         this.chatClient = new ChatClient({ authProvider: this.authProvider, channels: ['dadthegam3r'] });
         this.channel = 'dadthegam3r';
+        this.bot = new Bot({
+            channels: ['dadthegam3r'],
+            authProvider: this.authProvider,
+            rejoinChannelsOnReconnect: true,
+            isAlwaysMod: true,
+        });
     }
 
     // Method to connect to Twitch chat
@@ -31,7 +36,7 @@ export class TwitchChatClient {
                 this.reconnect();
             });
             this.chatClient.onMessage(async (channel, user, message, msg) => {
-                await onMessageHandler(channel, user, message, msg, botClient)
+                await onMessageHandler(channel, user, message, msg, this.bot)
             });
         }
         catch (error) {
@@ -66,6 +71,16 @@ export class TwitchChatClient {
         }
         catch (error) {
             writeToLogFile('error', `Error in reconnect method within chat client: ${error}`);
+        }
+    }
+
+    // Method to reply to a message in chat
+    async replyToMessage(text, msg) {
+        try {
+            await this.bot.reply(this.channel, text, msg)
+        }
+        catch (error) {
+            console.log(error);
         }
     }
 }

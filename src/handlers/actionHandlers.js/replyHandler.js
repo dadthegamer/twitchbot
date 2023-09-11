@@ -1,10 +1,10 @@
-import { botClient } from "../../config/initializers.js";
+import { chatClient } from "../../config/initializers.js";
 import { writeToLogFile } from "../../utilities/logging.js";
 
 
 export async function replyHandler(message, id) {
     try {
-        await botClient.replyToMessage(message, id);
+        await chatClient.replyToMessage(message, id);
     }
     catch (err) {
         console.log(err);

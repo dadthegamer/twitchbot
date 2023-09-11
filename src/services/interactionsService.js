@@ -1,6 +1,5 @@
 import { writeToLogFile } from "../utilities/logging.js";
 
-
 // Class to to handle interactions with the database
 export class InteractionsDbService {
     constructor(dbConnection, cache) {
