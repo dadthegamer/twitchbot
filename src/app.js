@@ -63,6 +63,7 @@ import ttsRouter from './routes/apiRoutes/tts.js';
 import predictionRouter from './routes/apiRoutes/prediction.js';
 import statusRoute from './routes/apiRoutes/status.js';
 import streamStatsRoute from './routes/apiRoutes/streamStats.js';
+import usersRouter from './routes/apiRoutes/users.js';
 
 // Import GUI routes
 import guiRouter from './routes/gui.js';
@@ -75,6 +76,7 @@ app.use('/api/tts', ttsRouter);
 app.use('/api/prediction', predictionRouter);
 app.use('/api/status', statusRoute);
 app.use('/api/streamStats', streamStatsRoute);
+app.use('/api/users', usersRouter);
 
 // Overlay routes
 app.use('/overlay', overlayRouter);

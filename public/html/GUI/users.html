@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="../../css/gui/main.css">
     <link rel="stylesheet" href="../../css/gui/users.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
@@ -14,128 +14,183 @@
 </head>
 
 <body>
-    <div class="top-nav-bar">
-        <span>User Management</span>
-    </div>
-    <div class="left-nav-bar">
-        <ul>
-            <li>
-                <a href="settings.html">
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="../../images/logo.png" alt="App Logo" class="sidebar-logo">
+                <span>STREAM A.I.</span>
+            </div>
+
+            <ul class="sidebar-list">
+                <li class="sidebar-item" class="active">
                     <i class="fa-solid fa-gauge"></i>
-                    <span>Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="dashboard.php">
-                    <i class="fa-solid fa-bars-staggered"></i>
-                    <span>Stream</span>
-                </a>
-            </li>
-            <li>
-                <a href="dashboard.html">
-                    <i class="fa-solid fa-users"></i>
-                    <span>User Management</span>
-                </a>
-            </li>
-            <li>
-                <a href="dashboard.php">
+                    <a href="#" class="sidebar-link">Dashboard</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-chart-bar"></i>
+                    <a href="#" class="sidebar-link">Statistics</a>
+                </li>
+                <li class="sidebar-item">
                     <i class="fa-solid fa-terminal"></i>
-                    <span>Commands</span>
-                </a>
-            </li>
-            <li>
-                <a href="dashboard.php">
+                    <a href="#" class="sidebar-link">Commands</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-list-check"></i>
+                    <a href="#" class="sidebar-link">Events</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-coins"></i>
+                    <a href="#" class="sidebar-link">Currency</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-stopwatch"></i>
+                    <a href="#" class="sidebar-link">Timers</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-gem"></i>
+                    <a href="#" class="sidebar-link">Channel Points</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-calendar"></i>
+                    <a href="#" class="sidebar-link">Calendar</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-quote-left"></i>
+                    <a href="#" class="sidebar-link">Quotes</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-hammer"></i>
+                    <a href="#" class="sidebar-link">Moderation</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <a href="#" class="sidebar-link">Games</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-user-tag"></i>
+                    <a href="#" class="sidebar-link">Roles</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-users"></i>
+                    <a href="#" class="sidebar-link">User Management</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-brands fa-tiktok"></i>
+                    <a href="#" class="sidebar-link">TikTok</a>
+                </li>
+                <li class="sidebar-item">
                     <i class="fa-solid fa-gear"></i>
-                    <span>Settings</span>
-                </a>
-            </li>
-        </ul>
-    </div>
+                    <a href="#" class="sidebar-link">Settings</a>
+                    <i class="fa-solid fa-chevron-down"></i>
+                    <ul class="sidebar-sublist">
+                        <li class="sidebar-subitem"><a href="#" class="sidebar-sublink">General</a></li>
+                        <li class="sidebar-subitem"><a href="#" class="sidebar-sublink">Account</a></li>
+                        <li class="sidebar-subitem"><a href="#" class="sidebar-sublink">Notifications</a></li>
+                    </ul>
+                </li>
+            </ul>
 
-    <div class="search-container">
-        <input type="text" placeholder="Search for a user">
-    </div>
-
-    <table class="table-container">
-        <tr>
-            <th>User</th>
-            <th>Points</th>
-            <th>View Time</th>
-            <th>Bits</th>
-            <th>Subs</th>
-            <th>Donations</th>
-            <th>Likes</th>
-        </tr>
-
-        <tr>
-            <td>
+            <div class="sidebar-footer">
                 <div class="user-info">
-                    <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/99ea2ed4-a642-45bd-b33b-d72a59e05d80-profile_image-70x70.png"
-                        alt="">
-                    <span>Some user</span>
+                    <div>
+                        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png"
+                            alt="User" class="user-avatar">
+                        <div class="user-name">Dad The Gamer</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right"></i>
                 </div>
-            </td>
-            <td>
-                100
-            </td>
-            <td>
-                <span>100</span>
-                <span>100</span>
-                <span>100</span>
-                <span>100</span>
-            </td>
-            <td>
-                <span>100</span>
-                <span>100</span>
-                <span>100</span>
-                <span>100</span>
-            </td>
-            <td>
-                <span>100</span>
-                <span>100</span>
-                <span>100</span>
-                <span>100</span>
-            </td>
-            <td>
-                <span>100</span>
-                <span>100</span>
-                <span>100</span>
-                <span>100</span>
-            </td>
-        </tr>
-    </table>
+            </div>
+        </div>
 
-    <script>
-        const table = document.querySelector('.table-container');
+        <div class="top-nav-bar">
+            <div class="stream-status">
+                <span>OFFLINE</span>
+            </div>
+            <div class="notifications-container">
+                <div class="notification">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="notification-count">3</span>
+                </div>
+                <div class="notifications">
+                    <span class="notification-item">Test
+                        <i class="fa-solid fa-times"></i>
+                    </span>
+                    <span>Test</span>
+                    <span>Test</span>
+                    <span>Test</span>
+                    <span>Test</span>
+                    <span>Test</span>
+                    <span>Test</span>
+                    <span>Test</span>
+                    <span>Test</span>
+                </div>
+            </div>
+        </div>
 
-        // function to get all the users from the database
-        async function getUsers() {
-            const res = await fetch('/api/users');
-            const data = await res.json();
-            return data;
-        }
+        <div class="content">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search for users...">
+            </div>
+            <div class="users-container">
+            </div>
+        </div>
+    </div>
 
-        // Function to create a table row for each user
-        function createTableRow(user) {
-            const tr = document.createElement('tr');
-            const td = document.createElement('td');
-            const div = document.createElement('div');
-            const img = document.createElement('img');
-            const span = document.createElement('span');
+    <div class="user-info-container">
+        <img id="userimg" src="https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png"
+            alt="">
+        <span class="username" id="username">Dad The Gamer</span>
+        <i class="fa-solid fa-xmark" id="close-button"></i>
+        <div class="user-details-container">
+            <table id="user-table">
+                <tr class="first-row">
+                    <td>Item</td>
+                    <td>Stream</td>
+                    <td>Weekly</td>
+                    <td>Monthly</td>
+                    <td>Yearly</td>
+                    <td>All Time</td>
+                </tr>
+                <tr>
+                    <td>View Time</td>
+                    <td class="editable" id="stream_view_time">0</td>
+                    <td class="editable" id="weekly_view_time">0</td>
+                    <td class="editable" id="monthly_view_time">0</td>
+                    <td class="editable" id="yearly_view_time">0</td>
+                    <td class="editable" id="view_time">0</td>
+                </tr>
+                <tr>
+                    <td>Subs</td>
+                    <td class="editable" id="stream_subs">0</td>
+                    <td class="editable" id="weekly_subs">0</td>
+                    <td class="editable" id="monthly_subs">0</td>
+                    <td class="editable" id="yearly_subs">0</td>
+                    <td class="editable" id="all_time_subs">0</td>
+                </tr>
+                <tr>
+                    <td>Bits</td>
+                    <td class="editable" id="stream_bits">0</td>
+                    <td class="editable" id="weekly_bits">0</td>
+                    <td class="editable" id="monthly_bits">0</td>
+                    <td class="editable" id="yearly_bits">0</td>
+                    <td class="editable" id="all_time_bits">0</td>
+                </tr>
+                <tr>
+                    <td>Donations</td>
+                    <td class="editable" id="stream_donations">0</td>
+                    <td class="editable" id="weekly_donations">0</td>
+                    <td class="editable" id="monthly_donations">0</td>
+                    <td class="editable" id="yearly_donations">0</td>
+                    <td class="editable" id="all_time_donations">0</td>
+                </tr>
+            </table>
+            <button id="submit-changes">Submit</button>
+        </div>
+        <button class="delete-button">Delete</button>
+    </div>
 
-            img.src = user.profile_image_url;
-            span.textContent = user.display_name;
-
-            div.appendChild(img);
-            div.appendChild(span);
-            td.appendChild(div);
-            tr.appendChild(td);
-
-            table.appendChild(tr);
-        }
-
-        getUsers();
-    </script>
+    <script type="module" src="../../js/GUI/users.js"></script>
 
 </body>
 

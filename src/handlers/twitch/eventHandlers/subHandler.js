@@ -15,6 +15,8 @@ export async function onSubscription(e) {
         const streakMonths = e.streakMonths;
         const userData = await e.getUser();
         const profileImage = userData.profilePictureUrl;
+        cache.set('streamSubs', cache.get('streamSubs') + 1);
+        cache.set('monthlySubs', cache.get('monthlySubs') + 1);
         await usersDB.increaseUserValue(e.userId, 'leaderboard_points', 5000 * tier);
         await userData.setUserValue(e.userId, 'cumulative_months', cumulativeMonths);
         await userData.setUserValue(e.userId, 'duration_months', durationMonths);

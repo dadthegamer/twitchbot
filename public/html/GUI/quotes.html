@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="../../css/gui/main.css">
+    <link rel="stylesheet" href="../../css/gui/quotes.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
@@ -19,7 +20,7 @@
                 <img src="../../images/logo.png" alt="App Logo" class="sidebar-logo">
                 <span>STREAM A.I.</span>
             </div>
-    
+
             <ul class="sidebar-list">
                 <li class="sidebar-item" class="active">
                     <i class="fa-solid fa-gauge"></i>
@@ -88,18 +89,19 @@
                     </ul>
                 </li>
             </ul>
-    
+
             <div class="sidebar-footer">
                 <div class="user-info">
                     <div>
-                        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png" alt="User" class="user-avatar">
+                        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png"
+                            alt="User" class="user-avatar">
                         <div class="user-name">Dad The Gamer</div>
                     </div>
                     <i class="fa-solid fa-chevron-right"></i>
                 </div>
             </div>
         </div>
-    
+
         <div class="top-nav-bar">
             <div class="stream-status">
                 <span>OFFLINE</span>
@@ -124,9 +126,18 @@
                 </div>
             </div>
         </div>
+
+        <div class="content">
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search for quotes...">
+            </div>
+            <div class="quotes-container">
+            </div>
+        </div>
     </div>
 
-    <script type="module" src="../../js/GUI/dashboard.js"></script>
+    <script type="module" src="../../js/GUI/users.js"></script>
 
 </body>
 

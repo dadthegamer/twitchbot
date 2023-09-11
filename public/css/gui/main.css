@@ -8,62 +8,314 @@
 }
 
 :root {
-    --primary-color: #eeeeee;
-    --secondary-color: #333533;
-    --tertiary-color: #db3a34;
-    --font-color: #000000;
+    --background-color: #111111;
+    --primary-color: #1b1b1b;
+    --terrestrial-color: #1F1F1F;
+    --secondary-color: #005AFF;
+    --font-color: #FFFFFF;
 }
 
 
 body {
-    background-color: var(--primary-color);
+    background-color: var(--background-color);
+    color: var(--font-color);
+}
+
+.main-container {
+    width: 100%;
+    height: 100vh;
+    display: block;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar {
+    width: 250px;
+    height: 100%;
+    background: var(--primary-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+    z-index: 100;
+    gap: 20px;
+}
+
+.sidebar-header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 65px;
+    margin-top: 5px;
+}
+
+.sidebar-logo {
+    width: 75px;
+}
+
+.sidebar-header span {
+    font-size: 1.2em;
+    color: var(--font-color);
+    font-weight: 700;
+    margin-left: 10px;
+}
+
+.sidebar-list {
+    list-style: none;
+    padding: 0;
+    height: 100%;
+}
+
+.sidebar-item {
+    margin-bottom: 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-left: none;
+}
+
+.sidebar-item .active {
+    background-color: #005AFF;
+}
+
+.sidebar-item .fa-chevron-down {
+    margin-left: auto;
+    font-size: 12px;
+}
+
+.sidebar-item i {
+    font-size: 1.2em;
+}
+
+.sidebar-item:hover {
+    background-color: var(--font-color);
+    color: var(--primary-color);
+}
+
+.sidebar-item:hover .sidebar-link{
+    background-color: var(--font-color);
+    color: var(--primary-color);
+}
+
+
+.sidebar-link {
+    display: block;
+    padding: 10px 15px;
+    color: var(--font-color);
+    text-decoration: none;
+}
+
+.sidebar-link:hover {
+    background-color: var(--font-color);
+    color: var(--primary-color);
+}
+
+.sidebar-sublist {
+    list-style: block;
+    padding-left: 20px;
+    display: none;
+}
+
+.sidebar-sublink {
+    font-size: 0.9em;
+    color: var(--font-color);
+}
+
+.sidebar-footer {
+    width: 100%;
+    padding: 10px;
+    border-top: 1px solid var(--font-color);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    cursor: pointer;
+}
+
+.user-info div {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.user-name {
+    font-size: 0.8em;
     color: var(--font-color);
 }
 
 .top-nav-bar {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    min-height: 50px;
-    background-color: #e6e5e5;
-    z-index: 99;
-    height: 50px;
-    width: 100%;
-    font-size: 24px;
-    position: fixed;
-    top: 0;
-    left: 0;
-}
-
-.left-nav-bar {
-    position: fixed;
-    top: 50px;
-    left: 0;
-    height: 100vh;
-    width: 250px;
+    width: calc(100% - 250px);
+    height: 60px;
     background-color: var(--primary-color);
-    padding: 20px 10px;
-    border-right: 1px solid black;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    padding: 0 20px;
+    margin-left: 250px;
 }
 
-.left-nav-bar ul {
-    list-style: none;
+.top-nav-bar i {
+    font-size: 32px;
+    color: var(--font-color);
 }
 
-.left-nav-bar ul li {
+.notifications-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0 20px;
+    cursor: pointer;
+}
+
+.notification {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #1f1f1f;
+    cursor: pointer;
+}
+
+.notifications {
+    width: 300px;
+    height: 400px;
+    background-color: #1f1f1f;
+    border-radius: 5px;
+    padding: 20px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: scroll;
+    z-index: 100;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.notifications::-webkit-scrollbar {
+    width: 10px;
+}
+
+.notifications::-webkit-scrollbar-track {
+    background-color: #1f1f1f;
+}
+
+.notifications::-webkit-scrollbar-thumb {
+    background-color: #005aff;
+    border-radius: 5px;
+}
+
+.notification-item {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 10px;
 }
 
-.left-nav-bar ul li a {
-    text-decoration: none;
-    color: var(--font-color);
+.notification-item .fa-times {
+    font-size: 12px;
+    color: #ff0000;
+    cursor: pointer;
+}
+
+
+.notification-count {
+    position: absolute;
+    top: 0;
+    right: 0;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ff0000;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
     padding: 10px;
+}
+
+.content {
+    width: calc(100% - 250px);
+    height: calc(100vh - 60px);
+    margin-left: 250px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    overflow-y: none;
+}
+
+.content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.content::-webkit-scrollbar-track {
+    background-color: #1f1f1f;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: #005aff;
     border-radius: 5px;
-    transition: all .3s ease-in-out;
+}
+
+.search-bar {
+    width: 100%;
+    height: 60px;
+    background-color: var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    border-radius: 5px;
+}
+
+.search-bar input {
+    width: 100%;
+    height: 100%;
+    background-color: var(--primary-color);
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    padding: 0 20px;
+    color: var(--font-color);
+    font-size: 1em;
+}
+
+.search-bar input::placeholder {
+    color: var(--font-color);
+}
+
+.search-bar i {
+    font-size: 1.2em;
+    color: var(--font-color);
+    margin-left: 10px;
 }

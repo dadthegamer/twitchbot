@@ -503,4 +503,5 @@ export class UsersDB {
         }
     }
 
+    // Method to update a users property with a new value.
 }
