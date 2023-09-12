@@ -19,6 +19,7 @@ import { addBotsToKnownBots } from '../handlers/twitch/viewTimeHandler.js';
 import { InteractionsDbService } from '../services/interactionsService.js';
 import { NotificationService } from '../services/notificationService.js';
 import { ChatLogService } from '../services/chatLogService.js';
+import { SettingsService } from '../services/settingsService.js';
 
 
 
@@ -47,6 +48,9 @@ await chatClient.connectToBotChat();
 
 // Chat log service initialization
 const chatLogService = new ChatLogService(db.dbConnection);
+
+// SettingsDB initialization
+const settingsDB = new SettingsService(db.dbConnection, cache);
 
 // InteractionsDB initialization
 const interactionsDB = new InteractionsDbService(db.dbConnection, cache);
