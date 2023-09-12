@@ -17,7 +17,8 @@ import { TwitchChatClient } from '../services/twitchChatClientServices.js';
 import { viewTimeHandler } from '../handlers/twitch/viewTimeHandler.js';
 import { addBotsToKnownBots } from '../handlers/twitch/viewTimeHandler.js';
 import { InteractionsDbService } from '../services/interactionsService.js';
-import {NotificationService } from '../services/notificationService.js';
+import { NotificationService } from '../services/notificationService.js';
+import { ChatLogService } from '../services/chatLogService.js';
 
 
 
@@ -44,13 +45,15 @@ const twitchApi = new TwitchApiClient(authProvider.authProvider, cache);
 const chatClient = new TwitchChatClient(authProvider.authProvider);
 await chatClient.connectToBotChat();
 
-// Bot client initialization
+// Chat log service initialization
+const chatLogService = new ChatLogService(db.dbConnection);
 
 // InteractionsDB initialization
 const interactionsDB = new InteractionsDbService(db.dbConnection, cache);
 
 // StreamDB initialization
 const streamDB = new StreamDB(db.dbConnection, cache);
+
 
 // Websocket initialization
 const webSocket = new WebSocket();
@@ -88,5 +91,6 @@ export {
     commandHandler,
     streamDB,
     interactionsDB,
-    notificationDB
+    notificationDB,
+    chatLogService
 };

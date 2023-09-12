@@ -47,4 +47,11 @@ export class CacheService {
     getCache() {
         return this.cache;
     }
+
+    // Method to get the cache size in megabytes
+    getCacheSize() {
+        const stats = this.getStats();
+        const size = stats.ksize / 1024 / 1024;
+        return size;
+    }
 }

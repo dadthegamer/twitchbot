@@ -6,7 +6,8 @@ import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
-import { tokenDB } from './config/initializers.js';
+import { tokenDB, cache } from './config/initializers.js';
+
 
 
 config();

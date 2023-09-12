@@ -1,26 +1,28 @@
 import { writeToLogFile } from "../utilities/logging.js";
 import { msToMinutes } from "../utilities/utils.js";
+import { chatLogService } from "../config/initializers.js";
 
 // Class to handle all stream related services
 export class StreamDB {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
+        this.setInitialStreamData();
         this.getJackpot();
         this.getLatestEvents();
+        this.checkStream();
     }
 
-    // Method to start a stream
-    async startStream(streamTitle, category) {
+    // Method to set the initial stream data in the database if there is not already a document in the streamData collection with a status of offline or online
+    async setInitialStreamData() {
         try {
-            const date = new Date();
-            const query = { status: 'offline' };
+            const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
             const update = {
                 $set: {
-                    status: 'online',
-                    title: streamTitle,
-                    category: category,
-                    date: date,
+                    status: 'offline',
+                    title: null,
+                    category: null,
+                    date: null,
                     followers: [],
                     new_subs: [],
                     gifted_subs: 0,
@@ -39,12 +41,57 @@ export class StreamDB {
             };
             const options = { upsert: true };
             await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            this.cache.set('stream', update.$set);
             return true;
         }
         catch (error) {
-            writeToLogFile('error', `Error in startStream: ${error}`);
+            writeToLogFile('error', `Error in setInitialStreamData: ${error}`);
             return false;
+        }
+    }
+
+    // Method to start a stream
+    async startStream(streamTitle, category) {
+        if (await this.checkStream() !== null) {
+            console.log('There is already a stream started within the last hour');
+            return;
+        } else {
+            try {
+                const date = new Date();
+                const query = { status: 'offline' };
+                const streamId = await chatLogService.createChatLogForStream();
+                const update = {
+                    $set: {
+                        status: 'online',
+                        title: streamTitle,
+                        category: category,
+                        date: date,
+                        followers: [],
+                        new_subs: [],
+                        gifted_subs: 0,
+                        total_subs: 0,
+                        bits: 0,
+                        raids: 0,
+                        donations: [],
+                        max_viewers: 0,
+                        average_viewers: 0,
+                        viewers: [],
+                        tiktTokLive: false,
+                        tikTokLikes: 0,
+                        tikTokFollowers: 0,
+                        tikTokGifts: 0,
+                        streamId: streamId,
+                    }
+                };
+                const options = { upsert: true };
+                const res = await this.dbConnection.collection('streamData').updateOne(query, update, options);
+                this.cache.set('stream', update.$set);
+                this.cache.set('streamId', streamId)
+                return res;
+            }
+            catch (error) {
+                writeToLogFile('error', `Error in startStream: ${error}`);
+                return;
+            }
         }
     }
 
@@ -72,20 +119,35 @@ export class StreamDB {
     // Check if a stream has been started within the last hour
     async checkStream() {
         try {
-            const date = new Date();
             const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
+            console.log(`Stream data: ${streamData}`)
             if (streamData) {
-                const streamDate = streamData.date;
-                const difference = date - streamDate;
-                const minutes = msToMinutes(difference);
-                if (minutes < 60) {
-                    return streamData;
-                } else {
-                    return null;
-                }
+                console.log('There is already a stream started within the last hour');
+                this.cache.set('stream', streamData);
+                this.cache.set('streamStartedAt', streamData.date);
+                this.cache.set('streamTitle', streamData.title);
+                this.cache.set('streamGame', streamData.category);
+                this.cache.set('streamSubs', streamData.total_subs);
+                this.cache.set('streamBits', streamData.bits);
+                this.cache.set('streamDonations', streamData.donations);
+                this.cache.set('viewers', streamData.viewers);
+                this.cache.set('live', true);
+                this.cache.set('TikTokLive', streamData.tikTokLive);
+                this.cache.set('TikTokLiveId', streamData.tikTokLiveId);
+                this.cache.set('TikTokLikes', streamData.tikTokLikes);
+                this.cache.set('TikTokFollowers', streamData.tikTokFollowers);
+                this.cache.set('TikTokGifts', streamData.tikTokGifts);
+
+                // Set the stream id in the cache
+                const streamId = streamData._id;
+                this.cache.set('streamId', streamId);
+                return streamData;
+            } else {
+                return null;
             }
         }
         catch (error) {
+            console.log(error);
             writeToLogFile('error', `Error in checkStream: ${error}`);
             return null;
         }
@@ -116,7 +178,7 @@ export class StreamDB {
             };
             await this.dbConnection.collection('streams').insertOne(stream);
             return true;
-            }
+        }
         catch (error) {
             writeToLogFile('error', `Error in insertNewStream: ${error}`);
             return false;
