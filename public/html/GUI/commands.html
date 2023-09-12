@@ -129,7 +129,7 @@
 
         <div class="content">
             <div class="options-container">
-                <button>New Command</button>
+                <button id="new-command-button">New Command</button>
                 <div class="search-bar">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" placeholder="Search for commands...">
@@ -193,39 +193,61 @@
 
     </div>
 
-    <div class="new-command-container">
-        <i class="fa-solid fa-xmark" id="close-button"></i>
+    <div class="new-command-main-container">
         <h2>New Command</h2>
+        <div class="new-command-inner-container">
+            <div class="inner">
+                <div class="input-container">
+                    <label for="command-name">Command Name:</label>
+                    <input type="text" id="command-name" placeholder="Command Name">
+                </div>
+                <div class="input-container">
+                    <label for="command-name">Command Description</label>
+                    <input type="text" id="command-description" placeholder="Command Description">
+                </div>
+                <div class="input-container">
+                    <label for="command-name">Command Permissions</label>
+                    <input type="text" id="command-permissions" placeholder="Command Permissions">
+                </div>
+                <div class="input-container">
+                    <label for="command-name">Global Cooldown</label>
+                    <input type="text" id="global-cooldown" placeholder="Global Cooldown">
+                </div>
+                <div class="input-container">
+                    <label for="command-name">User Cooldown</label>
+                    <input type="text" id="user-cooldown" placeholder="User Cooldown">
+                </div>
+            </div>
+            <div class="inner">
+                <div class="actions-main-container">
+                    <div class="action-container">
+                        <span>Add an action</span>
+                        <i class="fa-solid fa-plus"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="inner"></div>
+        </div>
+
+        <div class="command-buttons">
+            <button id="cancel-button">Cance</button>
+            <button>Save</button>
+        </div>
+    </div>
+
+
+    <!-- Templates for the "Chat" action -->
+    <div class="action-template chat-template">
+        <label for="chat-message">Chat Message:</label>
+        <input type="text" id="chat-message" placeholder="Enter chat message">
     </div>
 
     <script type="module" src="../../js/GUI/main.js"></script>
     <script type="module" src="../../js/GUI/linkHandler.js"></script>
     <script type="module" src="../../js/GUI/activeHandler.js"></script>
+    <script type="module" src="../../js/GUI/commands.js"></script>
 
     <script>
-        // Add an event listener for the search bar to filter the commands
-        document.querySelector(".search-bar input").addEventListener("keyup", (e) => {
-            // Get the search query
-            const query = e.target.value.toLowerCase();
-
-            // Get all the commands
-            const commands = document.querySelectorAll(".command-container");
-
-            // Loop through all the commands
-            commands.forEach((command) => {
-                // Get the command name
-                const commandName = command.querySelector(".command-name").textContent.toLowerCase();
-
-                // Check if the command name contains the search query
-                if (commandName.includes(query)) {
-                    // If it does, show the command
-                    command.style.display = "flex";
-                } else {
-                    // If it doesn't, hide the command
-                    command.style.display = "none";
-                }
-            });
-        });
     </script>
 </body>
 
