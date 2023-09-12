@@ -4,15 +4,6 @@ const notifications = document.getElementById('notifications');
 const notificationsItems = document.getElementById('notifications-items');
 const notificationsContainer = document.querySelector('.notification-items-container');
 const notificationCount = document.querySelector('.notification-count');
-// Get the page title
-const title = document.querySelector('title');
-console.log(title.textContent);
-
-if (title.textContent === 'User Management') {
-    // Set the left nav bar item to active
-    const users = document.getElementById('users');
-    users.classList.add('active');
-}
 
 let connected = false;
 let socket;

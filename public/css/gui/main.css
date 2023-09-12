@@ -23,10 +23,18 @@ body {
 
 .main-container {
     width: 100%;
-    height: 100vh;
+    height: 100%;
     display: block;
     align-items: center;
     justify-content: center;
+}
+
+body::-webkit-scrollbar {
+    width: 10px;
+}
+
+body::-webkit-scrollbar-track {
+    background-color: #1f1f1f;
 }
 
 .sidebar {
@@ -68,32 +76,43 @@ body {
     list-style: none;
     padding: 0;
     height: 100%;
+    width: 100%;
+}
+
+.sidebar-list span {
+    font-size: 0.8em;
+    color: var(--font-color);
+    opacity: 0.5;
+    font-weight: 700;
+    width: 100%;
+    text-align: center;
+    margin-left: 10px;
 }
 
 .sidebar-item {
     margin-bottom: 10px;
     border-radius: 5px;
     display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
     align-items: center;
     padding: 5px 10px;
     cursor: pointer;
-    border-left: none;
+    width: 100%;
 }
 
 .sidebar-item.active,
 .sidebar-item.active a {
     background-color: var(--font-color);
     color: var(--background-color);
-    font-weight: 800;
-}
-
-.sidebar-item .fa-chevron-down {
-    margin-left: auto;
-    font-size: 12px;
+    font-weight: bold;
 }
 
 .sidebar-item i {
     font-size: 1.2em;
+    padding: 5px;
+    width: 20px;
 }
 
 .sidebar-item:hover {
@@ -101,33 +120,24 @@ body {
     color: var(--primary-color);
 }
 
-.sidebar-item:hover .sidebar-link{
+.sidebar-item:hover .sidebar-link {
     background-color: var(--font-color);
     color: var(--primary-color);
 }
 
-
 .sidebar-link {
     display: block;
-    padding: 10px 15px;
+    padding: 5px 10px;
     color: var(--font-color);
     text-decoration: none;
+    width: 100%;
+    text-align: left;
+    margin-left: 10px;
 }
 
 .sidebar-link:hover {
     background-color: var(--font-color);
     color: var(--primary-color);
-}
-
-.sidebar-sublist {
-    list-style: block;
-    padding-left: 20px;
-    display: none;
-}
-
-.sidebar-sublink {
-    font-size: 0.9em;
-    color: var(--font-color);
 }
 
 .sidebar-footer {
@@ -413,4 +423,52 @@ body {
     font-size: 1.2em;
     color: var(--font-color);
     margin-left: 10px;
+}
+
+/* The switch - the box around the slider */
+.switch-container {
+    width: 51px;
+    height: 31px;
+    position: relative;
+}
+
+/* Hide default HTML checkbox */
+.checkbox {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    position: absolute;
+}
+
+.switch {
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-color: #e9e9eb;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+}
+
+/* The slider */
+.slider {
+    width: 27px;
+    height: 27px;
+    position: absolute;
+    left: calc(50% - 27px/2 - 10px);
+    top: calc(50% - 27px/2);
+    border-radius: 50%;
+    background: #FFFFFF;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.15), 0px 3px 1px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease-out;
+    cursor: pointer;
+}
+
+.checkbox:checked+.switch {
+    background-color: var(--secondary-color)
+}
+
+.checkbox:checked+.switch .slider {
+    left: calc(50% - 27px/2 + 10px);
+    top: calc(50% - 27px/2);
 }

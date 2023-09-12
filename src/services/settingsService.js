@@ -50,18 +50,22 @@ export class SettingsService {
                 {
                     name: 'databaseSettings',
                     removeUsersAfter: 365,
+                },
+                {
+                    name: 'rapidApikey',
+                    key: null,
+                },
+                {
+                    name: 'OpenAIKey',
+                    key: null,
                 }
             ]
-            // Check if there are as many settings in the database as there are in the initial settings array
+            // Check if there are as many settings in the database as there are in the initial settings array as well as checking to make sure each key exists under each setting
             const settings = await this.dbConnection.collection('settings').find().toArray();
-            if (settings.length !== initialSettings.length) {
-                // If not then set the initial settings if the name doesn't already exist
-                initialSettings.forEach(async (setting) => {
-                    const settingExists = await this.dbConnection.collection('settings').findOne({ name: setting.name });
-                    if (!settingExists) {
-                        await this.dbConnection.collection('settings').insertOne(setting);
-                    }
-                });
+            if (settings.length !== initialSettings.length || settings.some(setting => !initialSettings.some(initialSetting => initialSetting.name === setting.name))) {
+                // If there are not as many settings in the database as there are in the initial settings array, or if there are settings in the database that do not exist in the initial settings array, then delete all settings in the database and insert the initial settings
+                await this.dbConnection.collection('settings').deleteMany({});
+                await this.dbConnection.collection('settings').insertMany(initialSettings);
             }
 
             // Cache the settings
