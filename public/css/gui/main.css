@@ -80,8 +80,11 @@ body {
     border-left: none;
 }
 
-.sidebar-item .active {
-    background-color: #005AFF;
+.sidebar-item.active,
+.sidebar-item.active a {
+    background-color: var(--font-color);
+    color: var(--background-color);
+    font-weight: 800;
 }
 
 .sidebar-item .fa-chevron-down {
@@ -164,7 +167,8 @@ body {
     height: 60px;
     background-color: var(--primary-color);
     display: flex;
-    position: relative;
+    position: fixed;
+    top: 0;
     justify-content: center;
     align-items: center;
     padding: 0 20px;
@@ -208,13 +212,17 @@ body {
     display: none;
     flex-direction: column;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
     overflow-y: scroll;
     z-index: 100;
     position: absolute;
     top: 60px;
     right: 0;
     transition: all 0.3s ease-in-out;
+}
+
+.notifications.show {
+    display: flex;
 }
 
 .notifications::-webkit-scrollbar {
@@ -230,16 +238,103 @@ body {
     border-radius: 5px;
 }
 
+.notification-items-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    overflow-y: scroll;
+    height: 100%;
+}
+
+.notification-items-container::-webkit-scrollbar {
+    width: 10px;
+}
+
+.notification-items-container::-webkit-scrollbar-track {
+    background-color: #1f1f1f;
+}
+
+.notification-items-container::-webkit-scrollbar-thumb {
+    background-color: #005aff;
+    border-radius: 5px;
+}
+
 .notification-item {
     width: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: default;
+}
+
+.notification-item div {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.noti-time {
+    font-size: 0.8em;
+    margin-top: 5px;
+}
+
+.notification-item:hover {
+    background-color: var(--font-color);
+    color: var(--primary-color);
+}
+
+.notification-filters {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.notification-filters button {
+    width: 100%;
+    height: 40px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--font-color);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+.notification-actions {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.notification-actions button {
+    width: 100%;
+    height: 40px;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: var(--font-color);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
 }
 
 .notification-item .fa-times {
-    font-size: 12px;
+    font-size: 20px;
     color: #ff0000;
     cursor: pointer;
 }
@@ -264,7 +359,7 @@ body {
 
 .content {
     width: calc(100% - 250px);
-    height: calc(100vh - 60px);
+    margin-top: 60px;
     margin-left: 250px;
     padding: 20px;
     display: flex;

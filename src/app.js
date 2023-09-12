@@ -64,6 +64,7 @@ import predictionRouter from './routes/apiRoutes/prediction.js';
 import statusRoute from './routes/apiRoutes/status.js';
 import streamStatsRoute from './routes/apiRoutes/streamStats.js';
 import usersRouter from './routes/apiRoutes/users.js';
+import quoteRouter from './routes/apiRoutes/quotes.js';
 
 // Import GUI routes
 import guiRouter from './routes/gui.js';
@@ -77,6 +78,7 @@ app.use('/api/prediction', predictionRouter);
 app.use('/api/status', statusRoute);
 app.use('/api/streamStats', streamStatsRoute);
 app.use('/api/users', usersRouter);
+app.use('/api/quotes', quoteRouter);
 
 // Overlay routes
 app.use('/overlay', overlayRouter);

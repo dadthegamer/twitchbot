@@ -8,12 +8,16 @@ router.get('/', async (req, res) => {
     res.sendFile('dashboard.html', { root: './public/html/gui' });
 });
 
-router.get('/users', async (req, res) => {
-    res.sendFile('users.html', { root: './public/html/gui' });
-});
 
-router.get('/commands', async (req, res) => {
-    res.sendFile('commands.html', { root: './public/html/gui' });
+router.get('/:page', async (req, res) => {
+    try {
+        const { page } = req.params;
+        res.sendFile(`${page}.html`, { root: './public/html/gui' });
+    }
+    catch (error) {
+        res.status(404).send('Not found');
+        writeToLogFile('error', `Error in gui.js: ${error}`);
+    }
 });
 
 

@@ -9,6 +9,12 @@ export class WebSocket {
         this.wss = new WebSocketServer({ port: 8080 });
         this.wss.on('connection', (ws) => {
             console.log('Client connected');
+            this.notification({ 
+                notification: 'Connected to websocket',
+                classification: 'info',
+                read: false,
+                createdAt: new Date()
+                });
             ws.on('message', (message) => {
                 console.log(`Received message => ${message}`);
             });
@@ -75,5 +81,10 @@ export class WebSocket {
             message: data.message,
         }
         this.broadcastMessage('tts', payload);
+    }
+
+    // Method to send a new notification
+    notification(payload) {
+        this.broadcastMessage('notification', payload);
     }
 }

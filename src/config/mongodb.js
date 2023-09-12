@@ -15,6 +15,8 @@ export class MongoDBConnection {
         this.client = new MongoClient(uri);
         this.dbName = 'twitchBot';
         this.dbConnection = null;
+        this.createCollections();
+        this.createIndexes();
     }
 
     // Method to connect to MongoDB
@@ -57,6 +59,7 @@ export class MongoDBConnection {
                 'settings',
                 'quotes',
                 'roasts',
+                'notifications'
             ]
             const collectionPromises = collections.map(collection =>
                 this.dbConnection.createCollection(collection)

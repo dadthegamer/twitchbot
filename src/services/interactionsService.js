@@ -76,7 +76,7 @@ export class InteractionsDbService {
     }
 
     // Method to store a new quote into the database with the id being one number higher than the id of the last quote
-    async storeQuote(quote, creator) {
+    async createQuote(quote, creator) {
         try {
             const quotes = await this.cache.get('quotes');
             const lastQuote = quotes[quotes.length - 1];
@@ -95,4 +95,45 @@ export class InteractionsDbService {
             writeToLogFile('error', `Error in storeQuote: ${err}`);
         }
     }
+
+    // Method to update a quote in the database
+    async updateQuote(id, quote, creator) {
+        if (typeof id !== 'number') {
+            id = parseInt(id);
+        }
+        try {
+            const res = await this.dbConnection.collection('quotes').updateOne({ id: id }, 
+                { $set: 
+                    { 
+                    text: quote,
+                    creator: creator 
+                    } 
+                }
+            );
+            console.log(res)
+            await this.getAllQuotes();
+            return res;
+        }
+        catch (err) {
+            console.error('Error in updateQuote:', err);
+            writeToLogFile('error', `Error in updateQuote: ${err}`);
+        }
+    }
+
+    // Method to delete a quote from the database
+    async deleteQuote(id) {
+        if (typeof id !== 'number') {
+            id = parseInt(id);
+        }
+        try {
+            const res = await this.dbConnection.collection('quotes').deleteOne({ id: id });
+            await this.getAllQuotes();
+            return res;
+        }
+        catch (err) {
+            writeToLogFile('error', `Error in deleteQuote: ${err}`);
+        }
+    }
+
+    
 }
