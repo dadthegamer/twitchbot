@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency</title>
+    <link rel="stylesheet" href="../../css/gui/main.css">
+    <link rel="stylesheet" href="../../css/gui/currency.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="../../images/logo.png" alt="App Logo" class="sidebar-logo">
+                <span>STREAM A.I.</span>
+            </div>
+
+            <ul class="sidebar-list">
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-gauge"></i>
+                    <a href="#" class="sidebar-link">Dashboard</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-chart-bar"></i>
+                    <a href="#" class="sidebar-link">Statistics</a>
+                </li>
+                <li class="sidebar-item" id="commands-link">
+                    <i class="fa-solid fa-terminal"></i>
+                    <a href="#" class="sidebar-link">Commands</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-list-check"></i>
+                    <a href="#" class="sidebar-link">Events</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-coins"></i>
+                    <a href="#" class="sidebar-link">Currency</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-stopwatch"></i>
+                    <a href="#" class="sidebar-link">Timers</a>
+                </li>
+                <li class="sidebar-item" id="channel-points-link">
+                    <i class="fa-solid fa-gem"></i>
+                    <a href="#" class="sidebar-link">Channel Points</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-calendar"></i>
+                    <a href="#" class="sidebar-link">Calendar</a>
+                </li>
+                <li class="sidebar-item" id="quotes-link">
+                    <i class="fa-solid fa-quote-left"></i>
+                    <a href="#" class="sidebar-link">Quotes</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-hammer"></i>
+                    <a href="#" class="sidebar-link">Moderation</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <a href="#" class="sidebar-link">Games</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-user-tag"></i>
+                    <a href="#" class="sidebar-link">Roles</a>
+                </li>
+                <span>Applications</span>
+                <li class="sidebar-item" id="tiktok">
+                    <i class="fa-brands fa-tiktok"></i>
+                    <a href="#" class="sidebar-link">TikTok</a>
+                </li>
+                <li class="sidebar-item" id="discord">
+                    <i class="fa-brands fa-discord"></i>
+                    <a href="#" class="sidebar-link">Discord</a>
+                </li>
+                <span>Settings</span>
+                <li class="sidebar-item" id="users">
+                    <i class="fa-solid fa-users"></i>
+                    <a href="#" class="sidebar-link">User Management</a>
+                </li>
+                <li class="sidebar-item" id="streamathon">
+                    <i class="fa-solid fa-video"></i>
+                    <a href="#" class="sidebar-link">Streamathon</a>
+                </li>
+                <li class="sidebar-item" id="updates">
+                    <i class="fa-solid fa-download"></i>
+                    <a href="#" class="sidebar-link">Updates</a>
+                </li>
+                <li class="sidebar-item" id="settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <a href="#" class="sidebar-link">Settings</a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div>
+                        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png"
+                            alt="User" class="user-avatar">
+                        <div class="user-name">Dad The Gamer</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-nav-bar">
+            <div class="stream-status">
+                <span>OFFLINE</span>
+            </div>
+            <div class="notifications-container">
+                <div class="notification" id="notifications">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="notification-count">0</span>
+                </div>
+                <div class="notifications" id="notifications-items">
+                    <div class="notification-filters">
+                        <button id="filter-all">All</button>
+                        <button id="filter-info">Info</button>
+                        <button id="filter-errors">Errors</button>
+                    </div>
+                    <div class="notification-items-container">
+                    </div>
+                    <div class="notification-actions">
+                        <button>Acknowledge All</button>
+                        <button>Delete All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="currency-main-container">
+                <button id="add-currency">Add A Currency</button>
+                <div class="currency-container" id="raffle-container">
+                    <div class="currency-first">
+                        <h2>Raffle Tickets</h2>
+                        <i class="fa-solid fa-chevron-down"></i>
+                        <div class="switch-container">
+                            <input type="checkbox" class="checkbox" id="checkbox">
+                            <label class="switch" for="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="currency-container-inner">
+                        <h3>Payout Settings</h3>
+                        <span>How often are viewers rewarded. How much currency is rewarded for each sub, bits,
+                            etc</span>
+                        <div class="currency-payout-settings">
+                            <div>
+                                <label for="">Payout Interval (Minutes)</label>
+                                <input id="raffle-payout-interval" type="text">
+                            </div>
+                            <div>
+                                <label for="">Amount</label>
+                                <input id="raffle-payout-amount" type="text">
+                            </div>
+                            <div>
+                                <label for="">Subs</label>
+                                <input id="raffle-payout-subs" type="text">
+                                <label for="">Minimum</label>
+                                <input id="raffle-payout-subs-min" type="text">
+                            </div>
+                            <div>
+                                <label for="">Bits</label>
+                                <input id="raffle-payout-bits" type="text">
+                                <label for="">Minimum</label>
+                                <input id="raffle-payout-bits-min" type="text">
+                            </div>
+                            <div>
+                                <label for="">Donations</label>
+                                <input id="raffle-payout-donations" type="text">
+                                <label for="">Minimum</label>
+                                <input id="raffle-payout-donations-min" type="text">
+                            </div>
+                            <div>
+                                <label for="">Raids</label>
+                                <input id="raffle-payout-raids" type="text">
+                            </div>
+                            <div>
+                                <label for="">Arrival</label>
+                                <input id="raffle-payout-arrival" type="text">
+                            </div>
+                        </div>
+                        <h3>Bonus Settings</h3>
+                        <span>Bonus rules for viewers who are in a specific role</span>
+                        <div class="currency-payout-settings">
+                            <div>
+                                <label for="">Moderator</label>
+                                <input id="raffle-bonus-moderator" type="text">
+                            </div>
+                            <div>
+                                <label for="">Subscriber</label>
+                                <input id="raffle-bonus-subscriber" type="text">
+                            </div>
+                            <div>
+                                <label for="">Vip</label>
+                                <input id="raffle-bonus-vip" type="text">
+                            </div>
+                            <div>
+                                <label for="">Active Chat User</label>
+                                <input id="raffle-bonus-active-chat-user" type="text">
+                            </div>
+                            <div>
+                                <label for="">Tier 1 Sub</label>
+                                <input id="raffle-bonus-tier1" type="text">
+                            </div>
+                            <div>
+                                <label for="">Tier 2 Sub</label>
+                                <input id="raffle-bonus-tier2" type="text">
+                            </div>
+                            <div>
+                                <label for="">Tier 3 Sub</label>
+                                <input id="raffle-bonus-tier3" type="text">
+                            </div>
+                        </div>
+                        <h3>Restrictions</h3>
+                        <span>Establish restrcitions for a currency</span>
+                        <div class="restrcitions-main-container">
+                            <div class="restrictions-container">
+                                <label for="">Followers Only</label>
+                                <div class="switch-container">
+                                    <input type="checkbox" class="checkbox" id="checkbox">
+                                    <label class="switch" for="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="restrictions-container">
+                                <label for="">Subscribers Only</label>
+                                <div class="switch-container">
+                                    <input type="checkbox" class="checkbox" id="checkbox">
+                                    <label class="switch" for="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="restrictions-container">
+                                <label for="">VIP's Only</label>
+                                <div class="switch-container">
+                                    <input type="checkbox" class="checkbox" id="checkbox">
+                                    <label class="switch" for="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="restrictions-container">
+                                <label for="">Active Chat User Only</label>
+                                <div class="switch-container">
+                                    <input type="checkbox" class="checkbox" id="checkbox">
+                                    <label class="switch" for="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <h3>Limit</h3>
+                        <span>Establish a llimit on the currency</span>
+                        <span>(0 is no limit)</span>
+                        <div class="limit-container">
+                            <input id="raffle-limit-value" type="text" value="0">
+                        </div>
+                        <button id="save-button">Save</button>
+                    </div>
+                </div>
+                <div class="currency-container" id="new-currency-container">
+                    <div class="currency-first">
+                        <input type="text" placeholder="Currency Name">
+                        <i class="fa-solid fa-chevron-down"></i>
+                        <div class="switch-container">
+                            <input type="checkbox" class="checkbox" id="checkbox">
+                            <label class="switch" for="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="currency-container-inner">
+                        <h3>Payout Settings</h3>
+                        <span>How often are viewers rewarded. How much currency is rewarded for each sub, bits,
+                            etc</span>
+                        <div class="currency-payout-settings">
+                            <div>
+                                <label for="">Payout Interval (Minutes)</label>
+                                <input id="payout-interval" type="text">
+                            </div>
+                            <div>
+                                <label for="">Amount</label>
+                                <input id="payout-amount" type="text">
+                            </div>
+                            <div>
+                                <label for="">Subs</label>
+                                <input id="payout-subs" type="text">
+                            </div>
+                            <div>
+                                <label for="">Bits</label>
+                                <input id="payout-bits" type="text">
+                                <label for="">Minimum</label>
+                                <input id="payout-bits-min" type="text">
+                            </div>
+                            <div>
+                                <label for="">Donations</label>
+                                <input id="payout-donations" type="text">
+                                <label for="">Minimum</label>
+                                <input id="payout-donations-minimum" type="text">
+                            </div>
+                            <div>
+                                <label for="">Raids</label>
+                                <input id="rpayout-raids" type="text">
+                            </div>
+                            <div>
+                                <label for="">Arrival</label>
+                                <input id="payout-arrival" type="text">
+                            </div>
+                        </div>
+                        <h3>Bonus Settings</h3>
+                        <span>Bonus rules for viewers who are in a specific role</span>
+                        <div class="currency-payout-settings">
+                            <div>
+                                <label for="">Moderator</label>
+                                <input id="bonus-moderator" type="text">
+                            </div>
+                            <div>
+                                <label for="">Subscriber</label>
+                                <input id="bonus-subs" type="text">
+                            </div>
+                            <div>
+                                <label for="">Vip</label>
+                                <input id="bonus-vips" type="text">
+                            </div>
+                            <div>
+                                <label for="">Active Chat User</label>
+                                <input id="bonus-active-chat-user" type="text">
+                            </div>
+                            <div>
+                                <label for="">Tier 1 Sub</label>
+                                <input id="bonus-tier1" type="text">
+                            </div>
+                            <div>
+                                <label for="">Tier 2 Sub</label>
+                                <input id="bonus-tier2" type="text">
+                            </div>
+                            <div>
+                                <label for="">Tier 3 Sub</label>
+                                <input id="bonus-tier3" type="text">
+                            </div>
+                        </div>
+                        <h3>Restrictions</h3>
+                        <span>Establish restrcitions for a currency</span>
+                        <div class="restrcitions-main-container">
+                            <div class="restrictions-container">
+                                <label for="">Followers Only</label>
+                                <div class="switch-container">
+                                    <input type="checkbox" class="checkbox" id="checkbox">
+                                    <label class="switch" for="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="restrictions-container">
+                                <label for="">Subscribers Only</label>
+                                <div class="switch-container">
+                                    <input type="checkbox" class="checkbox" id="checkbox">
+                                    <label class="switch" for="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="restrictions-container">
+                                <label for="">VIP's Only</label>
+                                <div class="switch-container">
+                                    <input type="checkbox" class="checkbox" id="checkbox">
+                                    <label class="switch" for="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="restrictions-container">
+                                <label for="">Active Chat User Only</label>
+                                <div class="switch-container">
+                                    <input type="checkbox" class="checkbox" id="checkbox">
+                                    <label class="switch" for="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <h3>Limit</h3>
+                        <span>Establish a llimit on the currency</span>
+                        <span>(0 is no limit)</span>
+                        <div class="limit-container">
+                            <input id="limit-value" type="text" value="0">
+                        </div>
+                        <button id="save-button">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module" src="../../js/GUI/main.js"></script>
+    <script type="module" src="../../js/GUI/linkHandler.js"></script>
+    <script type="module" src="../../js/GUI/activeHandler.js"></script>
+    <script type="module" src="../../js/GUI/currency.js"></script>
+
+    <script>
+        // Function to create a new currency using DOM
+        function createCurrency(data) {
+
+        }
+    </script>
+</body>
+
+</html>

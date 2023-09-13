@@ -1,30 +1,18 @@
 import { Router } from 'express';
 import { writeToLogFile } from '../../utilities/logging.js';
-import { usersDB } from '../../config/initializers.js';
+import { usersDB, currencyDB } from '../../config/initializers.js';
 
 const router = Router();
 
-router.post('/', async (req, res) => {
+
+router.get('/', async (req, res) => {
     try {
-        let { type, amount } = req.body;
-        if (typeof amount === 'string') {
-            amount = parseInt(amount);
-        }
-        if (type === 'all') {
-            const allViewers = await viewers.get('viewers');
-            for (let i = 0; i < allViewers.length; i++) {
-                await usersDB.increaseUserValue(allViewers[i].userId, 'leaderboard_points', amount);
-            }
-            res.status(200).send();
-        } else if (type === 'user') {
-            let { userId } = req.body;
-            await usersDB.increaseUserValue(userId, 'leaderboard_points', amount);
-            res.status(200).send();
-        }
+        const currencies = await currencyDB.getAllCurrencies();
+        res.status(200).json(currencies);
     }
-    catch (err) {
-        writeToLogFile('error', `Error in currency: ${err}`);
-        res.status(500).send();
+    catch (error) {
+        writeToLogFile('error', `Error getting all currencies: ${error}`);
+        res.status(500).json({ error: 'Internal Server Error' });
     }
 });
 

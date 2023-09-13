@@ -34,13 +34,22 @@ export class CurrencyService {
                     name: 'Points',
                     enabled: true,
                     payoutSettings: {
-                        interval: 5,
-                        amount: 5,
-                        subs: 10,
-                        bits: 10,
-                        donations: 10,
-                        raids: 10,
-                        arrived: 10,
+                        interval: 1,
+                        amount: 1,
+                        subs: {
+                            amount: 1,
+                            minimum: 0,
+                        },
+                        bits: {
+                            amount: 1,
+                            minimum: 0,
+                        },
+                        donations: {
+                            amount: 1,
+                            minimum: 0,
+                        },
+                        raids: 1,
+                        arrived: 1,
                     },
                     createdAt: new Date(),
                     roleBonuses: {
@@ -84,9 +93,18 @@ export class CurrencyService {
                     payoutSettings: {
                         interval: 1,
                         amount: 1,
-                        subs: 1,
-                        bits: 1,
-                        donations: 1,
+                        subs: {
+                            amount: 1,
+                            minimum: 0,
+                        },
+                        bits: {
+                            amount: 1,
+                            minimum: 0,
+                        },
+                        donations: {
+                            amount: 1,
+                            minimum: 0,
+                        },
                         raids: 1,
                         arrived: 1,
                     },
@@ -183,9 +201,18 @@ export class CurrencyService {
                 payoutSettings: {
                     interval: 1,
                     amount: 1,
-                    subs: 1,
-                    bits: 1,
-                    donations: 1,
+                    subs: {
+                        amount: 1,
+                        minimum: 0,
+                    },
+                    bits: {
+                        amount: 1,
+                        minimum: 0,
+                    },
+                    donations: {
+                        amount: 1,
+                        minimum: 0,
+                    },
                     raids: 1,
                     arrived: 1,
                 },

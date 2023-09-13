@@ -86,6 +86,11 @@ export class StreamathonService {
 
     // Method to increase the streamathon current by the amount in the parameters based on what is passed in. If the streamathon current is greater than or equal to the streamathon cap, then set the streamathon current to the streamathon cap
     async increaseStreamathonCurrent(parameter) {
+        // Check if a streamathon is active
+        const streamathonSettings = await this.getStreamathonSettings();
+        if (!streamathonSettings.streamathonActive) {
+            return;
+        }
         // Check if the parameter is valid
         const validParameters = ['subs', 'bits', 'followers', 'donations', 'tikTokFollowers', 'tikTokLikes', 'tikTokGifts'];
         if (!validParameters.includes(parameter)) {
