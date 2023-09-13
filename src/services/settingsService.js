@@ -27,6 +27,11 @@ export class SettingsService {
                     lightId: null,
                 },
                 {
+                    name: 'AWSSettings',
+                    accessKeyId: null,
+                    secretAccessKey: null,
+                },
+                {
                     name: 'alertTime',
                     time: 8000,
                 },
@@ -53,6 +58,10 @@ export class SettingsService {
                 },
                 {
                     name: 'rapidApikey',
+                    key: null,
+                },
+                {
+                    name: 'apiNinjaKey',
                     key: null,
                 },
                 {
