@@ -13,10 +13,16 @@ export class CurrencyService {
         this.currencyCache = new NodeCache();
         this.collectionName = 'currency';
         this.payoutIntervals = [];
-        this.createFirstCurrency();
-        this.createRaffleCurrency();
-        this.getAllCurrencies();
-        this.currencyPayoutHandler();
+        this.initializeCurrencies();
+    }
+
+    // Method for initializing the currencies
+    async initializeCurrencies() {
+        this.clearAllPayoutIntervals();
+        await this.createFirstCurrency();
+        await this.createRaffleCurrency();
+        await this.getAllCurrencies();
+        await this.currencyPayoutHandler();
     }
 
     // Method to create the first currency if it doesn't exist
@@ -277,17 +283,22 @@ export class CurrencyService {
         // Reset the intervals list
         this.payoutIntervals = [];
         const currencies = this.cache.get('currencies');
+        if (currencies === undefined) {
+            return;
+        }
+        if (currencies.length === 0) {
+            return;
+        }
         for (const currency of currencies) {
             const { name, payoutSettings, hypeTrainBonus, enabled, roleBonuses, restrictions, limit } = currency;
             // If the currency is not enabled then continue to the next currency
             if (!enabled) {
                 continue;
             }
-
+            const { interval, amount, subs, bits, donations, raids, arrived } = payoutSettings;
             if (interval === 0) {
                 continue;
             }
-            const { interval, amount, subs, bits, donations, raids, arrived } = payoutSettings;
             // Set an interval to payout the currency
             const intervalId = setInterval(async () => {
                 if (environment === 'development') {

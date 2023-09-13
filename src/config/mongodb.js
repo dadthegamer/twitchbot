@@ -5,18 +5,14 @@ import { config } from 'dotenv';
 
 config();
 
-const uri = `mongodb://${process.env.MONGO_INITDB_DATABASE_HOST}:${process.env.MONGO_INITDB_DATABASE_PORT}`;
-
 export class MongoDBConnection {
     constructor() {
         this.host = process.env.MONGO_INITDB_DATABASE_HOST;
         this.port = process.env.MONGO_INITDB_DATABASE_PORT;
         this.uri = `mongodb://${this.host}:${this.port}`;
-        this.client = new MongoClient(uri);
+        this.client = new MongoClient(this.uri);
         this.dbName = 'twitchBot';
         this.dbConnection = null;
-        this.createCollections();
-        this.createIndexes();
     }
 
     // Method to connect to MongoDB
@@ -26,6 +22,7 @@ export class MongoDBConnection {
             console.log('Connected to MongoDB');
             this.dbConnection = this.client.db(this.dbName);
             await this.createCollections();
+            await this.createIndexes();
         } catch (error) {
             console.error('Error connecting to MongoDB', error);
             throw error;
@@ -62,6 +59,7 @@ export class MongoDBConnection {
                 'notifications',
                 'chatLogs',
                 'raffleEntries',
+                'Streamathon',
             ]
             const collectionPromises = collections.map(collection =>
                 this.dbConnection.createCollection(collection)
@@ -87,7 +85,14 @@ export class MongoDBConnection {
     // Method to check the connection to MongoDB
     async checkConnection() {
         try {
-            await this.dbConnection.command({ ping: 1 });
+            const status = await this.dbConnection.command({ ping: 1 });
+            if (status.ok) {
+                console.log('MongoDB connection is ok');
+                return true;
+            } else {
+                console.log('MongoDB connection is not ok');
+                return false;
+            }
         }
         catch (error) {
             writeToLogFile('error', `Error checking MongoDB connection: ${error}`);

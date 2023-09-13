@@ -14,7 +14,6 @@ import { subscribeToDonationEvents } from '../services/streamElementsService.js'
 import { AuthProviderManager } from '../services/twitchAuthProviderServices.js';
 import { TwitchApiClient } from '../services/twitchApiServices.js';
 import { TwitchChatClient } from '../services/twitchChatClientServices.js';
-import { viewTimeHandler } from '../handlers/twitch/viewTimeHandler.js';
 import { addBotsToKnownBots } from '../handlers/twitch/viewTimeHandler.js';
 import { InteractionsDbService } from '../services/interactionsService.js';
 import { NotificationService } from '../services/notificationService.js';
@@ -23,6 +22,7 @@ import { SettingsService } from '../services/settingsService.js';
 import { CurrencyService } from '../services/currencyService.js';
 import { RaffleService } from '../services/raffleService.js';
 import { GoalService } from '../services/goalService.js';
+import { ViewTimeService } from '../services/viewTimeService.js';
 
 
 // Cache initialization
@@ -82,13 +82,15 @@ const raffleDB = new RaffleService(db.dbConnection, cache);
 // GoalDB initialization
 const goalDB = new GoalService(db.dbConnection, cache);
 
+// ViewTimeDB initialization
+const viewTimeDB = new ViewTimeService(db.dbConnection, cache);
+
 // Subscribe to donation events
 subscribeToDonationEvents();
 
 addBotsToKnownBots();
 startAlertsHandler();
 startWelcomeAlerts();
-setInterval(viewTimeHandler, 1000);
 
 
 export {
@@ -110,4 +112,5 @@ export {
     currencyDB,
     raffleDB,
     goalDB,
+    viewTimeDB,
 };

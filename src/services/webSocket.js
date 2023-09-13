@@ -87,4 +87,9 @@ export class WebSocket {
     notification(payload) {
         this.broadcastMessage('notification', payload);
     }
+
+    // Method to send a streamathon update
+    streamathonUpdate(payload) {
+        this.broadcastMessage('streamathonUpdate', payload);
+    }
 }

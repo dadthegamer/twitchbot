@@ -3,6 +3,7 @@ import { twitchApi } from "../../config/initializers.js";
 import { writeToLogFile } from "../../utilities/logging.js";
 import { cache } from "../../config/initializers.js";
 import NodeCache from "node-cache";
+import { environment } from "../../config/environmentVars.js";
 
 
 export const knownBots = new NodeCache();
@@ -85,6 +86,9 @@ export async function addBotsToKnownBots() {
 export async function getChattersWithoutBots() {
     try {
         const chatters = await twitchApi.getChatters();
+        if (environment === 'development') {
+            console.log('chatters', chatters);
+        }
         const bots = knownBots.keys();
         const chattersWithoutBots = chatters.filter((chatter) => !bots.includes(chatter.userId));
         return chattersWithoutBots;
