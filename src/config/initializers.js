@@ -21,7 +21,7 @@ import { NotificationService } from '../services/notificationService.js';
 import { ChatLogService } from '../services/chatLogService.js';
 import { SettingsService } from '../services/settingsService.js';
 import { CurrencyService } from '../services/currencyService.js';
-
+import { RaffleService } from '../services/raffleService.js';
 
 
 // Cache initialization
@@ -75,6 +75,9 @@ const commands = new Commands(db.dbConnection);
 // Command cache initialization
 const commandHandler = new CommandHandler(commands.cache);
 
+// RaffleDB initialization
+const raffleDB = new RaffleService(db.dbConnection, cache);
+
 // Subscribe to donation events
 subscribeToDonationEvents();
 
@@ -101,4 +104,5 @@ export {
     chatLogService,
     settingsDB,
     currencyDB,
+    raffleDB,
 };

@@ -60,7 +60,8 @@ export class MongoDBConnection {
                 'quotes',
                 'roasts',
                 'notifications',
-                'chatLogs'
+                'chatLogs',
+                'raffleEntries',
             ]
             const collectionPromises = collections.map(collection =>
                 this.dbConnection.createCollection(collection)

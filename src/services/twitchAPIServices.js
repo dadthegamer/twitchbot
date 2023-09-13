@@ -163,11 +163,10 @@ export class TwitchApiClient {
             const data = await this.apiClient.users.getUserById(userId);
             const user = {
                 id: data.id,
-                login: data.name,
-                display_name: data.displayName,
-                profile_image_url: data.profilePictureUrl,
+                name: data.name,
+                displayname: data.displayName,
+                profilePictureUrl: data.profilePictureUrl,
             };
-            console.log(user);
             return user;
         }
         catch (error) {

@@ -28,13 +28,13 @@ export class CurrencyService {
                     name: 'Points',
                     enabled: true,
                     payoutSettings: {
-                        interval: 1,
-                        amount: 1,
-                        subs: 1,
-                        bits: 1,
-                        donations: 1,
-                        raids: 1,
-                        arrived: 1,
+                        interval: 5,
+                        amount: 5,
+                        subs: 10,
+                        bits: 10,
+                        donations: 10,
+                        raids: 10,
+                        arrived: 10,
                     },
                     createdAt: new Date(),
                     roleBonuses: {
@@ -150,6 +150,9 @@ export class CurrencyService {
 
     // Method to delete a currency
     async deleteCurrency(name) {
+        if (name === 'Raffle') {
+            return 'Cannot delete the raffle currency';
+        }
         try {
             const res = await this.dbConnection.collection(this.collectionName).deleteOne({ name });
             await getAllCurrencies();
@@ -330,7 +333,7 @@ export class CurrencyService {
                                 }
                             }
                             // If the currency is not limited then add the total payout to the viewer
-                            await usersDB.addCurrency(viewer.userId, name, totalPayout);
+                            await usersDB.increaseCurrency(viewer.userId, name, totalPayout);
                         }
                     }
                 }
@@ -357,5 +360,105 @@ export class CurrencyService {
     clearAllPayoutIntervals() {
         this.payoutIntervals.forEach(intervalId => clearInterval(intervalId));
         this.payoutIntervals = [];
+    }
+
+    // Method to add a currency to a user for subs
+    async addCurrencyForSub(userId) {
+        try {
+            // Loop through all currencies and add the amount to the user
+            const currencies = this.cache.get('currencies');
+            for (const currency of currencies) {
+                const { name, payoutSettings, enabled } = currency;
+                if (!enabled) {
+                    continue;
+                } else {
+                    const { subs } = payoutSettings;
+                    await usersDB.increaseCurrency(userId, name, subs);
+                }
+            }
+        }
+        catch (err) {
+            writeToLogFile('error', `Error in addCurrencyForSub: ${err}`);
+        }
+    }
+
+    // Method to add a currency to a user for bits
+    async addCurrencyForBits(userId) {
+        try {
+            // Loop through all currencies and add the amount to the user
+            const currencies = this.cache.get('currencies');
+            for (const currency of currencies) {
+                const { name, payoutSettings, enabled } = currency;
+                if (!enabled) {
+                    continue;
+                } else {
+                    const { bits } = payoutSettings;
+                    await usersDB.increaseCurrency(userId, name, bits);
+                }
+            }
+        }
+        catch (err) {
+            writeToLogFile('error', `Error in addCurrencyForBits: ${err}`);
+        }
+    }
+
+    // Method to add a currency to a user for donations
+    async addCurrencyForDonations(userId) {
+        try {
+            // Loop through all currencies and add the amount to the user
+            const currencies = this.cache.get('currencies');
+            for (const currency of currencies) {
+                const { name, payoutSettings, enabled } = currency;
+                if (!enabled) {
+                    continue;
+                } else {
+                    const { donations } = payoutSettings;
+                    await usersDB.increaseCurrency(userId, name, donations);
+                }
+            }
+        }
+        catch (err) {
+            writeToLogFile('error', `Error in addCurrencyForDonations: ${err}`);
+        }
+    }
+
+    // Method to add a currency to a user for raids
+    async addCurrencyForRaids(userId) {
+        try {
+            // Loop through all currencies and add the amount to the user
+            const currencies = this.cache.get('currencies');
+            for (const currency of currencies) {
+                const { name, payoutSettings, enabled } = currency;
+                if (!enabled) {
+                    continue;
+                } else {
+                    const { raids } = payoutSettings;
+                    await usersDB.increaseCurrency(userId, name, raids);
+                }
+            }
+        }
+        catch (err) {
+            writeToLogFile('error', `Error in addCurrencyForRaids: ${err}`);
+        }
+    }
+
+    // Method to add a currency to a user for arriving
+    async addCurrencyForArriving(userId) {
+        try {
+            // Loop through all currencies and add the amount to the user
+            const currencies = this.cache.get('currencies');
+            for (const currency of currencies) {
+                const { name, payoutSettings, enabled } = currency;
+                if (!enabled) {
+                    continue;
+                } else {
+                    const { arrived } = payoutSettings;
+                    await usersDB.increaseCurrency(userId, name, arrived);
+                }
+            }
+        }
+        catch (err) {
+            writeToLogFile('error', `Error in addCurrencyForArriving: ${err}`);
+        }
     }
 }
