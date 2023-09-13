@@ -1,10 +1,9 @@
 import NodeCache from 'node-cache';
 
 // Class for active users cache
-export class ActiveUsersCache extends NodeCache {
+export class ActiveUsersCache {
     constructor() {
-        super();
-        console.log('Active users cache started');
+        this.cache = new NodeCache({ stdTTL: 900, checkperiod: 120 });
         this.listenForExpiredKeys();
     }
 
@@ -13,48 +12,34 @@ export class ActiveUsersCache extends NodeCache {
         return this;
     }
 
-    // Method to return the cache stats
-    async getCacheStats() {
-        return this.getStats();
+    // Method to add a user to the cache with a ttl. 
+    // If the user already exists, the ttl is updated
+    async addUser(user, ttl = 15) {
+        const key = user.id;
+        const value = user;
+        this.cache.set(key, value, ttl);
     }
 
-    // Method to return the cache keys
-    async getCacheKeys() {
-        return this.keys();
+    // Method to get a user from the cache
+    async getUser(userId) {
+        return this.cache.get(userId);
     }
 
-    // Method to return the cache values
-    async getCacheValues() {
-        return this.values();
+    // Method to return a list of all users in the cache
+    async getAllUsers() {
+        return this.cache.keys().map(key => this.cache.get(key));
     }
 
-    // Set a value in the cache
-    set(key, value, ttl = 0) {
-        if (ttl === 0) {
-            super.set(key, value);
-        } else {
-            super.set(key, value, ttl);
-        }
+    // Method to delete a user from the cache
+    async deleteUser(userId) {
+        this.cache.del(userId);
     }
 
-    // Get a value from the cache
-    async getKey(key) {
-        return this.cache.get(key);
-    }
-
-    // Delete a value from the cache
-    async DeleteKey(key) {
-        this.del(key);
-    }
-
-    // Check if a key exists in the cache
-    async has(key) {
-        return this.has(key);
-    }
-
-    // Flush the entire cache
-    async flushCache() {
-        this.flushAll();
+    // Method to return a random user from the cache
+    async getRandomActiveUser() {
+        const keys = this.cache.keys();
+        const randomKey = keys[Math.floor(Math.random() * keys.length)];
+        return this.cache.get(randomKey);
     }
 
     // Listen for expired keys

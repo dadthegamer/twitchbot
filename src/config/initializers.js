@@ -20,12 +20,13 @@ import { InteractionsDbService } from '../services/interactionsService.js';
 import { NotificationService } from '../services/notificationService.js';
 import { ChatLogService } from '../services/chatLogService.js';
 import { SettingsService } from '../services/settingsService.js';
+import { CurrencyService } from '../services/currencyService.js';
 
 
 
 // Cache initialization
 const cache = new CacheService('mainCache');
-
+setInitialCacheValues();
 // MongoDB initialization
 const db = new MongoDBConnection();
 await db.connect();
@@ -58,6 +59,8 @@ const interactionsDB = new InteractionsDbService(db.dbConnection, cache);
 // StreamDB initialization
 const streamDB = new StreamDB(db.dbConnection, cache);
 
+// CurrencyDB initialization
+const currencyDB = new CurrencyService(db.dbConnection, cache);
 
 // Websocket initialization
 const webSocket = new WebSocket();
@@ -76,7 +79,6 @@ const commandHandler = new CommandHandler(commands.cache);
 subscribeToDonationEvents();
 
 addBotsToKnownBots();
-setInitialCacheValues();
 startAlertsHandler();
 startWelcomeAlerts();
 setInterval(viewTimeHandler, 1000);
@@ -96,5 +98,7 @@ export {
     streamDB,
     interactionsDB,
     notificationDB,
-    chatLogService
+    chatLogService,
+    settingsDB,
+    currencyDB,
 };

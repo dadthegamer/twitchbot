@@ -86,7 +86,7 @@ export async function getChattersWithoutBots() {
     try {
         const chatters = await twitchApi.getChatters();
         const bots = knownBots.keys();
-        const chattersWithoutBots = chatters.filter((chatter) => !bots.includes(chatter.id));
+        const chattersWithoutBots = chatters.filter((chatter) => !bots.includes(chatter.userId));
         return chattersWithoutBots;
     }
     catch (err) {

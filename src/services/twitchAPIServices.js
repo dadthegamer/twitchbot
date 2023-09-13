@@ -181,12 +181,11 @@ export class TwitchApiClient {
             let chatters = [];
             const response = await this.apiClient.chat.getChattersPaginated(this.userId).getAll();
             const data = response.map((chatter) => ({
-                id: chatter.userId,
-                login: chatter.userName,
-                display_name: chatter.userDisplayName,
+                userId: chatter.userId,
+                userName: chatter.userName,
+                userDisplayName: chatter.userDisplayName,
             }));
             chatters = [...chatters, ...data];
-            this.cache.set('chatters', chatters);
             return chatters;
         }
         catch (error) {

@@ -29,17 +29,83 @@ export class UsersDB {
         }
     }
 
-    // Method to return rather a user is a follower or not
+    // Get all users that have have a follow_date and set the followers property in the cache
+    async getFollowers() {
+        try {
+            const users = await this.getAllUsers();
+            const followers = users.filter((user) => user.follow_date !== null);
+            this.cache.set('followers', followers);
+            return followers;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in getFollowers: ${error}`);
+            return null;
+        }
+    }
+
+    // Method to get all users that are vip in and set the vips property in the cache
+    async getVips() {
+        try {
+            const users = await this.getAllUsers();
+            const vips = users.filter((user) => user.vip === true);
+            this.cache.set('vips', vips);
+            return vips;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in getVips: ${error}`);
+            return null;
+        }
+    }
+
+    // Method to get all users that are subscribers and set the subscribers property in the cache
+    async getSubscribers() {
+        try {
+            const users = await this.getAllUsers();
+            const subscribers = users.filter((user) => user.subscriber === true);
+            this.cache.set('subscribers', subscribers);
+            return subscribers;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in getSubscribers: ${error}`);
+            return null;
+        }
+    }
+
+    // Method to get all users that are moderators and set the moderators property in the cache
+    async getModerators() {
+        try {
+            const users = await this.getAllUsers();
+            const moderators = users.filter((user) => user.moderator === true);
+            this.cache.set('moderators', moderators);
+            return moderators;
+        }
+        catch (error) {
+            writeToLogFile('error', `Error in getModerators: ${error}`);
+            return null;
+        }
+    }
+
+    // Method to return rather a user is a follower or not from the cache
     async isFollower(userId) {
         try {
             if (typeof userId !== 'string') {
                 userId = userId.toString();
             }
-            const user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
-            if (user.follow_date) {
-                return true;
+            const users = this.cache.get('users');
+            if (users) {
+                const user = users.find((user) => user.id === userId);
+                if (user.follow_date !== null) {
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
-                return false;
+                const user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
+                if (user.follow_date !== null) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
         }
         catch (error) {
@@ -153,12 +219,12 @@ export class UsersDB {
                     login: userData.login,
                     profile_image_url: null,
                     follow_date: userData.follow_date,
-                    leaderboard_points: 0,
                     arrived: true,
                     view_time: 0,
                     stream_view_time: 0,
                     monthly_view_time: 0,
                     weekly_view_time: 0,
+                    currency: {},
                 }
             };
             const options = { upsert: true };
@@ -167,6 +233,153 @@ export class UsersDB {
         }
         catch (error) {
             writeToLogFile('error', `Error in addUser: ${error}`);
+        }
+    }
+
+    // Method to increase a currency property for a user
+    async increaseCurrency(userId, currency, amount) {
+        try {
+            if (environment === 'development') {
+                console.log(`increaseUserValue: ${userId} ${currency} ${amount}`);
+                return;
+            } else {
+                // Increase the currency property for the user in the cache
+                let user = this.cache.get(userId);
+                if (!user) {
+                    user = await this.getUserByUserId(userId);
+                }
+                if (currency in user.currency) {
+                    user.currency[currency] += amount;
+                } else {
+                    user.currency[currency] = amount;
+                }
+                this.cache.set(userId, user);
+                // Increase the currency property for the user in the database
+                await this.dbConnection.collection(this.collectionName).updateOne(
+                    { id: userId },
+                    // Increase the currency name within the currency object to the amount
+                    { $inc: { [`currency.${currency}`]: amount } },
+                    { upsert: true }
+                );
+            }
+        } catch (error) {
+            writeToLogFile('error', `Error in increaseCurrency: ${error}`);
+        }
+    }
+
+    // Method to increase a currency property for a a list of users
+    async increaseCurrencyForUsers(userIds, currency, amount) {
+        try {
+            if (environment === 'development') {
+                console.log(`increaseUserValue: ${userIds} ${currency} ${amount}`);
+                return;
+            } else {
+                // Increase the currency property for the user in the cache
+                let users = this.cache.get('users');
+                if (!users) {
+                    users = await this.getAllUsers();
+                }
+                for (const userId of userIds) {
+                    const user = users.find((user) => user.id === userId);
+                    if (currency in user.currency) {
+                        user.currency[currency] += amount;
+                    } else {
+                        user.currency[currency] = amount;
+                    }
+                    this.cache.set(userId, user);
+                }
+                // Increase the currency property for the user in the database
+                await this.dbConnection.collection(this.collectionName).updateMany(
+                    { id: { $in: userIds } },
+                    // Increase the currency name within the currency object to the amount
+                    { $inc: { [`currency.${currency}`]: amount } },
+                    { upsert: true }
+                );
+            }
+        } catch (error) {
+            writeToLogFile('error', `Error in increaseCurrencyForUsers: ${error}`);
+        }
+    }
+
+    // Method to decrease a currency property for a user
+    async decreaseCurrency(userId, currency, amount) {
+        try {
+            if (environment === 'development') {
+                console.log(`decreaseUserValue: ${userId} ${currency} ${amount}`);
+                return;
+            } else {
+                // Decrease the currency property for the user in the cache
+                let user = this.cache.get(userId);
+                if (!user) {
+                    user = await this.getUserByUserId(userId);
+                }
+                if (currency in user.currency) {
+                    user.currency[currency] -= amount;
+                } else {
+                    user.currency[currency] = amount;
+                }
+                this.cache.set(userId, user);
+                // Decrease the currency property for the user in the database
+                await this.dbConnection.collection(this.collectionName).updateOne(
+                    { id: userId },
+                    // Decrease the currency name within the currency object to the amount
+                    { $inc: { [`currency.${currency}`]: -amount } },
+                    { upsert: true }
+                );
+            }
+        } catch (error) {
+            writeToLogFile('error', `Error in decreaseCurrency: ${error}`);
+        }
+    }
+
+    // Method to set a currency property for a user
+    async setCurrency(userId, currency, amount) {
+        try {
+            if (environment === 'development') {
+                console.log(`setUserValue: ${userId} ${currency} ${amount}`);
+                return;
+            } else {
+                // Set the currency property for the user in the cache
+                let user = this.cache.get(userId);
+                if (!user) {
+                    user = await this.getUserByUserId(userId);
+                }
+                user.currency[currency] = amount;
+                this.cache.set(userId, user);
+                // Set the currency property for the user in the database
+                await this.dbConnection.collection(this.collectionName).updateOne(
+                    { id: userId },
+                    // Set the currency name within the currency object to the amount
+                    { $set: { [`currency.${currency}`]: amount } },
+                    { upsert: true }
+                );
+            }
+        } catch (error) {   
+            writeToLogFile('error', `Error in setCurrency: ${error}`);
+        }
+    }
+
+    // Method to get a currency property for a user
+    async getCurrency(userId, currency) {
+        try {
+            if (environment === 'development') {
+                console.log(`getUserValue: ${userId} ${currency}`);
+                return;
+            } else {
+                // Get the currency property for the user in the cache
+                let user = this.cache.get(userId);
+                if (!user) {
+                    user = await this.getUserByUserId(userId);
+                }
+                // Get the currency property for the user in the database
+                const result = await this.dbConnection.collection(this.collectionName).findOne(
+                    { id: userId },
+                    { projection: { [`currency.${currency}`]: 1 } }
+                );
+                return result.currency[currency];
+            }
+        } catch (error) {
+            writeToLogFile('error', `Error in getCurrency: ${error}`);
         }
     }
 
