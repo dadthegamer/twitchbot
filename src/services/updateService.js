@@ -23,7 +23,7 @@ async function checkForUpdates() {
             console.log(response.data);
             console.log(`Update available: ${latestVersion}`);
 
-            await downloadUpdate(release.zipball_url);
+            await downloadUpdate(release.assets[0].browser_download_url);
 
             console.log('Update downloaded and extracted. Restarting...');
             restartApp();
@@ -35,7 +35,6 @@ async function checkForUpdates() {
     } catch (error) {
         console.error(error);
     }
-
 }
 
 async function downloadUpdate(url) {
@@ -53,8 +52,15 @@ async function downloadUpdate(url) {
     writer.on('finish', async () => {
         console.log('Download complete');
 
-        const zip = new admZip(filePath);
-        zip.extractAllTo(__dirname);
+        // If in production, delete the old files
+        if (process.env.NODE_ENV === 'production') {
+            const files = await fs.readdir(__dirname);
+            const filteredFiles = files.filter(file => file !== 'latest.zip');
+            const zip = new admZip(filePath);
+            zip.extractAllTo(__dirname);
+        } else if (process.env.NODE_ENV === 'development') {
+            console.log('In development, not deleting old files');
+        }
 
         await fs.unlink(filePath);
 

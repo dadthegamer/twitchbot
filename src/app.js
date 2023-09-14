@@ -47,6 +47,15 @@ app.use(
     })
 );
 
+
+app.on('exit', (code) => {
+    if(code === 0) {
+        console.log('App restarted successfully.');
+    } else {
+        console.error('App failed to restart. Exit code:', code);
+    }
+});
+
 // Twitch authentication
 import twitchAuthRouter from './routes/authRoutes/twitchAuth.js';
 import twitchCallbackRouter from './routes/authRoutes/twitchCallback.js';
