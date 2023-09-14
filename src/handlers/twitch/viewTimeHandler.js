@@ -86,9 +86,6 @@ export async function addBotsToKnownBots() {
 export async function getChattersWithoutBots() {
     try {
         const chatters = await twitchApi.getChatters();
-        if (environment === 'development') {
-            console.log('chatters', chatters);
-        }
         const bots = knownBots.keys();
         const chattersWithoutBots = chatters.filter((chatter) => !bots.includes(chatter.userId));
         return chattersWithoutBots;
@@ -103,6 +100,7 @@ export async function getChattersWithoutBots() {
 export async function viewTimeHandler() {
     try {
         const live = cache.get('live');
+        console.log(live);
         const mintues = 1;
         if (!live) {
             return;
