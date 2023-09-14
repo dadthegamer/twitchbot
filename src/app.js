@@ -9,7 +9,7 @@ import { config } from 'dotenv';
 import { tokenDB, cache } from './config/initializers.js';
 import { checkForUpdates } from './services/updateService.js';
 
-checkForUpdates();
+
 config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -46,15 +46,6 @@ app.use(
         },
     })
 );
-
-
-app.on('exit', (code) => {
-    if(code === 0) {
-        console.log('App restarted successfully.');
-    } else {
-        console.error('App failed to restart. Exit code:', code);
-    }
-});
 
 // Twitch authentication
 import twitchAuthRouter from './routes/authRoutes/twitchAuth.js';
@@ -106,4 +97,5 @@ app.use('/', guiRouter);
 
 app.listen(port, () => {
     console.log(`Server is running`);
+    checkForUpdates();
 });

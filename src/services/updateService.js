@@ -6,6 +6,7 @@ import { createWriteStream } from 'fs';
 import admZip from 'adm-zip';
 import semver from 'semver';
 import stream from 'stream';
+import { spawn } from 'child_process';
 
 // Define __dirname
 const __dirname = path.resolve();
@@ -23,9 +24,9 @@ async function checkForUpdates() {
             console.log(response.data);
             console.log(`Update available: ${latestVersion}`);
 
-            await downloadUpdate(release.assets[0].browser_download_url);
+            // await downloadUpdate(release.assets[0].browser_download_url);
 
-            console.log('Update downloaded and extracted. Restarting...');
+            // console.log('Update downloaded and extracted. Restarting...');
             restartApp();
 
         } else {
@@ -78,7 +79,28 @@ async function downloadUpdate(url) {
 }
 
 function restartApp() {
-    console.log('Restarting app...');
+    try {
+        console.log('Restarting app...');
+        const app = spawn('node', ['start'], {
+            cwd: process.cwd(),
+            detached: true,
+            stdio: 'inherit'
+        });
+
+        app.stderr.on('data', (data) => {
+            console.error(`stderr from new instance: ${data}`);
+        });
+        
+        app.on('error', (err) => {
+            console.error('Error during restart:', err);
+        });
+        
+        app.unref();
+        console.log('App restart process initiated.');
+    }
+    catch (error) {
+        console.error(error);
+    }
 }
 
 export { checkForUpdates };
