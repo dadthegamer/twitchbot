@@ -4,6 +4,7 @@ import { Routes, Route } from 'react-router-dom';
 import Users from './components/Users';
 import SideNavbar from './components/SideNavBar';
 import TopNavbar from './components/TopNavBar';
+import Currency from './components/Currency';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <TopNavbar />
       <Routes>
         <Route path="/users" element={<Users />} />
+        <Route path="/currency" element={<Currency />} />
       </Routes>
     </div>
   );
