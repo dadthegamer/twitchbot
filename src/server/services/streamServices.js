@@ -1,4 +1,4 @@
-import { writeToLogFile } from "../utilities/logging.js";
+import logger from "../utilities/logger.js";
 import { msToMinutes } from "../utilities/utils.js";
 import { chatLogService } from "../config/initializers.js";
 
@@ -44,7 +44,7 @@ export class StreamDB {
             return true;
         }
         catch (error) {
-            writeToLogFile('error', `Error in setInitialStreamData: ${error}`);
+            logger.error(`Error in setInitialStreamData: ${error}`);
             return false;
         }
     }
@@ -89,7 +89,7 @@ export class StreamDB {
                 return res;
             }
             catch (error) {
-                writeToLogFile('error', `Error in startStream: ${error}`);
+                logger.error(`Error in startStream: ${error}`);
                 return;
             }
         }
@@ -147,8 +147,7 @@ export class StreamDB {
             }
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error in checkStream: ${error}`);
+            logger.error(`Error in checkStream: ${error}`);
             return null;
         }
     }
@@ -180,7 +179,7 @@ export class StreamDB {
             return true;
         }
         catch (error) {
-            writeToLogFile('error', `Error in insertNewStream: ${error}`);
+            logger.error(`Error in insertNewStream: ${error}`);
             return false;
         }
     }
@@ -193,7 +192,7 @@ export class StreamDB {
             return streamData;
         }
         catch (error) {
-            writeToLogFile('error', `Error in getStreamData: ${error}`);
+            logger.error(`Error in getStreamData: ${error}`);
             return null;
         }
     }
@@ -225,7 +224,7 @@ export class StreamDB {
             );
             this.cache.set('stream', stream);
         } catch (error) {
-            writeToLogFile('error', `Error in increaseStreamProperty: ${error}`);
+            logger.error(`Error in increaseStreamProperty: ${error}`);
         }
     }
 
@@ -243,7 +242,7 @@ export class StreamDB {
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error in addFollower: ${error}`);
+            logger.error(`Error in addFollower: ${error}`);
         }
     }
 
@@ -261,7 +260,7 @@ export class StreamDB {
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error in addNewSub: ${error}`);
+            logger.error(`Error in addNewSub: ${error}`);
         }
     }
 
@@ -279,7 +278,7 @@ export class StreamDB {
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error in addViewer: ${error}`);
+            logger.error(`Error in addViewer: ${error}`);
         }
     }
 
@@ -299,7 +298,7 @@ export class StreamDB {
             this.getLatestEvents();
         }
         catch (error) {
-            writeToLogFile('error', `Error in setLatestEvent: ${error}`);
+            logger.error(`Error in setLatestEvent: ${error}`);
         }
     }
 
@@ -319,7 +318,7 @@ export class StreamDB {
             return events;
         }
         catch (error) {
-            writeToLogFile('error', `Error in getLatestEvents: ${error}`);
+            logger.error(`Error in getLatestEvents: ${error}`);
             return null;
         }
     }
@@ -333,7 +332,7 @@ export class StreamDB {
             return jackpot;
         }
         catch (error) {
-            writeToLogFile('error', `Error in getJackpot: ${error}`);
+            logger.error(`Error in getJackpot: ${error}`);
             return null;
         }
     }
@@ -351,7 +350,7 @@ export class StreamDB {
             return newJackpot;
         }
         catch (error) {
-            writeToLogFile('error', `Error in increaseJackpot: ${error}`);
+            logger.error(`Error in increaseJackpot: ${error}`);
             return null;
         }
     }
@@ -367,7 +366,7 @@ export class StreamDB {
             return amount;
         }
         catch (error) {
-            writeToLogFile('error', `Error in setJackpot: ${error}`);
+            logger.error(`Error in setJackpot: ${error}`);
             return null;
         }
     }

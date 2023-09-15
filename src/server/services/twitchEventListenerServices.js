@@ -2,7 +2,7 @@ import { EventSubWsListener } from '@twurple/eventsub-ws';
 import { onPredictionStart, onPredictionEnd, onPredictionLock, onPredictionProgress } from '../handlers/twitch/eventHandlers/predictionHanders.js';
 import { onRedemptionAdd } from '../handlers/twitch/eventHandlers/redemptionHandler.js';
 import { onRaid } from '../handlers/twitch/eventHandlers/raidHandler.js';
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from "../utilities/logger.js";
 import { onStreamOnline, onStreamOffline, onStreamUpdate } from '../handlers/twitch/eventHandlers/streamHandler.js';
 import { onBits } from '../handlers/twitch/eventHandlers/cheerHandler.js';
 import { onFollow } from '../handlers/twitch/eventHandlers/followHandler.js';
@@ -46,7 +46,7 @@ export async function startEventListener(apiClient) {
         console.log('Event listener started.');
     }
     catch (error) {
-        writeToLogFile('error', `Error starting event listener: ${error}`);
+        logger.error(`Error starting event listener: ${error}`);
         throw new Error(`Error starting event listener: ${error}`);
     }
 }

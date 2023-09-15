@@ -1,5 +1,5 @@
 import { ApiClient } from '@twurple/api';
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from "../utilities/logger.js";
 import axios from 'axios';
 import { startEventListener } from '../services/twitchEventListenerServices.js';
 
@@ -58,7 +58,7 @@ export class TwitchApiClient {
         }
         catch (error) {
             console.log(error);
-            writeToLogFile('error', `Error getting stream info: ${error}`);
+            logger.error(`Error getting stream info: ${error}`);
         }
     }
 
@@ -79,8 +79,7 @@ export class TwitchApiClient {
             return followers;
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error getting channel followers: ${error}`);
+            logger.error(`Error getting followers: ${error}`);
         }
     }
 
@@ -97,8 +96,7 @@ export class TwitchApiClient {
             return data;
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error getting user data by token: ${error}`);
+            logger.error(`Error getting user data by token: ${error}`);
         }
     }
 
@@ -115,7 +113,7 @@ export class TwitchApiClient {
             return vips;
         }
         catch (error) {
-            writeToLogFile('error', `Error getting channel VIP's: ${error}`);
+            logger.error(`Error getting channel VIP's: ${error}`);
         }
     }
 
@@ -134,8 +132,7 @@ export class TwitchApiClient {
             return subs;
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error getting channel subscribers: ${error}`);
+            logger.error(`Error getting channel subscribers: ${error}`);
         }
     }
 
@@ -152,8 +149,7 @@ export class TwitchApiClient {
             return mods;
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error getting channel moderators: ${error}`);
+            logger.error(`Error getting channel moderators: ${error}`);
         }
     }
 
@@ -170,7 +166,7 @@ export class TwitchApiClient {
             return user;
         }
         catch (error) {
-            writeToLogFile('error', `Error getting user data: ${error}`);
+            logger.error(`Error getting user data by ID: ${error}`);
         }
     }
 
@@ -189,7 +185,7 @@ export class TwitchApiClient {
         }
         catch (error) {
             console.log(error);
-            writeToLogFile('error', `Error getting chatters: ${error}`);
+            logger.error(`Error getting chatters: ${error}`);
         }
     }
 
@@ -199,7 +195,7 @@ export class TwitchApiClient {
             await this.apiClient.chat.sendAnnouncement(this.userId, { message: message, color: color });
         }
         catch (error) {
-            writeToLogFile('error', `Error sending channel announcement: ${error}`);
+            logger.error(`Error sending channel announcement: ${error}`);
         }
     }
 
@@ -209,7 +205,7 @@ export class TwitchApiClient {
             await this.apiClient.chat.shoutoutUser(this.userId, userId);
         }
         catch (error) {
-            writeToLogFile('error', `Error shouting out user: ${error}`);
+            logger.error(`Error shouting out user: ${error}`);
         }
     }
 
@@ -226,7 +222,7 @@ export class TwitchApiClient {
             return response;
         }
         catch (error) {
-            writeToLogFile('error', `Error creating prediction: ${error}`);
+            logger.error(`Error creating prediction: ${error}`);
         }
     }
 
@@ -239,7 +235,7 @@ export class TwitchApiClient {
             return response;
         }
         catch (error) {
-            writeToLogFile('error', `Error ending prediction: ${error}`);
+            logger.error(`Error ending prediction: ${error}`);
         }
     }
 
@@ -274,7 +270,7 @@ export class TwitchApiClient {
         }
         catch (error) {
             console.log(error);
-            writeToLogFile('error', `Error getting current prediction: ${error}`);
+            logger.error(`Error getting current prediction: ${error}`);
         }
     }
 
@@ -287,7 +283,7 @@ export class TwitchApiClient {
             return response;
         }
         catch (error) {
-            writeToLogFile('error', `Error canceling prediction: ${error}`);
+            logger.error(`Error canceling prediction: ${error}`);
         }
     }
 
@@ -304,7 +300,7 @@ export class TwitchApiClient {
             return response;
         }
         catch (error) {
-            writeToLogFile('error', `Error creating poll: ${error}`);
+            logger.error(`Error creating poll: ${error}`);
         }
     }
 
@@ -317,7 +313,7 @@ export class TwitchApiClient {
             return response;
         }
         catch (error) {
-            writeToLogFile('error', `Error ending poll: ${error}`);
+            logger.error(`Error ending poll: ${error}`);
         }
     }
 
@@ -329,7 +325,7 @@ export class TwitchApiClient {
             return polls;
         }
         catch (error) {
-            writeToLogFile('error', `Error getting polls: ${error}`);
+            logger.error(`Error getting polls: ${error}`);
         }
     }
 
@@ -352,7 +348,7 @@ export class TwitchApiClient {
         }
         catch (error) {
             console.log(error);
-            writeToLogFile('error', `Error getting latest poll: ${error}`);
+            logger.error(`Error getting latest poll: ${error}`);
         }
     }
 
@@ -372,8 +368,7 @@ export class TwitchApiClient {
             return leaderboard;
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error getting bits leaderboard: ${error}`);
+            logger.error(`Error getting bits leaderboard: ${error}`);
         }
     }
 
@@ -402,8 +397,7 @@ export class TwitchApiClient {
             return rewards;
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error getting channel rewards: ${error}`);
+            logger.error(`Error getting channel rewards: ${error}`);
         }
     }
 
@@ -432,8 +426,7 @@ export class TwitchApiClient {
             return rewards;
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error getting channel rewards: ${error}`);
+            logger.error(`Error getting channel rewards managed: ${error}`);
         }
     }
 
@@ -461,8 +454,7 @@ export class TwitchApiClient {
             return reward;
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error getting custom reward by ID: ${error}`);
+            logger.error(`Error getting custom reward by ID: ${error}`);
         }
     }
 
@@ -480,8 +472,7 @@ export class TwitchApiClient {
             return response;
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error updating custom reward: ${error}`);
+            logger.error(`Error updating custom reward: ${error}`);
         }
     }
 
@@ -492,8 +483,7 @@ export class TwitchApiClient {
             return response;
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error creating custom reward: ${error}`);
+            logger.error(`Error creating custom reward: ${error}`);
         }
     }
 }

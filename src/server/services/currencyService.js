@@ -1,9 +1,9 @@
-import { writeToLogFile } from '../utilities/logging.js';
 import { cache, usersDB } from '../config/initializers.js';
 import { environment } from '../config/environmentVars.js';
 import { getChattersWithoutBots } from '../handlers/twitch/viewTimeHandler.js';
 import NodeCache from 'node-cache';
 import { activeUsersCache } from '../config/initializers.js';
+import logger from '../utilities/logger.js';
 
 // Currency Class
 export class CurrencyService {
@@ -78,7 +78,7 @@ export class CurrencyService {
                 return currency;
             }
         } catch (err) {
-            writeToLogFile('error', `Error in createFirstCurrency: ${err}`);
+            logger.error(`Error in createFirstCurrency: ${err}`);
         }
     }
 
@@ -136,7 +136,7 @@ export class CurrencyService {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in createRaffleCurrency: ${err}`);
+            logger.error(`Error in createRaffleCurrency: ${err}`);
         }
     }
 
@@ -146,7 +146,7 @@ export class CurrencyService {
             const currency = await this.dbConnection.collection(this.collectionName).findOne({ name });
             return currency;
         } catch (err) {
-            writeToLogFile('error', `Error in getCurrencyByName: ${err}`);
+            logger.error(`Error in getCurrencyByName: ${err}`);
         }
     }
 
@@ -157,7 +157,7 @@ export class CurrencyService {
             this.cache.set('currencies', currencies);
             return currencies;
         } catch (err) {
-            writeToLogFile('error', `Error in getAllCurrencies: ${err}`);
+            logger.error(`Error in getAllCurrencies: ${err}`);
         }
     }
 
@@ -168,7 +168,7 @@ export class CurrencyService {
             await getAllCurrencies();
             return res;
         } catch (err) {
-            writeToLogFile('error', `Error in updateCurrency: ${err}`);
+            logger.error(`Error in updateCurrency: ${err}`);
         }
     }
 
@@ -183,7 +183,7 @@ export class CurrencyService {
             return res;
         }
         catch (err) {
-            writeToLogFile('error', `Error in deleteCurrency: ${err}`);
+            logger.error(`Error in deleteCurrency: ${err}`);
         }
     }
 
@@ -243,7 +243,7 @@ export class CurrencyService {
             await getAllCurrencies();
             return res;
         } catch (err) {
-            writeToLogFile('error', `Error in createCurrency: ${err}`);
+            logger.error(`Error in createCurrency: ${err}`);
         }
     }
 
@@ -297,7 +297,7 @@ export class CurrencyService {
             return roles;
         }
         catch (err) {
-            writeToLogFile('error', `Error in restrictionPayoutHandler: ${err}`);
+            logger.error(`Error in restrictionPayoutHandler: ${err}`);
         }
     }
 
@@ -390,7 +390,7 @@ export class CurrencyService {
             this.currencyPayoutHandler();
             return res;
         } catch (err) {
-            writeToLogFile('error', `Error in updateCurrency: ${err}`);
+            logger.error(`Error in updateCurrency: ${err}`);
         }
     }
 
@@ -416,7 +416,7 @@ export class CurrencyService {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in addCurrencyForSub: ${err}`);
+            logger.error(`Error in addCurrencyForSub: ${err}`);
         }
     }
 
@@ -436,7 +436,7 @@ export class CurrencyService {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in addCurrencyForBits: ${err}`);
+            logger.error(`Error in addCurrencyForBits: ${err}`);
         }
     }
 
@@ -456,7 +456,7 @@ export class CurrencyService {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in addCurrencyForDonations: ${err}`);
+            logger.error(`Error in addCurrencyForDonations: ${err}`);
         }
     }
 
@@ -476,7 +476,7 @@ export class CurrencyService {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in addCurrencyForRaids: ${err}`);
+            logger.error(`Error in addCurrencyForRaids: ${err}`);
         }
     }
 
@@ -496,7 +496,7 @@ export class CurrencyService {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in addCurrencyForArriving: ${err}`);
+            logger.error(`Error in addCurrencyForArriving: ${err}`);
         }
     }
 }

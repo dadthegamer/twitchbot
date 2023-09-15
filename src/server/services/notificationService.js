@@ -1,5 +1,5 @@
-import { writeToLogFile } from '../utilities/logging.js';
 import { environment } from '../config/environmentVars.js';
+import logger from '../utilities/logger.js';
 
 // User class 
 export class NotificationService {
@@ -21,8 +21,7 @@ export class NotificationService {
             const result = await this.dbConnection.collection(this.collectionName).insertOne(data);
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error creating notification: ${error}`);
-            throw error;
+            logger.error(`Error creating notification: ${error}`);
         }
     }
 
@@ -32,8 +31,7 @@ export class NotificationService {
             const result = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error getting notifications: ${error}`);
-            throw error;
+            logger.error(`Error getting notifications: ${error}`);
         }
     }
 
@@ -43,8 +41,7 @@ export class NotificationService {
             const result = await this.dbConnection.collection(this.collectionName).find({ read: false }).toArray();
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error getting unread notifications: ${error}`);
-            throw error;
+            logger.error(`Error getting unread notifications: ${error}`);
         }
     }
 
@@ -54,8 +51,7 @@ export class NotificationService {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ _id: notificationId }, { $set: { read: true } });
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error marking notification as read: ${error}`);
-            throw error;
+            logger.error(`Error marking notification as read: ${error}`);
         }
     }
 
@@ -65,8 +61,7 @@ export class NotificationService {
             const result = await this.dbConnection.collection(this.collectionName).deleteOne({ _id: notificationId });
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error deleting notification: ${error}`);
-            throw error;
+            logger.error(`Error deleting notification: ${error}`);
         }
     }
 
@@ -76,8 +71,7 @@ export class NotificationService {
             const result = await this.dbConnection.collection(this.collectionName).deleteMany({});
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error deleting all notifications: ${error}`);
-            throw error;
+            logger.error(`Error deleting all notifications: ${error}`);
         }
     }
 
@@ -87,8 +81,7 @@ export class NotificationService {
             const result = await this.dbConnection.collection(this.collectionName).deleteMany({ read: true });
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error deleting all read notifications: ${error}`);
-            throw error;
+            logger.error(`Error deleting all read notifications: ${error}`);
         }
     }
 

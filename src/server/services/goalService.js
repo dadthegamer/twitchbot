@@ -1,4 +1,4 @@
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from "../utilities/logger.js";
 
 // User class 
 export class GoalService {
@@ -80,7 +80,7 @@ export class GoalService {
                 await this.getAllGoals();
             }
         } catch (error) {
-            writeToLogFile('error', `Error creating initial goal: ${error}`);
+            logger.error(`Error creating initial goals: ${error}`);
         }
     }
 
@@ -91,7 +91,7 @@ export class GoalService {
             await this.cache.set('goals', goals);
             return goals;
         } catch (error) {
-            writeToLogFile('error', `Error getting all goals: ${error}`);
+            logger.error(`Error getting all goals: ${error}`);
         }
     }
 
@@ -106,7 +106,7 @@ export class GoalService {
             const goal = goals.find(goal => goal.name === goalName);
             return goal;
         } catch (error) {
-            writeToLogFile('error', `Error getting goal by name: ${error}`);
+            logger.error(`Error getting goal by name: ${error}`);
         }
     }
 
@@ -121,7 +121,7 @@ export class GoalService {
             await this.getAllGoals();
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error setting goal goal: ${error}`);
+            logger.error(`Error setting goal goal: ${error}`);  
         }
     }
 
@@ -136,7 +136,7 @@ export class GoalService {
             await this.getAllGoals();
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error setting goal current: ${error}`);
+            logger.error(`Error setting goal current: ${error}`);
         }
     }
 
@@ -151,7 +151,7 @@ export class GoalService {
             await this.getAllGoals();
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error increasing goal current: ${error}`);
+            logger.error(`Error increasing goal current: ${error}`);
         }
     }
 
@@ -166,7 +166,7 @@ export class GoalService {
             await this.getAllGoals();
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error updating goal: ${error}`);
+            logger.error(`Error updating goal: ${error}`);
         }
     }
 

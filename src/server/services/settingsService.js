@@ -1,4 +1,4 @@
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from "../utilities/logger.js";
 
 
 // Command Class
@@ -81,7 +81,7 @@ export class SettingsService {
             const cachedSettings = await this.dbConnection.collection('settings').find().toArray();
             this.cache.set('applicationSettings', cachedSettings);
         } catch (error) {
-            writeToLogFile('error', `Error setting initial settings: ${error}`);
+            logger.error(`Error setting initial settings: ${error}`);
         }
     }
 
@@ -92,7 +92,7 @@ export class SettingsService {
             this.cache.set('applicationSettings', settings);
             return settings;
         } catch (error) {
-            writeToLogFile('error', `Error getting all settings: ${error}`);
+            logger.error(`Error getting all settings: ${error}`);
         }
     }
 
@@ -102,7 +102,7 @@ export class SettingsService {
             const setting = await this.dbConnection.collection('settings').findOne({ name: name });
             return setting;
         } catch (error) {
-            writeToLogFile('error', `Error getting setting: ${error}`);
+            logger.error(`Error getting setting: ${error}`);
         }
     }
 
@@ -113,7 +113,7 @@ export class SettingsService {
             await this.getAllSettings();
             return setting;
         } catch (error) {
-            writeToLogFile('error', `Error updating setting: ${error}`);
+            logger.error(`Error updating setting: ${error}`);
         }
     }
 }

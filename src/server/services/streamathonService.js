@@ -1,4 +1,4 @@
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from "../utilities/logger.js";
 import { webSocket } from '../config/initializers.js';
 import { environment } from '../config/environmentVars.js';
 
@@ -59,11 +59,11 @@ export class StreamathonService {
             if (!subathonSettings) {
                 await this.dbConnection.collection(this.collectionName).insertOne(initialstreamathonSettings);
                 await this.cache.set('streamathonSettings', initialstreamathonSettings);
-                writeToLogFile('info', `Created initial streamathon settings in database and cache`);
+                logger.info('Initial streamathon settings created');
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error creating initial streamathon settings: ${error}`);
+            logger.error(`Error creating initial streamathon settings: ${error}`);
         }
     }
 
@@ -81,7 +81,7 @@ export class StreamathonService {
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error getting streamathon settings: ${error}`);
+            logger.error(`Error getting streamathon settings: ${error}`);
         }
     }
 
@@ -93,7 +93,7 @@ export class StreamathonService {
             return streamathonSettings;
         }
         catch (error) {
-            writeToLogFile('error', `Error updating streamathon settings: ${error}`);
+            logger.error(`Error updating streamathon settings: ${error}`);
         }
     }
 
@@ -107,7 +107,7 @@ export class StreamathonService {
         // Check if the parameter is valid
         const validParameters = ['subs', 'bits', 'followers', 'donations', 'tikTokFollowers', 'tikTokLikes', 'tikTokGifts'];
         if (!validParameters.includes(parameter)) {
-            writeToLogFile('error', `Invalid parameter in increaseStreamathonCurrent: ${parameter}`);
+            logger.error(`Invalid parameter: ${parameter}`);
             return new Error(`Invalid parameter: ${parameter}`);
         }
         try {
@@ -125,7 +125,7 @@ export class StreamathonService {
             return streamathonSettings;
         }
         catch (error) {
-            writeToLogFile('error', `Error increasing streamathon current: ${error}`);
+            logger.error(`Error increasing streamathon current: ${error}`);
         }
     }
 }

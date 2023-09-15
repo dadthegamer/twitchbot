@@ -1,5 +1,5 @@
 import { WebcastPushConnection } from 'tiktok-live-connector';
-import { writeToLogFile } from './utilities/logging.js';
+import logger from "../utilities/logger.js";
 
 let connected = false;
 
@@ -10,13 +10,12 @@ export async function initializeTikTokConnection(username) {
         // Connect to the chat
         tiktokLiveConnection.connect().then(state => {
             connected = true;
-            console.info(`Connected to roomId ${state.roomId}`);
-            writeToLogFile('info', `Connected to TikTok`);
+            logger.info(`Connected to roomId ${state.roomId}`);
         }).catch(err => {
             if (err.message === 'LIVE has ended') {
                 return;
             } else {
-                writeToLogFile('error', `Error in initializeTikTokConnection: ${err}`);
+                logger.error(`Error connecting to TikTok: ${err}`);
             }
         })
     
@@ -24,11 +23,11 @@ export async function initializeTikTokConnection(username) {
         tiktokLiveConnection.on('streamEnd', (actionId) => {
             if (actionId === 3) {
                 console.log('Stream ended by user');
-                writeToLogFile('info', 'Stream ended by user');
+                logger.info('Stream ended by user');
             }
             if (actionId === 4) {
                 console.log('Stream ended by platform moderator (ban)');
-                writeToLogFile('info', 'Stream ended by platform moderator (ban)');
+                logger.info('Stream ended by platform moderator (ban)');
             }
         })
     
@@ -65,6 +64,6 @@ export async function initializeTikTokConnection(username) {
     }
     catch (err) {
         console.log(err);
-        writeToLogFile('error', `Error in initializeTikTokConnection: ${err}`);
+        logger.error(`Error initializing TikTok connection: ${err}`);
     }
 }

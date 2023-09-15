@@ -1,4 +1,4 @@
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from "../utilities/logger.js";
 import { getChattersWithoutBots } from '../handlers/twitch/viewTimeHandler.js';
 import { currencyDB, usersDB } from '../config/initializers.js';
 import NodeCache from 'node-cache';
@@ -28,7 +28,7 @@ export class ViewTimeService {
             this.cache.set('currentViewers', chatters);
             return chatters;
         } catch (err) {
-            writeToLogFile('error', `Error in getCurrentViewers: ${err}`);
+            logger.error(`Error in getCurrentViewers: ${err}`);
         }
     }
 
@@ -40,7 +40,7 @@ export class ViewTimeService {
                 this.viewTimeHandler();
             }, 60000);
         } catch (err) {
-            writeToLogFile('error', `Error in getCurrentViewersEveryMinute: ${err}`);
+            logger.error(`Error in viewTimeHandlerInterval: ${err}`);
         }
     }
 
@@ -72,6 +72,6 @@ export class ViewTimeService {
             }
         }
     } catch (err) {
-        writeToLogFile('error', `Error in viewTimeHandler: ${err}`);
+        logger.error(`Error in viewTimeHandler: ${err}`);
     }}
 }

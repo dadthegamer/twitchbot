@@ -1,4 +1,4 @@
-import { writeToLogFile } from "../utilities/logging.js";
+import logger from "../utilities/logger.js";
 
 // Class to to handle interactions with the database
 export class InteractionsDbService {
@@ -17,7 +17,7 @@ export class InteractionsDbService {
             return roasts;
         }
         catch (err) {
-            writeToLogFile('error', `Error in getRoasts: ${err}`);
+            logger.error(`Error in getRoasts: ${err}`);
         }
     }
 
@@ -35,7 +35,7 @@ export class InteractionsDbService {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in insertRoast: ${err}`);
+            logger.error(`Error in insertRoast: ${err}`);
         }
     }
 
@@ -47,7 +47,7 @@ export class InteractionsDbService {
             return quotes;
         }
         catch (err) {
-            writeToLogFile('error', `Error in getQuotes: ${err}`);
+            logger.error(`Error in getAllQuotes: ${err}`);
         }
     }
 
@@ -59,7 +59,7 @@ export class InteractionsDbService {
             return randomQuote;
         }
         catch (err) {
-            writeToLogFile('error', `Error in getRandomQuote: ${err}`);
+            logger.error(`Error in getRandomQuote: ${err}`);
         }
     }
 
@@ -92,7 +92,7 @@ export class InteractionsDbService {
             return newQuote;
         }
         catch (err) {
-            writeToLogFile('error', `Error in storeQuote: ${err}`);
+            logger.error(`Error in createQuote: ${err}`);
         }
     }
 
@@ -115,8 +115,7 @@ export class InteractionsDbService {
             return res;
         }
         catch (err) {
-            console.error('Error in updateQuote:', err);
-            writeToLogFile('error', `Error in updateQuote: ${err}`);
+            logger.error(`Error in updateQuote: ${err}`);
         }
     }
 
@@ -131,7 +130,7 @@ export class InteractionsDbService {
             return res;
         }
         catch (err) {
-            writeToLogFile('error', `Error in deleteQuote: ${err}`);
+            logger.error(`Error in deleteQuote: ${err}`);
         }
     }
 

@@ -1,5 +1,4 @@
-import { writeToLogFile } from '../utilities/logging.js';
-
+import logger from "../utilities/logger.js";
 
 // Class for token data
 export class TokenDB {
@@ -16,7 +15,7 @@ export class TokenDB {
             return result;
         }
         catch (error) {
-            writeToLogFile('error', `Error in getToken: ${error}`);
+            logger.error(`Error in getToken: ${error}`);
         }
     }
 
@@ -36,10 +35,9 @@ export class TokenDB {
             };
             const options = { upsert: true };
             await collection.updateOne(filter, update, options);
-            writeToLogFile('info', `User auth token stored for ${userId}.`);
+            logger.info(`User auth token stored for ${userId}.`);
         } catch (error) {
-            writeToLogFile('error', `Error storing user auth token: ${error}`);
-            console.log(`Error storing user auth token: ${error}`);
+            logger.error(`Error storing user auth token: ${error}`);
         }
     }
 
@@ -59,10 +57,9 @@ export class TokenDB {
             };
             const options = { upsert: true };
             await collection.updateOne(filter, update, options);
-            writeToLogFile('info', `User auth token updated for ${userId}.`);
+            logger.info(`User auth token updated for ${userId}.`);
         } catch (error) {
-            writeToLogFile('error', `Error updating user auth token: ${error}`);
-            console.log(`Error updating user auth token: ${error}`);
+            logger.error(`Error updating user auth token: ${error}`);
         }
     }
 
@@ -73,7 +70,7 @@ export class TokenDB {
             const result = await collection.findOne({ userId: userId });
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error getting user auth token: ${error}`);
+            logger.error(`Error getting user auth token: ${error}`);
         }
     }
 
@@ -84,8 +81,7 @@ export class TokenDB {
             const result = await collection.find({}).toArray();
             return result;
         } catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error getting all tokens: ${error}`);
+            logger.error(`Error getting all tokens: ${error}`);
         }
     }
 }

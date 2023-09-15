@@ -1,6 +1,6 @@
 import { RefreshingAuthProvider } from '@twurple/auth';
 import { ApiClient } from '@twurple/api';
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from "../utilities/logger.js";
 import { startEventListener } from './twitchEventListenerServices.js';
 import { TwitchBotClient } from './twitchBotServices.js';
 
@@ -32,13 +32,12 @@ export class AuthProviderManager {
                 await this.tokenDB.updateUserAuthToken(userId, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn, tokenData.obtainmentTimestamp);
             });
             this.authProvider.onRefreshFailure(async (userId, error) => {
-                writeToLogFile('error', `Error refreshing token for user ${userId}: ${error}`);
+                logger.error(`Error refreshing token for user ${userId}: ${error}`);
                 console.log(`Error refreshing token for user ${userId}: ${error}`);
             });
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error initializing auth provider: ${error}`);
+            logger.error(`Error initializing auth provider: ${error}`);
         }
     }
 
@@ -58,8 +57,7 @@ export class AuthProviderManager {
                     await this.addUserToAuthProvider(token);
                 }
             } catch (error) {
-                writeToLogFile('error', `Error adding user for token: ${error}`);
-                console.log(`Error adding user for token: ${error}`);
+                logger.error(`Error adding user to auth provider: ${error}`);
             }
         }
         catch (error) {
@@ -82,8 +80,7 @@ export class AuthProviderManager {
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error adding user to auth provider: ${error}`);
-            console.log(error);
+            logger.error(`Error adding user to auth provider: ${error}`);
         }
     }
 

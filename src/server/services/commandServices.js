@@ -1,5 +1,5 @@
-import { writeToLogFile } from '../utilities/logging.js';
 import NodeCache from 'node-cache';
+import logger from '../utilities/logger.js';
 
 
 // Command Class
@@ -20,8 +20,7 @@ export class Commands {
             });
         }
         catch (err) {
-            writeToLogFile('error', `Error in setInitialCacheValues: ${err}`)
-            console.error('Error in setInitialCacheValues:', err);
+            logger.error(`Error in setInitialCacheValues: ${err}`);
         }
     }
 
@@ -42,8 +41,7 @@ export class Commands {
             return result;
         }
         catch (err) {
-            writeToLogFile('error', `Error in getAllCommands: ${err}`);
-            console.error('Error in getAllCommands:', err);
+            logger.error(`Error in getAllCommandsFromDB: ${err}`);
         }
     }
 
@@ -58,8 +56,7 @@ export class Commands {
             return commands;
         }
         catch (err) {
-            writeToLogFile('error', `Error in getAllCommandsFromCache: ${err}`);
-            console.error('Error in getAllCommandsFromCache:', err);
+            logger.error(`Error in getAllCommandsFromCache: ${err}`);
         }
     }
 
@@ -77,8 +74,7 @@ export class Commands {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in getCommand: ${err}`);
-            console.error('Error in getCommand:', err);
+            logger.error(`Error in getCommand: ${err}`);
         }
     }
 
@@ -113,12 +109,11 @@ export class Commands {
                 };
                 this.cache.set(commandName, command);
                 const result = await commandsCollection.insertOne(command);
-                writeToLogFile('info', `Command created: ${result.name}`);
+                logger.info(`Command created: ${result.name}`);
                 return result;
             }
         } catch (error) {
-            console.error('Error in createCommand:', error);
-            writeToLogFile('error', `Error in createCommand: ${error}`)
+            logger.error(`Error in createCommand: ${error}`);
         }
     }
 
@@ -147,10 +142,10 @@ export class Commands {
                 }
             });
             this.cache.set(commandName, result);
-            writeToLogFile('info', `Command updated: ${result.name}`);
+            logger.info(`Command updated: ${result.name}`);
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error in updateCommand: ${error}`)
+            logger.error(`Error in updateCommand: ${error}`);
         }
     }
 
@@ -160,10 +155,10 @@ export class Commands {
             const commandsCollection = this.dbConnection.collection('commands');
             const result = await commandsCollection.deleteOne({ name: commandName });
             this.cache.del(commandName);
-            writeToLogFile('info', `Command deleted: ${result.name}`);
+            logger.info(`Command deleted: ${result.name}`);
             return true;
         } catch (error) {
-            writeToLogFile('error', `Error in deleteCommand: ${error}`)
+            logger.error(`Error in deleteCommand: ${error}`);
             return false;
         }
     }
@@ -178,10 +173,10 @@ export class Commands {
                 }
             });
             this.cache.set(commandName, result);
-            writeToLogFile('info', `Command toggled: ${result.name}`);
+            logger.info(`Command toggled: ${result.name}`);
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error in toggleCommand: ${error}`)
+            logger.error(`Error in toggleCommand: ${error}`);
             return false;
         }
     }
@@ -193,8 +188,7 @@ export class Commands {
             this.setInitialCacheValues();
         }
         catch (err) {
-            writeToLogFile('error', `Error in reloadCommands: ${err}`)
-            console.error('Error in reloadCommands:', err);
+            logger.error(`Error in reloadCommands: ${err}`);
         }
     }
 }

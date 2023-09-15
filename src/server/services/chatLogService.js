@@ -1,7 +1,6 @@
-import { writeToLogFile } from "../utilities/logging.js";
 import { cache } from "../config/initializers.js";
 import NodeCache from 'node-cache';
-
+import logger from '../utilities/logger.js';
 
 // Class to handle all stream related services
 export class ChatLogService {
@@ -27,7 +26,7 @@ export class ChatLogService {
             const chatLogs = await this.dbConnection.collection('chatLogs').find({ streamId: streamId }).toArray();
             return chatLogs;
         } catch (error) {
-            writeToLogFile('error', `Error getting chat logs for stream ${streamId}: ${error}`);
+            logger.error(`Error getting chat logs for stream ${streamId}: ${error}`);
         }
     }
 
@@ -51,7 +50,7 @@ export class ChatLogService {
                 this.addChatLogToDB(chatLogs);
             }
         } catch (error) {
-            writeToLogFile('error', `Error capturing chat message: ${error}`);
+            logger.error(`Error capturing chat message: ${error}`);
         }
     }
 
@@ -71,7 +70,7 @@ export class ChatLogService {
                 upsert: true,
             });
         } catch (error) {
-            writeToLogFile('error', `Error adding chat logs to the database: ${error}`);
+            logger.error(`Error adding chat logs to database: ${error}`);
         }
     }
 
@@ -80,7 +79,7 @@ export class ChatLogService {
         try {
             await this.dbConnection.collection('chatLogs').deleteMany({ streamId: streamId });
         } catch (error) {
-            writeToLogFile('error', `Error deleting chat logs for stream ${streamId}: ${error}`);
+            logger.error(`Error deleting chat logs for stream ${streamId}: ${error}`);
         }
     }
 
@@ -95,8 +94,7 @@ export class ChatLogService {
             // Return the id of the inserted document without the ObjectId wrapper
             return res.insertedId.toString();
         } catch (error) {
-            console.log(`Error creating chat log for stream ${streamId}: ${error}`);
-            writeToLogFile('error', `Error creating chat log for stream ${streamId}: ${error}`);
+            logger.error(`Error creating chat log for stream: ${error}`);
         }
     }
 }

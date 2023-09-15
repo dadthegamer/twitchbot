@@ -2,7 +2,7 @@ import { Bot } from '@twurple/easy-bot';
 import { ChatClient } from '@twurple/chat';
 import { environment } from '../config/environmentVars.js';
 import { onMessageHandler } from '../handlers/twitch/chatHandlers/onMessage.js';
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from "../utilities/logger.js";
 
 // Class to connect to Twitch chat
 export class TwitchChatClient {
@@ -40,7 +40,7 @@ export class TwitchChatClient {
             });
         }
         catch (error) {
-            writeToLogFile('error', `Error connecting to Twitch chat: ${error}`);
+            logger.error(`Error connecting to Twitch chat: ${error}`);
         }
     }
 
@@ -60,7 +60,7 @@ export class TwitchChatClient {
             this.chatClient.action(this.channel, message);
         }
         catch (error) {
-            writeToLogFile('error', `Error in action method within chat client: ${error}`);
+            logger.error(`Error in action method within chat client: ${error}`);
         }
     }
 
@@ -70,7 +70,7 @@ export class TwitchChatClient {
             this.chatClient.reconnect();
         }
         catch (error) {
-            writeToLogFile('error', `Error in reconnect method within chat client: ${error}`);
+            logger.error(`Error in reconnect method within chat client: ${error}`);
         }
     }
 

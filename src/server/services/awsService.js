@@ -1,6 +1,6 @@
 import AWS from 'aws-sdk';
 import { amazonAccessKey, amazonSecretKey } from '../config/environmentVars.js';
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from '../utilities/logger.js';
 
 
 const polly = new AWS.Polly({
@@ -20,6 +20,7 @@ export async function textToSpeech(text) {
         const speech = await polly.synthesizeSpeech(params).promise();
         return speech;
     } catch (error) {
-        writeToLogFile('error', `Error generating speech: ${error}`);
+        logger.error(`Error in textToSpeech: ${error}`);
+        return null;
     }
 }
