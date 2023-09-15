@@ -1,6 +1,6 @@
 import { existsSync, mkdirSync, appendFile, readdir, stat, unlink } from 'fs';
 import { join } from 'path';
-import { __dirname } from '../app.js'
+import { __dirname } from '../server.js'
 
 const logsDirectory = './logs'
 

@@ -6,8 +6,8 @@
   "main": "src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js",
-    "start": "node src/server/app.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "keywords": [
     "Twitchbot"
@@ -41,6 +41,7 @@
     "request-ip": "^3.3.0",
     "semver": "^7.5.4",
     "socket.io-client": "^4.7.2",
-    "tiktok-live-connector": "^1.0.5"
+    "tiktok-live-connector": "^1.0.5",
+    "winston": "^3.10.0"
   }
 }

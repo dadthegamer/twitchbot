@@ -7,7 +7,7 @@ import bodyParser from 'body-parser';
 import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
 import { tokenDB, cache } from './config/initializers.js';
-
+import logger from './utilities/logger.js';
 
 config();
 
