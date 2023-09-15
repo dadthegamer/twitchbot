@@ -5,6 +5,7 @@ import { cache, usersDB } from '../../config/initializers.js';
 const router = Router();
 
 router.get('/', async (req, res) => {
+    console.log('Getting all users');
     try {
         const users = await usersDB.getAllUsers();
         res.json(users);

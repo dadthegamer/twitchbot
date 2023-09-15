@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon app.js",
-    "start": "node src/app.js"
+    "start": "node src/server/app.js"
   },
   "keywords": [
     "Twitchbot"
@@ -15,6 +15,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.4.2",
+    "@fortawesome/free-solid-svg-icons": "^6.4.2",
+    "@fortawesome/react-fontawesome": "^0.2.0",
     "@twurple/api": "^7.0.1",
     "@twurple/auth": "^7.0.1",
     "@twurple/easy-bot": "^7.0.1",
@@ -34,6 +37,7 @@
     "node-cron": "^3.0.2",
     "nodemon": "^3.0.1",
     "openai": "^4.4.0",
+    "react-router-dom": "^6.16.0",
     "request-ip": "^3.3.0",
     "semver": "^7.5.4",
     "socket.io-client": "^4.7.2",

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quotes</title>
+    <link rel="stylesheet" href="../../css/gui/main.css">
+    <link rel="stylesheet" href="../../css/gui/streamathon.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.10.1/css/all.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="../../images/logo.png" alt="App Logo" class="sidebar-logo">
+                <span>STREAM A.I.</span>
+            </div>
+
+            <ul class="sidebar-list">
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-gauge"></i>
+                    <a href="#" class="sidebar-link">Dashboard</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-chart-bar"></i>
+                    <a href="#" class="sidebar-link">Statistics</a>
+                </li>
+                <li class="sidebar-item" id="commands-link">
+                    <i class="fa-solid fa-terminal"></i>
+                    <a href="#" class="sidebar-link">Commands</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-list-check"></i>
+                    <a href="#" class="sidebar-link">Events</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-coins"></i>
+                    <a href="#" class="sidebar-link">Currency</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-stopwatch"></i>
+                    <a href="#" class="sidebar-link">Timers</a>
+                </li>
+                <li class="sidebar-item" id="channel-points-link">
+                    <i class="fa-solid fa-gem"></i>
+                    <a href="#" class="sidebar-link">Channel Points</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-calendar"></i>
+                    <a href="#" class="sidebar-link">Calendar</a>
+                </li>
+                <li class="sidebar-item" id="quotes-link">
+                    <i class="fa-solid fa-quote-left"></i>
+                    <a href="#" class="sidebar-link">Quotes</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-hammer"></i>
+                    <a href="#" class="sidebar-link">Moderation</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-gamepad"></i>
+                    <a href="#" class="sidebar-link">Games</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-user-tag"></i>
+                    <a href="#" class="sidebar-link">Roles</a>
+                </li>
+                <span>Applications</span>
+                <li class="sidebar-item">
+                    <i class="fa-brands fa-tiktok"></i>
+                    <a href="#" class="sidebar-link">TikTok</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-brands fa-discord"></i>
+                    <a href="#" class="sidebar-link">Discord</a>
+                </li>
+                <span>Settings</span>
+                <li class="sidebar-item" id="users">
+                    <i class="fa-solid fa-users"></i>
+                    <a href="#" class="sidebar-link">User Management</a>
+                </li>
+                <li class="sidebar-item" id="users">
+                    <i class="fa-solid fa-download"></i>
+                    <a href="#" class="sidebar-link">Updates</a>
+                </li>
+                <li class="sidebar-item">
+                    <i class="fa-solid fa-gear"></i>
+                    <a href="#" class="sidebar-link">Settings</a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div>
+                        <img src="https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png"
+                            alt="User" class="user-avatar">
+                        <div class="user-name">Dad The Gamer</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="top-nav-bar">
+            <div class="stream-status">
+                <span>OFFLINE</span>
+            </div>
+            <div class="notifications-container">
+                <div class="notification" id="notifications">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="notification-count">0</span>
+                </div>
+                <div class="notifications" id="notifications-items">
+                    <div class="notification-filters">
+                        <button id="filter-all">All</button>
+                        <button id="filter-info">Info</button>
+                        <button id="filter-errors">Errors</button>
+                    </div>
+                    <div class="notification-items-container">
+                    </div>
+                    <div class="notification-actions">
+                        <button>Acknowledge All</button>
+                        <button>Delete All</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="streamathon-main-container">
+                <h2>Streamathon Settings</h2>
+                <div class="switch-container">
+                    <input type="checkbox" class="checkbox" id="checkbox"> 
+                    <label class="switch" for="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <div class="input-container">
+                    <label for="" title="Start time for the timer">Description</label>
+                    <input type="text" placeholder="A description of the streamathon">
+                </div>
+                <h3>Timer Settings</h3>
+                <div class="streamathon-inner-container">
+                    <div class="input-container">
+                        <label for="" title="Start time for the timer">Start Time (in minutes)</label>
+                        <input type="text" id="start-time" placeholder="Start time">
+                    </div>
+                    <div class="input-container">
+                        <label for="" title="Start time for the timer">Cap (in minutes)</label>
+                        <input type="text" placeholder="Streamathon timer cap">
+                    </div>
+                </div>
+                <h3></h3>
+            </div>
+        </div>
+        
+    </div>
+
+    <script type="module" src="../../js/GUI/main.js"></script>
+    <script type="module" src="../../js/GUI/linkHandler.js"></script>
+    <script type="module" src="../../js/GUI/activeHandler.js"></script>
+</body>
+
+</html>

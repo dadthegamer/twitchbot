@@ -33,10 +33,23 @@ export class StreamathonService {
                 streamathonAlertTime: 3000,
                 streamathonHandlers: [],
                 parameters: {
-                    subs: 0,
-                    bits: 0,
+                    subs: {
+                        time: 0,
+                        minimum: 0,
+                    },
+                    bits: {
+                        time: 0,
+                        minimum: 0,
+                    },
                     followers: 0,
-                    donations: 0,
+                    donations: {
+                        time: 0,
+                        minimum: 0,
+                    },
+                    hypeTrain: {
+                        enabled: false,
+                        perLevel: 0,
+                    },
                     tikTokFollowers: 0,
                     tikTokLikes: 0,
                     tikTokGifts: 0,

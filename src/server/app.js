@@ -7,7 +7,6 @@ import bodyParser from 'body-parser';
 import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
 import { tokenDB, cache } from './config/initializers.js';
-import { checkForUpdates } from './services/updateService.js';
 
 
 config();
@@ -97,5 +96,4 @@ app.use('/', guiRouter);
 
 app.listen(port, () => {
     console.log(`Server is running`);
-    checkForUpdates();
 });
