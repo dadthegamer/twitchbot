@@ -1,7 +1,7 @@
 import logger from "../utilities/logger.js";
 
 // User class 
-export class GoalService {
+class GoalService {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
@@ -15,7 +15,7 @@ export class GoalService {
         try {
             const initialGoals = [
                 {
-                    name: 'Daily Sub Goal',
+                    name: 'dailySubGoal',
                     goal: 0,
                     current: 0,
                     description: null,
@@ -23,7 +23,7 @@ export class GoalService {
                     handlers: [],
                 },
                 {
-                    name: 'Monthly Sub Goal',
+                    name: 'monthlySubGoal',
                     goal: 0,
                     current: 0,
                     description: null,
@@ -31,7 +31,7 @@ export class GoalService {
                     handlers: [],
                 },
                 {
-                    name: 'Monthly Donation Goal',
+                    name: 'dailyDonationGoal',
                     goal: 0,
                     current: 0,
                     description: null,
@@ -39,7 +39,7 @@ export class GoalService {
                     handlers: [],
                 },
                 {
-                    name: 'Daily Cheer Goal',
+                    name: 'monthlyDonationGoal',
                     goal: 0,
                     current: 0,
                     description: null,
@@ -47,7 +47,7 @@ export class GoalService {
                     handlers: [],
                 },
                 {
-                    name: 'Monthly Cheer Goal',
+                    name: 'dailyBitsGoal',
                     goal: 0,
                     current: 0,
                     description: null,
@@ -55,7 +55,7 @@ export class GoalService {
                     handlers: [],
                 },
                 {
-                    name: 'Daily Follower Goal',
+                    name: 'monthlyBitsGoal',
                     goal: 0,
                     current: 0,
                     description: null,
@@ -63,7 +63,7 @@ export class GoalService {
                     handlers: [],
                 },
                 {
-                    name: 'Monthly Follower Goal',
+                    name: 'dailyFollowersGoal',
                     goal: 0,
                     current: 0,
                     description: null,
@@ -140,10 +140,8 @@ export class GoalService {
         }
     }
 
-    // Method to increase a goal's current
+    // Method to increase a goal's current in the cache and database. Then check if the goal has been completed
     async increaseGoalCurrent(goalName, goalIncrease) {
-        const goals = await this.cache.get('goals');
-
         // Check if the goalIncrease is a number. If it is not, then parse it to a number
         if (typeof goalIncrease !== 'number') {
             goalIncrease = parseInt(goalIncrease);
@@ -152,12 +150,21 @@ export class GoalService {
                 logger.error(`Goal increase ${goalIncrease} is not a number`);
             }
         }
+        const goals = await this.cache.get('goals');
+        // Check if the goal name exists
+        console.log(goals);
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $inc: { current: goalIncrease } });
             await this.getAllGoals();
+            // Check if the goal has been completed
+            const goal = await this.getGoalByName(goalName);
+            if (goal.current >= goal.goal) {
+                await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { completed: true } });
+                console.log(`Goal ${goalName} has been completed`);
+            }
             return result;
         } catch (error) {
             logger.error(`Error increasing goal current: ${error}`);
@@ -179,4 +186,82 @@ export class GoalService {
         }
     }
 
+    // Method to increase the dailysubgoal and the monthlysubgoal
+    async increaseSubGoals(goalIncrease) {
+        // Check if the goalIncrease is a number. If it is not, then parse it to a number
+        if (typeof goalIncrease !== 'number') {
+            goalIncrease = parseInt(goalIncrease);
+            // If the goalIncrease is not a number, then return an error
+            if (isNaN(goalIncrease)) {
+                logger.error(`Goal increase ${goalIncrease} is not a number`);
+            }
+        }
+        try {
+            this.increaseGoalCurrent('dailySubGoal', goalIncrease);
+            this.increaseGoalCurrent('monthlySubGoal', goalIncrease);
+            await this.getAllGoals();
+        } catch (error) {
+            console.log(error);
+            logger.error(`Error increasing subgoals: ${error}`);
+        }
+    }
+
+    // Method to increase the dailydonationgoal and the monthlydonationgoal
+    async increaseDonationGoals(goalIncrease) {
+        // Check if the goalIncrease is a number. If it is not, then parse it to a number
+        if (typeof goalIncrease !== 'number') {
+            goalIncrease = parseInt(goalIncrease);
+            // If the goalIncrease is not a number, then return an error
+            if (isNaN(goalIncrease)) {
+                logger.error(`Goal increase ${goalIncrease} is not a number`);
+            }
+        }
+        try {
+            this.increaseGoalCurrent('dailyDonationGoal', goalIncrease);
+            this.increaseGoalCurrent('monthlyDonationGoal', goalIncrease);
+            await this.getAllGoals();
+        } catch (error) {
+            logger.error(`Error increasing donation goals: ${error}`);
+        }
+    }
+
+    // Method to increase the dailybitsgoal and the monthlybitsgoal
+    async increaseBitsGoals(goalIncrease) {
+        // Check if the goalIncrease is a number. If it is not, then parse it to a number
+        if (typeof goalIncrease !== 'number') {
+            goalIncrease = parseInt(goalIncrease);
+            // If the goalIncrease is not a number, then return an error
+            if (isNaN(goalIncrease)) {
+                logger.error(`Goal increase ${goalIncrease} is not a number`);
+            }
+        }
+        try {
+            this.increaseGoalCurrent('dailyBitsGoal', goalIncrease);
+            this.increaseGoalCurrent('monthlyBitsGoal', goalIncrease);
+            await this.getAllGoals();
+        } catch (error) {
+            logger.error(`Error increasing bits goals: ${error}`);
+        }
+    }
+
+    // Method to increase the dailyfollowersgoal
+    async increaseFollowersGoal(goalIncrease) {
+        // Check if the goalIncrease is a number. If it is not, then parse it to a number
+        if (typeof goalIncrease !== 'number') {
+            goalIncrease = parseInt(goalIncrease);
+            // If the goalIncrease is not a number, then return an error
+            if (isNaN(goalIncrease)) {
+                logger.error(`Goal increase ${goalIncrease} is not a number`);
+            }
+        }
+        try {
+            this.increaseGoalCurrent('dailyFollowersGoal', goalIncrease);
+            await this.getAllGoals();
+        } catch (error) {
+            logger.error(`Error increasing followers goal: ${error}`);
+        }
+    }
 }
+
+
+export default GoalService;

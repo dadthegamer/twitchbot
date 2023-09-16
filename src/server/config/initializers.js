@@ -21,7 +21,7 @@ import { ChatLogService } from '../services/chatLogService.js';
 import { SettingsService } from '../services/settingsService.js';
 import { CurrencyService } from '../services/currencyService.js';
 import { RaffleService } from '../services/raffleService.js';
-import { GoalService } from '../services/goalService.js';
+import GoalService from '../services/goalService.js';
 import ViewTimeService from '../services/viewTimeService.js';
 import TaskCoordinator from '../managers/tasksCoordinator.js';
 import OBSService from '../services/obsService.js';
@@ -121,4 +121,5 @@ export {
     goalDB,
     viewTimeDB,
     taskCoordinator,
+    obsService,
 };
