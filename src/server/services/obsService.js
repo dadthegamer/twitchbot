@@ -55,8 +55,15 @@ class OBSService {
             this.startRecording();
         }
         catch (err) {
-            console.log(err);
+        if (err.message && err.message.includes('ECONNREFUSED')) {
+            return;
+        } else if (err.code && err.code === 4009) {
+            logger.error('OBS Authentication failed. Please check your password.');
+            return;
+        } else {
+            // Handle or log other errors
             logger.error(`Error in connectToObs: ${err}`);
+        }
         }
     }
 

@@ -99,7 +99,7 @@ export class GoalService {
     async getGoalByName(goalName) {
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
-            return new Error(`Goal ${goalName} does not exist`);
+            logger.error(`Goal ${goalName} does not exist`);
         }
         try {
             const goals = await this.cache.get('goals');
@@ -114,7 +114,7 @@ export class GoalService {
     async setGoal(goalName, goalGoal) {
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
-            return new Error(`Goal ${goalName} does not exist`);
+            logger.error(`Goal ${goalName} does not exist`);
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { goal: goalGoal } });
@@ -129,7 +129,7 @@ export class GoalService {
     async setGoalCurrent(goalName, goalCurrent) {
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
-            return new Error(`Goal ${goalName} does not exist`);
+            logger.error(`Goal ${goalName} does not exist`);
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { current: goalCurrent } });
@@ -143,8 +143,17 @@ export class GoalService {
     // Method to increase a goal's current
     async increaseGoalCurrent(goalName, goalIncrease) {
         const goals = await this.cache.get('goals');
+
+        // Check if the goalIncrease is a number. If it is not, then parse it to a number
+        if (typeof goalIncrease !== 'number') {
+            goalIncrease = parseInt(goalIncrease);
+            // If the goalIncrease is not a number, then return an error
+            if (isNaN(goalIncrease)) {
+                logger.error(`Goal increase ${goalIncrease} is not a number`);
+            }
+        }
         if (!goals.some(goal => goal.name === goalName)) {
-            return new Error(`Goal ${goalName} does not exist`);
+            logger.error(`Goal ${goalName} does not exist`);
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $inc: { current: goalIncrease } });
@@ -159,7 +168,7 @@ export class GoalService {
     async updateGoal(goalName, goal, current, description, handlers) {
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
-            return new Error(`Goal ${goalName} does not exist`);
+            logger.error(`Goal ${goalName} does not exist`);
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { goal, current, description, handlers } });
