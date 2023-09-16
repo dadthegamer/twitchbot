@@ -8,7 +8,6 @@ export class StreamDB {
         this.dbConnection = dbConnection;
         this.cache = cache;
         this.setInitialStreamData();
-        this.getJackpot();
         this.getLatestEvents();
         this.checkStream();
     }
@@ -42,6 +41,7 @@ export class StreamDB {
                     tikTokLikes: 0,
                     tikTokFollowers: 0,
                     tikTokGifts: 0,
+                    streamId: null,
                 }
             };
             const options = { upsert: true };
@@ -168,23 +168,26 @@ export class StreamDB {
                 category: streamData.category,
                 date: streamData.date,
                 followers: streamData.followers,
-                new_subs: streamData.new_subs,
-                gifted_subs: streamData.gifted_subs,
-                total_subs: streamData.total_subs,
+                newSubs: streamData.new_subs,
+                giftedSubs: streamData.giftedSubs,
+                totalSubs: streamData.totalSubs,
                 bits: streamData.bits,
                 raids: streamData.raids,
                 donations: streamData.donations,
-                max_viewers: streamData.max_viewers,
-                average_viewers: streamData.average_viewers,
+                maxViewers: streamData.maxViewers,
+                averageViewers: streamData.averageViewers,
                 viewers: streamData.viewers,
-                uptime: uptime,
+                duration: uptime,
+                tikTokLive: streamData.tikTokLive,
+                tikTokLikes: streamData.tikTokLikes,
+                tikTokFollowers: streamData.tikTokFollowers,
+                tikTokGifts: streamData.tikTokGifts,
+                streamId: streamData.streamId,
             };
             await this.dbConnection.collection('streams').insertOne(stream);
-            return true;
         }
         catch (error) {
             logger.error(`Error in insertNewStream: ${error}`);
-            return false;
         }
     }
 
@@ -323,54 +326,6 @@ export class StreamDB {
         }
         catch (error) {
             logger.error(`Error in getLatestEvents: ${error}`);
-            return null;
-        }
-    }
-
-    // Method to get the current jackpot amount from the database and store it in the cache
-    async getJackpot() {
-        try {
-            const data = await this.dbConnection.collection('streamData').findOne({ id: 'jackpot' });
-            const jackpot = data.jackpot;
-            this.cache.set('jackpot', jackpot);
-            return jackpot;
-        }
-        catch (error) {
-            logger.error(`Error in getJackpot: ${error}`);
-            return null;
-        }
-    }
-
-    // Method to increase the jackpot amount in the database and cache
-    async increaseJackpot(amount) {
-        try {
-            const jackpot = this.cache.get('jackpot');
-            const newJackpot = jackpot + amount;
-            await this.dbConnection.collection('streamData').updateOne(
-                { id: 'jackpot' },
-                { $set: { jackpot: newJackpot } }
-            );
-            this.cache.set('jackpot', newJackpot);
-            return newJackpot;
-        }
-        catch (error) {
-            logger.error(`Error in increaseJackpot: ${error}`);
-            return null;
-        }
-    }
-
-    // Method to set the jackpot amount in the database and cache
-    async setJackpot(amount) {
-        try {
-            await this.dbConnection.collection('streamData').updateOne(
-                { id: 'jackpot' },
-                { $set: { jackpot: amount } }
-            );
-            this.cache.set('jackpot', amount);
-            return amount;
-        }
-        catch (error) {
-            logger.error(`Error in setJackpot: ${error}`);
             return null;
         }
     }

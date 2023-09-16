@@ -24,7 +24,7 @@ import { RaffleService } from '../services/raffleService.js';
 import { GoalService } from '../services/goalService.js';
 import ViewTimeService from '../services/viewTimeService.js';
 import TaskCoordinator from '../managers/tasksCoordinator.js';
-
+import OBSService from '../services/obsService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -88,6 +88,9 @@ const viewTimeDB = new ViewTimeService(db.dbConnection, cache);
 
 // Task coordinator initialization
 const taskCoordinator = new TaskCoordinator(twitchApi, usersDB);
+
+// OBS Service initialization
+const obsService = new OBSService(db.dbConnection, cache);
 
 // Subscribe to donation events
 subscribeToDonationEvents();

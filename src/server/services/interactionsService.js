@@ -96,6 +96,25 @@ export class InteractionsDbService {
         }
     }
 
+    // Method to store a new quote into the database with the id being an argument passed in
+    async createQuoteWithId(id, quote, creator) {
+        try {
+            const newQuote = {
+                id: id,
+                text: quote,
+                originator: 'dadthegam3r',
+                creator: creator,
+                createdAt: new Date(),
+            }
+            await this.dbConnection.collection('quotes').insertOne(newQuote);
+            await this.getAllQuotes();
+            return newQuote;
+        }
+        catch (err) {
+            logger.error(`Error in createQuoteWithId: ${err}`);
+        }
+    }
+
     // Method to update a quote in the database
     async updateQuote(id, quote, creator) {
         if (typeof id !== 'number') {
