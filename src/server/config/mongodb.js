@@ -49,6 +49,7 @@ export class MongoDBConnection {
                 'sessions',
                 'tokens',
                 'streams',
+                'streamSettings',
                 'streamData',
                 'users',
                 'currency',
@@ -58,8 +59,7 @@ export class MongoDBConnection {
                 'roasts',
                 'notifications',
                 'chatLogs',
-                'raffleEntries',
-                'Streamathon',
+                'channelRewards',
             ]
             const collectionPromises = collections.map(collection =>
                 this.dbConnection.createCollection(collection)

@@ -1,6 +1,7 @@
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from "../utilities/logger.js";
 import { twitchApi } from '../config/initializers.js';
 import { environment } from '../config/environmentVars.js';
+
 
 // User class 
 export class UsersDB {
@@ -24,21 +25,21 @@ export class UsersDB {
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error in getAllUsers: ${error}`);
+            logger.error(`Error in getAllUsers: ${error}`);
             return null;
         }
     }
 
-    // Get all users that have have a follow_date and set the followers property in the cache
+    // Get all users that have have a followDate and set the followers property in the cache
     async getFollowers() {
         try {
             const users = await this.getAllUsers();
-            const followers = users.filter((user) => user.follow_date !== null);
+            const followers = users.filter((user) => user.followDate !== null);
             this.cache.set('followers', followers);
             return followers;
         }
         catch (error) {
-            writeToLogFile('error', `Error in getFollowers: ${error}`);
+            logger.error(`Error in getFollowers: ${error}`);
             return null;
         }
     }
@@ -47,12 +48,12 @@ export class UsersDB {
     async getVips() {
         try {
             const users = await this.getAllUsers();
-            const vips = users.filter((user) => user.vip === true);
+            const vips = users.filter((user) => user.roles.vip === true);
             this.cache.set('vips', vips);
             return vips;
         }
         catch (error) {
-            writeToLogFile('error', `Error in getVips: ${error}`);
+            logger.error(`Error in getVips in users class: ${error}`);
             return null;
         }
     }
@@ -61,27 +62,141 @@ export class UsersDB {
     async getSubscribers() {
         try {
             const users = await this.getAllUsers();
-            const subscribers = users.filter((user) => user.subscriber === true);
+            const subscribers = users.filter((user) => user.roles.subscriber === true);
             this.cache.set('subscribers', subscribers);
             return subscribers;
         }
         catch (error) {
-            writeToLogFile('error', `Error in getSubscribers: ${error}`);
+            logger.error(`Error in getSubscribers in users class: ${error}`);
             return null;
         }
     }
 
-    // Method to get all users that are moderators and set the moderators property in the cache
+    // Method to get all users that have moderators set to true and set the moderators property in the cache
     async getModerators() {
         try {
             const users = await this.getAllUsers();
-            const moderators = users.filter((user) => user.moderator === true);
+            const moderators = users.filter((user) => user.roles.moderator === true);
             this.cache.set('moderators', moderators);
             return moderators;
         }
         catch (error) {
-            writeToLogFile('error', `Error in getModerators: ${error}`);
+            logger.error(`Error in getModerators in users class: ${error}`);
             return null;
+        }
+    }
+
+    // Method to add a user to the moderator role
+    async addModerator(userId) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            const user = await this.getUserByUserId(userId);
+            user.roles.moderator = true;
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $set: { 'roles.moderator': true } },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        }
+        catch (error) {
+            logger.error(`Error in addModerator in users class: ${error}`);
+        }
+    }
+
+    // Method to add a user to the subscriber role
+    async addSubscriber(userId) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            const user = await this.getUserByUserId(userId);
+            user.roles.subscriber = true;
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $set: { 'roles.subscriber': true } },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        }
+        catch (error) {
+            logger.error(`Error in addSubscriber in users class: ${error}`);
+        }
+    }
+
+    // Method to add a user to the vip role
+    async addVip(userId) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            const user = await this.getUserByUserId(userId);
+            user.roles.vip = true;
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $set: { 'roles.vip': true } },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        }
+        catch (error) {
+            logger.error(`Error in addVip in users class: ${error}`);
+        }
+    }
+
+    // Method to get all the users who are assigned a custom role and set the customRoles property in the cache
+    async getCustomRoles() {
+        try {
+            const users = await this.getAllUsers();
+            const customRoles = users.filter((user) => Object.keys(user.customRoles).length !== 0);
+            this.cache.set('customRoles', customRoles);
+            return customRoles;
+        }
+        catch (error) {
+            logger.error(`Error in getCustomRoles in users class: ${error}`);
+            return null;
+        }
+    }
+
+    // Method to add a user to a custom role
+    async addUserToCustomRole(userId, customRole) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            const user = await this.getUserByUserId(userId);
+            user.roles.custom[customRole] = true;
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $set: { [`roles.custom.${customRole}`]: true } },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        }
+        catch (error) {
+            logger.error(`Error in addUserToCustomRole in users class: ${error}`);
+        }
+    }
+
+    // Method to remove a user from a custom role
+    async removeUserFromCustomRole(userId, customRole) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            const user = await this.getUserByUserId(userId);
+            delete user.roles.custom[customRole];
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $unset: { [`roles.custom.${customRole}`]: "" } },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        }
+        catch (error) {
+            logger.error(`Error in removeUserFromCustomRole in users class: ${error}`);
         }
     }
 
@@ -94,14 +209,14 @@ export class UsersDB {
             const users = this.cache.get('users');
             if (users) {
                 const user = users.find((user) => user.id === userId);
-                if (user.follow_date !== null) {
+                if (user.followDate !== null) {
                     return true;
                 } else {
                     return false;
                 }
             } else {
                 const user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
-                if (user.follow_date !== null) {
+                if (user.followDate !== null) {
                     return true;
                 } else {
                     return false;
@@ -109,7 +224,7 @@ export class UsersDB {
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error in isFollower: ${error}`);
+            logger.error(`Error in isFollower: ${error}`);
             return null;
         }
     }
@@ -135,7 +250,7 @@ export class UsersDB {
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error in getUser: ${error}`);
+            logger.error(`Error in getUserByUserId: ${error}`);
             return null;
         }
     }
@@ -148,12 +263,12 @@ export class UsersDB {
             }
             let user = this.cache.get(userId);
             if (user) {
-                if (user.profile_image_url === null) {
+                if (user.profilePictureUrl === null) {
                     const twitchUser = await twitchApi.getUserDataById(userId);
-                    this.setUserValue(userId, 'profile_image_url', twitchUser.profile_image_url);
+                    this.setUserValue(userId, 'profilePictureUrl', twitchUser.profilePictureUrl);
                     user = await this.getUserByUserId(userId);
                 }
-                return user.profile_image_url;
+                return user.profilePictureUrl;
             } else {
                 user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
                 if (user === null) {
@@ -161,40 +276,80 @@ export class UsersDB {
                     this.newFollower(twitchUser);
                     user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
                 }
-                if (user.profile_image_url === null) {
+                if (user.profilePictureUrl === null) {
                     const twitchUser = await twitchApi.getUserDataById(userId);
-                    this.setUserValue(userId, 'profile_image_url', twitchUser.profile_image_url);
+                    this.setUserValue(userId, 'profilePictureUrl', twitchUser.profilePictureUrl);
                     user = await this.getUserByUserId(userId);
                 }
                 this.cache.set(userId, user);
-                return user.profile_image_url;
+                return user.profilePictureUrl;
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error in getUserProfileImageUrl: ${error}`);
-            return null;
+            logger.error(`Error in getUserProfileImageUrl: ${error}`);
+            return undefined;
         }
     }
 
-    // Method to add a user
-    async newFollower(userData) {
+    // Method to add a user to the database and cache from t he stream directly
+    async newUser(userId) {
         try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            const userData = await twitchApi.getUserDataById(userId);
             const date = new Date();
-            const query = { id: userData.id };
+            const query = { id: userId };
             const update = {
                 $set: {
-                    id: userData.id,
-                    display_name: userData.display_name,
-                    login: userData.login,
-                    profile_image_url: userData.profile_image_url,
-                    follow_date: date,
-                    leaderboard_points: 0,
+                    id: userId,
+                    displayName: userData.displayName,
+                    username: userData.name,
+                    profilePictureUrl: userData.profilePictureUrl,
+                    broadcasterType: userData.broadcasterType,
+                    email: undefined,
+                    followDate: date,
+                    lastSeen: date,
                     arrived: true,
-                    view_time: 0,
-                    stream_view_time: 0,
-                    monthly_view_time: 0,
-                    weekly_view_time: 0,
-                    last_seen: date,
+                    viewTime: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    roles: {
+                        vip: false,
+                        subscriber: false,
+                        moderator: false,
+                        custom: {},
+                    },
+                    subs: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    bits: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    donations: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    currency: {
+                        points: 0,
+                    },
+                    lastSeen: date,
+                    metaData: {}
                 }
             };
             const options = { upsert: true };
@@ -202,43 +357,57 @@ export class UsersDB {
             this.cache.set(userData.id, userData);
         }
         catch (error) {
-            console.log(error);
-            writeToLogFile('error', `Error in addUser: ${error}`);
+            logger.error(`Error in newFollower: ${error}`);
         }
     }
 
-    // Method to add a user manually
-    async addUserManually(userData) {
+    // Method to set a users value in the database and cache
+    async setUserValue(userId, property, value) {
         try {
-            const date = new Date();
-            const query = { id: userData.id };
-            const update = {
-                $set: {
-                    id: userData.id,
-                    display_name: userData.display_name,
-                    login: userData.login,
-                    profile_image_url: null,
-                    follow_date: userData.follow_date,
-                    arrived: true,
-                    view_time: 0,
-                    stream_view_time: 0,
-                    monthly_view_time: 0,
-                    weekly_view_time: 0,
-                    currency: {},
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            if (environment === 'development') {
+                console.log(`setUserValue: ${userId} ${property} ${value}`);
+                return;
+            } else {
+                // Set the property for the user in the cache
+                let user = this.cache.get(userId);
+                if (!user) {
+                    user = await this.getUserByUserId(userId);
                 }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
-            this.cache.set(userData.id, userData);
-        }
-        catch (error) {
-            writeToLogFile('error', `Error in addUser: ${error}`);
+                user[property] = value;
+                this.cache.set(userId, user);
+                // Set the property for the user in the database
+                await this.dbConnection.collection(this.collectionName).updateOne(
+                    { id: userId },
+                    { $set: { [property]: value } },
+                    { upsert: true }
+                );
+            }
+        } catch (error) {
+            logger.error(`Error in setUserValue: ${error}`);
         }
     }
 
     // Method to increase a currency property for a user
     async increaseCurrency(userId, currency, amount) {
         try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            if (typeof amount !== 'number') {
+                try {
+                    amount = parseInt(amount);
+                    if (isNaN(amount)) {
+                        logger.error(`Error in increaseCurrency: Amount is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseCurrency: ${error}`);
+                }
+            }
             if (environment === 'development') {
                 console.log(`increaseUserValue: ${userId} ${currency} ${amount}`);
                 return;
@@ -263,15 +432,27 @@ export class UsersDB {
                 );
             }
         } catch (error) {
-            writeToLogFile('error', `Error in increaseCurrency: ${error}`);
+            logger.error(`Error in increaseCurrency: ${error}`);
         }
     }
 
     // Method to increase a currency property for a a list of users
     async increaseCurrencyForUsers(userIds, currency, amount) {
         try {
+            if (typeof amount !== 'number') {
+                try {
+                    amount = parseInt(amount);
+                    if (isNaN(amount)) {
+                        logger.error(`Error in increaseCurrencyForUsers: Amount is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseCurrencyForUsers: ${error}`);
+                }
+            }
             if (environment === 'development') {
-                console.log(`increaseUserValue: ${userIds} ${currency} ${amount}`);
+                console.log(`increaseCurrencyForUsers: ${userIds} ${currency} ${amount}`);
                 return;
             } else {
                 // Increase the currency property for the user in the cache
@@ -297,15 +478,30 @@ export class UsersDB {
                 );
             }
         } catch (error) {
-            writeToLogFile('error', `Error in increaseCurrencyForUsers: ${error}`);
+            logger.error(`Error in increaseCurrencyForUsers: ${error}`);
         }
     }
 
     // Method to decrease a currency property for a user
     async decreaseCurrency(userId, currency, amount) {
         try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            if (typeof amount !== 'number') {
+                try {
+                    amount = parseInt(amount);
+                    if (isNaN(amount)) {
+                        logger.error(`Error in decreaseCurrency: Amount is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in decreaseCurrency: ${error}`);
+                }
+            }
             if (environment === 'development') {
-                console.log(`decreaseUserValue: ${userId} ${currency} ${amount}`);
+                console.log(`decreaseCurrency: ${userId} ${currency} ${amount}`);
                 return;
             } else {
                 // Decrease the currency property for the user in the cache
@@ -328,15 +524,30 @@ export class UsersDB {
                 );
             }
         } catch (error) {
-            writeToLogFile('error', `Error in decreaseCurrency: ${error}`);
+            logger.error(`Error in decreaseCurrency: ${error}`);
         }
     }
 
     // Method to set a currency property for a user
     async setCurrency(userId, currency, amount) {
         try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            if (typeof amount !== 'number') {
+                try {
+                    amount = parseInt(amount);
+                    if (isNaN(amount)) {
+                        logger.error(`Error in setCurrency: Amount is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in setCurrency: ${error}`);
+                }
+            }
             if (environment === 'development') {
-                console.log(`setUserValue: ${userId} ${currency} ${amount}`);
+                console.log(`setCurrency: ${userId} ${currency} ${amount}`);
                 return;
             } else {
                 // Set the currency property for the user in the cache
@@ -355,7 +566,7 @@ export class UsersDB {
                 );
             }
         } catch (error) {   
-            writeToLogFile('error', `Error in setCurrency: ${error}`);
+            logger.error(`Error in setCurrency: ${error}`);
         }
     }
 
@@ -379,148 +590,112 @@ export class UsersDB {
                 return result.currency[currency];
             }
         } catch (error) {
-            writeToLogFile('error', `Error in getCurrency: ${error}`);
+            logger.error(`Error in getCurrency: ${error}`);
+            return undefined;
         }
     }
 
-    // Method to increase/decrease a users property
-    async increaseUserValue(userId, property, value) {
-        if (typeof userId !== 'string') {
-            userId = userId.toString();
-        };
-        if (typeof value !== 'number') {
-            try {
-                value = parseInt(value);
-                if (isNaN(value)) {
-                    writeToLogFile('error', `Error in increaseUserValue: Value is not a number`);
-                    return null;
+    // Method to set the arrived property for a user
+    async setArrived(userId, arrived) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if arrived is a boolean
+            if (typeof arrived !== 'boolean') {
+                try {
+                    arrived = JSON.parse(arrived);
+                    if (typeof arrived !== 'boolean') {
+                        logger.error(`Error in setArrived: Arrived is not a boolean`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in setArrived: ${error}`);
                 }
             }
-            catch (error) {
-                writeToLogFile('error', `Error in increaseUserValue: ${error}`);
-            }
-        }
-        if (environment === 'development') {
-            console.log(`increaseUserValue: ${userId} ${property} ${value}`);
-            return;
-        } else {
-            try {
-                const date = new Date();
-                const last_seen = date;
+            if (environment === 'development') {
+                console.log(`setArrived: ${userId} ${arrived}`);
+                return;
+            } else {
+                // Set the arrived property for the user in the cache
                 let user = this.cache.get(userId);
                 if (!user) {
                     user = await this.getUserByUserId(userId);
                 }
-                if (property in user) {
-                    user[property] += value;
-                } else {
-                    user[property] = value;
-                }
+                user.arrived = arrived;
+                this.cache.set(userId, user);
+                // Set the arrived property for the user in the database
                 await this.dbConnection.collection(this.collectionName).updateOne(
                     { id: userId },
-                    { $set: { [property]: user[property], last_seen: last_seen } },
+                    { $set: { arrived: arrived } },
                     { upsert: true }
                 );
-                this.cache.set(userId, user);
-            } catch (error) {
-                console.log(error);
-                writeToLogFile('error', `Error in increaseUserValue: ${error}`);
             }
+        } catch (error) {
+            logger.error(`Error in setArrived: ${error}`);
         }
     }
 
-    // Method to set a users property
-    async setUserValue(userId, property, value) {
+    // Method to get the rank of a user by a property in the currency object
+    async getUserRankByProperty(userId, property) {
         try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Get the currency property for the user in the cache
             let user = this.cache.get(userId);
             if (!user) {
                 user = await this.getUserByUserId(userId);
             }
-            user[property] = value;
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                { $set: { [property]: user[property] } },
-                { upsert: true }
-            );
-            this.cache.set(userId, user);
-            return user;
-        } catch (error) {
-            writeToLogFile('error', `Error in setUserValue: ${error}`);
-        }
-    }
-
-    // Method to get the rank of a user by a property
-    async getUserRankByProperty(userId, property) {
-        if (typeof userId !== 'string') {
-            userId = userId.toString();
-        }
-        try {
-            const collection = this.dbConnection.collection(this.collectionName);
-            const result = await collection
-                .find({})
-                .sort({ [property]: -1 })
-                .toArray();
-            const user = result.find((user) => user.id === userId);
-            const rank = result.indexOf(user) + 1;
+            const users = await this.getAllUsers();
+            const sortedUsers = users.sort((a, b) => b.currency[property] - a.currency[property]);
+            const rank = sortedUsers.findIndex((user) => user.id === userId) + 1;
             return rank;
         } catch (error) {
-            writeToLogFile('error', `Error retrieving user rank by ${property}: ${error}`);
+            logger.error(`Error in getUserRankByProperty: ${error}`);
         }
     }
 
-    // Method to return the userId of the user with the highest value of a property
-    async getHighestUserByProperty(property) {
-        try {
-            const collection = this.dbConnection.collection(this.collectionName);
-            const result = await collection
-                .find({})
-                .sort({ [property]: -1 })
-                .toArray();
-            return result[0].id;
-        } catch (error) {
-            writeToLogFile('error', `Error retrieving highest user by ${property}: ${error}`);
-        }
-    }
-
-    // Method to get user data by a property
-    async getUserByProperty(property, value) {
-        try {
-            const collection = this.dbConnection.collection(this.collectionName);
-            const result = await collection.findOne({ [property]: value });
-            return result;
-        } catch (error) {
-            writeToLogFile('error', `Error retrieving user by ${property}: ${error}`);
-        }
-    }
-
-    // Method to get a leaderboard by a property
+    // Method to get the leaderboard for a currency property sorted by the property from highest to lowest
     async getLeaderboardByProperty(property, count = 10) {
         try {
-            const collection = this.dbConnection.collection(this.collectionName);
-            const result = await collection
-                .find({})
-                .sort({ [property]: -1 })
-                .limit(count)
-                .toArray();
-            return result;
+            const users = await this.getAllUsers();
+            const sortedUsers = users.sort((a, b) => b.currency[property] - a.currency[property]);
+            const leaderboard = sortedUsers.slice(0, count);
+            return leaderboard;
         } catch (error) {
-            writeToLogFile('error', `Error retrieving leaderboard by ${property}: ${error}`);
+            logger.error(`Error in getLeaderboardByProperty: ${error}`);
         }
     }
 
-    // Method to reset a property for all users to 0 in the database and cache
-    async resetProperty(property) {
+    // Method to reset a currency property for all users to 0
+    async resetCurrency(property) {
         try {
-            const collection = this.dbConnection.collection(this.collectionName);
-            const result = await collection.updateMany(
+            const result = await this.dbConnection.collection(this.collectionName).updateMany(
                 {},
-                { $set: { [property]: 0 } }
+                { $set: { [`currency.${property}`]: 0 } }
             );
-            const users = await collection.find({}).toArray();
+            const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             this.cache.set('users', users);
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error in resetProperty: ${error}`);
+            logger.error(`Error in resetProperty: ${error}`);
+        }
+    }
+
+    // Method to delete a currency from the currency object for all users
+    async deleteCurrency(property) {
+        try {
+            const result = await this.dbConnection.collection(this.collectionName).updateMany(
+                {},
+                { $unset: { [`currency.${property}`]: "" } }
+            );
+            const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
+            this.cache.set('users', users);
+            return result;
+        } catch (error) {
+            logger.error(`Error in deleteCurrency: ${error}`);
         }
     }
 
@@ -535,186 +710,384 @@ export class UsersDB {
             this.cache.set('users', users);
             return result;
         } catch (error) {
-            writeToLogFile('error', `Error in resetArrived: ${error}`);
+            logger.error(`Error in resetArrived: ${error}`);
         }
     }
 
-    // Method to reset the leaderboard_points property for all users to 0
-    async resetLeaderboardPoints() {
-        try {
-            await this.resetProperty('leaderboard_points');
-        }
-        catch (error) {
-            writeToLogFile('error', `Error in resetLeaderboardPoints: ${error}`);
-        }
-    }
-
-    // Method to reset all stream properties for all users to 0
+    // Method to reset all stream related properties for all users to 0
     async resetStreamProperties() {
         try {
-            await this.resetProperty('stream_view_time');
-            await this.resetProperty('stream_bits');
-            await this.resetProperty('stream_subs');
-            await this.resetProperty('stream_donations');
-        }
-        catch (error) {
-            writeToLogFile('error', `Error in resetStreamProperties: ${error}`);
+            await this.dbConnection.collection(this.collectionName).updateMany(
+                {},
+                {
+                    $set: {
+                        viewTime: {
+                            stream: 0
+                        },
+                        subs: {
+                            stream: 0
+                        },
+                        bits: {
+                            stream: 0
+                        },
+                        donations: {
+                            stream: 0
+                        }
+                    }
+                }
+            );
+            const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
+            this.cache.set('users', users);
+        } catch (error) {
+            logger.error(`Error in resetStreamProperties: ${error}`);
         }
     }
 
-    // Method to reset all weekly properties for all users to 0
+
+    // Method to reset all weekly related properties for all users to 0
     async resetWeeklyProperties() {
         try {
-            await this.resetProperty('weekly_view_time');
-            await this.resetProperty('weekly_bits');
-            await this.resetProperty('weekly_subs');
-            await this.resetProperty('weekly_donations');
+            await this.dbConnection.collection(this.collectionName).updateMany(
+                {},
+                {
+                    $set: {
+                        viewTime: {
+                            weekly: 0
+                        },
+                        subs: {
+                            weekly: 0
+                        },
+                        bits: {
+                            weekly: 0
+                        },
+                        donations: {
+                            weekly: 0
+                        }
+                    }
+                }
+            );
+            const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
+            this.cache.set('users', users);
         }
         catch (error) {
-            writeToLogFile('error', `Error in resetWeeklyProperties: ${error}`);
+            logger.error(`Error in resetWeeklyProperties: ${error}`);
         }
     }
 
     // Method to reset all monthly properties for all users to 0
     async resetMonthlyProperties() {
         try {
-            await this.resetProperty('monthly_view_time');
-            await this.resetProperty('monthly_bits');
-            await this.resetProperty('monthly_subs');
-            await this.resetProperty('monthly_donations');
+            await this.dbConnection.collection(this.collectionName).updateMany(
+                {},
+                {
+                    $set: {
+                        viewTime: {
+                            monthly: 0
+                        },
+                        subs: {
+                            monthly: 0
+                        },
+                        bits: {
+                            monthly: 0
+                        },
+                        donations: {
+                            monthly: 0
+                        }
+                    }
+                }
+            );
+            const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
+            this.cache.set('users', users);
         }
         catch (error) {
-            writeToLogFile('error', `Error in resetMonthlyProperties: ${error}`);
+            logger.error(`Error in resetMonthlyProperties: ${error}`);
         }
     }
 
-    // Method to increase the view_time, stream_view_time, monthly_view_time, and weekly_view_time properties for a user. If the property does not exist, it will be created. Take in the time in seconds as a number.
-    async increaseViewTime(userId, time) {
+    // Method to reset all yearly properties for all users to 0
+    async resetYearlyProperties() {
         try {
+            await this.dbConnection.collection(this.collectionName).updateMany(
+                {},
+                {
+                    $set: {
+                        viewTime: {
+                            yearly: 0
+                        },
+                        subs: {
+                            yearly: 0
+                        },
+                        bits: {
+                            yearly: 0
+                        },
+                        donations: {
+                            yearly: 0
+                        }
+                    }
+                }
+            );
+            const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
+            this.cache.set('users', users);
+        }
+        catch (error) {
+            logger.error(`Error in resetYearlyProperties: ${error}`);
+        }
+    }
+
+    // Method to increase the viewTime for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of minutes as a number.
+    async increaseViewTime(userId, minutes) {
+        try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if minutes is a number
+            if (typeof minutes !== 'number') {
+                try {
+                    minutes = parseInt(minutes);
+                    if (isNaN(minutes)) {
+                        logger.error(`Error in increaseViewTime: Minutes is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseViewTime: ${error}`);
+                }
+            }
             const date = new Date();
-            const last_seen = date;
+            const lastSeen = date;
             let user = this.cache.get(userId);
             if (!user) {
                 user = await this.getUserByUserId(userId);
             }
-            user.view_time += time;
-            user.stream_view_time += time;
-            user.monthly_view_time += time;
-            user.weekly_view_time += time;
+            user.viewTime.allTime += minutes;
+            user.viewTime.yearly += minutes;
+            user.viewTime.monthly += minutes;
+            user.viewTime.weekly += minutes;
+            user.viewTime.stream += minutes;
+            // Increase the viewTime property for the user in the database
             await this.dbConnection.collection(this.collectionName).updateOne(
                 { id: userId },
                 {
                     $set: {
-                        view_time: user.view_time,
-                        stream_view_time: user.stream_view_time,
-                        monthly_view_time: user.monthly_view_time,
-                        weekly_view_time: user.weekly_view_time,
-                        last_seen: last_seen
+                        viewTime: {
+                            allTime: user.viewTime.allTime,
+                            yearly: user.viewTime.yearly,
+                            monthly: user.viewTime.monthly,
+                            weekly: user.viewTime.weekly,
+                            stream: user.viewTime.stream
+                        },
+                        lastSeen: lastSeen
                     }
                 },
                 { upsert: true }
             );
             this.cache.set(userId, user);
         } catch (error) {
-            writeToLogFile('error', `Error in increaseViewTime: ${error}`);
+            logger.error(`Error in increaseViewTime: ${error}`);
         }
     }
 
-    // Method to increase the stream_bits, all_time_bits, monthly_bits, and weekly_bits properties for a user. If the property does not exist, it will be created. Take in the number of bits as a number.
+    // Method to increase the bits for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of bits as a number.
     async increaseBits(userId, bits) {
         try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if bits is a number
+            if (typeof bits !== 'number') {
+                try {
+                    bits = parseInt(bits);
+                    if (isNaN(bits)) {
+                        logger.error(`Error in increaseBits: Bits is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseBits: ${error}`);
+                }
+            }
             const date = new Date();
-            const last_seen = date;
+            const lastSeen = date;
             let user = this.cache.get(userId);
             if (!user) {
                 user = await this.getUserByUserId(userId);
             }
-            user.stream_bits += bits;
-            user.all_time_bits += bits;
-            user.monthly_bits += bits;
-            user.weekly_bits += bits;
+            user.bits.allTime += bits;
+            user.bits.yearly += bits;
+            user.bits.monthly += bits;
+            user.bits.weekly += bits;
+            user.bits.stream += bits;
+            // Increase the bits property for the user in the database
             await this.dbConnection.collection(this.collectionName).updateOne(
                 { id: userId },
                 {
                     $set: {
-                        stream_bits: user.stream_bits,
-                        all_time_bits: user.all_time_bits,
-                        monthly_bits: user.monthly_bits,
-                        weekly_bits: user.weekly_bits,
-                        last_seen: last_seen
+                        bits: {
+                            allTime: user.bits.allTime,
+                            yearly: user.bits.yearly,
+                            monthly: user.bits.monthly,
+                            weekly: user.bits.weekly,
+                            stream: user.bits.stream
+                        },
+                        lastSeen: lastSeen
                     }
                 },
                 { upsert: true }
             );
             this.cache.set(userId, user);
         } catch (error) {
-            writeToLogFile('error', `Error in increaseBits: ${error}`);
+            logger.error(`Error in increaseBits: ${error}`);
         }
     }
 
-    // Method to increase the stream_subs, all_time_subs, monthly_subs, and weekly_subs properties for a user. If the property does not exist, it will be created. Take in the number of subs as a number.
+    // Method to increase the subs for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of bits as a number.
     async increaseSubs(userId, subs) {
         try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if subs is a number
+            if (typeof subs !== 'number') {
+                try {
+                    subs = parseInt(subs);
+                    if (isNaN(subs)) {
+                        logger.error(`Error in increaseSubs: Subs is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseSubs: ${error}`);
+                }
+            }
             const date = new Date();
-            const last_seen = date;
+            const lastSeen = date;
             let user = this.cache.get(userId);
             if (!user) {
                 user = await this.getUserByUserId(userId);
             }
-            user.stream_subs += subs;
-            user.all_time_subs += subs;
-            user.monthly_subs += subs;
-            user.weekly_subs += subs;
+            user.subs.allTime += subs;
+            user.subs.yearly += subs;
+            user.subs.monthly += subs;
+            user.subs.weekly += subs;
+            user.subs.stream += subs;
+            // Increase the subs property for the user in the database
             await this.dbConnection.collection(this.collectionName).updateOne(
                 { id: userId },
                 {
                     $set: {
-                        stream_subs: user.stream_subs,
-                        all_time_subs: user.all_time_subs,
-                        monthly_subs: user.monthly_subs,
-                        weekly_subs: user.weekly_subs,
-                        last_seen: last_seen
+                        subs: {
+                            allTime: user.subs.allTime,
+                            yearly: user.subs.yearly,
+                            monthly: user.subs.monthly,
+                            weekly: user.subs.weekly,
+                            stream: user.subs.stream
+                        },
+                        lastSeen: lastSeen
                     }
                 },
                 { upsert: true }
             );
             this.cache.set(userId, user);
         } catch (error) {
-            writeToLogFile('error', `Error in increaseSubs: ${error}`);
+            logger.error(`Error in increaseSubs: ${error}`);
         }
     }
 
-    // Method to increase the stream_donations, all_time_donations, monthly_donations, and weekly_donations properties for a user. If the property does not exist, it will be created. Take in the amount of the donation as a number.
-    async increaseDonations(userId, amount) {
+    // Method to increase the donations for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of bits as a number.
+    async increaseDonations(userId, donations) {
         try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if donations is a number
+            if (typeof donations !== 'number') {
+                try {
+                    donations = parseInt(donations);
+                    if (isNaN(donations)) {
+                        logger.error(`Error in increaseDonations: Donations is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseDonations: ${error}`);
+                }
+            }
             const date = new Date();
-            const last_seen = date;
+            const lastSeen = date;
             let user = this.cache.get(userId);
             if (!user) {
                 user = await this.getUserByUserId(userId);
             }
-            user.stream_donations += amount;
-            user.all_time_donations += amount;
-            user.monthly_donations += amount;
-            user.weekly_donations += amount;
+            user.donations.allTime += donations;
+            user.donations.yearly += donations;
+            user.donations.monthly += donations;
+            user.donations.weekly += donations;
+            user.donations.stream += donations;
+            // Increase the donations property for the user in the database
             await this.dbConnection.collection(this.collectionName).updateOne(
                 { id: userId },
                 {
                     $set: {
-                        stream_donations: user.stream_donations,
-                        all_time_donations: user.all_time_donations,
-                        monthly_donations: user.monthly_donations,
-                        weekly_donations: user.weekly_donations,
-                        last_seen: last_seen
+                        donations: {
+                            allTime: user.donations.allTime,
+                            yearly: user.donations.yearly,
+                            monthly: user.donations.monthly,
+                            weekly: user.donations.weekly,
+                            stream: user.donations.stream
+                        },
+                        lastSeen: lastSeen
                     }
                 },
                 { upsert: true }
             );
             this.cache.set(userId, user);
         } catch (error) {
-            writeToLogFile('error', `Error in increaseDonations: ${error}`);
+            logger.error(`Error in increaseDonations: ${error}`);
         }
     }
 
-    // Method to update a users property with a new value.
+    // Method to update the metaData property for a user. if the property does not exist, it will be created. Take in the property name as a string and the value as a string.
+    async updateMetaData(userId, property, value) {
+        try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if property is a string
+            if (typeof property !== 'string') {
+                logger.error(`Error in updateMetaData: Property is not a string`);
+                return null;
+            }
+            // Check if value is a string
+            if (typeof value !== 'string') {
+                logger.error(`Error in updateMetaData: Value is not a string`);
+                return null;
+            }
+            const date = new Date();
+            const lastSeen = date;
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            user.metaData[property] = value;
+            // Update the metaData property for the user in the database
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $set: {
+                        metaData: user.metaData,
+                        lastSeen: lastSeen
+                    }
+                },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        } catch (error) {
+            logger.error(`Error in updateMetaData: ${error}`);
+        }
+    }
 }

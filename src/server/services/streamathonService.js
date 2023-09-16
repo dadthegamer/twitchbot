@@ -7,15 +7,16 @@ export class StreamathonService {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
-        this.collectionName = 'streamathon';
+        this.collectionName = 'streamSettings';
         this.createInitialStreamathonSettings();
         this.getStreamathonSettings();
     }
 
-    // Method to create the initial subathon settings in the database and cache if they dont exist
+    // Method to create the initial streamathon settings in the database and cache if they dont exist
     async createInitialStreamathonSettings() {
         try {
             const initialstreamathonSettings = {
+                name: 'StreamathonSettings',
                 streamathonActive: false,
                 streamathonStartTime: null,
                 description: null,
@@ -55,11 +56,13 @@ export class StreamathonService {
                     tikTokGifts: 0,
                 },
             }
-            const subathonSettings = await this.dbConnection.collection(this.collectionName).findOne();
-            if (!subathonSettings) {
+            // check if the name exists in the database. If not, create the initial streamathon settings and cache it
+            const streamathonSettings = await this.dbConnection.collection(this.collectionName).findOne({ name: initialstreamathonSettings.name });
+            if (!streamathonSettings) {
                 await this.dbConnection.collection(this.collectionName).insertOne(initialstreamathonSettings);
                 await this.cache.set('streamathonSettings', initialstreamathonSettings);
-                logger.info('Initial streamathon settings created');
+            } else {
+                await this.cache.set('streamathonSettings', streamathonSettings);
             }
         }
         catch (error) {
@@ -67,65 +70,34 @@ export class StreamathonService {
         }
     }
 
-    // Method to get the streamathon settings from the database and cache
+    // Method to get the streamathon settings from the cache. If it doesnt exist, get it from the database and cache it
     async getStreamathonSettings() {
         try {
-            const streamathonSettings = await this.cache.get('streamathonSettings');
-            if (streamathonSettings) {
-                return streamathonSettings;
-            }
-            else {
-                const streamathonSettings = await this.dbConnection.collection(this.collectionName).findOne();
+            let streamathonSettings = await this.cache.get('streamathonSettings');
+            if (!streamathonSettings) {
+                streamathonSettings = await this.dbConnection.collection(this.collectionName).findOne({ name: 'StreamathonSettings' });
                 await this.cache.set('streamathonSettings', streamathonSettings);
-                return streamathonSettings;
             }
+            return streamathonSettings;
         }
         catch (error) {
             logger.error(`Error getting streamathon settings: ${error}`);
         }
     }
 
+
     // Method to update the streamathon settings in the database and cache
     async updateStreamathonSettings(streamathonSettings) {
         try {
-            await this.dbConnection.collection(this.collectionName).updateOne({}, { $set: streamathonSettings });
             await this.cache.set('streamathonSettings', streamathonSettings);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { name: 'StreamathonSettings' }, 
+                { $set: streamathonSettings }
+            );
             return streamathonSettings;
         }
         catch (error) {
             logger.error(`Error updating streamathon settings: ${error}`);
-        }
-    }
-
-    // Method to increase the streamathon current by the amount in the parameters based on what is passed in. If the streamathon current is greater than or equal to the streamathon cap, then set the streamathon current to the streamathon cap
-    async increaseStreamathonCurrent(parameter) {
-        // Check if a streamathon is active
-        const streamathonSettings = await this.getStreamathonSettings();
-        if (!streamathonSettings.streamathonActive) {
-            return;
-        }
-        // Check if the parameter is valid
-        const validParameters = ['subs', 'bits', 'followers', 'donations', 'tikTokFollowers', 'tikTokLikes', 'tikTokGifts'];
-        if (!validParameters.includes(parameter)) {
-            logger.error(`Invalid parameter: ${parameter}`);
-            return new Error(`Invalid parameter: ${parameter}`);
-        }
-        try {
-            const streamathonSettings = await this.getStreamathonSettings();
-            const streamathonCurrent = streamathonSettings.streamathonCurrent;
-            const streamathonCap = streamathonSettings.streamathonCap;
-            const newStreamathonCurrent = streamathonCurrent + streamathonSettings.parameters[parameter];
-            if (newStreamathonCurrent >= streamathonCap) {
-                streamathonSettings.streamathonCurrent = streamathonCap;
-            }
-            else {
-                streamathonSettings.streamathonCurrent = newStreamathonCurrent;
-            }
-            await this.updateStreamathonSettings(streamathonSettings);
-            return streamathonSettings;
-        }
-        catch (error) {
-            logger.error(`Error increasing streamathon current: ${error}`);
         }
     }
 }

@@ -2,6 +2,7 @@ import { ApiClient } from '@twurple/api';
 import logger from "../utilities/logger.js";
 import axios from 'axios';
 import { startEventListener } from '../services/twitchEventListenerServices.js';
+import { usersDB } from '../config/initializers.js';
 
 // Class for the Twitch API client
 export class TwitchApiClient {
@@ -160,7 +161,7 @@ export class TwitchApiClient {
             const user = {
                 id: data.id,
                 name: data.name,
-                displayname: data.displayName,
+                displayName: data.displayName,
                 profilePictureUrl: data.profilePictureUrl,
             };
             return user;
@@ -393,7 +394,6 @@ export class TwitchApiClient {
                 redemptionsThisStream: reward.redemptionsThisStream,
                 cooldownExpiryDate: reward.cooldownExpiryDate,
             }));
-            this.cache.set('channelRewards', rewards);
             return rewards;
         }
         catch (error) {
@@ -422,7 +422,6 @@ export class TwitchApiClient {
                 redemptionsThisStream: reward.redemptionsThisStream,
                 cooldownExpiryDate: reward.cooldownExpiryDate,
             }));
-            this.cache.set('channelRewardsManaged', rewards);
             return rewards;
         }
         catch (error) {
