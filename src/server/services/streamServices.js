@@ -17,6 +17,11 @@ export class StreamDB {
     async setInitialStreamData() {
         try {
             const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+            // Check if there is already a document in the streamData collection with a status of offline or online
+            const streamData = await this.dbConnection.collection('streamData').findOne(query);
+            if (streamData) {
+                return;
+            }
             const update = {
                 $set: {
                     status: 'offline',
@@ -52,7 +57,6 @@ export class StreamDB {
     // Method to start a stream
     async startStream(streamTitle, category) {
         if (await this.checkStream() !== null) {
-            console.log('There is already a stream started within the last hour');
             return;
         } else {
             try {
@@ -120,7 +124,7 @@ export class StreamDB {
     async checkStream() {
         try {
             const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
-            console.log(`Stream data: ${streamData}`)
+            // Check if a stream
             if (streamData) {
                 console.log('There is already a stream started within the last hour');
                 this.cache.set('stream', streamData);

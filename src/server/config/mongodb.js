@@ -60,6 +60,7 @@ export class MongoDBConnection {
                 'notifications',
                 'chatLogs',
                 'channelRewards',
+                'gameSettings',
             ]
             const collectionPromises = collections.map(collection =>
                 this.dbConnection.createCollection(collection)

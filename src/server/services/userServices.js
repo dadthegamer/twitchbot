@@ -166,6 +166,11 @@ export class UsersDB {
             if (typeof userId !== 'string') {
                 userId = userId.toString();
             }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
             const user = await this.getUserByUserId(userId);
             user.roles.custom[customRole] = true;
             await this.dbConnection.collection(this.collectionName).updateOne(
@@ -186,6 +191,11 @@ export class UsersDB {
             if (typeof userId !== 'string') {
                 userId = userId.toString();
             }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
             const user = await this.getUserByUserId(userId);
             delete user.roles.custom[customRole];
             await this.dbConnection.collection(this.collectionName).updateOne(
@@ -241,8 +251,7 @@ export class UsersDB {
             } else {
                 user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
                 if (user === null) {
-                    const twitchUser = await twitchApi.getUserDataById(userId);
-                    this.newFollower(twitchUser);
+                    await this.newUser(userId);
                     user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
                 }
                 this.cache.set(userId, user);
@@ -297,6 +306,10 @@ export class UsersDB {
             if (typeof userId !== 'string') {
                 userId = userId.toString();
             }
+            const user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
+            if (user) {
+                return;
+            }
             const userData = await twitchApi.getUserDataById(userId);
             const date = new Date();
             const query = { id: userId };
@@ -304,10 +317,9 @@ export class UsersDB {
                 $set: {
                     id: userId,
                     displayName: userData.displayName,
-                    username: userData.name,
+                    userName: userData.name,
                     profilePictureUrl: userData.profilePictureUrl,
                     broadcasterType: userData.broadcasterType,
-                    email: undefined,
                     followDate: date,
                     lastSeen: date,
                     arrived: true,
@@ -355,6 +367,78 @@ export class UsersDB {
             const options = { upsert: true };
             await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
             this.cache.set(userData.id, userData);
+        }
+        catch (error) {
+            logger.error(`Error in newFollower: ${error}`);
+        }
+    }
+
+    async addUserManually(userId, followDate) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if the user is already in the database. If they are then return
+            const user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
+            if (user) {
+                return;
+            }
+            const userData = await twitchApi.getUserDataById(userId);
+            const date = new Date();
+            const query = { id: userId };
+            const update = {
+                $set: {
+                    id: userId,
+                    displayName: userData.displayName,
+                    userName: userData.name,
+                    profilePictureUrl: userData.profilePictureUrl,
+                    broadcasterType: userData.broadcasterType,
+                    followDate: followDate,
+                    arrived: false,
+                    viewTime: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    roles: {
+                        vip: false,
+                        subscriber: false,
+                        moderator: false,
+                        custom: {},
+                    },
+                    subs: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    bits: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    donations: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    currency: {
+                        points: 0,
+                    },
+                    lastSeen: date,
+                    metaData: {}
+                }
+            };
+            const options = { upsert: true };
+            await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
+            this.cache.set(userId, userData);
         }
         catch (error) {
             logger.error(`Error in newFollower: ${error}`);
@@ -565,7 +649,7 @@ export class UsersDB {
                     { upsert: true }
                 );
             }
-        } catch (error) {   
+        } catch (error) {
             logger.error(`Error in setCurrency: ${error}`);
         }
     }
@@ -854,6 +938,12 @@ export class UsersDB {
                     logger.error(`Error in increaseViewTime: ${error}`);
                 }
             }
+
+            // Check if the user is a follower. If they are not then return
+            const isFollower = await this.isFollower(userId);
+            if (!isFollower) {
+                return;
+            }
             const date = new Date();
             const lastSeen = date;
             let user = this.cache.get(userId);
@@ -908,6 +998,12 @@ export class UsersDB {
                     logger.error(`Error in increaseBits: ${error}`);
                 }
             }
+
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
             const date = new Date();
             const lastSeen = date;
             let user = this.cache.get(userId);
@@ -962,6 +1058,11 @@ export class UsersDB {
                     logger.error(`Error in increaseSubs: ${error}`);
                 }
             }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
             const date = new Date();
             const lastSeen = date;
             let user = this.cache.get(userId);
@@ -1016,6 +1117,11 @@ export class UsersDB {
                     logger.error(`Error in increaseDonations: ${error}`);
                 }
             }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
             const date = new Date();
             const lastSeen = date;
             let user = this.cache.get(userId);
@@ -1067,6 +1173,11 @@ export class UsersDB {
                 logger.error(`Error in updateMetaData: Value is not a string`);
                 return null;
             }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
             const date = new Date();
             const lastSeen = date;
             let user = this.cache.get(userId);

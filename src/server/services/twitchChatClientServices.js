@@ -25,14 +25,13 @@ export class TwitchChatClient {
             this.chatClient.join('dadthegam3r');
             this.chatClient.onConnect(() => {
                 if (environment === 'production'){
-                    writeToLogFile('info','The Dadb0t is online!');
                     this.chatClient.say('dadthegam3r', 'The Dadb0t is online!');
                 } else {
                     console.log('The Dadb0t is online!')
                 }
             });
             this.chatClient.onDisconnect(() => {
-                writeToLogFile('info','The Dadb0t is offline! Reconnecting...')
+                logger.error('Disconnected from Twitch chat');
                 this.reconnect();
             });
             this.chatClient.onMessage(async (channel, user, message, msg) => {
@@ -50,7 +49,7 @@ export class TwitchChatClient {
             this.chatClient.say(this.channel, message);
         }
         catch (error) {
-            writeToLogFile('error', `Error in say method within chat client: ${error}`);
+            logger.error(`Error in say method within chat client: ${error}`);
         }
     }
 
@@ -80,7 +79,7 @@ export class TwitchChatClient {
             await this.bot.reply(this.channel, text, msg)
         }
         catch (error) {
-            console.log(error);
+            logger.error(`Error in replyToMessage method within chat client: ${error}`);
         }
     }
 }

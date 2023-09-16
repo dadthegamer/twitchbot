@@ -70,10 +70,10 @@ export class TwitchApiClient {
             const data = await this.apiClient.channels.getChannelFollowersPaginated(this.userId).getAll();
             for (const follower of data) {
                 const d = {
-                    id: follower.userId,
-                    login: follower.userName,
-                    display_name: follower.userDisplayName,
-                    follow_date: follower.followDate,
+                    userId: follower.userId,
+                    userName: follower.userName,
+                    userDisplayName: follower.userDisplayName,
+                    followDate: follower.followDate,
                 }
                 followers.push(d);
             }
@@ -107,10 +107,9 @@ export class TwitchApiClient {
             const data = await this.apiClient.channels.getVipsPaginated(this.userId).getAll();
             const vips = data.map((vip) => ({
                 id: vip.id,
-                display_name: vip.displayName,
+                displayName: vip.displayName,
             }));
-            console.log(vips);
-            this.cache.set('channel_vips', vips);
+            this.cache.set('vifps', vips);
             return vips;
         }
         catch (error) {
@@ -124,12 +123,12 @@ export class TwitchApiClient {
             const data = await this.apiClient.subscriptions.getSubscriptionsPaginated(this.userId).getAll();
             const subs = data.map((sub) => ({
                 id: sub.userId,
-                login: sub.userName,
-                display_Name: sub.userDisplayName,
+                userName: sub.userName,
+                userDisplayName: sub.userDisplayName,
                 tier: sub.tier,
-                is_gift: sub.isGift,
+                isGift: sub.isGift,
             }));
-            this.cache.set('channel_subs', subs);
+            this.cache.set('subscribers', subs);
             return subs;
         }
         catch (error) {

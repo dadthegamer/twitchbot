@@ -22,7 +22,8 @@ import { SettingsService } from '../services/settingsService.js';
 import { CurrencyService } from '../services/currencyService.js';
 import { RaffleService } from '../services/raffleService.js';
 import { GoalService } from '../services/goalService.js';
-import { ViewTimeService } from '../services/viewTimeService.js';
+import ViewTimeService from '../services/viewTimeService.js';
+import TaskCoordinator from '../managers/tasksCoordinator.js';
 
 
 // Cache initialization
@@ -85,6 +86,9 @@ const goalDB = new GoalService(db.dbConnection, cache);
 // ViewTimeDB initialization
 const viewTimeDB = new ViewTimeService(db.dbConnection, cache);
 
+// Task coordinator initialization
+const taskCoordinator = new TaskCoordinator(twitchApi, usersDB);
+
 // Subscribe to donation events
 subscribeToDonationEvents();
 
@@ -113,4 +117,5 @@ export {
     raffleDB,
     goalDB,
     viewTimeDB,
+    taskCoordinator,
 };

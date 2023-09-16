@@ -2,9 +2,10 @@ import logger from "../utilities/logger.js";
 import { getChattersWithoutBots } from '../handlers/twitch/viewTimeHandler.js';
 import { currencyDB, usersDB } from '../config/initializers.js';
 import NodeCache from 'node-cache';
+import { environment } from "../config/environmentVars.js";
 
 // Currency Class
-export class ViewTimeService {
+class ViewTimeService {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
@@ -38,8 +39,9 @@ export class ViewTimeService {
             setInterval(async () => {
                 await this.getCurrentViewers();
                 this.viewTimeHandler();
-            }, 60000);
+            }, 5000);
         } catch (err) {
+            console.log(err);
             logger.error(`Error in viewTimeHandlerInterval: ${err}`);
         }
     }
@@ -48,11 +50,18 @@ export class ViewTimeService {
     async viewTimeHandler() {
         try {
             const live = this.cache.get('live');
-            if (!live) {
+            // if (!live) {
+            //     return;
+            // };
+            const viewers = await this.getCurrentViewers();
+            if (!viewers) {
                 return;
-            };
-            const viewers = this.cache.get('currentViewers');
+            }
             for (const viewer of viewers) {
+                if (environment === 'development') {
+                    console.log(`${viewer.userId} is a viewer`);
+                    return;
+                }
                 // Check if the viewer is a follower
                 const isFollower = usersDB.isFollower(viewer.userId);
                 if (isFollower) {
@@ -72,6 +81,9 @@ export class ViewTimeService {
             }
         }
     } catch (err) {
+        console.log(err);
         logger.error(`Error in viewTimeHandler: ${err}`);
     }}
 }
+
+export default ViewTimeService;
