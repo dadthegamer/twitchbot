@@ -17,15 +17,16 @@ class TwitchChannelPointsService {
             // Get all the channel rewards that are managed by the bot
             const managedChannelRewards = await twitchApi.getChannelRewardsManaged();
 
-            // get all the channel rewards from the database
-            const channelRewardsFromDatabase = await this.getAllChannelRewardsFromDatabase();
-
             // For all the channel rewards that are managed by the bot assing a property to the channel reward object of managed to true
             for (const managedChannelReward of managedChannelRewards) {
                 const channelReward = channelRewards.find(channelReward => channelReward.id === managedChannelReward.id);
                 channelReward.managed = true;
-                // If the channel reward is not in the database add it to the database
-                if (!channelRewardsFromDatabase.find(channelRewardFromDatabase => channelRewardFromDatabase.id === channelReward.id)) {
+            }
+
+            // for each channel reward insert it into the database if it does not exist
+            for (const channelReward of channelRewards) {
+                const channelRewardExists = await this.dbConnection.collection(this.collectionName).findOne({ id: channelReward.id });
+                if (!channelRewardExists) {
                     await this.dbConnection.collection(this.collectionName).insertOne(channelReward);
                 }
             }
