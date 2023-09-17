@@ -5,7 +5,7 @@ import { onMessageHandler } from '../handlers/twitch/chatHandlers/onMessage.js';
 import logger from "../utilities/logger.js";
 
 // Class to connect to Twitch chat
-export class TwitchChatClient {
+class TwitchChatClient {
     constructor(authProvider) {
         this.authProvider = authProvider;
         this.chatClient = new ChatClient({ authProvider: this.authProvider, channels: ['dadthegam3r'] });
@@ -83,3 +83,5 @@ export class TwitchChatClient {
         }
     }
 }
+
+export default TwitchChatClient;

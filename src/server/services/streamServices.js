@@ -3,7 +3,7 @@ import { msToMinutes } from "../utilities/utils.js";
 import { chatLogService } from "../config/initializers.js";
 
 // Class to handle all stream related services
-export class StreamDB {
+class StreamDB {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
@@ -330,3 +330,5 @@ export class StreamDB {
         }
     }
 }
+
+export default StreamDB;

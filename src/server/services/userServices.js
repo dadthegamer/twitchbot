@@ -4,7 +4,7 @@ import { environment } from '../config/environmentVars.js';
 
 
 // User class 
-export class UsersDB {
+class UsersDB {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
@@ -1202,3 +1202,6 @@ export class UsersDB {
         }
     }
 }
+
+
+export default UsersDB;

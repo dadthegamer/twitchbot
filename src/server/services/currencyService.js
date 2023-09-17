@@ -6,7 +6,7 @@ import { activeUsersCache } from '../config/initializers.js';
 import logger from '../utilities/logger.js';
 
 // Currency Class
-export class CurrencyService {
+class CurrencyService {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
@@ -500,3 +500,5 @@ export class CurrencyService {
         }
     }
 }
+
+export default CurrencyService;

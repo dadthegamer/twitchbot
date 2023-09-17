@@ -1,7 +1,7 @@
 import logger from "../utilities/logger.js";
 
 // Class for token data
-export class TokenDB {
+class TokenDB {
     constructor(dbConnection) {
         this.dbConnection = dbConnection;
         this.collectionName = 'tokens';
@@ -85,3 +85,5 @@ export class TokenDB {
         }
     }
 }
+
+export default TokenDB;

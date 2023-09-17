@@ -2,7 +2,7 @@ import { environment } from '../config/environmentVars.js';
 import logger from '../utilities/logger.js';
 
 // User class 
-export class NotificationService {
+class NotificationService {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
@@ -84,6 +84,7 @@ export class NotificationService {
             logger.error(`Error deleting all read notifications: ${error}`);
         }
     }
-
 }
 
+
+export default NotificationService;

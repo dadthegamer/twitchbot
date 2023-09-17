@@ -1,11 +1,11 @@
 import { ApiClient } from '@twurple/api';
 import logger from "../utilities/logger.js";
 import axios from 'axios';
-import { startEventListener } from '../services/twitchEventListenerServices.js';
+import { startEventListener } from './twitchEventListenerServices.js';
 import { usersDB } from '../config/initializers.js';
 
 // Class for the Twitch API client
-export class TwitchApiClient {
+class TwitchApiClient {
     constructor(authProvider, cache) {
         console.log(authProvider);
         this.apiClient = new ApiClient({ authProvider: authProvider });
@@ -478,10 +478,29 @@ export class TwitchApiClient {
     async createCustomReward(data) {
         try {
             const response = await this.apiClient.channelPoints.createCustomReward(this.userId, data);
-            return response;
+            console.log(response);
+            return response.id;
         }
         catch (error) {
+            // Parse the error message to see if the error is because the reward already exists
+            if (error.message.includes('CREATE_CUSTOM_REWARD_DUPLICATE_REWARD')) {
+                return { error: 'Reward already exists'}
+            }
             logger.error(`Error creating custom reward: ${error}`);
         }
     }
+
+    // Method to delete a custom reward
+    async deleteCustomReward(rewardId) {
+        try {
+            const response = await this.apiClient.channelPoints.deleteCustomReward(this.userId, rewardId);
+            return response;
+        }
+        catch (error) {
+            logger.error(`Error deleting custom reward: ${error}`);
+        }
+    }
 }
+
+
+export default TwitchApiClient;

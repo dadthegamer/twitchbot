@@ -1,7 +1,7 @@
 import NodeCache from 'node-cache';
 
 
-export class CacheService {
+class CacheService {
     constructor(name, stdTTL = 0) {
         this.name = name;
         this.cache = new NodeCache({ stdTTL, checkperiod: 120 });
@@ -55,3 +55,6 @@ export class CacheService {
         return size;
     }
 }
+
+
+export default CacheService;

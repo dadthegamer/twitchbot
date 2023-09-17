@@ -2,7 +2,7 @@ import logger from "../utilities/logger.js";
 
 
 // Command Class
-export class SettingsService {
+class SettingsService {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
@@ -117,3 +117,5 @@ export class SettingsService {
         }
     }
 }
+
+export default SettingsService;

@@ -5,7 +5,7 @@ import { config } from 'dotenv';
 
 config();
 
-export class MongoDBConnection {
+class MongoDBConnection {
     constructor() {
         this.host = process.env.MONGO_INITDB_DATABASE_HOST;
         this.port = process.env.MONGO_INITDB_DATABASE_PORT;
@@ -110,3 +110,5 @@ export class MongoDBConnection {
         }
     }
 }
+
+export default MongoDBConnection;

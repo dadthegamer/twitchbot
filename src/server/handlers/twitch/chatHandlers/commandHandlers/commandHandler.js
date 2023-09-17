@@ -6,7 +6,7 @@ import { evalulate } from '../../../evaluater.js';
 import { chatClient } from '../../../../config/initializers.js';
 
 // Class to handle commands
-export class CommandHandler {
+class CommandHandler {
     constructor(commandsCache) {
         this.cache = commandsCache;
         this.userCooldownCache = new NodeCache({ stdTTL: 0, checkperiod: 300 });
@@ -106,3 +106,5 @@ export class CommandHandler {
         }
     }
 }
+
+export default CommandHandler;

@@ -1,11 +1,10 @@
 import { RefreshingAuthProvider } from '@twurple/auth';
 import { ApiClient } from '@twurple/api';
 import logger from "../utilities/logger.js";
-import { startEventListener } from './twitchEventListenerServices.js';
-import { TwitchBotClient } from './twitchBotServices.js';
+
 
 // Class for the Twitch API client
-export class AuthProviderManager {
+class AuthProviderManager {
     constructor(tokenDBInstance) {
         this.userId = '64431397';
         this.clientId = process.env.TWITCH_CLIENT_ID;
@@ -33,7 +32,6 @@ export class AuthProviderManager {
             });
             this.authProvider.onRefreshFailure(async (userId, error) => {
                 logger.error(`Error refreshing token for user ${userId}: ${error}`);
-                console.log(`Error refreshing token for user ${userId}: ${error}`);
             });
         }
         catch (error) {
@@ -49,7 +47,7 @@ export class AuthProviderManager {
         try {
             const tokenData = await this.tokenDB.getAllTokens();
             if (tokenData === null) {
-                writeToLogFile('error', `No token data found.`);
+                logger.error(`No token data found for user ${tokenData.userId}.`);
                 return;
             }
             try {
@@ -61,7 +59,7 @@ export class AuthProviderManager {
             }
         }
         catch (error) {
-            console.log(error);
+            logger.error(`Error getting all tokens from database: ${error}`);
         }
     }
 
@@ -69,7 +67,7 @@ export class AuthProviderManager {
     async addUserToAuthProvider(tokenData) {
         try {
             if (tokenData === null) {
-                writeToLogFile('error', `No token data found for user ${tokenData.userId}.`);
+                logger.error(`No token data found for user ${tokenData.userId}.`);
                 return;
             }
             if (tokenData.userId === '671284746') {
@@ -92,3 +90,5 @@ export class AuthProviderManager {
         return this.authProvider;
     }
 }
+
+export default AuthProviderManager;

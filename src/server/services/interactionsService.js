@@ -1,7 +1,7 @@
 import logger from "../utilities/logger.js";
 
 // Class to to handle interactions with the database
-export class InteractionsDbService {
+class InteractionsDbService {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
@@ -152,6 +152,6 @@ export class InteractionsDbService {
             logger.error(`Error in deleteQuote: ${err}`);
         }
     }
-
-    
 }
+
+export default InteractionsDbService;

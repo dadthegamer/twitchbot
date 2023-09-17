@@ -3,7 +3,7 @@ import NodeCache from 'node-cache';
 
 
 // Class to handle active users
-export class ActiveUsersHandler {
+class ActiveUsersHandler {
     constructor() {
         this.cache = new NodeCache({ stdTTL: 10, checkperiod: 300 });
         this.listenForExpiredKeys();
@@ -83,3 +83,5 @@ export class ActiveUsersHandler {
     }
     
 }
+
+export default ActiveUsersHandler;

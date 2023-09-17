@@ -3,7 +3,7 @@ import logger from '../utilities/logger.js';
 
 
 // Command Class
-export class Commands {
+class Commands {
     constructor(dbConnection) {
         this.dbConnection = dbConnection;
         this.cache = new NodeCache();
@@ -192,3 +192,5 @@ export class Commands {
         }
     }
 }
+
+export default Commands;

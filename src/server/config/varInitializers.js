@@ -2,7 +2,7 @@ import { cache } from "./initializers.js";
 import { writeToLogFile } from "../utilities/logging.js";
 
 // Function to set initial values for the cache
-export async function setInitialCacheValues() {
+async function setInitialCacheValues() {
     try {
         // Set the initial values for the cache
         cache.set('viewers', []);
@@ -50,3 +50,5 @@ export async function setInitialCacheValues() {
         writeToLogFile('error', `Error in setInitialCacheValues: ${err}`)
     }
 }
+
+export default setInitialCacheValues;

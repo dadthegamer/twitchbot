@@ -1,30 +1,32 @@
-import { CacheService } from '../services/cacheServices.js';
-import { MongoDBConnection } from './mongodb.js';
-import { UsersDB } from '../services/userServices.js';
-import { TokenDB } from '../services/tokenServices.js';
+import CacheService from '../services/cacheServices.js';
+import MongoDBConnection from './mongodb.js';
+import UsersDB from '../services/userServices.js';
+import TokenDB from '../services/tokenServices.js';
 import { WebSocket } from '../services/webSocket.js';
 import { startWelcomeAlerts } from '../handlers/welcomeHandler.js';
 import { startAlertsHandler } from '../handlers/alertHandler.js';
-import { setInitialCacheValues } from './varInitializers.js';
-import { ActiveUsersHandler } from '../handlers/twitch/chatHandlers/activeUsersHandler.js';
-import { Commands } from '../services/commandServices.js';
-import { CommandHandler } from '../handlers/twitch/chatHandlers/commandHandlers/commandHandler.js';
-import { StreamDB } from '../services/streamServices.js';
+import setInitialCacheValues from './varInitializers.js';
+import ActiveUsersHandler from '../handlers/twitch/chatHandlers/activeUsersHandler.js';
+import Commands from '../services/commandServices.js';
+import CommandHandler from '../handlers/twitch/chatHandlers/commandHandlers/commandHandler.js';
+import StreamDB from '../services/streamServices.js';
 import { subscribeToDonationEvents } from '../services/streamElementsService.js';
-import { AuthProviderManager } from '../services/twitchAuthProviderServices.js';
-import { TwitchApiClient } from '../services/twitchApiServices.js';
-import { TwitchChatClient } from '../services/twitchChatClientServices.js';
+import AuthProviderManager from '../services/twitchAuthProviderServices.js';
+import TwitchChatClient from '../services/twitchChatClientServices.js';
 import { addBotsToKnownBots } from '../handlers/twitch/viewTimeHandler.js';
-import { InteractionsDbService } from '../services/interactionsService.js';
-import { NotificationService } from '../services/notificationService.js';
-import { ChatLogService } from '../services/chatLogService.js';
-import { SettingsService } from '../services/settingsService.js';
-import { CurrencyService } from '../services/currencyService.js';
+import InteractionsDbService from '../services/interactionsService.js';
+import NotificationService from '../services/notificationService.js';
+import ChatLogService from '../services/chatLogService.js';
+import SettingsService from '../services/settingsService.js';
+import CurrencyService from '../services/currencyService.js';
 import { RaffleService } from '../services/raffleService.js';
 import GoalService from '../services/goalService.js';
 import ViewTimeService from '../services/viewTimeService.js';
 import TaskCoordinator from '../managers/tasksCoordinator.js';
 import OBSService from '../services/obsService.js';
+import TwitchApiClient from '../services/twitchApiService.js';
+import TwitchChannelPointsService from '../services/channelPointService.js';
+
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -33,16 +35,20 @@ setInitialCacheValues();
 const db = new MongoDBConnection();
 await db.connect();
 
-// Database initialization
+// User Database initialization
 const usersDB = new UsersDB(db.dbConnection, cache);
+
+// Token Database initialization
 const tokenDB = new TokenDB(db.dbConnection);
 
 // NotificationDB initialization
 const notificationDB = new NotificationService(db.dbConnection, cache);
 
-// Twitch API initialization
+// Twurple Auth initialization
 const authProvider = new AuthProviderManager(tokenDB);
 await authProvider.addAllUsersToAuthProvider();
+
+// Twitch API client initialization
 const twitchApi = new TwitchApiClient(authProvider.authProvider, cache);
 
 // Chat client initialization
@@ -66,7 +72,6 @@ const currencyDB = new CurrencyService(db.dbConnection, cache);
 
 // Websocket initialization
 const webSocket = new WebSocket();
-webSocket.startWebSocketServer();
 
 // Active users cache initialization
 const activeUsersCache = new ActiveUsersHandler();
@@ -91,6 +96,9 @@ const taskCoordinator = new TaskCoordinator(twitchApi, usersDB);
 
 // OBS Service initialization
 const obsService = new OBSService(db.dbConnection, cache);
+
+// Channel points service initialization
+const channelPointsService = new TwitchChannelPointsService(cache, db.dbConnection);
 
 // Subscribe to donation events
 subscribeToDonationEvents();
@@ -122,4 +130,5 @@ export {
     viewTimeDB,
     taskCoordinator,
     obsService,
+    channelPointsService    
 };

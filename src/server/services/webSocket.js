@@ -1,12 +1,15 @@
 // server.js
 import { WebSocketServer } from 'ws';
-import { writeToLogFile } from '../utilities/logging.js';
 import { getRandomInt } from '../utilities/utils.js';
+import logger from '../utilities/logger.js';
 
 // Calss for the WebSocket server
 export class WebSocket {
     constructor() {
         this.wss = new WebSocketServer({ port: 8080 });
+        this.wss.on('listening', () => {
+            logger.info('WebSocket server started on port 8080...');
+        });
         this.wss.on('connection', (ws) => {
             console.log('Client connected');
             this.notification({ 
@@ -33,18 +36,9 @@ export class WebSocket {
     }
 
     // Method to send a message to the client
-    startWebSocketServer() {
-        this.wss.on('listening', () => {
-            console.log('WebSocket server started on port 8080...');
-            writeToLogFile('info', 'WebSocket server started...');
-        });
-    }
-
-    // Method to send a message to the client
     stopWebSocketServer() {
         this.wss.close(() => {
-            console.log('WebSocket server stopped...');
-            writeToLogFile('info', 'WebSocket server stopped...');
+            logger.info('WebSocket server stopped...');
         });
     }
 

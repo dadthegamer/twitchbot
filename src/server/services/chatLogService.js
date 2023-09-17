@@ -3,7 +3,7 @@ import NodeCache from 'node-cache';
 import logger from '../utilities/logger.js';
 
 // Class to handle all stream related services
-export class ChatLogService {
+class ChatLogService {
     constructor(dbConnection) {
         this.dbConnection = dbConnection;
         this.cache = new NodeCache({ stdTTL: 10, checkperiod: 120 });
@@ -98,3 +98,5 @@ export class ChatLogService {
         }
     }
 }
+
+export default ChatLogService;
