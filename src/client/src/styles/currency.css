@@ -15,6 +15,10 @@
     --font-color: #FFFFFF;
 }
 
+body {
+    background-color: var(--background-color);
+}
+
 input {
     background-color: var(--background-color);
     border: 1px solid var(--font-color);
