@@ -3,8 +3,7 @@ import { twitchApi } from "../../config/initializers.js";
 import { writeToLogFile } from "../../utilities/logging.js";
 import { cache } from "../../config/initializers.js";
 import NodeCache from "node-cache";
-import { environment } from "../../config/environmentVars.js";
-
+import logger from "../../utilities/logger.js";
 
 export const knownBots = new NodeCache();
 
@@ -91,7 +90,7 @@ export async function getChattersWithoutBots() {
         return chattersWithoutBots;
     }
     catch (err) {
-        writeToLogFile('error', `Error in getChattersWithoutBots: ${err}`);
+        logger.error(`Error in getChattersWithoutBots: ${err}`);
     }
 }
 
@@ -115,7 +114,6 @@ export async function viewTimeHandler() {
         }
     }
     catch (err) {
-        console.log(`Error in viewTimeHandler: ${err}`)
-        writeToLogFile('error', `Error in viewTimeHandler: ${err}`);
+        logger.error(`Error in viewTimeHandler: ${err}`);
     }
 }

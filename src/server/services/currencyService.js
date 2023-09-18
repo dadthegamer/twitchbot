@@ -72,6 +72,7 @@ class CurrencyService {
                         tier2: false,
                         tier3: false,
                     },
+                    autoReset: false,
                     limit: false,
                 };
                 await this.dbConnection.collection(this.collectionName).insertOne(currency);
@@ -333,7 +334,7 @@ class CurrencyService {
                     return;
                 } else {
                     // Get the viewers
-                    const viewers = await getChattersWithoutBots();
+                    const viewers = this.cache.get('currentViewers');
                     for (const viewer of viewers) {
                         // Check if the viewer is a follower, subscriber, vip, or moderator
                         const payout = await this.restrictionPayoutHandler(viewer.userId, name);
@@ -366,7 +367,7 @@ class CurrencyService {
 
                             if (hypeTrainBonus !== false) {
                                 const hypeTrain = await cache.get('hypeTrain');
-                                if (hypeTrain !== null) {
+                                if (hypeTrain && hypeTrain.isActive) {
                                     bonus += hypeTrainBonus
                                 }
                             }
@@ -394,6 +395,8 @@ class CurrencyService {
         }
     }
 
+    // Method to get all the c
+
     // Method to clear all payout intervals
     clearAllPayoutIntervals() {
         this.payoutIntervals.forEach(intervalId => clearInterval(intervalId));
@@ -401,7 +404,7 @@ class CurrencyService {
     }
 
     // Method to add a currency to a user for subs
-    async addCurrencyForSub(userId) {
+    async addCurrencyForSub(userId, subsAmount) {
         try {
             // Loop through all currencies and add the amount to the user
             const currencies = this.cache.get('currencies');
@@ -411,7 +414,10 @@ class CurrencyService {
                     continue;
                 } else {
                     const { subs } = payoutSettings;
-                    await usersDB.increaseCurrency(userId, name, subs);
+                    const { amount, minimum } = subs;
+                    if (subsAmount >= minimum) {
+                        await usersDB.increaseCurrency(userId, name, (amount * subsAmount));
+                    }
                 }
             }
         }
@@ -431,7 +437,10 @@ class CurrencyService {
                     continue;
                 } else {
                     const { bits } = payoutSettings;
-                    await usersDB.increaseCurrency(userId, name, bits);
+                    const { amount, minimum } = bits;
+                    if (bitsAmount >= minimum) {
+                        await usersDB.increaseCurrency(userId, name, (amount * bitsAmount));
+                    }
                 }
             }
         }
@@ -451,7 +460,10 @@ class CurrencyService {
                     continue;
                 } else {
                     const { donations } = payoutSettings;
-                    await usersDB.increaseCurrency(userId, name, donations);
+                    const { amount, minimum } = donations;
+                    if (donationsAmount >= minimum) {
+                        await usersDB.increaseCurrency(userId, name, (amount * donationsAmount));
+                    }
                 }
             }
         }

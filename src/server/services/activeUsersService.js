@@ -45,7 +45,6 @@ export class ActiveUsersCache {
     // Listen for expired keys
     listenForExpiredKeys() {
         this.on('expired', (key, value) => {
-            console.log(`Key ${key} expired`);
             this.delete(key);
         });
     }

@@ -679,6 +679,24 @@ class UsersDB {
         }
     }
 
+    // Method to get all the users who have a currency property of at least 1. For each of the currency the user has add the user to an array. Return the array
+    async getUsersWithCurrency(currency) {
+        try {
+            const users = await this.getAllUsers();
+            const usersWithCurrency = users.filter((user) => user.currency[currency] >= 1);
+            // For each of the users with the currency, add the userid to an array the amount of times they have the currency
+            const userIds = [];
+            for (const user of usersWithCurrency) {
+                for (let i = 0; i < user.currency[currency]; i++) {
+                    userIds.push(user.id);
+                }
+            }
+            return userIds;
+        } catch (error) {
+            logger.error(`Error in getUsersWithCurrency: ${error}`);
+        }
+    }
+
     // Method to set the arrived property for a user
     async setArrived(userId, arrived) {
         try {

@@ -41,7 +41,6 @@ class ViewTimeService {
                 this.viewTimeHandler();
             }, 5000);
         } catch (err) {
-            console.log(err);
             logger.error(`Error in viewTimeHandlerInterval: ${err}`);
         }
     }
@@ -50,9 +49,9 @@ class ViewTimeService {
     async viewTimeHandler() {
         try {
             const live = this.cache.get('live');
-            // if (!live) {
-            //     return;
-            // };
+            if (!live) {
+                return;
+            };
             const viewers = await this.getCurrentViewers();
             if (!viewers) {
                 return;
@@ -72,7 +71,7 @@ class ViewTimeService {
                     } else {
                         this.viewTimeCache.set(viewer.userId, viewTime + 1, 900);
                     }
-                    // Check if the viwer has more than 15 minutes of view time. If they do increase the view time in the database by the amount of view time they have in the cache.
+                    // Check if the viewer has more than 15 minutes of view time. If they do increase the view time in the database by the amount of view time they have in the cache.
                     if (this.viewTimeCache.get(viewer.userId) >= 15) {
                         const user = currencyDB.getUser(viewer.userId);
                         await usersDB.increaseViewTime(user, this.viewTimeCache.get(viewer.userId));
@@ -81,7 +80,6 @@ class ViewTimeService {
             }
         }
     } catch (err) {
-        console.log(err);
         logger.error(`Error in viewTimeHandler: ${err}`);
     }}
 }
