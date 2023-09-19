@@ -365,8 +365,9 @@ class UsersDB {
                 }
             };
             const options = { upsert: true };
-            await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
+            const res = await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
             this.cache.set(userData.id, userData);
+            return res.value;
         }
         catch (error) {
             logger.error(`Error in newFollower: ${error}`);

@@ -37,9 +37,11 @@ class CurrencyService {
                     payoutSettings: {
                         interval: 1,
                         amount: 1,
+                        follower: 1,
                         subs: {
                             amount: 1,
                             minimum: 0,
+                            tierMultiplier: false,
                         },
                         bits: {
                             amount: 1,
@@ -101,9 +103,11 @@ class CurrencyService {
                     payoutSettings: {
                         interval: 1,
                         amount: 1,
+                        follower: 1,
                         subs: {
                             amount: 1,
                             minimum: 0,
+                            tierMultiplier: false,
                         },
                         bits: {
                             amount: 1,
@@ -206,7 +210,7 @@ class CurrencyService {
     }
 
     // Method to create a currency
-    async createCurrency(name, enabled, payoutSettings, roleBonuses, limit) {
+    async createCurrency(name, enabled, payoutSettings, roleBonuses, restrictions, limit, autoReset) {
         name = name.toLowerCase();
         // If the currency already exists, return
         const currency = await this.getCurrencyByName(name);
@@ -215,48 +219,55 @@ class CurrencyService {
         }
         try {
             const currency = {
-                name: 'Points',
-                enabled: true,
+                name: name,
+                enabled: enabled,
                 payoutSettings: {
-                    interval: 1,
-                    amount: 1,
+                    interval: payoutSettings.interval,
+                    amount: payoutSettings.amount,
+                    follower: payoutSettings.follower,
                     subs: {
-                        amount: 1,
-                        minimum: 0,
+                        amount: payoutSettings.subs.amount,
+                        minimum: payoutSettings.subs.minimum,
+                        tierMultiplier: payoutSettings.subs.tierMultiplier,
                     },
                     bits: {
-                        amount: 1,
-                        minimum: 0,
+                        amount: payoutSettings.bits.amount,
+                        minimum: payoutSettings.bits.minimum,
                     },
                     donations: {
-                        amount: 1,
-                        minimum: 0,
+                        amount: payoutSettings.donations.amount,
+                        minimum: payoutSettings.donations.minimum,
                     },
-                    raids: 1,
-                    arrived: 1,
+                    raids: payoutSettings.raids,
+                    arrived: payoutSettings.arrived,
+                    first: {
+                        first: payoutSettings.first.first,
+                        second: payoutSettings.first.second,
+                        third: payoutSettings.first.third,
+                    }
                 },
-                hypeTrainBonus: false,
                 createdAt: new Date(),
                 roleBonuses: {
-                    moderator: 0,
-                    subscriber: 0,
-                    vip: 0,
-                    activeChatUser: 0,
-                    tier1: 0,
-                    tier2: 0,
-                    tier3: 0,
+                    moderator: roleBonuses.moderator,
+                    subscriber: roleBonuses.subscriber,
+                    vip: roleBonuses.vip,
+                    activeChatUser: roleBonuses.activeChatUser,
+                    tier1: roleBonuses.tier1,
+                    tier2: roleBonuses.tier2,
+                    tier3: roleBonuses.tier3,
                 },
                 restrictions: {
-                    follower: false,
-                    subscriber: false,
-                    vip: false,
-                    moderator: false,
-                    activeChatUser: false,
-                    tier1: false,
-                    tier2: false,
-                    tier3: false,
+                    follower: restrictions.follower,
+                    subscriber: restrictions.subscriber,
+                    vip: restrictions.vip,
+                    regular: restrictions.regular,
+                    activeChatUser: restrictions.activeChatUser,
+                    tier1: restrictions.tier1,
+                    tier2: restrictions.tier2,
+                    tier3: restrictions.tier3,
                 },
-                limit: false,
+                autoReset: autoReset,
+                limit: limit,
             };
             const res = await this.dbConnection.collection(this.collectionName).insertOne(currency);
             await getAllCurrencies();
@@ -424,7 +435,7 @@ class CurrencyService {
     }
 
     // Method to add a currency to a user for subs
-    async addCurrencyForSub(userId, subsAmount) {
+    async addCurrencyForSub(userId, subsAmount, tier) {
         try {
             // Loop through all currencies and add the amount to the user
             const currencies = this.cache.get('currencies');
@@ -434,9 +445,13 @@ class CurrencyService {
                     continue;
                 } else {
                     const { subs } = payoutSettings;
-                    const { amount, minimum } = subs;
+                    const { amount, minimum, tierMultiplier } = subs;
                     if (subsAmount >= minimum) {
-                        await usersDB.increaseCurrency(userId, name, (amount * subsAmount));
+                        if (tierMultiplier) {
+                            await usersDB.increaseCurrency(userId, name, (amount * subsAmount * tier));
+                        } else {
+                            await usersDB.increaseCurrency(userId, name, (amount * subsAmount));
+                        }
                     }
                 }
             }
@@ -529,6 +544,26 @@ class CurrencyService {
         }
         catch (err) {
             logger.error(`Error in addCurrencyForArriving: ${err}`);
+        }
+    }
+
+    // Method to add current for followers
+    async addCurrencyForNewFollower(userId) {
+        try {
+            // Loop through all currencies and add the amount to the user
+            const currencies = this.cache.get('currencies');
+            for (const currency of currencies) {
+                const { name, payoutSettings, enabled } = currency;
+                if (!enabled) {
+                    continue;
+                } else {
+                    const { follower } = payoutSettings;
+                    await usersDB.increaseCurrency(userId, name, follower);
+                }
+            }
+        }
+        catch (err) {
+            logger.error(`Error in addCurrencyForNewFollower: ${err}`);
         }
     }
 
