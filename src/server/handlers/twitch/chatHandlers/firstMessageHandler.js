@@ -1,5 +1,4 @@
 
-import { writeToLogFile } from "../../../utilities/logging.js";
 import { cache, currencyDB } from "../../../config/initializers.js";
 import { chatClient } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";

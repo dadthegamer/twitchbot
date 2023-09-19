@@ -542,7 +542,6 @@ class CurrencyService {
                     continue;
                 } else {
                     const { first } = payoutSettings;
-                    console.log(first);
                     if (position === 1) {
                         await usersDB.increaseCurrency(userId, name, first.first);
                     } else if (position === 2) {

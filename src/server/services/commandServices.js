@@ -9,6 +9,7 @@ class Commands {
         this.cache = new NodeCache();
         this.listenForExpiredKeys();
         this.setInitialCacheValues();
+        this.createCommand('spin', [{type: 'spin'}], 'Displays a list of all the commands', 'everyone', true, 0, 0, false);
     }
 
     // Method to get all the commands from the database and add them to the cache
@@ -91,7 +92,7 @@ class Commands {
                 userCooldown = parseInt(userCooldown);
             }
             if (await this.getCommand(commandName) !== null) {
-                updateCommand(commandName, commandHandlers, commandDescription, commandPermissions, commandEnabled, userCooldown, globalCooldown, liveOnly);
+                console.log('Command already exists');
                 return;
             } else {
                 const commandsCollection = this.dbConnection.collection('commands');
@@ -113,6 +114,7 @@ class Commands {
                 return result;
             }
         } catch (error) {
+            console.log(error);
             logger.error(`Error in createCommand: ${error}`);
         }
     }

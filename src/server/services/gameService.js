@@ -1,7 +1,7 @@
 import logger from "../utilities/logger.js";
 
 // Class to handle all stream related services
-export class StreamDB {
+class GameService {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
@@ -17,9 +17,10 @@ export class StreamDB {
             if (!data) {
                 const data = {
                     id: 'jackpot',
-                    jackpot: 0,
-                    jackPotPCT: 10,
-                    jackPotStart: 25000,
+                    jackpot: 25000,
+                    currency: 'points',
+                    jackpotPCT: 10,
+                    jackpotStart: 25000,
                     increaseBy: {
                         min: 100,
                         max: 500
@@ -99,3 +100,5 @@ export class StreamDB {
         }
     }
 }
+
+export default GameService;

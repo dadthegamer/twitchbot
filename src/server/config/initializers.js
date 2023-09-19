@@ -27,7 +27,7 @@ import OBSService from '../services/obsService.js';
 import TwitchApiClient from '../services/twitchApiService.js';
 import TwitchChannelPointsService from '../services/channelPointService.js';
 import FirebotService from '../services/firebotImportService.js';
-
+import GameService from '../services/gameService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -105,6 +105,9 @@ const channelPointsService = new TwitchChannelPointsService(cache, db.dbConnecti
 // Firebot service initialization
 const firebotService = new FirebotService(db.dbConnection, cache);
 
+// Game service initialization
+const gameService = new GameService(db.dbConnection, cache);
+
 // Subscribe to donation events
 subscribeToDonationEvents();
 
@@ -136,5 +139,6 @@ export {
     taskCoordinator,
     obsService,
     channelPointsService,
-    firebotService
+    firebotService,
+    gameService
 };

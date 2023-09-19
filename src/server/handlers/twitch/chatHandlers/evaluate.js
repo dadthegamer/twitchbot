@@ -1,8 +1,9 @@
-import { writeToLogFile } from "../../../utilities/logging.js";
-
+import logger from "../../../utilities/logger.js";
+import { spinHandler } from "../../actionHandlers.js/spinHandler.js";
 
 // Method to evaluate the handler
 export async function evalulate(handler, context) {
+    const { userDisplayName, userId, messageID, msg } = context;
     try {
         const { type } = handler;
         switch (type) {
@@ -12,12 +13,15 @@ export async function evalulate(handler, context) {
             case 'reply':
                 console.log('Reply handler');
                 break;
+            case 'spin':
+                spinHandler(userDisplayName, userId, messageID);
+                break;
             default:
                 console.log(`Handler not found: ${handler}`);
-                writeToLogFile('error', `Handler not found: ${handler}`);
+                logger.error(`Handler not found: ${handler}`);
         }
     }
     catch (err) {
-        writeToLogFile('error', `Error in eval: ${err}`);
+        logger.error(`Error in evaluate: ${err}`);
     }
 }
