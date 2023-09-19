@@ -31,7 +31,7 @@ import GameService from '../services/gameService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
-setInitialCacheValues();
+
 // MongoDB initialization
 const db = new MongoDBConnection();
 await db.connect();

@@ -1,7 +1,8 @@
 // Import cache
 import { MongoClient } from 'mongodb';
-import { writeToLogFile } from '../utilities/logging.js'
 import { config } from 'dotenv';
+import logger from '../utilities/logger.js';
+import { exec } from 'child_process';
 
 config();
 
@@ -19,12 +20,11 @@ class MongoDBConnection {
     async connect() {
         try {
             await this.client.connect();
-            console.log('Connected to MongoDB');
             this.dbConnection = this.client.db(this.dbName);
             await this.createCollections();
             await this.createIndexes();
         } catch (error) {
-            console.error('Error connecting to MongoDB', error);
+            logger.error(`Error connecting to MongoDB: ${error}`);
             throw error;
         }
     }
@@ -38,7 +38,7 @@ class MongoDBConnection {
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error closing MongoDB connection: ${error}`);
+            logger.error(`Error closing MongoDB connection: ${error}`);
         }
     }
 
@@ -68,7 +68,7 @@ class MongoDBConnection {
             await Promise.all(collectionPromises);
         }
         catch (error) {
-            writeToLogFile('error', `Error creating collections: ${error}`);
+            logger.error(`Error creating collections: ${error}`);
         }
     }
 
@@ -79,7 +79,7 @@ class MongoDBConnection {
             await this.dbConnection.collection('commands').createIndex({ name: 1 });
         }
         catch (error) {
-            writeToLogFile('error', `Error creating indexes: ${error}`);
+            logger.error(`Error creating indexes: ${error}`);
         }
     }
 
@@ -96,7 +96,7 @@ class MongoDBConnection {
             }
         }
         catch (error) {
-            writeToLogFile('error', `Error checking MongoDB connection: ${error}`);
+            logger.error(`Error checking MongoDB connection: ${error}`);
         }
     }
 
@@ -107,6 +107,53 @@ class MongoDBConnection {
         }
         catch (error) {
             writeToLogFile('error', `Error renaming collection: ${error}`);
+        }
+    }
+
+    // Method to backup the database
+    async backupDatabase() {
+        try {
+            const backupPath = '/backup';
+            const backupCommand = `mongodump --host ${this.host} --port ${this.port} --out ${backupPath}`;
+            exec(backupCommand, (error, stdout, stderr) => {
+                if (error) {
+                    console.log(error);
+                    logger.error(`Error backing up database: ${error}`);
+                    return;
+                }
+                if (stderr) {
+                    console.log(stderr);
+                    logger.error(`Error backing up database: ${stderr}`);
+                    return;
+                }
+                logger.info(`Database backed up successfully: ${stdout}`);
+            });
+        }
+        catch (error) {
+            console.log(error);
+            logger.error(`Error backing up database: ${error}`);
+        }
+    }
+
+    // Method to restore the database
+    async restoreDatabase() {
+        try {
+            const backupPath = '/backup';
+            const restoreCommand = `mongorestore --host ${this.host} --port ${this.port} ${backupPath}`;
+            exec(restoreCommand, (error, stdout, stderr) => {
+                if (error) {
+                    logger.error(`Error restoring database: ${error}`);
+                    return;
+                }
+                if (stderr) {
+                    logger.error(`Error restoring database: ${stderr}`);
+                    return;
+                }
+                logger.info(`Database restored successfully: ${stdout}`);
+            });
+        }
+        catch (error) {
+            logger.error(`Error restoring database: ${error}`);
         }
     }
 }

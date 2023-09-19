@@ -7,7 +7,6 @@ import { usersDB } from '../config/initializers.js';
 // Class for the Twitch API client
 class TwitchApiClient {
     constructor(authProvider, cache) {
-        console.log(authProvider);
         this.apiClient = new ApiClient({ authProvider: authProvider });
         this.userId = '64431397';
         this.cache = cache;
@@ -478,7 +477,6 @@ class TwitchApiClient {
     async createCustomReward(data) {
         try {
             const response = await this.apiClient.channelPoints.createCustomReward(this.userId, data);
-            console.log(response);
             return response.id;
         }
         catch (error) {
@@ -498,6 +496,28 @@ class TwitchApiClient {
         }
         catch (error) {
             logger.error(`Error deleting custom reward: ${error}`);
+        }
+    }
+
+    // Method to get the hype train information
+    async getHypeTrain() {
+        try {
+            const data = await this.apiClient.hypeTrain.getHypeTrainEventsForBroadcasterPaginated(this.userId).getAll();
+            const hypeTrain = {
+                id: data.id,
+                level: data.level,
+                total: data.total,
+                expiryDate: data.expiryDate,
+                goal: data.goal,
+                topContributions: data.topContributions,
+                lastContribution: data.lastContribution,
+                startDate: data.startDate,
+                endDate: data.endDate,
+            };
+            return hypeTrain;
+        }
+        catch (error) {
+            logger.error(`Error getting hype train: ${error}`);
         }
     }
 }

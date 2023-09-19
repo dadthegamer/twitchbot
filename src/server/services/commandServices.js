@@ -28,7 +28,6 @@ class Commands {
     // Method to listen for expired keys
     listenForExpiredKeys() {
         this.cache.on('expired', (key, value) => {
-            console.log(`${key} expired`);
             this.removeCommand(key);
         });
     }
@@ -92,7 +91,6 @@ class Commands {
                 userCooldown = parseInt(userCooldown);
             }
             if (await this.getCommand(commandName) !== null) {
-                console.log('Command already exists');
                 return;
             } else {
                 const commandsCollection = this.dbConnection.collection('commands');

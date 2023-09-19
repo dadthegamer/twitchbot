@@ -47,7 +47,7 @@ class AuthProviderManager {
         try {
             const tokenData = await this.tokenDB.getAllTokens();
             if (tokenData === null) {
-                logger.error(`No token data found for user ${tokenData.userId}.`);
+                logger.error(`No token data found.`);
                 return;
             }
             try {

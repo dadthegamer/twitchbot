@@ -5,7 +5,6 @@ class CacheService {
     constructor(name, stdTTL = 0) {
         this.name = name;
         this.cache = new NodeCache({ stdTTL, checkperiod: 120 });
-        console.log(`${name} cache started with a ttl of ${stdTTL} seconds`);
     }
 
     // Method to get a value from the cache

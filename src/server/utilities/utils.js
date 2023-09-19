@@ -1,3 +1,5 @@
+import crypto from 'crypto';
+
 // Function to format time from minutes to a string
 export function formatTimeFromMinutes(minToFormat) {
     const seconds = Math.floor(minToFormat * 60);
@@ -73,4 +75,9 @@ export function calculateUptime(startDate) {
 // Function to convert ms to minutes
 export function msToMinutes(ms) {
     return ms / 1000 / 60;
+}
+
+// Function to generate a random API key
+export function generateApiKey(length = 32) {
+    return crypto.randomBytes(length).toString('hex');
 }

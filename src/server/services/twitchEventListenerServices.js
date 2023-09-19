@@ -43,7 +43,6 @@ export async function startEventListener(apiClient) {
 
         // Event listener for follows
         listener.onChannelFollow(userId, userId, onFollow);
-        console.log('Event listener started.');
     }
     catch (error) {
         logger.error(`Error starting event listener: ${error}`);

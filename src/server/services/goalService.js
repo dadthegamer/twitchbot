@@ -152,7 +152,6 @@ class GoalService {
         }
         const goals = await this.cache.get('goals');
         // Check if the goal name exists
-        console.log(goals);
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
         }
@@ -163,7 +162,6 @@ class GoalService {
             const goal = await this.getGoalByName(goalName);
             if (goal.current >= goal.goal) {
                 await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { completed: true } });
-                console.log(`Goal ${goalName} has been completed`);
             }
             return result;
         } catch (error) {
@@ -201,7 +199,6 @@ class GoalService {
             this.increaseGoalCurrent('monthlySubGoal', goalIncrease);
             await this.getAllGoals();
         } catch (error) {
-            console.log(error);
             logger.error(`Error increasing subgoals: ${error}`);
         }
     }

@@ -72,6 +72,10 @@ class SettingsService {
                     name: 'appVersion',
                     version: '1.0.0-Alpha',
                 },
+                {
+                    name: 'apikey',
+                    key: null,
+                }
             ]
             // Check if there are as many settings in the database as there are in the initial settings array as well as checking to make sure each key exists under each setting
             const settings = await this.dbConnection.collection('settings').find().toArray();
@@ -118,6 +122,18 @@ class SettingsService {
             return setting;
         } catch (error) {
             logger.error(`Error updating setting: ${error}`);
+        }
+    }
+
+    // Method to update the API key
+    async updateApiKey(key) {
+        try {
+            const res = await this.dbConnection.collection('settings').findOneAndUpdate({ name: 'apikey' }, { $set: { key: key } }, { returnOriginal: false });
+            await this.getAllSettings();
+            return res;
+        }
+        catch (error) {
+            logger.error(`Error updating API key: ${error}`);
         }
     }
 }

@@ -57,7 +57,8 @@ class CurrencyService {
                             first: 1,
                             second: 1,
                             third: 1,
-                        }
+                        },
+                        hypeTrain: 0,
                     },
                     createdAt: new Date(),
                     roleBonuses: {
@@ -123,7 +124,8 @@ class CurrencyService {
                             first: 1,
                             second: 1,
                             third: 1,
-                        }
+                        },
+                        hypeTrain: 0,
                     },
                     createdAt: new Date(),
                     roleBonuses: {
@@ -244,7 +246,8 @@ class CurrencyService {
                         first: payoutSettings.first.first,
                         second: payoutSettings.first.second,
                         third: payoutSettings.first.third,
-                    }
+                    },
+                    hypeTrain: 0,
                 },
                 createdAt: new Date(),
                 roleBonuses: {
@@ -348,7 +351,7 @@ class CurrencyService {
             return;
         }
         for (const currency of currencies) {
-            const { name, payoutSettings, hypeTrainBonus, enabled, roleBonuses, restrictions, limit } = currency;
+            const { name, payoutSettings, enabled, roleBonuses, restrictions, limit } = currency;
             // If the currency is not enabled then continue to the next currency
             if (!enabled) {
                 continue;
@@ -395,12 +398,6 @@ class CurrencyService {
                                 }
                             }
 
-                            if (hypeTrainBonus !== false) {
-                                const hypeTrain = await cache.get('hypeTrain');
-                                if (hypeTrain && hypeTrain.isActive) {
-                                    bonus += hypeTrainBonus
-                                }
-                            }
                             // If the currency is not limited then add the total payout to the viewer
                             await usersDB.increaseCurrency(viewer.userId, name, totalPayout);
                         }
@@ -471,7 +468,7 @@ class CurrencyService {
                 if (!enabled) {
                     continue;
                 } else {
-                    const { bits } = payoutSettings;
+                    const { bits, hypeTrain } = payoutSettings;
                     const { amount, minimum } = bits;
                     if (bitsAmount >= minimum) {
                         await usersDB.increaseCurrency(userId, name, (amount * bitsAmount));
@@ -590,6 +587,58 @@ class CurrencyService {
         catch (err) {
             console.error(err);
             logger.error(`Error in addCurrencyForFirst: ${err}`);
+        }
+    }
+
+    // Method to reward all viewers in chat with currency
+    async rewardAllViewersWithCurrency(name, amount) {
+        const currency = await this.getCurrencyByName(name);
+        if (!currency) {
+            return;
+        }
+        try {
+            const viewers = await getChattersWithoutBots();
+            for (const viewer of viewers) {
+                await usersDB.increaseCurrency(viewer.userId, name, amount);
+            }
+        }
+        catch (err) {
+            logger.error(`Error in rewardAllViewersWithCurrency: ${err}`);
+        }
+    }
+
+    // Method to reward all active chat users with currency
+    async rewardAllActiveChatUsersWithCurrency(name, amount) {
+        // Check to make sure the currency exists
+        const currency = await this.getCurrencyByName(name);
+        if (!currency) {
+            return;
+        }
+        try {
+            const activeUsers = await activeUsersCache.getAllActiveUsers();
+            for (const user of activeUsers) {
+                await usersDB.increaseCurrency(user.userId, name, amount);
+            }
+        }
+        catch (err) {
+            logger.error(`Error in rewardAllActiveChatUsersWithCurrency: ${err}`);
+        }
+    }
+
+    // Method to reward all viewers in chat with currency for a hype train progress. Loop through all the currencies and add the amount to the viewers
+    async rewardAllViewersWithCurrencyForHypeTrainProgress() {
+        const currencies = this.cache.get('currencies');
+        const currenViewers = this.cache.get('currentViewers');
+        for (const currency of currencies) {
+            const { name, payoutSettings, enabled } = currency;
+            if (!enabled) {
+                continue;
+            } else {
+                const { hypeTrain } = payoutSettings;
+                for (const viewer of currenViewers) {
+                    await usersDB.increaseCurrency(viewer.userId, name, hypeTrain);
+                }
+            }
         }
     }
 }
