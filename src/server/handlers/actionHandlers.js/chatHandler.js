@@ -1,17 +1,18 @@
 import { chatClient } from '../../config/initializers.js';
-import { writeToLogFile } from '../../utilities/logging.js';
-
+import { variableHandler } from '../variablesHandler.js';
+import logger from '../../utilities/logger.js';
 
 export async function chatMessageHandler(message, context) {
     try {
         const { bot, msg, userDisplayName, userId, say, timeout, reply } = context;
+        const { id, isFirst, isCheer, isReply, bits, userInfo } = msg;
         if (message.includes('$')) {
             try {
-                console.log('message', message);
-                // const newMessage = await variableHandler(message, userId);
-                // BotClient.say('dadthegam3r', newMessage);
+                const newMessage = await variableHandler(message, userId);
+                console.log('New message:', newMessage);
+                chatClient.replyToMessage(newMessage, id);
             } catch (err) {
-                writeToLogFile('error', `Error in chatHandler: ${err}`);
+                logger.error(`Error in variableHandler: ${err}`);
             }
         } else {
             chatClient.say(message);
@@ -19,6 +20,6 @@ export async function chatMessageHandler(message, context) {
     }
     catch (err) {
         console.log('Error in chatHandler:', err);
-        writeToLogFile('error', `Error in chatHandler: ${err}`);
+        logger.error(`Error in chatHandler: ${err}`);
     }
 }

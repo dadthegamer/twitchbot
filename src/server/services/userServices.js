@@ -657,22 +657,17 @@ class UsersDB {
     // Method to get a currency property for a user
     async getCurrency(userId, currency) {
         try {
-            if (environment === 'development') {
-                console.log(`getUserValue: ${userId} ${currency}`);
-                return;
-            } else {
-                // Get the currency property for the user in the cache
-                let user = this.cache.get(userId);
-                if (!user) {
-                    user = await this.getUserByUserId(userId);
-                }
-                // Get the currency property for the user in the database
-                const result = await this.dbConnection.collection(this.collectionName).findOne(
-                    { id: userId },
-                    { projection: { [`currency.${currency}`]: 1 } }
-                );
-                return result.currency[currency];
+            // Get the currency property for the user in the cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
             }
+            // Get the currency property for the user in the database
+            const result = await this.dbConnection.collection(this.collectionName).findOne(
+                { id: userId },
+                { projection: { [`currency.${currency}`]: 1 } }
+            );
+            return result.currency[currency];
         } catch (error) {
             logger.error(`Error in getCurrency: ${error}`);
             return undefined;
@@ -935,6 +930,49 @@ class UsersDB {
             logger.error(`Error in resetYearlyProperties: ${error}`);
         }
     }
+
+    // Method to set a viewtime property for a user
+    async setViewTime(userId, property, amount) {
+        try {
+            // Check if the propery is in the viewTime object
+            const viewTimeProperties = ['allTime', 'yearly', 'monthly', 'weekly', 'stream'];
+            if (!viewTimeProperties.includes(property)) {
+                logger.error(`Error in setViewTime: Property is not in the viewTime object`);
+                return null;
+            }
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            if (typeof amount !== 'number') {
+                try {
+                    amount = parseInt(amount);
+                    if (isNaN(amount)) {
+                        logger.error(`Error in setViewTime: Amount is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in setViewTime: ${error}`);
+                }
+            }
+            // Set the viewTime property for the user in the cache and then the database
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            user.viewTime[property] = amount;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $set: { [`viewTime.${property}`]: amount } },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in setViewTime: ${error}`);
+        }
+    }
+
+
 
     // Method to increase the viewTime for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of minutes as a number.
     async increaseViewTime(userId, minutes) {

@@ -26,6 +26,7 @@ import TaskCoordinator from '../managers/tasksCoordinator.js';
 import OBSService from '../services/obsService.js';
 import TwitchApiClient from '../services/twitchApiService.js';
 import TwitchChannelPointsService from '../services/channelPointService.js';
+import FirebotService from '../services/firebotImportService.js';
 
 
 // Cache initialization
@@ -100,6 +101,10 @@ const obsService = new OBSService(db.dbConnection, cache);
 // Channel points service initialization
 const channelPointsService = new TwitchChannelPointsService(cache, db.dbConnection);
 
+
+// Firebot service initialization
+const firebotService = new FirebotService(db.dbConnection, cache);
+
 // Subscribe to donation events
 subscribeToDonationEvents();
 
@@ -130,5 +135,6 @@ export {
     viewTimeDB,
     taskCoordinator,
     obsService,
-    channelPointsService    
+    channelPointsService,
+    firebotService
 };

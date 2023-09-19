@@ -15,8 +15,8 @@ function Users() {
             .then((response) => response.json())
             .then((data) => {
                 // Update the users state with the fetched data and sort the users alphabetically
-                setUsers(data.sort((a, b) => a.display_name.localeCompare(b.display_name)));
-                setFilteredUsers(data.sort((a, b) => a.display_name.localeCompare(b.display_name)));
+                setUsers(data.sort((a, b) => a.displayName.localeCompare(b.displayName)));
+                setFilteredUsers(data.sort((a, b) => a.displayName.localeCompare(b.displayName)));
             })
             .catch((error) => {
                 console.error('Error fetching user data:', error);
@@ -33,7 +33,7 @@ function Users() {
             const searchTerm = event.target.value.toLowerCase();
             const filteredUsers = users.filter((user) =>
                 // Filter the users array and return only users whose display_name includes the search term. Sort the users alphabetically.
-                user.display_name.toLowerCase().includes(searchTerm)
+                user.displayName.toLowerCase().includes(searchTerm)
             );
             setFilteredUsers(filteredUsers);
         }
@@ -54,8 +54,8 @@ function Users() {
                 {/* Map over the filteredUsers array and render each user */}
                 {filteredUsers.map((user) => (
                     <div key={user.id} className="user-container">
-                        <img src={user.profile_image_url} alt={user.username} className="user-avatar" />
-                        <span className="username">{user.display_name}</span>
+                        <img src={user.profilePictureUrl} alt={user.username} className="user-avatar" />
+                        <span className="username">{user.displayName}</span>
                     </div>
                 ))}
             </div>

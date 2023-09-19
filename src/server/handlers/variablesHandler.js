@@ -1,6 +1,6 @@
-import { writeToLogFile } from "./utilities/log.js";
+import logger from '../utilities/logger.js';
 import { cache, usersDB, streamDB } from '../config/initializers.js';
-import { formatTimeFromMinutes, formatRank, numberWithCommas } from "../utilities/utilities.js";
+import { formatTimeFromMinutes, formatRank, numberWithCommas } from "../utilities/utils.js";
 
 let variables = [];
 
@@ -11,6 +11,8 @@ variables.push('allArgs')
 variables.push('watchTime')
 variables.push('8ball')
 variables.push('leaderboard')
+variables.push('rank')
+variables.push('user')
 
 
 export async function variableHandler(context, userId) {
@@ -38,15 +40,25 @@ export async function variableHandler(context, userId) {
         return context;
     }
     catch (err) {
-        writeToLogFile('error', `Error in variableHandler: ${err}`);
+        logger.error(`Error in variableHandler: ${err}`);
     }
 }
 
 export async function updateVariable(variable, context, userId, property = null) {
+    console.log(`Variable: ${variable}`)
     try {
         switch (variable) {
             case 'followAge':
                 return 'testing this variable';
+            case 'user':
+                console.log('User variable');
+                // Return the user's display name
+                const user = await usersDB.getUserByUserId(userId);
+                if (user === null) {
+                    return null;
+                } else {
+                    return user.displayName;
+                }
             case 'upTime':
                 const uptime = cache.get('uptime');
                 if (uptime === null) {
@@ -68,21 +80,13 @@ export async function updateVariable(variable, context, userId, property = null)
                 if (property === null) {
                     return null;
                 } else {
-                    switch (property) {
-                        case 'leaderboard':
-                            const rank = await usersDB.getUserRankByProperty(userId, 'leaderboard_points');
-                            if (rank === null || rank === undefined) {
-                                return 'Rank not found';
-                            } else {
-                                return formatRank(rank);
-                            }
-                        case 'watchTime':
-                            const watchTime = await usersDB.getUserRankByProperty(userId, 'view_time');
-                            if (watchTime === null || watchTime === undefined) {
-                                return null;
-                            } else {
-                                return formatRank(watchTime);
-                            }
+                    const currencies = cache.get('currencies');
+                    // Loop through each currency and check if the property is in the currency. Convert the name and property to lowercase to make it easier to check
+                    for (const currency of currencies) {
+                        if (currency.name.toLowerCase() === property.toLowerCase()) {
+                            const rank = await usersDB.getUserRankByProperty(userId, currency.name.toLowerCase());
+                            return formatRank(rank);
+                        }
                     }
                 }
                 break;
@@ -90,18 +94,26 @@ export async function updateVariable(variable, context, userId, property = null)
                 if (property === null) {
                     return null;
                 } else {
-                    switch (property) {
-                        case 'leaderboard':
+                    const currencies = cache.get('currencies');
+                    // Loop through each currency and check if the property is in the currency. Convert the name and property to lowercase to make it easier to check
+                    for (const currency of currencies) {
+                        if (currency.name.toLowerCase() === property.toLowerCase()) {
+                            const amount = await usersDB.getCurrency(userId, currency.name.toLowerCase());
+                            // If amount is null, return 0
+                            if (amount === null || amount === undefined) {
+                                return 0;
+                            } else {
+                                return numberWithCommas(amount);
+                            }
+                        }
                     }
                 }
-            case '8ball':
-                const res = await eightBallresponse();
-                return res;
             default:
                 return null;
         }
     }
     catch (err) {
-        writeToLogFile('error', `Error in updateVaraible: ${err}`);
+        console.log(err);
+        logger.error(`Error in updateVariable from variable ${context}: ${err}`);
     }
 }

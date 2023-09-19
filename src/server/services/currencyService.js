@@ -4,6 +4,7 @@ import { getChattersWithoutBots } from '../handlers/twitch/viewTimeHandler.js';
 import NodeCache from 'node-cache';
 import { activeUsersCache } from '../config/initializers.js';
 import logger from '../utilities/logger.js';
+import { commands } from '../config/initializers.js';
 
 // Currency Class
 class CurrencyService {
@@ -19,9 +20,9 @@ class CurrencyService {
     // Method for initializing the currencies
     async initializeCurrencies() {
         this.clearAllPayoutIntervals();
+        await this.getAllCurrencies();
         await this.createFirstCurrency();
         await this.createRaffleCurrency();
-        await this.getAllCurrencies();
         await this.currencyPayoutHandler();
     }
 
@@ -31,7 +32,7 @@ class CurrencyService {
             const res = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             if (res.length === 0) {
                 const currency = {
-                    name: 'Points',
+                    name: 'points',
                     enabled: true,
                     payoutSettings: {
                         interval: 1,
@@ -50,6 +51,11 @@ class CurrencyService {
                         },
                         raids: 1,
                         arrived: 1,
+                        first: {
+                            first: 1,
+                            second: 1,
+                            third: 1,
+                        }
                     },
                     createdAt: new Date(),
                     roleBonuses: {
@@ -76,6 +82,7 @@ class CurrencyService {
                     limit: false,
                 };
                 await this.dbConnection.collection(this.collectionName).insertOne(currency);
+                commands.createCommand('points', [{ type: 'chat', response: '$user you curreny have $currency.points points and rank $rank.points' }], 'Check how many points you have', 'everyone', true, 0, 0, false);
                 return currency;
             }
         } catch (err) {
@@ -86,11 +93,11 @@ class CurrencyService {
     // Method to create raffle currency if it doesn't exist
     async createRaffleCurrency() {
         try {
-            const res = await this.getCurrencyByName('Raffle');
+            const res = await this.getCurrencyByName('raffle');
             if (!res) {
                 const currency = {
-                    name: 'Raffle',
-                    enabled: false,
+                    name: 'raffle',
+                    enabled: true,
                     payoutSettings: {
                         interval: 1,
                         amount: 1,
@@ -108,10 +115,15 @@ class CurrencyService {
                         },
                         raids: 1,
                         arrived: 1,
+                        first: {
+                            first: 1,
+                            second: 1,
+                            third: 1,
+                        }
                     },
-                    hypeTrainBonus: false,
                     createdAt: new Date(),
                     roleBonuses: {
+                        streamer: 0,
                         moderator: 0,
                         subscriber: 0,
                         vip: 0,
@@ -124,15 +136,17 @@ class CurrencyService {
                         follower: false,
                         subscriber: false,
                         vip: false,
-                        moderator: false,
+                        regular: false,
                         activeChatUser: false,
                         tier1: false,
                         tier2: false,
                         tier3: false,
                     },
+                    autoReset: false,
                     limit: false,
                 };
                 await this.dbConnection.collection(this.collectionName).insertOne(currency);
+                await commands.createCommand('raffle', [{ type: 'chat', response: '$user you curreny have $currency.raffle tickets and rank $rank.raffle' }], 'Check how raffle tickets you have', 'everyone', true, 0, 0, false)
                 return currency;
             }
         }
@@ -143,6 +157,7 @@ class CurrencyService {
 
     // Method to get a currency by name
     async getCurrencyByName(name) {
+        name = name.toLowerCase();
         try {
             const currency = await this.dbConnection.collection(this.collectionName).findOne({ name });
             return currency;
@@ -164,6 +179,7 @@ class CurrencyService {
 
     // Method to update a currency
     async updateCurrency(name, currency) {
+        name = name.toLowerCase();
         try {
             const res = await this.dbConnection.collection(this.collectionName).updateOne({ name }, { $set: currency });
             await getAllCurrencies();
@@ -175,6 +191,7 @@ class CurrencyService {
 
     // Method to delete a currency
     async deleteCurrency(name) {
+        name = name.toLowerCase();
         if (name === 'Raffle') {
             return 'Cannot delete the raffle currency';
         }
@@ -190,6 +207,7 @@ class CurrencyService {
 
     // Method to create a currency
     async createCurrency(name, enabled, payoutSettings, roleBonuses, limit) {
+        name = name.toLowerCase();
         // If the currency already exists, return
         const currency = await this.getCurrencyByName(name);
         if (currency) {
@@ -250,6 +268,7 @@ class CurrencyService {
 
     // Method to handle the restriction payout
     async restrictionPayoutHandler(userId, currencyName) {
+        currencyName = currencyName.toLowerCase();
         try {
             // Set the initial data
             const followersList = await usersDB.getFollowers();
@@ -384,6 +403,7 @@ class CurrencyService {
 
     // Method to update a currency
     async updateCurrency(name, currency) {
+        name = name.toLowerCase();
         try {
             const res = await this.dbConnection.collection(this.collectionName).updateOne({ name }, { $set: currency });
             await getAllCurrencies();
@@ -427,7 +447,7 @@ class CurrencyService {
     }
 
     // Method to add a currency to a user for bits
-    async addCurrencyForBits(userId) {
+    async addCurrencyForBits(userId, bitsAmount) {
         try {
             // Loop through all currencies and add the amount to the user
             const currencies = this.cache.get('currencies');
@@ -450,7 +470,7 @@ class CurrencyService {
     }
 
     // Method to add a currency to a user for donations
-    async addCurrencyForDonations(userId) {
+    async addCurrencyForDonations(userId, donationsAmount) {
         try {
             // Loop through all currencies and add the amount to the user
             const currencies = this.cache.get('currencies');
@@ -509,6 +529,31 @@ class CurrencyService {
         }
         catch (err) {
             logger.error(`Error in addCurrencyForArriving: ${err}`);
+        }
+    }
+
+    // Method to add currency for being first in chat
+    async addCurrencyForFirst(userId, position) {
+        try {
+            const currencies = this.cache.get('currencies');
+            for (const currency of currencies) {
+                const { name, payoutSettings, enabled } = currency;
+                if (!enabled) {
+                    continue;
+                } else {
+                    const { first } = payoutSettings;
+                    if (position === 1) {
+                        await usersDB.increaseCurrency(userId, name, first.first);
+                    } else if (position === 2) {
+                        await usersDB.increaseCurrency(userId, name, first.second);
+                    } else if (position === 3) {
+                        await usersDB.increaseCurrency(userId, name, first.third);
+                    }
+                }
+            }
+        }
+        catch (err) {
+            logger.error(`Error in addCurrencyForFirst: ${err}`);
         }
     }
 }

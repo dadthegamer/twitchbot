@@ -67,7 +67,11 @@ class SettingsService {
                 {
                     name: 'OpenAIKey',
                     key: null,
-                }
+                },
+                {
+                    name: 'appVersion',
+                    version: '1.0.0-Alpha',
+                },
             ]
             // Check if there are as many settings in the database as there are in the initial settings array as well as checking to make sure each key exists under each setting
             const settings = await this.dbConnection.collection('settings').find().toArray();

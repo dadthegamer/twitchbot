@@ -8,6 +8,8 @@ export async function firstMessageHandler(context) {
     try {
         const { bot, userId, message, msg, userDisplayName, id } = context;
         if (!cache.get('first').includes(userDisplayName)) {
+            // Get the currency from the cache
+            const currency = cache.get('currency');
             cache.set('first', [...cache.get('first'), userDisplayName]);
             if (cache.get('first').length === 1) {
                 chatClient.replyToMessage(`@${userDisplayName} First message! You won 10,000 leaderboard points!`, id);

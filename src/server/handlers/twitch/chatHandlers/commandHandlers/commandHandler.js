@@ -72,9 +72,9 @@ class CommandHandler {
             const commandData = await this.getCommand(commandName);
             if (commandData) {
                 const { handlers, permissions, enabled, userCooldown, globalCooldown, liveOnly } = commandData;
-                if (!liveOnly === false && cache.get('live') === false) {
-                    return;
-                }
+                // if (!liveOnly === false && cache.get('live') === false) {
+                //     return;
+                // }
                 if (enabled === false) {
                     return;
                 }

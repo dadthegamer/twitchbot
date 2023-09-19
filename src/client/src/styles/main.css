@@ -18,6 +18,7 @@
 
 body {
     color: var(--font-color);
+    background-color: var(--background-color);
 }
 
 .main-container {
