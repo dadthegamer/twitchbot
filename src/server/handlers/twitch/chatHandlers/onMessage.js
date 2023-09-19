@@ -24,9 +24,9 @@ export async function onMessageHandler(channel, user, message, msg, bot) {
                 return;
             }
         }
-        // if (first.length < 3) {
-        //     firstMessageHandler({ bot, msg, user, message, userDisplayName: displayName, userId, id });
-        // }
+        if (first.length < 3) {
+            firstMessageHandler({ bot, msg, user, message, userDisplayName: displayName, userId, id });
+        }
 
         // Add the user to the active users cache if they are not already in it
         if (!activeUsersCache.getActiveUser(userId)) {

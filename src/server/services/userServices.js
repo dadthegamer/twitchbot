@@ -516,6 +516,7 @@ class UsersDB {
                 );
             }
         } catch (error) {
+            console.log(`Error in increaseCurrency: ${error}`);
             logger.error(`Error in increaseCurrency: ${error}`);
         }
     }
