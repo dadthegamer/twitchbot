@@ -76,7 +76,7 @@ app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/tts', ttsRouter);
 app.use('/api/prediction', predictionRouter);
 app.use('/api/status', statusRoute);
-app.use('/api/streamStats', streamStatsRoute);
+app.use('/api/streamdata', streamStatsRoute);
 app.use('/api/users', usersRouter);
 app.use('/api/quotes', quoteRouter);
 
