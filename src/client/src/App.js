@@ -6,6 +6,7 @@ import SideNavbar from './components/SideNavBar';
 import TopNavbar from './components/TopNavBar';
 import Currency from './components/Currency';
 import Goal from './components/overlayComponents/goalBar';
+import StartingSoon from './components/overlayComponents/startingSoon';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       {/* Overlay Routes */}
       <Route path="/overlay" element={<OverlayLayout />}>
         <Route path="progressbar" element={<Goal />} />
+        <Route path="startingsoon" element={<StartingSoon />} />
       </Route>
     </Routes>
   );
