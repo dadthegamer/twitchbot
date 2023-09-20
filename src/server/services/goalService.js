@@ -70,6 +70,14 @@ class GoalService {
                     completed: false,
                     handlers: [],
                 },
+                {
+                    name: 'monthlyFollowersGoal',
+                    goal: 0,
+                    current: 0,
+                    description: null,
+                    completed: false,
+                    handlers: [],
+                }
             ]
             // Check if there are as many goals in the database as there are in the goals array as well as checking to make sure each key exists under each goal
             const goals = await this.dbConnection.collection(this.collectionName).find().toArray();
@@ -149,6 +157,12 @@ class GoalService {
             if (isNaN(goalIncrease)) {
                 logger.error(`Goal increase ${goalIncrease} is not a number`);
             }
+        }
+        // Check and make sure the goal exists
+        const goalList = ['dailySubGoal', 'monthlySubGoal', 'dailyDonationGoal', 'monthlyDonationGoal', 'dailyBitsGoal', 'monthlyBitsGoal', 'dailyFollowersGoal, monthlyFollowersGoal']
+        if (!goalList.includes(goalName)) {
+            logger.error(`Goal ${goalName} does not exist`);
+            return;
         }
         const goals = await this.cache.get('goals');
         // Check if the goal name exists

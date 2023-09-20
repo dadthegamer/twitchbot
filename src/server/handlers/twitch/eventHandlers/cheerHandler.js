@@ -1,4 +1,4 @@
-import { streamDB, currencyDB } from "../../../config/initializers.js";
+import { streamDB, currencyDB, goalDB } from "../../../config/initializers.js";
 import { addAlert } from "../../../handlers/alertHandler.js";
 import logger from "../../../utilities/logger.js";
 
@@ -14,6 +14,7 @@ export async function onBits(e) {
             display_name: userDisplayName,
             profile_image_url: profileImage,
         };
+        await goalDB.increaseBitsGoals(bits);
         await streamDB.setLatestEvent('latestCheer', newCheerData);
         await addAlert('cheer', `${userDisplayName} cheered ${bits} bits!`, profileImage);
         await currencyDB.addCurrencyForBits(userId, bits);

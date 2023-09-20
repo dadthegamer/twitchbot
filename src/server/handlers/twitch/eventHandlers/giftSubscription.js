@@ -1,4 +1,4 @@
-import { streamDB, currencyDB, usersDB } from "../../../config/initializers.js";
+import { streamDB, currencyDB, goalDB } from "../../../config/initializers.js";
 import { addAlert } from "../../../handlers/alertHandler.js";
 import logger from "../../../utilities/logger.js";
 
@@ -13,9 +13,10 @@ export async function onGiftSubscription(e) {
 
         // User database operations
         await currencyDB.addCurrencyForSub(gifterId, amount, tier);
-
-        // Stream database operations
+        await goalDB.increaseSubGoals(amount);
         await streamDB.increaseStreamProperty('subs', amount);
+
+        // Sent alert
         await addAlert('giftedsub', `${user} gifted ${amount} subscription(s) at tier ${tier}!`, profileImage);
     }
     catch (error) {
