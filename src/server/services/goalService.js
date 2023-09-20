@@ -159,7 +159,7 @@ class GoalService {
             }
         }
         // Check and make sure the goal exists
-        const goalList = ['dailySubGoal', 'monthlySubGoal', 'dailyDonationGoal', 'monthlyDonationGoal', 'dailyBitsGoal', 'monthlyBitsGoal', 'dailyFollowersGoal, monthlyFollowersGoal']
+        const goalList = ['dailySubGoal', 'monthlySubGoal', 'dailyDonationGoal', 'monthlyDonationGoal', 'dailyBitsGoal', 'monthlyBitsGoal', 'dailyFollowersGoal', 'monthlyFollowersGoal']
         if (!goalList.includes(goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
             return;

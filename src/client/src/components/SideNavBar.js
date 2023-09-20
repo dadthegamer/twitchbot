@@ -4,117 +4,125 @@ import '../styles/main.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGauge, faChartBar, faTerminal, faListCheck, faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { faTiktok, faDiscord } from '@fortawesome/free-brands-svg-icons';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 function SideNavbar() {
+
+    const location = useLocation();
+
+    function isActive(path) {
+        return location.pathname === path ? "active" : "";
+    }
+
+
     return (
         <div className="sidebar">
             <div className="sidebar-header">
-                <img src="../../images/logo.png" alt="App Logo" className="sidebar-logo" />
+                {/* <img src="../../images/logo.png" alt="App Logo" className="sidebar-logo" /> */}
                 <span>STREAM A.I.</span>
             </div>
 
             <ul className="sidebar-list">
-                <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faGauge} />
+                <li className={`sidebar-item ${isActive("/")}`}>
+                    <FontAwesomeIcon icon={faGauge} className="fa-icon" />
                     <Link to="/" className="sidebar-link">
                         Dashboard
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faChartBar} />
+                    <FontAwesomeIcon icon={faChartBar} className="fa-icon"/>
                     <Link to="/statistics" className="sidebar-link">
                         Statistics
                     </Link>
                 </li>
                 <li className="sidebar-item" id="commands-link">
-                    <FontAwesomeIcon icon={faTerminal} />
+                    <FontAwesomeIcon icon={faTerminal} className="fa-icon"/>
                     <Link to="/commands" className="sidebar-link">
                         Commands
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faListCheck} />
+                    <FontAwesomeIcon icon={faListCheck} className="fa-icon"/>
                     <Link to="/events" className="sidebar-link">
                         Events
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faCoins} />
+                    <FontAwesomeIcon icon={faCoins} className="fa-icon"/>
                     <Link to="/currency" className="sidebar-link">
                         Currency
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faStopwatch} />
+                    <FontAwesomeIcon icon={faStopwatch} className="fa-icon"/>
                     <Link to="/timers" className="sidebar-link">
                         Timers
                     </Link>
                 </li>
                 <li className="sidebar-item" id="channel-points-link">
-                    <FontAwesomeIcon icon={faGem} />
+                    <FontAwesomeIcon icon={faGem} className="fa-icon"/>
                     <Link to="/channelpoints" className="sidebar-link">
                         Channel Points
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faCalendar} />
+                    <FontAwesomeIcon icon={faCalendar} className="fa-icon"/>
                     <Link to="/calendar" className="sidebar-link">
                         Calendar
                     </Link>
                 </li>
                 <li className="sidebar-item" id="quotes-link">
-                    <FontAwesomeIcon icon={faQuoteLeft} />
+                    <FontAwesomeIcon icon={faQuoteLeft} className="fa-icon"/>
                     <Link to="/quotes" className="sidebar-link">
                         Quotes
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faHammer} />
+                    <FontAwesomeIcon icon={faHammer} className="fa-icon"/>
                     <Link to="/moderation" className="sidebar-link">
                         Moderation
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faGamepad} />
+                    <FontAwesomeIcon icon={faGamepad} className="fa-icon"/>
                     <Link to="/games" className="sidebar-link">
                         Games
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faUserTag} />
+                    <FontAwesomeIcon icon={faUserTag} className="fa-icon"/>
                     <Link to="/roles" className="sidebar-link">
                         Roles
                     </Link>
                 </li>
                 <span>Applications</span>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faTiktok} />
+                    <FontAwesomeIcon icon={faTiktok} className="fa-icon"/>
                     <Link to="/tiktok" className="sidebar-link">
                         TikTok
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faDiscord} />
+                    <FontAwesomeIcon icon={faDiscord} className="fa-icon"/>
                     <Link to="/discord" className="sidebar-link">
                         Discord
                     </Link>
                 </li>
                 <span>Settings</span>
                 <li className="sidebar-item" id="users">
-                    <FontAwesomeIcon icon={faUsers} />
+                    <FontAwesomeIcon icon={faUsers} className="fa-icon"/>
                     <Link to="/users" className="sidebar-link">
                         Users
                     </Link>
                 </li>
                 <li className="sidebar-item" id="users">
-                    <FontAwesomeIcon icon={faDownload} />
+                    <FontAwesomeIcon icon={faDownload} className="fa-icon"/>
                     <Link to="/update" className="sidebar-link">
                         Update
                     </Link>
                 </li>
                 <li className="sidebar-item">
-                    <FontAwesomeIcon icon={faGear} />
+                    <FontAwesomeIcon icon={faGear} className="fa-icon"/>
                     <Link to="/settings" className="sidebar-link">
                         Settings
                     </Link>

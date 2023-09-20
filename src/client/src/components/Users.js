@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import '../styles/main.css';
 import '../styles/users.css';
 
 function Users() {

@@ -19,6 +19,7 @@
 body {
     background-color: var(--background-color);
     color: var(--font-color);
+    font-family: 'Cabin', sans-serif;
 }
 
 .main-container {
