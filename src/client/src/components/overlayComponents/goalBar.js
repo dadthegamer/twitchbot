@@ -15,7 +15,6 @@ function ProgressBar() {
                 .then(data => {
                     // Find the sub goal data named dailySubGoal
                     const subGoal = data.goalData.find(goal => goal.name === 'dailySubGoal');
-                    console.log(subGoal);
                     setSubData(subGoal);
                 });
         }, 5000);

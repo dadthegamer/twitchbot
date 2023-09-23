@@ -122,21 +122,7 @@ class StreamDB {
             const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
             // Check if a stream
             if (streamData) {
-                console.log('There is already a stream started within the last hour');
                 this.cache.set('stream', streamData);
-                this.cache.set('streamStartedAt', streamData.date);
-                this.cache.set('streamTitle', streamData.title);
-                this.cache.set('streamGame', streamData.category);
-                this.cache.set('streamSubs', streamData.total_subs);
-                this.cache.set('streamBits', streamData.bits);
-                this.cache.set('streamDonations', streamData.donations);
-                this.cache.set('viewers', streamData.viewers);
-                this.cache.set('live', true);
-                this.cache.set('TikTokLive', streamData.tikTokLive);
-                this.cache.set('TikTokLiveId', streamData.tikTokLiveId);
-                this.cache.set('TikTokLikes', streamData.tikTokLikes);
-                this.cache.set('TikTokFollowers', streamData.tikTokFollowers);
-                this.cache.set('TikTokGifts', streamData.tikTokGifts);
 
                 // Set the stream id in the cache
                 const streamId = streamData._id;

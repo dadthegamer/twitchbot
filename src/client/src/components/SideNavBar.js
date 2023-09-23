@@ -2,7 +2,7 @@
 import React from 'react';
 import '../styles/main.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGauge, faChartBar, faTerminal, faListCheck, faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faGauge, faChartBar, faTerminal, faListCheck, faBullseye,faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { faTiktok, faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -29,80 +29,80 @@ function SideNavbar() {
                         Dashboard
                     </Link>
                 </li>
-                <li className="sidebar-item">
+                <li className={`sidebar-item ${isActive("/statistics")}`}>
                     <FontAwesomeIcon icon={faChartBar} className="fa-icon"/>
                     <Link to="/statistics" className="sidebar-link">
                         Statistics
                     </Link>
                 </li>
-                <li className="sidebar-item" id="commands-link">
+                <li className={`sidebar-item ${isActive("/commands")}`}>
                     <FontAwesomeIcon icon={faTerminal} className="fa-icon"/>
                     <Link to="/commands" className="sidebar-link">
                         Commands
                     </Link>
                 </li>
-                <li className="sidebar-item">
+                <li className={`sidebar-item ${isActive("/events")}`}>
                     <FontAwesomeIcon icon={faListCheck} className="fa-icon"/>
                     <Link to="/events" className="sidebar-link">
                         Events
                     </Link>
                 </li>
-                <li className="sidebar-item">
+                <li className={`sidebar-item ${isActive("/currency")}`}>
                     <FontAwesomeIcon icon={faCoins} className="fa-icon"/>
                     <Link to="/currency" className="sidebar-link">
                         Currency
                     </Link>
                 </li>
-                <li className="sidebar-item">
+                <li className={`sidebar-item ${isActive("/timers")}`}>
                     <FontAwesomeIcon icon={faStopwatch} className="fa-icon"/>
                     <Link to="/timers" className="sidebar-link">
                         Timers
                     </Link>
                 </li>
-                <li className="sidebar-item" id="channel-points-link">
+                <li className={`sidebar-item ${isActive("/channelpoints")}`}>
                     <FontAwesomeIcon icon={faGem} className="fa-icon"/>
                     <Link to="/channelpoints" className="sidebar-link">
                         Channel Points
                     </Link>
                 </li>
-                <li className="sidebar-item">
+                <li className={`sidebar-item ${isActive("/calendar")}`}>
                     <FontAwesomeIcon icon={faCalendar} className="fa-icon"/>
                     <Link to="/calendar" className="sidebar-link">
                         Calendar
                     </Link>
                 </li>
-                <li className="sidebar-item" id="quotes-link">
+                <li className={`sidebar-item ${isActive("/quotes")}`}>
                     <FontAwesomeIcon icon={faQuoteLeft} className="fa-icon"/>
                     <Link to="/quotes" className="sidebar-link">
                         Quotes
                     </Link>
                 </li>
-                <li className="sidebar-item">
+                <li className={`sidebar-item ${isActive("/moderation")}`}>
                     <FontAwesomeIcon icon={faHammer} className="fa-icon"/>
                     <Link to="/moderation" className="sidebar-link">
                         Moderation
                     </Link>
                 </li>
-                <li className="sidebar-item">
+                <li className={`sidebar-item ${isActive("/games")}`}>
                     <FontAwesomeIcon icon={faGamepad} className="fa-icon"/>
                     <Link to="/games" className="sidebar-link">
                         Games
                     </Link>
                 </li>
-                <li className="sidebar-item">
+                <li className={`sidebar-item ${isActive("/roles")}`}>
                     <FontAwesomeIcon icon={faUserTag} className="fa-icon"/>
                     <Link to="/roles" className="sidebar-link">
                         Roles
                     </Link>
                 </li>
                 <span>Applications</span>
-                <li className="sidebar-item">
+                <li className={`sidebar-item ${isActive("/tiktok")}`}>
                     <FontAwesomeIcon icon={faTiktok} className="fa-icon"/>
                     <Link to="/tiktok" className="sidebar-link">
                         TikTok
                     </Link>
                 </li>
-                <li className="sidebar-item">
+                <li className={`sidebar-item ${isActive("/discord")}`}>
                     <FontAwesomeIcon icon={faDiscord} className="fa-icon"/>
                     <Link to="/discord" className="sidebar-link">
                         Discord

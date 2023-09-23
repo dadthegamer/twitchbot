@@ -5,8 +5,9 @@ import Users from './components/Users';
 import SideNavbar from './components/SideNavBar';
 import TopNavbar from './components/TopNavBar';
 import Currency from './components/Currency';
-import Goal from './components/overlayComponents/goalBar';
+import ProgressBar from './components/overlayComponents/goalBar';
 import StartingSoon from './components/overlayComponents/startingSoon';
+import Quotes from './components/Quotes'
 
 function App() {
   return (
@@ -15,11 +16,12 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route path="users" element={<Users />} />
         <Route path="currency" element={<Currency />} />
+        <Route path="quotes" element={<Quotes />} />
       </Route>
 
       {/* Overlay Routes */}
       <Route path="/overlay" element={<OverlayLayout />}>
-        <Route path="progressbar" element={<Goal />} />
+        <Route path="progressbar" element={<ProgressBar />} />
         <Route path="startingsoon" element={<StartingSoon />} />
       </Route>
     </Routes>
