@@ -1,5 +1,5 @@
 import { writeToLogFile } from "../../../utilities/logging.js";
-import { usersDB } from "../../../config/initializers.js";
+import { usersDB, goalDB } from "../../../config/initializers.js";
 import { ttsHandler } from "../../actionHandlers.js/ttsHandler.js";
 
 export async function onRedemptionAdd(e) {

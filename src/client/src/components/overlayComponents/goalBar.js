@@ -3,6 +3,7 @@ import '../../styles/overlay/progressBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGift } from '@fortawesome/free-solid-svg-icons';
 
+
 function ProgressBar() {
     // Get the current sub data from the API
     const [subData, setSubData] = useState({});

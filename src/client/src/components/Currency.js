@@ -1,5 +1,5 @@
 import React from 'react';
-import '../styles/currency.css';
+// import '../styles/currency.css';
 
 function Currency() {
     return (

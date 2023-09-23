@@ -1,6 +1,6 @@
 // src/client/src/components/Navbar.js
 import React from 'react';
-import '../styles/main.css';
+import '../styles/GUI/main.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGauge, faChartBar, faTerminal, faListCheck, faBullseye,faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { faTiktok, faDiscord } from '@fortawesome/free-brands-svg-icons';

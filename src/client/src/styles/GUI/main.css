@@ -1,11 +1,11 @@
 @import url('https://fonts.googleapis.com/css2?family=Cabin&family=Montserrat:ital,wght@1,900&display=swap');
 
-* {
+/* * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: 'Cabin', sans-serif;
-}
+} */
 
 :root {
     --background-color: #111111;
@@ -16,11 +16,11 @@
 }
 
 
-body {
+/* body {
     background-color: var(--background-color);
     color: var(--font-color);
     font-family: 'Cabin', sans-serif;
-}
+} */
 
 .main-container {
     width: 100%;

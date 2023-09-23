@@ -446,6 +446,56 @@ class UsersDB {
         }
     }
 
+    // Method to set the metaData property for a user. if it does not exist then create it
+    async setMetaData(userId, property, value) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
+            const user = await this.getUserByUserId(userId);
+            if (user.metaData === null) {
+                user.metaData = {};
+            }
+            user.metaData[property] = value;
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $set: { [`metaData.${property}`]: value } },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        }
+        catch (error) {
+            logger.error(`Error in setMetaData: ${error}`);
+        }
+    }
+
+    // Method to get the metaData property for a user
+    async getMetaData(userId, property) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
+            const user = await this.getUserByUserId(userId);
+            if (user.metaData === null) {
+                user.metaData = {};
+            }
+            return user.metaData[property];
+        }
+        catch (error) {
+            logger.error(`Error in getMetaData: ${error}`);
+        }
+    }
+
     // Method to set a users value in the database and cache
     async setUserValue(userId, property, value) {
         try {
