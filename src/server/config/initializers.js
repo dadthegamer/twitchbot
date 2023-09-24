@@ -29,6 +29,7 @@ import TwitchChannelPointsService from '../services/channelPointService.js';
 import FirebotService from '../services/firebotImportService.js';
 import GameService from '../services/gameService.js';
 import CounterService from '../services/counterService.js';
+import GoXLRClient from '../services/goXLRUtilityService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -112,6 +113,9 @@ const gameService = new GameService(db.dbConnection, cache);
 // Counter service initialization
 const counterService = new CounterService(db.dbConnection, cache);
 
+// GoXLR client initialization
+const goXLRClient = new GoXLRClient();
+
 // Subscribe to donation events
 subscribeToDonationEvents();
 
@@ -145,5 +149,6 @@ export {
     channelPointsService,
     firebotService,
     gameService,
-    counterService
+    counterService,
+    goXLRClient
 };
