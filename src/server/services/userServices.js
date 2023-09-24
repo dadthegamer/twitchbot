@@ -474,6 +474,50 @@ class UsersDB {
         }
     }
 
+    // Method to increase the metaData property for a user. if it does not exist then create it
+    async increaseMetaData(userId, property, amount) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
+            const user = await this.getUserByUserId(userId);
+            if (user.metaData === null) {
+                user.metaData = {};
+            }
+            if (typeof amount !== 'number') {
+                try {
+                    amount = parseInt(amount);
+                    if (isNaN(amount)) {
+                        logger.error(`Error in increaseMetaData: Amount is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseMetaData: ${error}`);
+                }
+            }
+            if (property in user.metaData) {
+                user.metaData[property] += amount;
+            } else {
+                user.metaData[property] = amount;
+            }
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $inc: { [`metaData.${property}`]: amount } },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        }
+        catch (error) {
+            logger.error(`Error in increaseMetaData: ${error}`);
+        }
+    }
+
     // Method to get the metaData property for a user
     async getMetaData(userId, property) {
         try {
