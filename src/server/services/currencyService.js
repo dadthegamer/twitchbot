@@ -197,15 +197,15 @@ class CurrencyService {
         }
     }
 
-    // Method to update a currency
-    async updateCurrency(name, currency) {
-        name = name.toLowerCase();
+    // Method to update a currency by id
+    async updateCurrencyById(id, currency) {
         try {
-            const res = await this.dbConnection.collection(this.collectionName).updateOne({ name }, { $set: currency });
+            const res = await this.dbConnection.collection(this.collectionName).updateOne({ _id: new ObjectId(id) }, { $set: currency });
             await getAllCurrencies();
             return res;
         } catch (err) {
-            logger.error(`Error in updateCurrency: ${err}`);
+            logger.error(`Error in updateCurrencyById: ${err}`);
+            throw err; // Rethrow the error so it can be handled appropriately in the calling code
         }
     }
 
