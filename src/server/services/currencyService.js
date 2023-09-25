@@ -5,6 +5,7 @@ import NodeCache from 'node-cache';
 import { activeUsersCache } from '../config/initializers.js';
 import logger from '../utilities/logger.js';
 import { commands } from '../config/initializers.js';
+import { ObjectId } from 'mongodb';
 
 // Currency Class
 class CurrencyService {
@@ -180,6 +181,19 @@ class CurrencyService {
             return currencies;
         } catch (err) {
             logger.error(`Error in getAllCurrencies: ${err}`);
+        }
+    }
+
+    // Method to get a currency by id
+    async getCurrencyById(id) {
+        try {
+            const currency = await this.dbConnection
+                .collection(this.collectionName)
+                .findOne({ _id: new ObjectId(id) }); // Convert id to ObjectId
+            return currency;
+        } catch (err) {
+            logger.error(`Error in getCurrencyById: ${err}`);
+            throw err; // Rethrow the error so it can be handled appropriately in the calling code
         }
     }
 
@@ -408,22 +422,6 @@ class CurrencyService {
             this.payoutIntervals.push(intervalId);
         }
     }
-
-    // Method to update a currency
-    async updateCurrency(name, currency) {
-        name = name.toLowerCase();
-        try {
-            const res = await this.dbConnection.collection(this.collectionName).updateOne({ name }, { $set: currency });
-            await getAllCurrencies();
-            this.clearAllPayoutIntervals();
-            this.currencyPayoutHandler();
-            return res;
-        } catch (err) {
-            logger.error(`Error in updateCurrency: ${err}`);
-        }
-    }
-
-    // Method to get all the c
 
     // Method to clear all payout intervals
     clearAllPayoutIntervals() {

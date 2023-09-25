@@ -15,10 +15,10 @@
     --font-color: #FFFFFF;
 }
 
-body {
+/* body {
     background-color: transparent !important;
     font-family: 'Montserrat', sans-serif !important;
-}
+} */
 
 .progress-container {
     width: 50%;

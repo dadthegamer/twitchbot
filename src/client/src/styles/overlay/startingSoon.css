@@ -4,7 +4,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
 }
 
 @property --angle {
@@ -12,6 +11,11 @@
     initial-value: 0deg;
     inherits: false;
 }
+
+/* body {
+    background-color: transparent !important;
+    font-family: 'Montserrat', sans-serif !important;
+} */
 
 .first-container {
     display: flex;

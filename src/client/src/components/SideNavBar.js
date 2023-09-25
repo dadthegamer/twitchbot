@@ -2,7 +2,7 @@
 import React from 'react';
 import '../styles/GUI/main.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGauge, faChartBar, faTerminal, faListCheck, faBullseye,faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faGauge, faChartBar, faTerminal, faListCheck, faBullseye, faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { faTiktok, faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -45,6 +45,12 @@ function SideNavbar() {
                     <FontAwesomeIcon icon={faListCheck} className="fa-icon"/>
                     <Link to="/events" className="sidebar-link">
                         Events
+                    </Link>
+                </li>
+                <li className={`sidebar-item ${isActive("/goals")}`}>
+                    <FontAwesomeIcon icon={faBullseye} className="fa-icon"/>
+                    <Link to="/goals" className="sidebar-link">
+                        Goals
                     </Link>
                 </li>
                 <li className={`sidebar-item ${isActive("/currency")}`}>

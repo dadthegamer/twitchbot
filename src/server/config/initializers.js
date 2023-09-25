@@ -19,14 +19,12 @@ import NotificationService from '../services/notificationService.js';
 import ChatLogService from '../services/chatLogService.js';
 import SettingsService from '../services/settingsService.js';
 import CurrencyService from '../services/currencyService.js';
-import { RaffleService } from '../services/raffleService.js';
 import GoalService from '../services/goalService.js';
 import ViewTimeService from '../services/viewTimeService.js';
 import TaskCoordinator from '../managers/tasksCoordinator.js';
 import OBSService from '../services/obsService.js';
 import TwitchApiClient from '../services/twitchApiService.js';
 import TwitchChannelPointsService from '../services/channelPointService.js';
-import FirebotService from '../services/firebotImportService.js';
 import GameService from '../services/gameService.js';
 import CounterService from '../services/counterService.js';
 import GoXLRClient from '../services/goXLRUtilityService.js';
@@ -85,9 +83,6 @@ const commands = new Commands(db.dbConnection);
 // Command cache initialization
 const commandHandler = new CommandHandler(commands.cache);
 
-// RaffleDB initialization
-const raffleDB = new RaffleService(db.dbConnection, cache);
-
 // GoalDB initialization
 const goalDB = new GoalService(db.dbConnection, cache);
 
@@ -102,10 +97,6 @@ const obsService = new OBSService(db.dbConnection, cache);
 
 // Channel points service initialization
 const channelPointsService = new TwitchChannelPointsService(cache, db.dbConnection);
-
-
-// Firebot service initialization
-const firebotService = new FirebotService(db.dbConnection, cache);
 
 // Game service initialization
 const gameService = new GameService(db.dbConnection, cache);
@@ -141,13 +132,11 @@ export {
     chatLogService,
     settingsDB,
     currencyDB,
-    raffleDB,
     goalDB,
     viewTimeDB,
     taskCoordinator,
     obsService,
     channelPointsService,
-    firebotService,
     gameService,
     counterService,
     goXLRClient
