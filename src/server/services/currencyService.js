@@ -69,7 +69,6 @@ class CurrencyService {
                     },
                     createdAt: new Date(),
                     roleBonuses: {
-                        streamer: 0,
                         moderator: 0,
                         subscriber: 0,
                         vip: 0,
@@ -136,7 +135,6 @@ class CurrencyService {
                     },
                     createdAt: new Date(),
                     roleBonuses: {
-                        streamer: 0,
                         moderator: 0,
                         subscriber: 0,
                         vip: 0,
@@ -231,12 +229,21 @@ class CurrencyService {
 
     // Method to create a currency
     async createCurrency(name, enabled, payoutSettings, roleBonuses, restrictions, limit, autoReset) {
-        name = name.toLowerCase();
         // If the currency already exists, return
         const currency = await this.getCurrencyByName(name);
         if (currency) {
             return 'Currency already exists';
         }
+
+        if (autoReset === 'False') {
+            autoReset = false;
+        }
+
+        // Convert the limit to a number
+        if (typeof limit !== 'number') {
+            limit = Number(limit);
+        }
+
         try {
             const currency = {
                 name: name,
@@ -248,7 +255,6 @@ class CurrencyService {
                     subs: {
                         amount: payoutSettings.subs.amount,
                         minimum: payoutSettings.subs.minimum,
-                        tierMultiplier: payoutSettings.subs.tierMultiplier,
                     },
                     bits: {
                         amount: payoutSettings.bits.amount,
@@ -291,9 +297,10 @@ class CurrencyService {
                 limit: limit,
             };
             const res = await this.dbConnection.collection(this.collectionName).insertOne(currency);
-            await getAllCurrencies();
+            await this.getAllCurrencies();
             return res;
         } catch (err) {
+            console.log(err);
             logger.error(`Error in createCurrency: ${err}`);
         }
     }

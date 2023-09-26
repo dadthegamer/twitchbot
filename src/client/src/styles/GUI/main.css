@@ -472,3 +472,10 @@ body::-webkit-scrollbar-track {
     left: calc(50% - 27px/2 + 10px);
     top: calc(50% - 27px/2);
 }
+
+.download-icon {
+    font-size: 1.2em;
+    color: red;
+    margin-left: 10px;
+    display: none;
+}

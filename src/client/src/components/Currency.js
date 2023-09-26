@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import '../styles/GUI/currency.css';
 import Confirmation from './SubComponents/confirm';
 import CurrencySubComponent from './SubComponents/CurrencySubComponent';
+import NewCurrency from './SubComponents/NewCurrency';
 
 function Currency() {
     const [isLoading, setIsLoading] = useState(true);
     const [currencies, setCurrencies] = useState([]);
     const [raffleId, setRaffleId] = useState('');
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const [showNewCurrency, setShowNewCurrency] = useState(false);
 
     // Set the states for each input field
     const [raffleEnabled, setRaffleEnabled] = useState(false);
@@ -261,6 +263,16 @@ function Currency() {
         });
     };
 
+    // Function to handle the add currency button
+    const handleAddCurrency = () => {
+        setShowNewCurrency(true);
+    };
+
+    const handleCancel = (event) => {
+        // event.preventDefault();
+        setShowNewCurrency(false);
+    };
+
 
     return (
         <div class="content">
@@ -275,7 +287,10 @@ function Currency() {
                 <p>Loading...</p>
             ) : (
                 <div className="currency-main-container">
-                    <button id="add-currency">Add A Currency</button>
+                    <button type="button" id="add-currency" onClick={handleAddCurrency}>Add A Currency</button>
+                    {showNewCurrency && (
+                        <NewCurrency onCancel={handleCancel}/>
+                    )}
                     <div className="currency-container" id="raffle-container" data-currencyId={raffleId} >
                         <div className="currency-first">
                             <h2>Raffle Tickets</h2>

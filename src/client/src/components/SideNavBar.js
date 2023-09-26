@@ -1,17 +1,43 @@
 // src/client/src/components/Navbar.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import '../styles/GUI/main.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGauge, faChartBar, faTerminal, faListCheck, faBullseye, faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faGauge, faChartBar, faTerminal, faListCheck, faBullseye, faExclamation, faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { faTiktok, faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 
 function SideNavbar() {
+    const [update, setUpdate] = useState(false);
 
     const location = useLocation();
 
     function isActive(path) {
         return location.pathname === path ? "active" : "";
+    }
+
+    useEffect(() => {
+        // Call the function once when the component is mounted
+        checkForUpdate();
+    
+        // Set up the interval to check for updates every 60 seconds
+        // const intervalId = setInterval(() => {
+        //     checkForUpdate();
+        // }, 60000); // 60000 milliseconds = 60 seconds
+    
+        // // Return a cleanup function to clear the interval when the component is unmounted
+        // return () => clearInterval(intervalId);
+    }, []);
+
+
+    // Function to check for updates
+    function checkForUpdate() {
+        fetch("/api/update")
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.update) {
+                    setUpdate(true);
+                }
+            });
     }
 
 
@@ -126,6 +152,7 @@ function SideNavbar() {
                     <Link to="/update" className="sidebar-link">
                         Update
                     </Link>
+                    <FontAwesomeIcon icon={faExclamation} className="fa-icon download-icon" style={{ display: update ? 'inline-block' : 'none' }}/>
                 </li>
                 <li className="sidebar-item">
                     <FontAwesomeIcon icon={faGear} className="fa-icon"/>

@@ -155,6 +155,120 @@ router.post('/reset', async (req, res) => {
 });
 
 
+router.post('/create', async (req, res) => {
+    try {
+        const { currencyName,
+            currencyEnabled,
+            payoutInterval,
+            payoutAmount,
+            payoutSubs,
+            payoutSubsMin,
+            payoutBits,
+            payoutBitsMin,
+            payoutDonations,
+            payoutDonationsMin,
+            payoutRaids,
+            payoutFollowers,
+            payoutArrival,
+            payoutFirst,
+            payoutSecond,
+            payoutThird,
+            payoutHypeTrain,
+            bonusModerator,
+            bonusSubscriber,
+            bonusVip,
+            bonusActiveChatUser,
+            bonusTier1,
+            bonusTier2,
+            bonusTier3,
+            autoResetValue,
+            followersOnly,
+            subscribersOnly,
+            vipsOnly,
+            activeChatUserOnly,
+            limitValue } = req.body;
+
+            console.log(req.body);
+        // Make sure the currency name is not empty and is a string
+        if (currencyName === '' || typeof currencyName !== 'string') {
+            res.status(400).json({ error: 'Currency name must be a string and cannot be empty' });
+            return;
+        }
+
+        // Make sure the enabled value is a boolean value. If it isnt convert it to a boolean value
+        if (typeof currencyEnabled !== 'boolean') {
+            if (currencyEnabled === 'true') {
+                currencyEnabled = true;
+            } else {
+                currencyEnabled = false;
+            }
+        }
+
+        // Make sure the limit value is a number. If it isnt convert it to a number
+        if (typeof limitValue !== 'number') {
+            const numberValue = Number(limitValue);
+            if (isNaN(numberValue)) {
+                res.status(400).json({ error: 'Limit must be a number' });
+                return;
+            }
+        }
+
+        const payoutSettings = {
+            interval: payoutInterval,
+            amount: payoutAmount,
+            subs: {
+                amount: payoutSubs,
+                minimum: payoutSubsMin
+            },
+            bits: {
+                amount: payoutBits,
+                minimum: payoutBitsMin
+            },
+            donations: {
+                amount: payoutDonations,
+                minimum: payoutDonationsMin
+            },
+            raids: payoutRaids,
+            arrived: payoutArrival,
+            follower: payoutFollowers,
+            first: {
+                first: payoutFirst,
+                second: payoutSecond,
+                third: payoutThird
+            },
+            hypeTrain: payoutHypeTrain
+        };
+
+        const roleBonuses = {
+            moderator: bonusModerator,
+            subscriber: bonusSubscriber,
+            vip: bonusVip,
+            activeChatUser: bonusActiveChatUser,
+            tier1: bonusTier1,
+            tier2: bonusTier2,
+            tier3: bonusTier3
+        };
+
+        const restrictions = {
+            followersOnly: followersOnly,
+            subscribersOnly: subscribersOnly,
+            vipsOnly: vipsOnly,
+            activeChatUserOnly: activeChatUserOnly
+        };
+
+        console.log(payoutSettings);
+        console.log(roleBonuses);
+        console.log(restrictions);
+
+        const res = await currencyDB.createCurrency(currencyName, currencyEnabled, payoutSettings, roleBonuses, restrictions, limitValue, autoResetValue);
+    }
+    catch (error) {
+        logger.error(`Error creating currency: ${error}`);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 router.delete('/:id', async (req, res) => {
     try {
         const currency = await currencyDB.deleteCurrencyById(req.params.id);

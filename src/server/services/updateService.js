@@ -11,26 +11,26 @@ import { spawn } from 'child_process';
 // Define __dirname
 const __dirname = path.resolve();
 
-const currentVersion = '0.1.0';
 
-async function checkForUpdates() {
+async function checkForUpdates(currentVersion) {
 
     try {
         const response = await axios.get('https://api.github.com/repos/dadthegamer/twitchbot/releases/latest');
         const release = response.data;
 
+        console.log(release);
+
         const latestVersion = release.tag_name;
         if (semver.gt(latestVersion, currentVersion)) {
             console.log(response.data);
-            console.log(`Update available: ${latestVersion}`);
 
             // await downloadUpdate(release.assets[0].browser_download_url);
 
             // console.log('Update downloaded and extracted. Restarting...');
-            restartApp();
-
+            // restartApp();
+            return response.data;
         } else {
-            console.log('No update available');
+            return false;
         }
 
     } catch (error) {
