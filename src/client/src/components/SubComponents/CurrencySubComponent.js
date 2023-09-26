@@ -16,6 +16,7 @@ function CurrencySubComponent({ props }) {
 
     const [currencyId, setCurrencyId] = useState(_id);
     const [showConfirmation, setShowConfirmation] = useState(false);
+    const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
     const [currencyName, setCurrencyName] = useState(name);
     const [currencyEnabled, setCurrencyEnabled] = useState(enabled);
@@ -64,7 +65,7 @@ function CurrencySubComponent({ props }) {
 
     const handleCancelConfirmation = () => {
         // Close the confirmation dialog
-        setShowConfirmation(false);
+        setShowDeleteConfirmation(false);
     };
 
     const handleReset = (e) => {
@@ -72,6 +73,30 @@ function CurrencySubComponent({ props }) {
         // Open the confirmation dialog
         setShowConfirmation(true);
         // Show the confirmation dialog
+    };
+
+    const handleDelete = (e) => {
+        console.log('Delete');
+        setShowDeleteConfirmation(true);
+    };
+
+    const handleDeleteConfirmation = () => {
+        // Make a POST request to the server to delete the currency
+        fetch(`/api/currency/${currencyId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => {
+            console.log(response);
+            if (response.status === 200) {
+                // Remove the currency from the DOM
+                const currencyContainer = document.querySelector(`[data-currencyId="${currencyId}"]`);
+                currencyContainer.remove();
+            }
+        });
+        // Close the confirmation dialog
+        setShowDeleteConfirmation(false);
     };
 
     // Handle input change. Get the value of the input and set it as the new value of the input and get the id of the input and set it as the new id of the input
@@ -216,6 +241,13 @@ function CurrencySubComponent({ props }) {
                 <Confirmation
                     message="Are you sure you want to reset the currency for all users?"
                     onConfirm={handleResetConfirmation} // Handle the reset action
+                    onCancel={handleCancelConfirmation} // Handle the cancellation
+                />
+            )}
+            {showDeleteConfirmation && (
+                <Confirmation
+                    message={`Are you sure you want to delete the ${currencyName} currency?`}
+                    onConfirm={handleDeleteConfirmation} // Handle the reset action
                     onCancel={handleCancelConfirmation} // Handle the cancellation
                 />
             )}
@@ -401,7 +433,7 @@ function CurrencySubComponent({ props }) {
                     </div>
                 </div>
                 <div className="currency-buttons">
-                    <button id="delete-button">Delete</button>
+                    <button id="delete-button" onClick={handleDelete}>Delete</button>
                     <button id="reset-button" onClick={handleReset}>Reset</button>
                 </div>
             </div>

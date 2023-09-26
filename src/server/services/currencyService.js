@@ -216,19 +216,16 @@ class CurrencyService {
         }
     }
 
-    // Method to delete a currency
-    async deleteCurrency(name) {
-        name = name.toLowerCase();
-        if (name === 'Raffle') {
-            return 'Cannot delete the raffle currency';
-        }
+    // Method to delete a currency by id
+    async deleteCurrencyById(id) {
         try {
-            const res = await this.dbConnection.collection(this.collectionName).deleteOne({ name });
-            await getAllCurrencies();
+            const res = await this.dbConnection.collection(this.collectionName).deleteOne({ _id: new ObjectId(id) });
+            await this.getAllCurrencies();
+            this.restartCurrencyPayoutHandler();
             return res;
-        }
-        catch (err) {
-            logger.error(`Error in deleteCurrency: ${err}`);
+        } catch (err) {
+            logger.error(`Error in deleteCurrencyById: ${err}`);
+            throw err; // Rethrow the error so it can be handled appropriately in the calling code
         }
     }
 

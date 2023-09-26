@@ -234,7 +234,7 @@ function Currency() {
                 setAutoReset(value);
                 updateCurrency(currencyId, id, value);
                 break;
-            case "toggle-currency-checkbox":
+            case `toggle-currency-checkbox-${raffleId}`:
                 setRaffleEnabled(checked);
                 updateCurrency(currencyId, id, checked);
                 break;
@@ -282,7 +282,7 @@ function Currency() {
                             <i className="fa-solid fa-chevron-down"></i>
                             <div className="switch-container">
                                 <input type="checkbox" className="checkbox" id={`toggle-currency-checkbox-${raffleId}`} onChange={handleInputChange} checked={raffleEnabled} />
-                                <label className="switch" htmlFor="toggle-currency-checkbox">
+                                <label className="switch" htmlFor={`toggle-currency-checkbox-${raffleId}`}>
                                     <span className="slider"></span>
                                 </label>
                             </div>

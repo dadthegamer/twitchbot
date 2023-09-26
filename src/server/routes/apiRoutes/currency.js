@@ -152,7 +152,18 @@ router.post('/reset', async (req, res) => {
         logger.error(`Error creating currency: ${error}`);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-}
-);
+});
+
+
+router.delete('/:id', async (req, res) => {
+    try {
+        const currency = await currencyDB.deleteCurrencyById(req.params.id);
+        res.status(200).json(currency);
+    }
+    catch (error) {
+        logger.error(`Error deleting currency by id: ${error}`);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
 
 export default router;
