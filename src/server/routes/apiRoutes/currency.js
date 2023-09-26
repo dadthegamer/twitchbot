@@ -85,30 +85,43 @@ router.post('/', async (req, res) => {
                 currendyData.payoutSettings.followers = numberValue;
                 await currencyDB.updateCurrencyById(currencyId, currendyData);
                 res.status(200).json(currendyData);
+                break;
             case 'payout-first':
                 currendyData.payoutSettings.first.first = numberValue;
                 await currencyDB.updateCurrencyById(currencyId, currendyData);
                 res.status(200).json(currendyData);
+                break;
             case 'payout-second':
                 currendyData.payoutSettings.first.second = numberValue;
                 await currencyDB.updateCurrencyById(currencyId, currendyData);
                 res.status(200).json(currendyData);
+                break;
             case 'payout-third':
                 currendyData.payoutSettings.first.third = numberValue;
                 await currencyDB.updateCurrencyById(currencyId, currendyData);
                 res.status(200).json(currendyData);
+                break;
             case 'payout-hype-train':
                 currendyData.payoutSettings.hypeTrain = numberValue;
                 await currencyDB.updateCurrencyById(currencyId, currendyData);
                 res.status(200).json(currendyData);
-            case 'toggle-currency-checkbox':
-                if (numberValue === 1) {
-                    currendyData.enabled = true;
-                } else {
-                    currendyData.enabled = false;
+                break;
+            case `toggle-currency-checkbox-${currencyId}`:
+                try {
+                    if (numberValue === 1) {
+                        currendyData.enabled = true;
+                    } else {
+                        currendyData.enabled = false;
+                    }
+                    await currencyDB.updateCurrencyById(currencyId, currendyData);
+                    res.status(200).json(currendyData);
+                    break;
                 }
-                await currencyDB.updateCurrencyById(currencyId, currendyData);
-                res.status(200).json(currendyData);
+                catch (error) {
+                    console.log(error);
+                    logger.error(`Error updating currency: ${error}`);
+                    res.status(500).json({ error: 'Internal Server Error' });
+                }
             case 'auto-reset':
                 if (value === 'False') {
                     currendyData.autoReset = false;
@@ -117,6 +130,7 @@ router.post('/', async (req, res) => {
                 }
                 await currencyDB.updateCurrencyById(currencyId, currendyData);
                 res.status(200).json(currendyData);
+                break;
         }
     }
     catch (error) {
@@ -125,5 +139,20 @@ router.post('/', async (req, res) => {
     }
 });
 
+
+router.post('/reset', async (req, res) => {
+    try {
+        const { currencyId } = req.body;
+        const currendyData = await currencyDB.getCurrencyById(currencyId);
+        await usersDB.resetCurrency(currendyData.name);
+        res.status(200).json(currendyData);
+    }
+    catch (error) {
+        console.log(error);
+        logger.error(`Error creating currency: ${error}`);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+}
+);
 
 export default router;

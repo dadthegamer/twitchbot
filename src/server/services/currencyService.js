@@ -27,6 +27,12 @@ class CurrencyService {
         await this.currencyPayoutHandler();
     }
 
+    // Method to restart the currency payout handler and reset the intervals
+    async restartCurrencyPayoutHandler() {
+        this.clearAllPayoutIntervals();
+        await this.currencyPayoutHandler();
+    }
+
     // Method to create the first currency if it doesn't exist
     async createFirstCurrency() {
         try {
@@ -201,7 +207,8 @@ class CurrencyService {
     async updateCurrencyById(id, currency) {
         try {
             const res = await this.dbConnection.collection(this.collectionName).updateOne({ _id: new ObjectId(id) }, { $set: currency });
-            await getAllCurrencies();
+            await this.getAllCurrencies();
+            this.restartCurrencyPayoutHandler();
             return res;
         } catch (err) {
             logger.error(`Error in updateCurrencyById: ${err}`);

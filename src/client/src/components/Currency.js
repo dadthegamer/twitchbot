@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/GUI/currency.css';
+import Confirmation from './SubComponents/confirm';
+import CurrencySubComponent from './SubComponents/CurrencySubComponent';
 
 function Currency() {
     const [isLoading, setIsLoading] = useState(true);
     const [currencies, setCurrencies] = useState([]);
     const [raffleId, setRaffleId] = useState('');
+    const [showConfirmation, setShowConfirmation] = useState(false);
 
     // Set the states for each input field
     const [raffleEnabled, setRaffleEnabled] = useState(false);
@@ -34,6 +37,36 @@ function Currency() {
     const [autoReset, setAutoReset] = useState('');
 
     document.title = 'Currencies';
+
+    // Function to handle cancellation
+    const handleResetConfirmation = () => {
+        // Make a POST request to the server to reset the currency for all users
+        fetch('/api/currency/reset', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                currencyId: raffleId,
+            }),
+        }).then((response) => {
+            console.log(response);
+        });
+        // Close the confirmation dialog
+        setShowConfirmation(false);
+    };
+
+    const handleCancelConfirmation = () => {
+        // Close the confirmation dialog
+        setShowConfirmation(false);
+    };
+
+    const handleReset = (e) => {
+        console.log('Reset');
+        // Open the confirmation dialog
+        setShowConfirmation(true);
+        // Show the confirmation dialog
+    };
 
 
     // Get all currencies from the server
@@ -72,6 +105,8 @@ function Currency() {
                 setAutoReset(currency.autoReset);
                 setRaffleId(currency._id);
                 setIsLoading(false);
+            } else {
+                return;
             }
         });
     };
@@ -94,10 +129,9 @@ function Currency() {
 
     // Handle input change. Get the value of the input and set it as the new value of the input and get the id of the input and set it as the new id of the input
     const handleInputChange = (event) => {
+        event.preventDefault();
         const value = event.target.value;
         const id = event.target.id;
-        console.log(value);
-        console.log(id);
         const checked = event.target.checked;
 
         // Get the currency ID from the data-currencyId attribute of the parent element
@@ -230,6 +264,13 @@ function Currency() {
 
     return (
         <div class="content">
+            {showConfirmation && (
+                <Confirmation
+                    message="Are you sure you want to reset the currency for all users?"
+                    onConfirm={handleResetConfirmation} // Handle the reset action
+                    onCancel={handleCancelConfirmation} // Handle the cancellation
+                />
+            )}
             {isLoading ? (
                 <p>Loading...</p>
             ) : (
@@ -240,7 +281,7 @@ function Currency() {
                             <h2>Raffle Tickets</h2>
                             <i className="fa-solid fa-chevron-down"></i>
                             <div className="switch-container">
-                                <input type="checkbox" className="checkbox" id="toggle-currency-checkbox" onChange={handleInputChange} checked={raffleEnabled} />
+                                <input type="checkbox" className="checkbox" id={`toggle-currency-checkbox-${raffleId}`} onChange={handleInputChange} checked={raffleEnabled} />
                                 <label className="switch" htmlFor="toggle-currency-checkbox">
                                     <span className="slider"></span>
                                 </label>
@@ -418,10 +459,16 @@ function Currency() {
                                 </div>
                             </div>
                             <div className="currency-buttons">
-                                <button id="reset-button">Reset</button>
+                                <button id="reset-button" onClick={handleReset}>Reset</button>
                             </div>
                         </div>
                     </div>
+                    {currencies.map((currency) => {
+                        if (currency.name !== 'raffle') {
+                            return <CurrencySubComponent 
+                            currencyId={currency._id} 
+                            props={currency} />
+                    }})}
                 </div>
             )}
         </div>
