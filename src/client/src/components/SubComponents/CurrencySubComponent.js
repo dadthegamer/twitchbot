@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/GUI/currency.css';
 import Confirmation from './confirm';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPenToSquare } from '@fortawesome/free-solid-svg-icons';
+
 
 function CurrencySubComponent({ props }) {
 
@@ -17,6 +20,7 @@ function CurrencySubComponent({ props }) {
     const [currencyId, setCurrencyId] = useState(_id);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+    const [isEditing, setIsEditing] = useState(false);
 
     const [currencyName, setCurrencyName] = useState(name);
     const [currencyEnabled, setCurrencyEnabled] = useState(enabled);
@@ -68,6 +72,10 @@ function CurrencySubComponent({ props }) {
         setShowDeleteConfirmation(false);
     };
 
+    const toggleEdit = () => {
+        setIsEditing(!isEditing);
+    };
+
     const handleReset = (e) => {
         console.log('Reset');
         // Open the confirmation dialog
@@ -103,7 +111,7 @@ function CurrencySubComponent({ props }) {
     const handleInputChange = (event) => {
         // Prevent the default action of the event
         event.preventDefault();
-        
+
         const value = event.target.value;
         const id = event.target.id;
         const checked = event.target.checked;
@@ -212,6 +220,10 @@ function CurrencySubComponent({ props }) {
                 setCurrencyEnabled(checked);
                 updateCurrency(currencyId, id, checked);
                 break;
+            case "currency-name":
+                setCurrencyName(value);
+                updateCurrency(currencyId, id, value);
+                break;
             default:
                 break;
         }
@@ -252,7 +264,21 @@ function CurrencySubComponent({ props }) {
                 />
             )}
             <div className="currency-first">
-                <input id="currency-name" type="text" onChange={handleInputChange} value={currencyName} disabled/>
+                <div className="currency-name">
+                    {isEditing ? (
+                        <input
+                            type="text"
+                            value={currencyName}
+                            onChange={handleInputChange}
+                            id='currency-name'
+                        />
+                    ) : (
+                        <h2>{currencyName}</h2>
+                    )}
+                    <button id="edit-button" onClick={toggleEdit}>
+                        <FontAwesomeIcon icon={faPenToSquare} />
+                    </button>
+                </div>
                 <i className="fa-solid fa-chevron-down"></i>
                 <div className="switch-container">
                     <input type="checkbox" className="checkbox" id={`toggle-currency-checkbox-${currencyId}`} onChange={handleInputChange} checked={currencyEnabled} />

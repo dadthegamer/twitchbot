@@ -131,6 +131,10 @@ router.post('/', async (req, res) => {
                 await currencyDB.updateCurrencyById(currencyId, currendyData);
                 res.status(200).json(currendyData);
                 break;
+            case 'currency-name':
+                currendyData.name = value;
+                await currencyDB.updateCurrencyById(currencyId, currendyData);
+                res.status(200).json(currendyData);
         }
     }
     catch (error) {
@@ -214,51 +218,47 @@ router.post('/create', async (req, res) => {
         }
 
         const payoutSettings = {
-            interval: payoutInterval,
-            amount: payoutAmount,
+            interval: Number(payoutInterval),
+            amount: Number(payoutAmount),
             subs: {
-                amount: payoutSubs,
-                minimum: payoutSubsMin
+                amount: Number(payoutSubs),
+                minimum: Number(payoutSubsMin)
             },
             bits: {
-                amount: payoutBits,
-                minimum: payoutBitsMin
+                amount: Number(payoutBits),
+                minimum: Number(payoutBitsMin)
             },
             donations: {
-                amount: payoutDonations,
-                minimum: payoutDonationsMin
+                amount: Number(payoutDonations),
+                minimum: Number(payoutDonationsMin)
             },
-            raids: payoutRaids,
-            arrived: payoutArrival,
-            follower: payoutFollowers,
+            raids: Number(payoutRaids),
+            arrived: Number(payoutArrival),
+            follower: Number(payoutFollowers),
             first: {
-                first: payoutFirst,
-                second: payoutSecond,
-                third: payoutThird
+                first: Number(payoutFirst),
+                second: Number(payoutSecond),
+                third: Number(payoutThird)
             },
-            hypeTrain: payoutHypeTrain
+            hypeTrain: Number(payoutHypeTrain)
         };
 
         const roleBonuses = {
-            moderator: bonusModerator,
-            subscriber: bonusSubscriber,
-            vip: bonusVip,
-            activeChatUser: bonusActiveChatUser,
-            tier1: bonusTier1,
-            tier2: bonusTier2,
-            tier3: bonusTier3
+            moderator: Number(bonusModerator),
+            subscriber: Number(bonusSubscriber),
+            vip: Number(bonusVip),
+            activeChatUser: Number(bonusActiveChatUser),
+            tier1: Number(bonusTier1),
+            tier2: Number(bonusTier2),
+            tier3: Number(bonusTier3)
         };
 
         const restrictions = {
-            followersOnly: followersOnly,
-            subscribersOnly: subscribersOnly,
-            vipsOnly: vipsOnly,
-            activeChatUserOnly: activeChatUserOnly
+            follower: Boolean(followersOnly),
+            subscriber: Boolean(subscribersOnly),
+            vip: Boolean(vipsOnly),
+            activeChatUser: Boolean(activeChatUserOnly)
         };
-
-        console.log(payoutSettings);
-        console.log(roleBonuses);
-        console.log(restrictions);
 
         const res = await currencyDB.createCurrency(currencyName, currencyEnabled, payoutSettings, roleBonuses, restrictions, limitValue, autoResetValue);
     }
