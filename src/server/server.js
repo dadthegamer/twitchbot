@@ -66,6 +66,7 @@ import streamStatsRoute from './routes/apiRoutes/streamStats.js';
 import usersRouter from './routes/apiRoutes/users.js';
 import quoteRouter from './routes/apiRoutes/quotes.js';
 import updateRouter from './routes/apiRoutes/update.js';
+import goalsRouter from './routes/apiRoutes/goals.js';
 
 // Import GUI routes
 import guiRouter from './routes/gui.js';
@@ -81,6 +82,7 @@ app.use('/api/streamdata', streamStatsRoute);
 app.use('/api/users', usersRouter);
 app.use('/api/quotes', quoteRouter);
 app.use('/api/update', updateRouter);
+app.use('/api/goals', goalsRouter);
 
 // Overlay routes
 app.use('/overlay', overlayRouter);

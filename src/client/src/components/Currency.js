@@ -275,7 +275,7 @@ function Currency() {
 
 
     return (
-        <div class="content">
+        <div className="content">
             {showConfirmation && (
                 <Confirmation
                     message="Are you sure you want to reset the currency for all users?"

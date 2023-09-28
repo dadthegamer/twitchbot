@@ -15,18 +15,18 @@ function SideNavbar() {
         return location.pathname === path ? "active" : "";
     }
 
-    useEffect(() => {
-        // Call the function once when the component is mounted
-        checkForUpdate();
+    // useEffect(() => {
+    //     // Call the function once when the component is mounted
+    //     checkForUpdate();
     
-        // Set up the interval to check for updates every 60 seconds
-        // const intervalId = setInterval(() => {
-        //     checkForUpdate();
-        // }, 60000); // 60000 milliseconds = 60 seconds
+    //     // Set up the interval to check for updates every 60 seconds
+    //     // const intervalId = setInterval(() => {
+    //     //     checkForUpdate();
+    //     // }, 60000); // 60000 milliseconds = 60 seconds
     
-        // // Return a cleanup function to clear the interval when the component is unmounted
-        // return () => clearInterval(intervalId);
-    }, []);
+    //     // // Return a cleanup function to clear the interval when the component is unmounted
+    //     // return () => clearInterval(intervalId);
+    // }, []);
 
 
     // Function to check for updates

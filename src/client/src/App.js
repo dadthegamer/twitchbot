@@ -9,6 +9,7 @@ import ProgressBar from './components/overlayComponents/goalBar';
 import StartingSoon from './components/overlayComponents/startingSoon';
 import Quotes from './components/Quotes'
 import Update from './components/Update';
+import Goals from './components/Goals';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="currency" element={<Currency />} />
         <Route path="quotes" element={<Quotes />} />
         <Route path="update" element={<Update />} />
+        <Route path="goals" element={<Goals />} />
       </Route>
 
       {/* Overlay Routes */}

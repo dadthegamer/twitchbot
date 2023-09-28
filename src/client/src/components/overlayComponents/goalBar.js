@@ -11,7 +11,7 @@ function ProgressBar() {
     // useEffect hook to update the sub data every 5 seconds
     useEffect(() => {
         const interval = setInterval(() => {
-            fetch('/api/streamdata')
+            fetch('/api/goals')
                 .then(res => res.json())
                 .then(data => {
                     // Find the sub goal data named dailySubGoal

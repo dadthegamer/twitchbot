@@ -12,14 +12,12 @@ const Quotes = () => {
             setQuotes(data)); 
     }, []);
 
-    
+    // Function to convert a date to a string
     const dateToString = (date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth() + 1;
-        const day = date.getDate();
-    
-        return `${year}-${month}-${day}`;
-    }
+        const dateObj = new Date(date);
+        const dateString = dateObj.toLocaleDateString();
+        return dateString;
+    };
 
     const handleQuoteClick = (quoteId) => {
         console.log('Quote clicked:', quoteId);
@@ -54,17 +52,15 @@ const Quotes = () => {
                             <th>Quote</th>
                             <th>Added On</th>
                             <th>Creator</th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
                         {quotes.map((quote) => (
-                            <tr key={quote.id} className='quote-container' onClick={() => handleQuoteClick(quote.id)}>
+                            <tr key={quote.id} className='quote-container' onClick={() => handleQuoteClick(quote._id)}>
                                 <td>{quote.id}</td>
                                 <td className='quote'>{quote.text}</td>
-                                <td>{quote.createdAt}</td>
+                                <td>{dateToString(quote.createdAt)}</td>
                                 <td>{quote.creator}</td>
-                                <td></td>
                             </tr>
                         ))}
                     </tbody>

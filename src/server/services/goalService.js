@@ -16,6 +16,7 @@ class GoalService {
             const initialGoals = [
                 {
                     name: 'dailySubGoal',
+                    enabled: true,
                     goal: 0,
                     current: 0,
                     description: null,
@@ -24,6 +25,7 @@ class GoalService {
                 },
                 {
                     name: 'monthlySubGoal',
+                    enabled: true,
                     goal: 0,
                     current: 0,
                     description: null,
@@ -32,6 +34,7 @@ class GoalService {
                 },
                 {
                     name: 'dailyDonationGoal',
+                    enabled: true,
                     goal: 0,
                     current: 0,
                     description: null,
@@ -40,6 +43,7 @@ class GoalService {
                 },
                 {
                     name: 'monthlyDonationGoal',
+                    enabled: true,
                     goal: 0,
                     current: 0,
                     description: null,
@@ -48,6 +52,7 @@ class GoalService {
                 },
                 {
                     name: 'dailyBitsGoal',
+                    enabled: true,
                     goal: 0,
                     current: 0,
                     description: null,
@@ -56,6 +61,7 @@ class GoalService {
                 },
                 {
                     name: 'monthlyBitsGoal',
+                    enabled: true,
                     goal: 0,
                     current: 0,
                     description: null,
@@ -64,6 +70,7 @@ class GoalService {
                 },
                 {
                     name: 'dailyFollowersGoal',
+                    enabled: true,
                     goal: 0,
                     current: 0,
                     description: null,
@@ -72,6 +79,7 @@ class GoalService {
                 },
                 {
                     name: 'monthlyFollowersGoal',
+                    enabled: true,
                     goal: 0,
                     current: 0,
                     description: null,
@@ -148,6 +156,22 @@ class GoalService {
         }
     }
 
+    // Method to set a goal's description
+    async setGoalDescription(goalName, goalDescription) {
+        console.log(goalDescription);
+        const goals = await this.cache.get('goals');
+        if (!goals.some(goal => goal.name === goalName)) {
+            logger.error(`Goal ${goalName} does not exist`);
+        }
+        try {
+            const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { description: goalDescription } });
+            await this.getAllGoals();
+            return result;
+        } catch (error) {
+            logger.error(`Error setting goal description: ${error}`);
+        }
+    }
+
     // Method to increase a goal's current in the cache and database. Then check if the goal has been completed
     async increaseGoalCurrent(goalName, goalIncrease) {
         // Check if the goalIncrease is a number. If it is not, then parse it to a number
@@ -180,6 +204,22 @@ class GoalService {
             return result;
         } catch (error) {
             logger.error(`Error increasing goal current: ${error}`);
+        }
+    }
+
+    // Method to enable/disable a goal
+    async setGoalEnabled(goalName, enabled) {
+        const goals = await this.cache.get('goals');
+        if (!goals.some(goal => goal.name === goalName)) {
+            logger.error(`Goal ${goalName} does not exist`);
+        }
+        try {
+            console.log(`Goal ${goalName} enabled: ${enabled}`)
+            const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { enabled } });
+            await this.getAllGoals();
+            return result;
+        } catch (error) {
+            logger.error(`Error enabling goal: ${error}`);
         }
     }
 
