@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { writeToLogFile } from '../../utilities/logging.js';
+import logger from '../../utilities/logger.js';
 import { commands } from '../../config/initializers.js';
 
 const router = Router();
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     }
     catch (err) {
         console.log('Error in getting all commands from the api: ', err)
-        writeToLogFile('error', `Error in getting all commands from the api: ${err}`);
+        logger.error(`Error in getting all commands from the api: ${err}`);
     }
 });
 
@@ -27,7 +27,7 @@ router.get('/:command', async (req, res) => {
         }
     }
     catch (err) {
-        writeToLogFile('error', `Error in getting command from the api: ${err}`);
+        logger.error(`Error in getting command from the api: ${err}`);
     }
 });
 
@@ -39,7 +39,7 @@ router.post('/', async (req, res) => {
     }
     catch (err) {
         console.log('Error in creating command from the api: ', err)
-        writeToLogFile('error', `Error in creating command from the api: ${err}`);
+        logger.error(`Error in creating command from the api: ${err}`);
     }
 });
 
@@ -50,23 +50,20 @@ router.put('/:command', async (req, res) => {
         res.json(command);
     }
     catch (err) {
-        writeToLogFile('error', `Error in updating command from the api: ${err}`);
+        logger.error(`Error in updating command from the api: ${err}`);
     }
 });
 
 // Endpoint to delete a command
-router.delete('/:command', async (req, res) => {
+router.delete('/:commandName', async (req, res) => {
+    console.log('Deleting command: ', req.params.commandName)
     try {
-        const result = await commands.deleteCommand(req.params.command);
-        if (result === false) {
-            res.status(404).json({ deleted: false });
-        } else if (result === true) {
-            res.json({ deleted: true });
-        }
+        const result = await commands.deleteCommand(req.params.commandName);
+        res.json(result);
     }
     catch (err) {
         console.log('Error in deleting command from the api: ', err)
-        writeToLogFile('error', `Error in deleting command from the api: ${err}`);
+        logger.error(`Error in deleting command from the api: ${err}`);
     }
 });
 
@@ -82,7 +79,7 @@ router.post('/:command', async (req, res) => {
         }
     }
     catch (err) {
-        writeToLogFile('error', `Error in toggling command from the api: ${err}`);
+        logger.error(`Error in toggling command from the api: ${err}`);
     }
 });
 

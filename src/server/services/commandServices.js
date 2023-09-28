@@ -149,17 +149,16 @@ class Commands {
         }
     }
 
-    // Method to delete a command from the database
+    // Method to delete a command from the database by name
     async deleteCommand(commandName) {
         try {
             const commandsCollection = this.dbConnection.collection('commands');
             const result = await commandsCollection.deleteOne({ name: commandName });
             this.cache.del(commandName);
-            logger.info(`Command deleted: ${result.name}`);
-            return true;
+            logger.info(`Command deleted: ${commandName}`);
+            return result;
         } catch (error) {
             logger.error(`Error in deleteCommand: ${error}`);
-            return false;
         }
     }
 

@@ -43,25 +43,22 @@ router.put('/', async (req, res) => {
                 goal = 'monthlyBitsGoal';
                 break;
         }
-        console.log('goal:', goal)
-        console.log('update:', update)
 
         if (update.current) {
-            console.log('update.current:', update.current)
             await goalDB.setGoalCurrent(goal, Number(update.current));
-            res.sendStatus(200).json({ message: 'Goal updated successfully' });
+            res.sendStatus(200);
         } else if (update.goal) {
             await goalDB.setGoal(goal, Number(update.goal));
-            res.sendStatus(200).json({ message: 'Goal updated successfully' });
+            res.sendStatus(200);
         } else if (update.description) {
             if (update.description === '') {
                 update.description = null;
             }
             await goalDB.setGoalDescription(goal, update.description);
-            res.sendStatus(200).json({ message: 'Goal updated successfully' });
+            res.sendStatus(200);
         } else if (update.enabled === true || update.enabled === false) {
             await goalDB.setGoalEnabled(goal, update.enabled);
-            res.sendStatus(200).json({ message: 'Goal updated successfully' });
+            res.sendStatus(200);
         }
     }
     catch (err) {
