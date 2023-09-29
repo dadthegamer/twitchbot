@@ -11,6 +11,8 @@ import Quotes from './components/Quotes'
 import Update from './components/Update';
 import Goals from './components/Goals';
 import Commands from './components/Commands';
+import Dashboard from './components/Dashboard';
+import Games from './components/Games';
 
 function App() {
   return (
@@ -23,6 +25,8 @@ function App() {
         <Route path="update" element={<Update />} />
         <Route path="goals" element={<Goals />} />
         <Route path="commands" element={<Commands />} />
+        <Route path="/" element={<Dashboard />} />
+        <Route path="games" element={<Games />} />
       </Route>
 
       {/* Overlay Routes */}

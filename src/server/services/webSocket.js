@@ -86,4 +86,14 @@ export class WebSocket {
     streamathonUpdate(payload) {
         this.broadcastMessage('streamathonUpdate', payload);
     }
+
+    // Method to send a chat message from twitch chat
+    twitchChatMessage(payload) {
+        this.broadcastMessage('chatMessage', payload);
+    }
+
+    // Method to send a chat message from tiktok chat
+    tiktokChatMessage(payload) {
+        this.broadcastMessage('chatMessage', payload);
+    }
 }

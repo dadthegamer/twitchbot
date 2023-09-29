@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/GUI/main.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGauge, faChartBar, faTerminal, faListCheck, faBullseye, faExclamation, faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faGauge, faHourglassHalf, faChartBar, faTerminal, faListCheck, faBullseye, faExclamation, faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { faTiktok, faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -77,6 +77,12 @@ function SideNavbar() {
                     <FontAwesomeIcon icon={faBullseye} className="fa-icon"/>
                     <Link to="/goals" className="sidebar-link">
                         Goals
+                    </Link>
+                </li>
+                <li className={`sidebar-item ${isActive("/streamathon")}`}>
+                    <FontAwesomeIcon icon={faHourglassHalf} className="fa-icon"/>
+                    <Link to="/streamathon" className="sidebar-link">
+                        Streamathon
                     </Link>
                 </li>
                 <li className={`sidebar-item ${isActive("/currency")}`}>

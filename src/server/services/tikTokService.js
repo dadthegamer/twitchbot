@@ -1,5 +1,6 @@
 import { WebcastPushConnection } from 'tiktok-live-connector';
 import logger from "../utilities/logger.js";
+import { webSocket } from '../config/initializers.js';
 
 let connected = false;
 
