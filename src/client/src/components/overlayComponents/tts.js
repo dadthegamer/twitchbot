@@ -29,6 +29,7 @@ function TTS() {
         socket.onclose = function (event) {
             console.log('Disconnected from WebSocket server');
             setConnected(false);
+            reconnect();
         };
 
         return () => {

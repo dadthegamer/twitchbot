@@ -6,7 +6,7 @@ import { usersDB } from '../../config/initializers.js';
 
 
 
-const maxJackPot = 10000;
+const maxJackPot = 100;
 
 // Function that returns a whole number between two numbers
 function getRandomInt(min, max) {

@@ -38,14 +38,15 @@ class GameService {
     // Method to set the jackpot amount in the database and cache
     async setJackpot(jackpot) {
         try {
-            const data = await this.dbConnection.collection(this.collectionName).findOne({ id: 'jackpot' });
-            if (data) {
-                await this.dbConnection.collection(this.collectionName).updateOne({ id: 'jackpot' }, { $set: { jackpot: jackpot } });
-                // Update the cache with the new jackpot amount
-                this.cache.set('jackpot', { jackpot: jackpot });
-            }
+            // Make sure the jackpot is a number
+            jackpot = Number(jackpot);
+            const res = await this.dbConnection.collection(this.collectionName).updateOne({ id: 'jackpot' }, { $set: { jackpot: jackpot } });
+            // Update the cache with the new jackpot amount
+            this.cache.set('jackpot', { jackpot: jackpot });
+            return res;
         }
         catch (error) {
+            console.log(error);
             logger.error(`Error in setJackpot: ${error}`);
         }
     }
