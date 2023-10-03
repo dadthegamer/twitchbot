@@ -13,6 +13,7 @@ import Goals from './components/Goals';
 import Commands from './components/Commands';
 import Dashboard from './components/Dashboard';
 import Games from './components/Games';
+import Alert from './components/overlayComponents/alert';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
       <Route path="/overlay" element={<OverlayLayout />}>
         <Route path="progressbar" element={<ProgressBar />} />
         <Route path="startingsoon" element={<StartingSoon />} />
+        <Route path="alert" element={<Alert />} />
       </Route>
     </Routes>
   );

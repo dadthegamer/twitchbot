@@ -831,7 +831,7 @@ class UsersDB {
     }
 
     // Method to get the rank of a user by a property in the currency object
-    async getUserRankByProperty(userId, property) {
+    async getUserRankByCurrencyProperty(userId, property) {
         try {
             if (typeof userId !== 'string') {
                 userId = userId.toString();
@@ -851,14 +851,41 @@ class UsersDB {
     }
 
     // Method to get the leaderboard for a currency property sorted by the property from highest to lowest
-    async getLeaderboardByProperty(property, count = 10) {
+    async getLeaderboardByCurrencyProperty(property, count = 10) {
         try {
             const users = await this.getAllUsers();
             const sortedUsers = users.sort((a, b) => b.currency[property] - a.currency[property]);
             const leaderboard = sortedUsers.slice(0, count);
-            return leaderboard;
+            // If the leaderboard property for the 1st user is 0 then return null
+            if (leaderboard[0].currency[property] === 0) {
+                return null;
+            } else {
+                return leaderboard;
+            };
         } catch (error) {
             logger.error(`Error in getLeaderboardByProperty: ${error}`);
+        }
+    }
+
+    // Method to get the leaderboard for view time
+    async getLeaderboardByViewTime(leaderboardType, count = 10) {
+        try {
+            // Make sure the leaderboard type is valid
+            if (leaderboardType !== 'allTime' && leaderboardType !== 'yearly' && leaderboardType !== 'monthly' && leaderboardType !== 'weekly' && leaderboardType !== 'stream') {
+                logger.error(`Error in getLeaderboardByViewTime: Invalid leaderboard type`);
+                return null;
+            }
+            const users = await this.getAllUsers();
+            const sortedUsers = users.sort((a, b) => b.viewTime[leaderboardType] - a.viewTime[leaderboardType]);
+            const leaderboard = sortedUsers.slice(0, count);
+            // If the leaderboard property for the 1st user is 0 then return null
+            if (leaderboard[0].viewTime[leaderboardType] === 0) {
+                return null;
+            } else {
+                return leaderboard;
+            };
+        } catch (error) {
+            logger.error(`Error in getLeaderboardByViewTime: ${error}`);
         }
     }
 
