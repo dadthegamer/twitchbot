@@ -31,7 +31,7 @@ async function getSound(type) {
                 return `/audio/sub.mp3`;
             case 'resub':
                 return `/audio/sub.mp3`;
-            case 'giftedsub':
+            case 'giftedSub':
                 return `/audio/giftedSubs.mp3`;
             case 'raid':
                 return `/audio/raid.mp3`;

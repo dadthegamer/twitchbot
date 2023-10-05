@@ -16,7 +16,7 @@ export async function onBits(e) {
         };
         await goalDB.increaseBitsGoals(bits);
         await streamDB.setLatestEvent('latestCheer', newCheerData);
-        await addAlert('cheer', `${userDisplayName} cheered ${bits} bits!`, profileImage);
+        await addAlert(userId, userDisplayName, 'cheer', `cheered ${bits} bits!`);
         await currencyDB.addCurrencyForBits(userId, bits);
         await streamDB.increaseStreamProperty('bits', bits);
     }

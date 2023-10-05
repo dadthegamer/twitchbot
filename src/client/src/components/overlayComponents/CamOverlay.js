@@ -13,6 +13,7 @@ function CamOverlay() {
     const [fontColor, setFontColor] = useState('white');
     const [subsCount, setSubsCount] = useState(0);
     const [socket, setSocket] = useState(null);
+    const [displayAlertType, setDisplayAlertType] = useState(null);
 
     const subsCountRef = useRef(subsCount);
 
@@ -176,34 +177,42 @@ function CamOverlay() {
     const setAlertColorBasedOnAlertType = (alertType) => {
         switch (alertType) {
             case 'sub':
+                setDisplayAlertType('Subscriber');
                 setAlertColor('blue');
                 setFontColor('white');
                 break;
             case 'resub':
+                setDisplayAlertType('re-Subscriber');
                 setAlertColor('blue');
                 setFontColor('white');
                 break;
-            case 'giftedsub':
+            case 'giftedSub':
+                setDisplayAlertType('Gifted Sub');
                 setAlertColor('#44a6c6');
                 setFontColor('black');
                 break;
             case 'raid':
+                setDisplayAlertType('Raid');
                 setAlertColor('#FFC000');
                 setFontColor('black');
                 break;
             case 'follow':
+                setDisplayAlertType('Follower');
                 setAlertColor('#FFEA00');
                 setFontColor('black');
                 break;
             case 'cheer':
+                setDisplayAlertType('Cheer');
                 setAlertColor('#9146FF');
                 setFontColor('white');
                 break;
             case 'donation':
+                setDisplayAlertType('Donation');
                 setAlertColor('#118c4f');
                 setFontColor('white');
                 break;
             default:
+                setDisplayAlertType('Alert');
                 setAlertColor('#9146FF');
                 setFontColor('white');
                 break;
@@ -279,7 +288,7 @@ function CamOverlay() {
                         color: fontColor,
                     }}>
                         <span>New</span>
-                        <span>{alertData.alertType}</span>
+                        <span>{displayAlertType}</span>
                     </div>
                     {showAlertDetails && (
                         <div className={`alert-details ${animationDirection === 'normal' ? 'slideRight' : 'slideLeft'}`}>

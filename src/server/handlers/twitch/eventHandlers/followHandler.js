@@ -6,7 +6,7 @@ import logger from "../../../utilities/logger.js";
 // Follow events handler
 export async function onFollow(e) {
     try {
-        const { userId } = e;
+        const { userId, userDisplayName } = e;
         const userData = await usersDB.newUser(userId);
         const profileImage = userData.profilePictureUrl;
         const newFollowerData = {
@@ -16,7 +16,7 @@ export async function onFollow(e) {
         };
         await streamDB.setLatestEvent('latestFollower', newFollowerData);
         await currencyDB.addCurrencyForNewFollower(userId);
-        addAlert('follow', `${user} followed!`, profileImage);
+        addAlert(userId, userDisplayName, 'follow', 'followed!');
         await streamDB.addFollower(user);
     }
     catch (error) {

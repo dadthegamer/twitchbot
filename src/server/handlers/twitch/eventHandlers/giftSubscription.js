@@ -8,8 +8,6 @@ export async function onGiftSubscription(e) {
     try {
         const { gifterDisplayName, gifterId, amount } = e;
         const tier = e.tier / 1000;
-        const userData = await e.getGifter();
-        const profileImage = userData.profilePictureUrl;
 
         // User database operations
         await currencyDB.addCurrencyForSub(gifterId, amount, tier);
@@ -17,7 +15,7 @@ export async function onGiftSubscription(e) {
         await streamDB.increaseStreamProperty('subs', amount);
 
         // Sent alert
-        await addAlert('giftedsub', `${user} gifted ${amount} subscription(s) at tier ${tier}!`, profileImage);
+        await addAlert(gifterId, gifterDisplayName, 'giftedSub', `gifted ${amount} subs!`);
     }
     catch (error) {
         logger.error(`Error in onGiftSubscription: ${error}`);
