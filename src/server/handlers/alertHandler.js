@@ -1,17 +1,11 @@
 import { webSocket } from '../config/initializers.js';
-import { writeToLogFile } from '../utilities/logging.js';
-import { environment } from '../config/environmentVars.js';
+import logger from '../utilities/logger.js';
+import { usersDB } from '../config/initializers.js';
 
 let alertQueue = [];
 let alertShowing = false;
 let alertTime = 8000;
-let baseURL;
 
-if (environment === 'production') {
-    baseURL = 'http://192.168.1.31:3500';
-} else {
-    baseURL = 'http://localhost:3001';
-}
 
 function alertHandler() {
     try {
@@ -25,7 +19,7 @@ function alertHandler() {
         }
     }
     catch (err) {
-        writeToLogFile('error', `Error in alertHandler for alerts: ${err}`);
+        logger.error('error', `Error in alertHandler: ${err}`);
     }
 }
 
@@ -34,41 +28,43 @@ async function getSound(type) {
     try {
         switch (type) {
             case 'sub':
-                return `${baseURL}/audio/sub.mp3`;
+                return `/audio/sub.mp3`;
             case 'resub':
-                return `${baseURL}/audio/sub.mp3`;
+                return `/audio/sub.mp3`;
             case 'giftedsub':
-                return `${baseURL}/audio/giftedSubs.mp3`;
+                return `/audio/giftedSubs.mp3`;
             case 'raid':
-                return `${baseURL}/audio/raid.mp3`;
+                return `/audio/raid.mp3`;
             case 'follow':
-                return `${baseURL}/audio/newFollower.mp3`;
+                return `/audio/newFollower.mp3`;
             case 'cheer':
-                return `${baseURL}/audio/cheer.mp3`;
+                return `/audio/cheer.mp3`;
             case 'donation':
-                return `${baseURL}/audio/donation.mp3`;
+                return `/audio/donation.mp3`;
             default:
-                return null;
+                return `/audio/newFollower.mp3`;
         }
     }
     catch (err) {
-        writeToLogFile('error', `Error in getSound for alert: ${err}`);
+        logger.error('error', `Error in getSound for alerts: ${err}`);
     }
 }
 
-export async function addAlert(alertType, alertMessage, userImg) {
+export async function addAlert(userId, displayName, alertType, alertMessage) {
     try {
+        const profileImg = await usersDB.getUserProfileImageUrl(userId);
         const sound = await getSound(alertType);
         alertQueue.push({ 
+                        displayName,
                         alertType,
                         alertMessage,
-                        userImg,
+                        profileImg,
                         alertTime,
                         sound
                     });
     }
     catch (err) {
-        writeToLogFile('error', `Error in addAlert: ${err}`);
+        logger.error('error', `Error in addAlert: ${err}`);
     }
 }
 

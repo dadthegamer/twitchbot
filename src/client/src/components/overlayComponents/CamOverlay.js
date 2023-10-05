@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/overlay/cam.css';
 
 function CamOverlay() {
@@ -7,16 +7,14 @@ function CamOverlay() {
     const [alertData, setAlertData] = useState({});
     const [connected, setConnected] = useState(false);
     const [userName, setUserName] = useState('DadTheGam3r');
-    const [alertDisplayName, setAlertDisplayName] = useState('DadTheGam3r');
-    const [alertIMG, setAlertIMG] = useState('https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png');
-    const [alertMSG, setAlertMSG] = useState('has followed!');
-    const [alertType, setAlertType] = useState('follower');
     const [animationDirection, setAnimationDirection] = useState('normal');
     const [animationDirection2, setAnimationDirection2] = useState('normal');
     const [alertColor, setAlertColor] = useState('black');
     const [fontColor, setFontColor] = useState('white');
     const [subsCount, setSubsCount] = useState(0);
     const [socket, setSocket] = useState(null);
+
+    const subsCountRef = useRef(subsCount);
 
     useEffect(() => {
         // Function to initiate the WebSocket connection
@@ -32,7 +30,9 @@ function CamOverlay() {
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 if (data.type === 'alert') {
+                    console.log(data.payload);
                     setAlertData(data.payload);
+                    playAlert(data.payload.alertTime);
                 }
             };
 
@@ -64,6 +64,42 @@ function CamOverlay() {
             }
         }
     }, []);
+
+    useEffect(() => {
+        // Ref to track the current subs count
+    
+        // Function to get the current subs count from the server
+        const getSubsCount = async () => {
+            try {
+                const response = await fetch('/api/goals');
+                const data = await response.json();
+                for (let goal of data) {
+                    if (goal.name === 'monthlySubGoal') {
+                        subsCountRef.current = goal.current;  // Update the ref
+                        return goal;
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching subs count:', error);
+            }
+            return null; // Return null if the goal wasn't found or there was an error
+        };
+    
+        // Call the getSubsCount function initially
+    
+        // Call the getSubsCount function every 2 seconds. If the subs count changes, animate it
+        const intervalId = setInterval(() => {
+            getSubsCount().then((data) => {
+                if (data && data.current !== subsCount) {
+                    animateSubsCount(data.current);
+                }
+            });
+        }, 2000); // Adjust this interval for faster/slower counting
+    
+        // Clear the interval when the component unmounts
+        return () => clearInterval(intervalId);
+    }, []); // Empty dependency array to ensure this effect runs once
+
 
 
 
@@ -98,20 +134,18 @@ function CamOverlay() {
         return () => clearInterval(intervalId);
     }, [userName]);
 
-    useEffect(() => {
-        // show the alert after 2 seconds of page load then hide it after 5 seconds
+    const playAlert = (time)=> {
+        showTheAlert();
+        console.log(alertData);
         setTimeout(() => {
-            showTheAlert();
-            setTimeout(() => {
-                hideTheAlert();
-            }, 5000);
-        }, 2000);
-    }, []);
+            hideTheAlert();
+        }
+        , (time-1000));
+    };
 
     const showTheAlert = () => {
-        setAlertColorBasedOnAlertType('donation');
-        playAlertSound('/audio/cheer.mp3');
-        animateSubsCount(100);
+        setAlertColorBasedOnAlertType(alertData.alertType);
+        playAlertSound(alertData.sound);
         setShowAlert(true);
         setAnimationDirection('normal');
         setAnimationDirection2('normal');
@@ -245,18 +279,18 @@ function CamOverlay() {
                         color: fontColor,
                     }}>
                         <span>New</span>
-                        <span>{alertType}</span>
+                        <span>{alertData.alertType}</span>
                     </div>
                     {showAlertDetails && (
                         <div className={`alert-details ${animationDirection === 'normal' ? 'slideRight' : 'slideLeft'}`}>
                             <div className='alert-details-inner' style={{
                                 animationDirection: animationDirection, // Apply animation direction here
                             }}>
-                                <span id='alert-username'>{alertDisplayName}</span>
-                                <span id='alert-message'>{alertMSG}</span>
+                                <span id='alert-username'>{alertData.displayName}</span>
+                                <span id='alert-message'>{alertData.alertMessage}</span>
                             </div>
                             <div className="img-container">
-                                <img src={alertIMG} alt="" />
+                                <img src={alertData.profileImg} alt="" />
                             </div>
                         </div>
                     )}

@@ -1,11 +1,13 @@
-import { writeToLogFile } from "../../../utilities/logging.js";
 import { usersDB, goalDB } from "../../../config/initializers.js";
 import { ttsHandler } from "../../actionHandlers.js/ttsHandler.js";
+import logger from "../../../utilities/logger.js";
+import { addAlert } from "../../alertHandler.js";
+
 
 export async function onRedemptionAdd(e) {
-    console.log('Redemption event:', e);
     try {
         const { rewardTitle, rewardCost, userName, userDisplayName, userId, input, id, status } = e;
+        addAlert(userId, userDisplayName, 'redemption', 'Redeemed a reward');
         switch (rewardTitle) {
             case 'Custom Shoutout':
                 usersDB.setUserValue(userId, 'shoutout', input);
@@ -27,6 +29,7 @@ export async function onRedemptionAdd(e) {
         }  
     }
     catch (error) {
-        writeToLogFile('error', `Error in onRedemptionAdd: ${error}`);
+        console.log(error);
+        logger.error('error', `Error in onRedemptionAdd: ${error}`);
     }
 }
