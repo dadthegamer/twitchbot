@@ -12,6 +12,11 @@ body {
     height: 1080px;
 }
 
+:root {
+    --alertContainerHeight: 200px;
+}
+
+
 .alert-container {
     width: 800px;
     height: 500px;

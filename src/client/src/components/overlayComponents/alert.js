@@ -28,7 +28,7 @@ function Alert() {
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === 'alert') {
-                showAlert(data.payload);
+                showDataAlert(data.payload);
             }
         };
 
@@ -74,7 +74,7 @@ function Alert() {
         }
     }
 
-    function showAlert(data) {
+    function showDataAlert(data) {
         setAlertType(data.alertType);
         setAlertMessage(data.alertMessage);
         setUserImg(data.userImg);
