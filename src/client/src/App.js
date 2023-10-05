@@ -1,6 +1,7 @@
 // App.js
 import React from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import Users from './components/Users';
 import SideNavbar from './components/SideNavBar';
 import TopNavbar from './components/TopNavBar';
@@ -54,9 +55,14 @@ function MainLayout() {
 }
 
 function OverlayLayout() {
-  return (
-    <Outlet />
+
+  return createPortal(
+    <div className="overlay">
+      <Outlet />
+    </div>,
+    document.body
   );
+
 }
 
 export default App;

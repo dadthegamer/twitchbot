@@ -88,7 +88,7 @@ app.use('/api/games', gamesRouter);
 
 // Overlay routes
 app.use('/overlay', overlayRouter);
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 
 // Twitch authentication

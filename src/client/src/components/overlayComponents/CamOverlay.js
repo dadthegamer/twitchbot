@@ -110,6 +110,7 @@ function CamOverlay() {
 
     const showTheAlert = () => {
         setAlertColorBasedOnAlertType('donation');
+        playAlertSound('/audio/cheer.mp3');
         animateSubsCount(100);
         setShowAlert(true);
         setAnimationDirection('normal');
@@ -189,6 +190,17 @@ function CamOverlay() {
                 }
             });
         }, 50);  // Adjust this interval for faster/slower counting
+    };
+
+    // Function to play the alert sound
+    const playAlertSound = (audio) => {
+        const newAudio = new Audio(audio);
+        newAudio.play();
+
+        return () => {
+            newAudio.pause();
+            newAudio.remove();
+        };
     };
 
     return (
