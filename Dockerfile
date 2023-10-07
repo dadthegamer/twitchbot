@@ -1,31 +1,26 @@
-# Use an official Node.js runtime as a parent image
-FROM node:14
-
-# Set the working directory in the container to /app
-WORKDIR /app
-
-# Copy the package.json and package-lock.json files to the working directory
-COPY src/server/package*.json ./
-COPY src/client/package*.json ./client/
-
-# Install server and client dependencies
+# Stage 1: Build the React client
+FROM node:14 as client-builder
+WORKDIR /app/client
+COPY ./src/client/package*.json ./
 RUN npm install
-RUN cd ./client && npm install
+COPY ./src/client ./
+RUN npm run build
 
-# Copy the rest of the application code to the working directory
-COPY . .
+# Stage 2: Build the Node.js server
+FROM node:14 as server-builder
+WORKDIR /app/server
+COPY ./src/server/package*.json ./
+RUN npm install
+COPY ./src/server ./
 
-# Build the React.js client
-RUN cd ./client && npm run build
+# Stage 3: Combine the client and server
+FROM node:14
+WORKDIR /app
+COPY --from=client-builder /app/client/build ./client
+COPY --from=server-builder /app/server ./
 
-# Copy the start.sh script into the container
-COPY start.sh .
+# Install production dependencies for the server
+RUN npm install --only=production
 
-# Make the script executable (if needed)
-RUN chmod +x start.sh
-
-# Expose the port on which the Node.js server will run (replace with your server's port)
-EXPOSE 3000
-
-# Define the command to start the application using the start.sh script
-CMD ["./start.sh"]
+EXPOSE 3001
+CMD ["npm", "start"]
