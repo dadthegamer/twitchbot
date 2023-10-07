@@ -21,6 +21,18 @@ class InteractionsDbService {
         }
     }
 
+    // Method to get a random roast from the database
+    async getRandomRoast() {
+        try {
+            const roasts = await this.cache.get('roasts');
+            const randomRoast = roasts[Math.floor(Math.random() * roasts.length)];
+            return randomRoast.roast;
+        }
+        catch (err) {
+            logger.error(`Error in getRandomRoast: ${err}`);
+        }
+    }
+
     // Method to insert a roast into the database if it doesn't already exist
     async insertRoast(roast) {
         try {

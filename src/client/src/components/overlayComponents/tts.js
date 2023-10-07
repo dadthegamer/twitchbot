@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/overlay/tts.css';
 
 
@@ -10,8 +10,10 @@ function TTS() {
     const [connected, setConnected] = useState(false);
     const [socket, setSocket] = useState(null);
 
+    const queueRef = useRef([]);
+
     useEffect(() => {
-        const socket = new WebSocket('ws://your-websocket-url');
+        const socket = new WebSocket('ws://localhost:8080');
 
         socket.onopen = () => {
             console.log('Connected to websocket server');
@@ -21,7 +23,9 @@ function TTS() {
         socket.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === 'tts') {
-                setTTSQueue([...ttsQueue, data.payload]);
+                queueRef.current.push({
+                    text: data.payload
+                });
             }
         };
 
@@ -36,6 +40,30 @@ function TTS() {
             socket.close();
         }
     }, []);
+
+    useEffect(() => {
+
+        const processQueue = async () => {
+            if (queueRef.current.length === 0) {
+                return;
+            }
+
+            const next = queueRef.current.shift();
+            setMessage(next.text);
+
+            const audio = await textToSpeech(next.text);
+            audio.onended = () => {
+                setIsPlaying(false);
+                processQueue();
+            }
+
+            setIsPlaying(true);
+            audio.play();
+        }
+
+        processQueue();
+
+    }, [isPlaying])
 
     // Function to reconnect to WebSocket server
     async function reconnect() {
@@ -94,49 +122,25 @@ function TTS() {
     }
 
     // Function to convert text to speech by making a post request to the server
-    async function textToSpeech(message) {
+    function textToSpeech(message) {
         try {
-            const res = await fetch(`http://${serverip}:${serverPort}/api/tts`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ message })
-            });
-            const audio = await res.blob();
-            return new Audio(URL.createObjectURL(audio));
+            const audio = new Audio();
+            audio.src = `/api/tts?message=${message}`;
+            return audio;
         }
         catch (err) {
             console.error('Error in textToSpeech:', err);
         }
     }
 
-    // Queue handler
-    useEffect(() => {
-        if (ttsQueue.length > 0 && !isPlaying) {
-            setIsPlaying(true);
-            const data = audioQueue.shift();
-            const { message, imgSrc } = data;
-            const audio = await textToSpeech(data.message);
-            audio.play();
-            showMessage(imgSrc, message);
-            audio.onended = () => {
-                console.log('Audio ended');
-                setTimeout(() => {
-                    container.style.display = 'none';
-                    setIsPlaying(false);
-                    if (ttsQueue.length > 0) {
-                        setIsPlaying(false);
-                    }
-                }, 5000);
-            }
-        }
-    }, [ttsQueue, isPlaying]);
-
     return (
-        <div className="tts-container">
-            <img id="img" src={imgSrc} alt=""></img>
-            <span id="message">{message}</span>
-        </div>
+        <>
+            {isPlaying && (
+                <div className="tts-container">
+                    <img id="img" src={imgSrc} alt=""></img>
+                    <span id="message">{message}</span>
+                </div>
+            )}
+        </>
     );
 }

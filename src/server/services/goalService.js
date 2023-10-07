@@ -143,6 +143,13 @@ class GoalService {
 
     // Method to set a goal's current
     async setGoalCurrent(goalName, goalCurrent) {
+        if (typeof goalCurrent !== 'number') {
+            goalCurrent = parseInt(goalCurrent);
+            // If the goalIncrease is not a number, then return an error
+            if (isNaN(goalCurrent)) {
+                logger.error(`Goal set ${goalCurrent} is not a number`);
+            }
+        }
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);

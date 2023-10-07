@@ -1,5 +1,5 @@
-import { usersDB, cache, streamDB } from "../../../config/initializers.js";
-import { writeToLogFile } from "../../../utilities/logging.js";
+import { usersDB, cache, streamDB, goalDB } from "../../../config/initializers.js";
+import logger from "../../../utilities/logger.js";
 
 
 export async function onStreamOffline(e) {
@@ -9,10 +9,10 @@ export async function onStreamOffline(e) {
         cache.set('streamGame', '');
         cache.set('streamStartedAt', null);
         await streamDB.endStream();
-        writeToLogFile('info', 'Stream offline');
+        logger.info('Stream offline');
     }
     catch (error) {
-        writeToLogFile('error', `Error in onStreamOffline: ${error}`);
+        logger.error(`Error in onStreamOffline: ${error}`);
     }
 }
 
@@ -33,6 +33,7 @@ export async function onStreamOnline(e) {
         cache.set('streamBits', 0);
         cache.set('streamDonations', 0);
         cache.set('streamFollowers', 0);
+        goalDB.setGoalCurrent('dailySubGoal', 0);
         const existingStream = await streamDB.getStreamData();
         if (existingStream !== null) {
             cache.set('streamSubs', existingStream.total_subs);
@@ -44,9 +45,9 @@ export async function onStreamOnline(e) {
             await usersDB.resetArrived();
             await usersDB.resetStreamProperties();
         }
-        writeToLogFile('info', 'Stream online');
+        logger.info('Stream online');
     }
     catch (error) {
-        writeToLogFile('error', `Error in onStreamOnline: ${error}`);
+        logger.error(`Error in onStreamOnline: ${error}`);
     }
 }
