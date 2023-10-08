@@ -111,7 +111,7 @@ class StreamDB {
             return true;
         }
         catch (error) {
-            writeToLogFile('error', `Error in endStream: ${error}`);
+            logger.error(`Error in endStream: ${error}`);
             return false;
         }
     }
@@ -190,12 +190,13 @@ class StreamDB {
             try {
                 value = parseInt(value);
                 if (isNaN(value)) {
-                    writeToLogFile('error', `Error in increaseStreamProperty: Value is not a number`);
+                    logger.error(`Error in increaseStreamProperty: value is not a number`);
                     return null;
                 }
             }
             catch (error) {
-                writeToLogFile('error', `Error in increaseStreamProperty: ${error}`);
+                logger.error(`Error in increaseStreamProperty: ${error}`);
+                return null;
             }
         }
         try {

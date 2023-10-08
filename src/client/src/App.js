@@ -2,7 +2,6 @@
 import React from 'react';
 import { Routes, Route, Outlet } from 'react-router-dom';
 import { createPortal } from 'react-dom';
-import CamOverlay from './components/overlayComponents/CamOverlay';
 import Users from './components/Users';
 import SideNavbar from './components/SideNavBar';
 import TopNavbar from './components/TopNavBar';
@@ -15,6 +14,7 @@ import Goals from './components/Goals';
 import Commands from './components/Commands';
 import Dashboard from './components/Dashboard';
 import Games from './components/Games';
+import CamOverlay from './components/overlayComponents/CamOverlay';
 
 function App() {
   return (

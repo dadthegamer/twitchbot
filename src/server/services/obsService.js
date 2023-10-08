@@ -35,7 +35,6 @@ class OBSService {
         try {
             // Check if the ip, port, and password are set
             if (!this.ip || !this.port || !this.password) {
-                logger.error('OBS Settings not set. Please set OBS settings in the settings page.');
                 return;
             }
 

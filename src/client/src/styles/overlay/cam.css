@@ -90,7 +90,7 @@ body {
     position: absolute;
     top: 0;
     left: 0;
-    color: black;
+    color: rgb(255, 255, 255);
     font-size: 32px;
     margin-left: 5px;
     margin-top: 5px;
@@ -99,7 +99,7 @@ body {
 #subs {
     font-size: 48px;
     font-weight: 900;
-    color: black;
+    color: rgb(255, 255, 255);
     font-family: 'Montserrat', sans-serif;
     margin-top: -10px;
 }
@@ -169,6 +169,7 @@ body {
     justify-content: center;
     align-items: center;
     text-transform: uppercase;
+    display: none;
 }
 
 #alert-message {

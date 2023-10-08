@@ -1,26 +1,28 @@
-# Stage 1: Build the React client
-FROM node:14 as client-builder
+# Stage 1 - Build React App
+FROM node:14 AS client-build
 WORKDIR /app/client
-COPY ./src/client/package*.json ./
+COPY ./src/client/package.json ./
 RUN npm install
 COPY ./src/client ./
 RUN npm run build
 
-# Stage 2: Build the Node.js server
-FROM node:14 as server-builder
+# Stage 2 - Build Node.js Server 
+FROM node:14 AS server-build
 WORKDIR /app/server
-COPY ./src/server/package*.json ./
-RUN npm install
+COPY ./src/server/package.json ./
+RUN npm install --production
 COPY ./src/server ./
 
-# Stage 3: Combine the client and server
+# Copy built React app into server image
+COPY --from=client-build /app/client/build ./client
+
+# Stage 3 - Final image
 FROM node:14
 WORKDIR /app
-COPY --from=client-builder /app/client/build ./client
-COPY --from=server-builder /app/server ./
+COPY --from=server-build /app/server ./
 
-# Install production dependencies for the server
-RUN npm install --only=production
+# Expose ports
+EXPOSE 3000 3001 
 
-EXPOSE 3001
+# Start server
 CMD ["npm", "start"]

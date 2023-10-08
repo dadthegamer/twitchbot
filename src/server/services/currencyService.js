@@ -447,13 +447,9 @@ class CurrencyService {
                     continue;
                 } else {
                     const { subs } = payoutSettings;
-                    const { amount, minimum, tierMultiplier } = subs;
+                    const { amount, minimum } = subs;
                     if (subsAmount >= minimum) {
-                        if (tierMultiplier) {
-                            await usersDB.increaseCurrency(userId, name, (amount * subsAmount * tier));
-                        } else {
-                            await usersDB.increaseCurrency(userId, name, (amount * subsAmount));
-                        }
+                        await usersDB.increaseCurrency(userId, name, (amount * subsAmount * tier));
                     }
                 }
             }

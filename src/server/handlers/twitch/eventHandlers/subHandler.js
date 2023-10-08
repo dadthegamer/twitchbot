@@ -1,6 +1,6 @@
-import { usersDB, cache, streamDB } from "../../../config/initializers.js";
-import { writeToLogFile } from "../../../utilities/logging.js"
+import { usersDB, cache, streamDB, currencyDB } from "../../../config/initializers.js";
 import { addAlert } from "../../../handlers/alertHandler.js";
+import logger from "../../../utilities/logger.js";
 
 
 //Subscription events
@@ -15,23 +15,21 @@ export async function onSubscription(e) {
         const streakMonths = e.streakMonths;
         const userData = await e.getUser();
         const profileImage = userData.profilePictureUrl;
-        cache.set('streamSubs', cache.get('streamSubs') + 1);
-        cache.set('monthlySubs', cache.get('monthlySubs') + 1);
-        await usersDB.increaseUserValue(e.userId, 'leaderboard_points', 5000 * tier);
-        await userData.setUserValue(e.userId, 'cumulative_months', cumulativeMonths);
-        await userData.setUserValue(e.userId, 'duration_months', durationMonths);
-        await userData.setUserValue(e.userId, 'streak_months', streakMonths);
+        await usersDB.setUserValue(e.userId, 'cumulativeMonths', cumulativeMonths);
+        await usersDB.setUserValue(e.userId, 'durationMonths', durationMonths);
+        await usersDB.setUserValue(e.userId, 'streakMonths', streakMonths);
         await addAlert('resub', `${userDisplayName} re-subscribed at tier ${tier}!`, profileImage);
         const latestSubsData = {
             id: userId,
-            display_name: userDisplayName,
+            displayName: userDisplayName,
             login: userName,
-            profile_image_url: profileImage,
+            profileImageUrl: profileImage,
         };
-        await streamDB.setLatestEvent('latest_subscriber', latestSubsData);
+        await streamDB.setLatestEvent('latestSubscriber', latestSubsData);
         await streamDB.addNewSub(userDisplayName);
+        currencyDB.addCurrencyForSub(userId, 1, tier);
     }
     catch (error) {
-        writeToLogFile('error', `Error in onSubscription: ${error}`);
+        logger.error(`Error in onSubscription: ${error}`);
     }
 }

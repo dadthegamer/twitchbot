@@ -20,7 +20,7 @@ function CamOverlay() {
     useEffect(() => {
         // Function to initiate the WebSocket connection
         const connect = () => {
-            const ws = new WebSocket('ws://localhost:8080');
+            const ws = new WebSocket('ws://192.168.1.28:8080');
 
             ws.onopen = () => {
                 console.log('Connected to websocket server');
@@ -129,7 +129,7 @@ function CamOverlay() {
         // Call the animateUsername function every 10 seconds
         const intervalId = setInterval(() => {
             animateUsername();
-        }, 10000); // 10 seconds in milliseconds
+        }, 60000); // 10 seconds in milliseconds
 
         // Clear the interval when the component unmounts
         return () => clearInterval(intervalId);
