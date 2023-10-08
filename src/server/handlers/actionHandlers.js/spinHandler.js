@@ -3,6 +3,7 @@ import { replyHandler } from './replyHandler.js';
 import { cache } from '../../config/initializers.js';
 import { numberWithCommas } from '../../utilities/utils.js';
 import { usersDB } from '../../config/initializers.js';
+import logger from '../../utilities/logger.js';
 
 
 
@@ -21,6 +22,7 @@ export async function increaseJackpot(amount) {
     }
     catch (err) {
         console.log(err);
+        logger.error(`Error in increaseJackpot: ${err}`);
     }
 }
 
@@ -32,6 +34,7 @@ export async function getJackpot() {
     }
     catch (err) {
         console.log(err);
+        logger.error(`Error in getJackpot: ${err}`);
     }
 }
 
@@ -43,35 +46,43 @@ export async function setJackpot(amount) {
     }
     catch (err) {
         console.log(err);
+        logger.error(`Error in setJackpot: ${err}`);
     }
 }
 
 
 // Function to handle the spin
 export async function spinHandler(userDisplayName, userId, messageID) {
-    const jackpotData = await getJackpot();
-    const { currency, jackpotPCT } = jackpotData;
-    const spin = getRandomInt(1, maxJackPot);
-    if (spin <= jackpotData.jackpotPCT) {
-        const amount = jackpotData.jackpot;
-        await usersDB.increaseCurrency(userId, jackpotData.currency, amount);
-        const formatJackpot = numberWithCommas(amount);
-        await gameService.resetJackpot();
-        if (currency === 'raffle') {
-            replyHandler(`@${userDisplayName} you won the jackpot of ${formatJackpot} raffle tickets!`, messageID);
+    try {
+        const jackpotData = await getJackpot();
+        const { currency, jackpotPCT } = jackpotData;
+        const spin = getRandomInt(1, maxJackPot);
+        if (spin <= jackpotData.jackpotPCT) {
+            const amount = jackpotData.jackpot;
+            await usersDB.increaseCurrency(userId, jackpotData.currency, amount);
+            const formatJackpot = numberWithCommas(amount);
+            await gameService.resetJackpot();
+            if (currency === 'raffle') {
+                replyHandler(`@${userDisplayName} you won the jackpot of ${formatJackpot} raffle tickets!`, messageID);
+            } else {
+                replyHandler(`@${userDisplayName} won the jackpot and won ${formatJackpot} ${currency} points!`, messageID);
+            }
         } else {
-            replyHandler(`@${userDisplayName} won the jackpot and won ${formatJackpot} ${currency} points!`, messageID);
+            let jackPotWin = jackpotData.jackpot;
+            const increaseBy = getRandomInt(jackpotData.increaseBy.min, jackpotData.increaseBy.max);
+            await gameService.increaseJackpot(increaseBy);
+            jackPotWin += increaseBy;
+            const formatJackpot = numberWithCommas(jackPotWin);
+            if (currency === 'raffle') {
+                // If the jackpot is in raffle tickets, we need to convert it to points
+                replyHandler(`@${userDisplayName} you did not win! The jackpot is now at ${formatJackpot} raffle tickets!`, messageID);
+            } else {
+                replyHandler(`@${userDisplayName} you did not win! The jackpot is now at ${formatJackpot} ${currency} points!`, messageID);
+            }
         }
-    } else {
-        let jackPotWin = jackpotData.jackpot;
-        const increaseBy = getRandomInt(jackpotData.increaseBy.min, jackpotData.increaseBy.max);
-        await gameService.increaseJackpot(increaseBy);
-        jackPotWin += increaseBy;
-        const formatJackpot = numberWithCommas(jackPotWin);
-        if (currency === 'raffle') {
-            replyHandler(`@${userDisplayName} you did not win! The jackpot is now at ${formatJackpot} raffle tickets!`, messageID);
-        } else {
-            replyHandler(`@${userDisplayName} you did not win! The jackpot is now at ${formatJackpot} ${currency} points!`, messageID);
-        }
+    }
+    catch (err) {
+        console.log(err);
+        logger.error(`Error in spinHandler: ${err}`);
     }
 }
