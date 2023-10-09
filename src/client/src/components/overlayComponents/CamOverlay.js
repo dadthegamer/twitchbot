@@ -9,7 +9,7 @@ function CamOverlay() {
     const [userName, setUserName] = useState('DadTheGam3r');
     const [animationDirection, setAnimationDirection] = useState('normal');
     const [animationDirection2, setAnimationDirection2] = useState('normal');
-    const [alertColor, setAlertColor] = useState('black');
+    const [alertColor, setAlertColor] = useState('#111111');
     const [fontColor, setFontColor] = useState('white');
     const [subsCount, setSubsCount] = useState(0);
     const [socket, setSocket] = useState(null);
@@ -168,7 +168,7 @@ function CamOverlay() {
             // Further wait to hide the entire alert-container after alert-details has exited
             setTimeout(() => {
                 setShowAlert(true);
-                setAlertColor('black');
+                setAlertColor('#111111');
             }, 500); // Assuming 500ms for the exit animation, adjust as needed
         }, 500); // Again assuming 500ms for the exit animation
     }
@@ -250,6 +250,7 @@ function CamOverlay() {
         <div className="cam-container">
             <div className="cam-inner" style={{
                 borderColor: alertColor,
+                backgroundColor: 'transparent',
             }}>
                 <div className="cam-username">
                     <span id='username'></span>

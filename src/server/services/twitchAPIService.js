@@ -520,6 +520,17 @@ class TwitchApiClient {
             logger.error(`Error getting hype train: ${error}`);
         }
     }
+
+    // Method to create a clip
+    async createClip() {
+        try {
+            const data = await this.apiClient.clips.createClip({ channel: this.userId });
+            return data;
+        }
+        catch (error) {
+            logger.error(`Error creating clip: ${error}`);
+        }
+    }
 }
 
 

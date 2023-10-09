@@ -143,6 +143,7 @@ class GoalService {
 
     // Method to set a goal's current
     async setGoalCurrent(goalName, goalCurrent) {
+        console.log(goalCurrent);
         if (typeof goalCurrent !== 'number') {
             goalCurrent = parseInt(goalCurrent);
             // If the goalIncrease is not a number, then return an error

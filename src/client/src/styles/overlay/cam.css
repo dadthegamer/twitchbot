@@ -7,10 +7,18 @@
     font-family: 'Montserrat', sans-serif;
 }
 
+:root {
+    --background-color: #111111;
+    --primary-color: #1b1b1b;
+    --terrestrial-color: #1F1F1F;
+    --secondary-color: #005AFF;
+    --font-color: #FFFFFF;
+}
+
 body {
     width: 1920px;
     height: 1080px;
-    background-color: transparent !important;
+    background-color: transparent;
 }
 
 :root {
@@ -28,6 +36,7 @@ body {
     top: 50%;
     transform: translate(-50%, -50%);
     font-family: 'Montserrat', sans-serif;
+    background-color: transparent;
 }
 
 .cam-inner {
@@ -37,15 +46,16 @@ body {
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    border-right: 15px solid black;
-    border-bottom: 40px solid black;
-    border-left: 15px solid black;
-    border-top: 30px solid black;
-    border-color: rgb(0, 0, 0);
+    border-right: 15px solid var(--primary-color);
+    border-bottom: 40px solid var(--primary-color);
+    border-left: 15px solid var(--primary-color);
+    border-top: 30px solid var(--primary-color);
+    border-color: var(--primary-color);
     position: relative;
     border-radius: 5px;
     z-index: 99;
     transition: all 0.25s ease-in-out;
+    background-color: transparent;
 }
 
 .alert-container {
@@ -250,7 +260,7 @@ body {
     border-left: 50px solid rgb(0, 0, 0);
     position: absolute;
     transform: rotate(-90deg);
-    border-color: black;
+    border-color: var(--primary-color);
     transition: all 0.25s ease-in-out;
 }
 

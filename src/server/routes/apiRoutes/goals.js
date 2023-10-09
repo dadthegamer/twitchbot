@@ -14,6 +14,7 @@ router.get('/', async (req, res) => {
 });
 
 router.put('/', async (req, res) => {
+    console.log(req.body);
     try {
         let { goal, update } = req.body;
 
@@ -43,8 +44,9 @@ router.put('/', async (req, res) => {
                 goal = 'monthlyBitsGoal';
                 break;
         }
-
-        if (update.current) {
+        // Get the key of the update object
+        const updateKey = Object.keys(update)[0];
+        if (updateKey === 'current') {
             await goalDB.setGoalCurrent(goal, Number(update.current));
             res.sendStatus(200);
         } else if (update.goal) {

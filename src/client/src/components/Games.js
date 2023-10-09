@@ -2,9 +2,13 @@ import React, { useState, useEffect } from 'react';
 import '../styles/GUI/games.css';
 
 function Games() {
+    const [loading, setLoading] = useState(true);
     const [percentValue, setPercentValue] = useState(50);
     const [jackpotData, setJackpotData] = useState({});
     const [jackpot, setJackpot] = useState(0);
+    const [min, setMin] = useState(0);
+    const [max, setMax] = useState(0);
+    const [currencies, setCurrencies] = useState([]);
 
     const handlePCTChange = (e) => {
         setPercentValue(e.target.value);
@@ -16,9 +20,20 @@ function Games() {
             .then((res) => res.json())
             .then((data) => {
                 // Update the state with the jackpot data
+                console.log(data);
                 setJackpotData(data);
                 setPercentValue(data.jackpotPCT);
                 setJackpot(data.jackpot);
+                setMin(data.increaseBy.min);
+                setMax(data.increaseBy.max);
+                setLoading(false);
+            });
+        fetch("/api/currency")
+            .then((res) => res.json())
+            .then((data) => {
+                // Update the state with the jackpot data
+                console.log(data);
+                setCurrencies(data);
             });
     }
         , []);
@@ -38,37 +53,42 @@ function Games() {
 
     return (
         <div className="content">
-            <div className="games-main-container">
-                <div className="game">
-                    <div className="game-info">
-                        <h2>Spin</h2>
-                    </div>
-                    <div className="spin-details">
-                        <label htmlFor="">Currency</label>
-                        <select name="" id="">
-                            <option value="">Points</option>
-                            <option value="">Coins</option>
-                        </select>
-                        <label htmlFor="">Jackpot</label>
-                        <input type="text" placeholder="set the value of the jackpot" value={jackpot} onChange={handleInputChange} />
-                        <div>
+            {loading ? (<p>Loading...</p>
+            ) : (
+                <div className="games-main-container">
+                    <div className="game">
+                        <div className="game-info">
+                            <h2>Spin</h2>
+                        </div>
+                        <div className="spin-details">
+                            <label htmlFor="">Currency</label>
+                            <select name="" id="">
+                                {currencies.map((currency) => {
+                                    return (
+                                        <option value={currency.name}>{currency.name}</option>
+                                    )
+                                })}
+                            </select>
+                            <label htmlFor="">Jackpot</label>
+                            <input type="text" placeholder="set the value of the jackpot" value={jackpot} onChange={handleInputChange} />
                             <div>
-                                <label htmlFor="">Minimum</label>
-                                <input type="text" />
+                                <div>
+                                    <label htmlFor="">Minimum</label>
+                                    <input type="text" value={min} />
+                                </div>
+                                <div>
+                                    <label htmlFor="">Minimum</label>
+                                    <input type="text" value={max} />
+                                </div>
                             </div>
-                            <div>
-                                <label htmlFor="">Minimum</label>
-                                <input type="text" />
+                            <label htmlFor="">Win Percentage</label>
+                            <div className="range-slider-div">
+                                <input type="range" min="1" max="100" step="1" onChange={handlePCTChange} value={percentValue} />
+                                <span className="range-slider-value">{percentValue}%</span>
                             </div>
                         </div>
-                        <label htmlFor="">Win Percentage</label>
-                        <div className="range-slider-div">
-                            <input type="range" min="1" max="100" step="1" onChange={handlePCTChange} value={percentValue} />
-                            <span className="range-slider-value">{percentValue}%</span>
-                        </div>
                     </div>
-                </div>
-            </div>
+                </div>)}
         </div>
     )
 }

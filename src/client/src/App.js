@@ -1,6 +1,7 @@
 // App.js
 import React from 'react';
-import { Routes, Route, Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import Users from './components/Users';
 import SideNavbar from './components/SideNavBar';
@@ -17,8 +18,26 @@ import Games from './components/Games';
 import CamOverlay from './components/overlayComponents/CamOverlay';
 
 function App() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.startsWith('/overlay')) {
+      document.body.style.backgroundColor = 'transparent';
+    } else {
+      document.body.style.backgroundColor = '#11111';
+      document.body.style.fontFamily = 'Cabin, sans-serif'
+    }
+  }, [location]);
+
   return (
     <Routes>
+      {/* Overlay Routes */}
+      <Route path="/overlay" element={<OverlayLayout />}>
+        <Route path="progressbar" element={<ProgressBar />} />
+        <Route path="startingsoon" element={<StartingSoon />} />
+        <Route path="camoverlay" element={<CamOverlay />} />
+      </Route>
+
       {/* Main Routes */}
       <Route path="/" element={<MainLayout />}>
         <Route path="users" element={<Users />} />
@@ -30,19 +49,18 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="games" element={<Games />} />
       </Route>
-
-      {/* Overlay Routes */}
-      <Route path="/overlay" element={<OverlayLayout />}>
-        <Route path="progressbar" element={<ProgressBar />} />
-        <Route path="startingsoon" element={<StartingSoon />} />
-        <Route path="camoverlay" element={<CamOverlay />} />
-      </Route>
     </Routes>
   );
 }
 
 
 function MainLayout() {
+  useEffect(() => {
+    document.body.style.backgroundColor = '#111111';
+    document.body.style.height = '100vh';
+    document.body.style.width = '100vw';
+  }, []);
+
   return (
     <div className="main-layout">
       <TopNavbar />
@@ -56,13 +74,16 @@ function MainLayout() {
 
 function OverlayLayout() {
 
+  useEffect(() => {
+    document.body.style = ''; // reset styles
+  }, []);
+
   return createPortal(
     <div className="overlay">
       <Outlet />
     </div>,
     document.body
   );
-
 }
 
 export default App;

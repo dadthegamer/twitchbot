@@ -16,9 +16,17 @@
 
 
 body {
-    background-color: var(--background-color) !important;
+    background-color: var(--background-color);
     color: var(--font-color);
-    font-family: 'Cabin', sans-serif !important;
+    font-family: 'Cabin', sans-serif;
+}
+
+.main-layout body {
+    background: var(--background-color);
+}
+
+.overlay-layout body {
+    background: transparent;
 }
 
 .main-container {

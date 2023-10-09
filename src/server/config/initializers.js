@@ -5,7 +5,6 @@ import TokenDB from '../services/tokenServices.js';
 import { WebSocket } from '../services/webSocket.js';
 import { startWelcomeAlerts } from '../handlers/welcomeHandler.js';
 import { startAlertsHandler } from '../handlers/alertHandler.js';
-import setInitialCacheValues from './varInitializers.js';
 import ActiveUsersHandler from '../handlers/twitch/chatHandlers/activeUsersHandler.js';
 import Commands from '../services/commandServices.js';
 import CommandHandler from '../handlers/twitch/chatHandlers/commandHandlers/commandHandler.js';
