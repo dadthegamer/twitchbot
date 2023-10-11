@@ -9,7 +9,8 @@
     "dev": "nodemon server.js",
     "start": "node server.js",
     "server": "node server.js",
-    "client": "cd ../client && npm start"
+    "client": "cd ../client && npm start",
+    "build-and-push": "docker build -t dadthegamer/twitchbot-server:latest . && docker push dadthegamer/twitchbot-server:latest" 
   },
   "keywords": [
     "Twitchbot"

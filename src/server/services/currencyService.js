@@ -310,7 +310,7 @@ class CurrencyService {
             const subscribersList = await usersDB.getSubscribers();
             const vipsList = await usersDB.getVips();
             const moderatorsList = await usersDB.getModerators();
-            const activeUsersList = await activeUsersCache.getAllUsers();
+            const activeUsersList = await activeUsersCache.getAllActiveUsers();
             // Get the currency
             const currency = this.cache.get('currencies').find((currency) => currency.name === currencyName);
 
@@ -352,81 +352,88 @@ class CurrencyService {
             return roles;
         }
         catch (err) {
+            console.log(`Error in restrictionPayoutHandler: ${err}`);
             logger.error(`Error in restrictionPayoutHandler: ${err}`);
         }
     }
 
     // Method to handle the currency payout
     async currencyPayoutHandler() {
-        for (const id of this.payoutIntervals) {
-            clearInterval(id);
-        }
-
-        // Reset the intervals list
-        this.payoutIntervals = [];
-        const currencies = this.cache.get('currencies');
-        if (currencies === undefined) {
-            return;
-        }
-        if (currencies.length === 0) {
-            return;
-        }
-        for (const currency of currencies) {
-            const { name, payoutSettings, enabled, roleBonuses, restrictions, limit } = currency;
-            // If the currency is not enabled then continue to the next currency
-            if (!enabled) {
-                continue;
+        try {
+            for (const id of this.payoutIntervals) {
+                clearInterval(id);
             }
-            const { interval, amount, subs, bits, donations, raids, arrived } = payoutSettings;
-            if (interval === 0) {
-                continue;
+    
+            // Reset the intervals list
+            this.payoutIntervals = [];
+            const currencies = this.cache.get('currencies');
+            if (currencies === undefined) {
+                return;
             }
-            // Set an interval to payout the currency
-            const intervalId = setInterval(async () => {
-                if (environment === 'development') {
-                    console.log(`Paying out ${amount} ${name} to all viewers`);
-                    return;
-                } else {
-                    // Get the viewers
-                    const viewers = this.cache.get('currentViewers');
-                    for (const viewer of viewers) {
-                        // Check if the viewer is a follower, subscriber, vip, or moderator
-                        const payout = await this.restrictionPayoutHandler(viewer.userId, name);
-                        if (payout.length > 0) {
-                            let bonus = 0
-                            const { moderator, subscriber, vip, activeChatUser, tier1, tier2, tier3 } = roleBonuses;
-                            // For each of the roles, check if the viewer has the role and add the bonus to the bonus variable
-                            if (payout.includes('moderator')) {
-                                bonus += moderator;
-                            }
-                            if (payout.includes('subscriber')) {
-                                bonus += subscriber;
-                            }
-                            if (payout.includes('vip')) {
-                                bonus += vip;
-                            }
-                            if (payout.includes('activeChatUser')) {
-                                bonus += activeChatUser;
-                            }
-                            const totalPayout = amount + bonus;
-                            // If the currency is limited then check if the viewer has reached the limit
-                            if (limit) {
-                                const currentAmount = await usersDB.getCurrency(viewer.userId, name);
-                                if (currentAmount + totalPayout > limit) {
-                                    // Set the amount to the limit
-                                    await usersDB.setCurrency(viewer.userId, name, limit);
-                                    continue;
+            if (currencies.length === 0) {
+                return;
+            }
+            for (const currency of currencies) {
+                const { name, payoutSettings, enabled, roleBonuses, restrictions, limit } = currency;
+                // If the currency is not enabled then continue to the next currency
+                if (!enabled) {
+                    continue;
+                }
+                const { interval, amount, subs, bits, donations, raids, arrived } = payoutSettings;
+                if (interval === 0) {
+                    continue;
+                }
+                // Set an interval to payout the currency
+                const intervalId = setInterval(async () => {
+                    if (environment === 'development1') {
+                        console.log(`Paying out ${amount} ${name} to all viewers`);
+                        return;
+                    } else {
+                        // Get the viewers
+                        const viewers = this.cache.get('currentViewers');
+                        for (const viewer of viewers) {
+                            // Check if the viewer is a follower, subscriber, vip, or moderator
+                            const payout = await this.restrictionPayoutHandler(viewer.userId, name);
+                            if (payout.length > 0) {
+                                let bonus = 0
+                                const { moderator, subscriber, vip, activeChatUser, tier1, tier2, tier3 } = roleBonuses;
+                                // For each of the roles, check if the viewer has the role and add the bonus to the bonus variable
+                                if (payout.includes('moderator')) {
+                                    bonus += moderator;
                                 }
+                                if (payout.includes('subscriber')) {
+                                    bonus += subscriber;
+                                }
+                                if (payout.includes('vip')) {
+                                    bonus += vip;
+                                }
+                                if (payout.includes('activeChatUser')) {
+                                    bonus += activeChatUser;
+                                }
+                                const totalPayout = amount + bonus;
+                                // If the currency is limited then check if the viewer has reached the limit
+                                if (limit) {
+                                    const currentAmount = await usersDB.getCurrency(viewer.userId, name);
+                                    if (currentAmount + totalPayout > limit) {
+                                        // Set the amount to the limit
+                                        await usersDB.setCurrency(viewer.userId, name, limit);
+                                        continue;
+                                    }
+                                }
+    
+                                // If the currency is not limited then add the total payout to the viewer
+                                await usersDB.increaseCurrency(viewer.userId, name, totalPayout);
                             }
-
-                            // If the currency is not limited then add the total payout to the viewer
-                            await usersDB.increaseCurrency(viewer.userId, name, totalPayout);
                         }
                     }
-                }
-            }, interval * 60000);
-
-            this.payoutIntervals.push(intervalId);
+                }, interval * 60000);
+    
+                this.payoutIntervals.push(intervalId);
+            }
+        }
+        catch (err) {
+            console.log(`Error in currencyPayoutHandler: ${err}`);
+            logger.error(`Error in currencyPayoutHandler: ${err}`);
         }
     }
 

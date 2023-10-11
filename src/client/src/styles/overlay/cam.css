@@ -4,7 +4,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
 }
 
 :root {
@@ -19,6 +18,7 @@ body {
     width: 1920px;
     height: 1080px;
     background-color: transparent;
+    font-family: 'Montserrat', sans-serif;
 }
 
 :root {

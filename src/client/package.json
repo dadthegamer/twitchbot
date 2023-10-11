@@ -2,7 +2,7 @@
   "name": "twitchbot",
   "version": "0.1.0",
   "description": "Twitch Bot",
-  "proxy": "http://localhost:3001",
+  "proxy": "http://192.168.1.31:3500",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.2",
@@ -24,7 +24,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "build-and-push": "docker build -t dadthegamer/twitchbot-client:latest . && docker push dadthegamer/twitchbot-client:latest" 
   },
   "eslintConfig": {
     "extends": [

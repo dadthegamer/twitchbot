@@ -84,7 +84,7 @@ export async function updateVariable(variable, context, userId, property = null)
                     // Loop through each currency and check if the property is in the currency. Convert the name and property to lowercase to make it easier to check
                     for (const currency of currencies) {
                         if (currency.name.toLowerCase() === property.toLowerCase()) {
-                            const rank = await usersDB.getUserRankByProperty(userId, currency.name.toLowerCase());
+                            const rank = await usersDB.getUserRankByCurrencyProperty(userId, currency.name.toLowerCase());
                             return formatRank(rank);
                         }
                     }
