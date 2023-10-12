@@ -593,7 +593,6 @@ class CurrencyService {
             }
         }
         catch (err) {
-            console.error(err);
             logger.error(`Error in addCurrencyForFirst: ${err}`);
         }
     }

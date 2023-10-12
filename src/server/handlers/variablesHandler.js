@@ -13,6 +13,8 @@ variables.push('8ball')
 variables.push('leaderboard')
 variables.push('rank')
 variables.push('user')
+variables.push('randomQuote')
+variables.push('currency')
 
 
 export async function variableHandler(context, userId) {
@@ -45,7 +47,6 @@ export async function variableHandler(context, userId) {
 }
 
 export async function updateVariable(variable, context, userId, property = null) {
-    console.log(`Variable: ${variable}`)
     try {
         switch (variable) {
             case 'followAge':
@@ -108,6 +109,11 @@ export async function updateVariable(variable, context, userId, property = null)
                         }
                     }
                 }
+                break;
+            case 'randomQuote':
+                const quotes = cache.get('quotes');
+                const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+                return randomQuote;
             default:
                 return null;
         }
