@@ -27,6 +27,7 @@ import TwitchChannelPointsService from '../services/channelPointService.js';
 import GameService from '../services/gameService.js';
 import CounterService from '../services/counterService.js';
 import GoXLRClient from '../services/goXLRUtilityService.js';
+import getLumiaStreamSettings from '../services/lumiaStreamService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -112,7 +113,7 @@ subscribeToDonationEvents();
 addBotsToKnownBots();
 startAlertsHandler();
 startWelcomeAlerts();
-
+getLumiaStreamSettings();
 
 export {
     db,
