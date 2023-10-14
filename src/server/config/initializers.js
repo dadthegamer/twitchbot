@@ -3,7 +3,7 @@ import MongoDBConnection from './mongodb.js';
 import UsersDB from '../services/userServices.js';
 import TokenDB from '../services/tokenServices.js';
 import { WebSocket } from '../services/webSocket.js';
-import { startWelcomeAlerts } from '../handlers/welcomeHandler.js';
+import { startWelcomeAlerts } from '../handlers/twitch/chatHandlers/arrivalHandler.js';
 import { startAlertsHandler } from '../handlers/alertHandler.js';
 import ActiveUsersHandler from '../handlers/twitch/chatHandlers/activeUsersHandler.js';
 import Commands from '../services/commandServices.js';

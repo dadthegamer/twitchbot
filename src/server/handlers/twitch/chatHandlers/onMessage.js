@@ -6,6 +6,8 @@ import { activeUsersCache } from "../../../config/initializers.js";
 import { commandHandler } from "../../../config/initializers.js";
 import { knownBots } from "../viewTimeHandler.js";
 import { webSocket } from "../../../config/initializers.js";
+import { arrivalHandler } from "./arrivalHandler.js";
+import logger from "../../../utilities/logger.js";
 
 
 // Message Handler
@@ -26,6 +28,7 @@ export async function onMessageHandler(channel, user, message, msg, bot) {
                 return;
             }
         }
+        await arrivalHandler({ bot, msg, user, message, userDisplayName: displayName, userId, id });
         // if (first.length < 3) {
         //     firstMessageHandler({ bot, msg, user, message, userDisplayName: displayName, userId, id });
         // }
@@ -36,7 +39,6 @@ export async function onMessageHandler(channel, user, message, msg, bot) {
         }
     }
     catch (err) {
-        writeToLogFile('error', `Error in messageHandler: ${err}`)
-        console.error('Error in messageHandler:', err);
+        logger.error(`Error in onMessageHandler: ${err}`);
     }
 }

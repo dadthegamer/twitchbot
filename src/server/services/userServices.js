@@ -264,6 +264,27 @@ class UsersDB {
         }
     }
 
+    // Method to update a user by their userId
+    async updateUserByUserId(userId, update) {
+        try {
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $set: update },
+                { upsert: true }
+            );
+            const user = await this.getUserByUserId(userId);
+            this.cache.set(userId, user);
+            return user;
+        }
+        catch (error) {
+            logger.error(`Error in updateUserByUserId: ${error}`);
+            return null;
+        }
+    }
+
     // Method to return the user profile image url. If it is null then grab it from the Twitch API and update the database
     async getUserProfileImageUrl(userId) {
         try {
