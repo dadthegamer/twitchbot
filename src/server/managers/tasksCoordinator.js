@@ -18,11 +18,26 @@ class TaskCoordinator {
                 await this.getAllSubscribers();
                 await this.getAllVips();
                 await this.getAllModerators();
+                await this.getBitsLeaderboard();
                 console.log('Task coordinator initialized');
             }
         }
         catch (error) {
             logger.error(`Error initializing TaskCoordinator: ${error}`);
+        }
+    }
+
+    // Method to get the bits leaderboard
+    async getBitsLeaderboard() {
+        try {
+            const leaderboard = await this.twitchAPI.getBitsLeaderboard();
+            for (const user of leaderboard) {
+                await this.usersDB.setBitsManually(user.userId, user.amount);
+            }
+            return leaderboard;
+        }
+        catch (error) {
+            logger.error(`Error getting bits leaderboard: ${error}`);
         }
     }
 

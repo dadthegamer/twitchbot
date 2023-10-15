@@ -1238,6 +1238,57 @@ class UsersDB {
         }
     }
 
+    // Method to set the bits for allTime
+    async setBitsManually(userId, bits) {
+        try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if bits is a number
+            if (typeof bits !== 'number') {
+                try {
+                    bits = parseInt(bits);
+                    if (isNaN(bits)) {
+                        logger.error(`Error in setBits: Bits is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in setBits: ${error}`);
+                }
+            }
+
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            user.bits.allTime = bits;
+            
+            // Increase the bits property for the user in the database
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $set: {
+                        bits: {
+                            allTime: bits,
+                        },
+                    }
+                },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        } catch (error) {
+            console.log(`Error in setBits: ${error}`);
+            logger.error(`Error in setBits: ${error}`);
+        }
+    }
+
     // Method to increase the subs for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of bits as a number.
     async increaseSubs(userId, subs) {
         try {

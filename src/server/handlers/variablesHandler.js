@@ -1,5 +1,5 @@
 import logger from '../utilities/logger.js';
-import { cache, usersDB, streamDB } from '../config/initializers.js';
+import { cache, usersDB, streamDB, interactionsDB } from '../config/initializers.js';
 import { formatTimeFromMinutes, formatRank, numberWithCommas } from "../utilities/utils.js";
 
 let variables = [];
@@ -14,13 +14,13 @@ variables.push('leaderboard')
 variables.push('rank')
 variables.push('user')
 variables.push('randomQuote')
+variables.push('quote')
 variables.push('currency')
-
 
 export async function variableHandler(context, userId) {
     try {
         const varsWithProps = context.match(/\$[a-zA-Z]+\.[a-zA-Z]+/g);
-        const varsNoProps = context.match(/\$[a-zA-Z]+/g);
+        const varsNoProps = context.match(/\$[a-zA-Z]+\[\d+\]/g);
         if (varsWithProps) {
             for (const variable of varsWithProps) {
                 const [varName, varProperty] = variable.slice(1).split('.');
@@ -31,10 +31,21 @@ export async function variableHandler(context, userId) {
         }
         if (varsNoProps) {
             for (const variable of varsNoProps) {
-                if (variables.includes(variable.split('$')[1])) {
-                    const variableResponse = await updateVariable(variable.split('$')[1], context, userId);
-                    if (variableResponse) {
-                        context = context.replace(variable, variableResponse);
+                const matches = variable.match(/\$([a-zA-Z]+)\[(\d+)\]/);
+                if (matches) {
+                    const varName = matches[1];
+                    const index = parseInt(matches[2], 10);
+                    if (index) {
+                        const variableValue = await updateVariable(varName, context, userId, index);
+                        let propValue = variableValue;
+                        context = context.replace(variable, propValue);
+                    } else {
+                        if (variables.includes(varName)) {
+                            const variableResponse = await updateVariable(varName, context, userId, index);
+                            if (variableResponse) {
+                                context = context.replace(variable, variableResponse);
+                            }
+                        }
                     }
                 }
             }
@@ -114,6 +125,10 @@ export async function updateVariable(variable, context, userId, property = null)
                 const quotes = cache.get('quotes');
                 const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
                 return randomQuote;
+            case 'quote':
+                const quoteId = parseInt(property);
+                const quote = await interactionsDB.getQuoteById(quoteId);
+                return quote.text;
             default:
                 return null;
         }

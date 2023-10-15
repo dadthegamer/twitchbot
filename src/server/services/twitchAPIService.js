@@ -42,6 +42,7 @@ class TwitchApiClient {
                     boxArtURL: 'https://static-cdn.jtvnw.net/ttv-boxart/509658-520x720.jpg',
                 };
             } else {
+                this.cache.set('live', true);
                 const boxart = await data.getThumbnailUrl(520, 720);
                 streamInfo = {
                     id: data.id,

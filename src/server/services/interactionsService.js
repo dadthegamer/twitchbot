@@ -77,13 +77,16 @@ class InteractionsDbService {
 
     // Method to get a quote by id from the cache
     async getQuoteById(id) {
+        if (typeof id !== 'number') {
+            id = parseInt(id);
+        }
         try {
             const quotes = await this.cache.get('quotes');
             const quote = quotes.find(quote => quote.id === id);
             return quote;
         }
         catch (err) {
-            writeToLogFile('error', `Error in getQuoteById: ${err}`);
+            logger.error(`Error in getQuoteById: ${err}`);
         }
     }
 

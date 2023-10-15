@@ -1,9 +1,9 @@
 import NodeCache from 'node-cache';
-import { writeToLogFile } from '../../../../utilities/logging.js';
 import { cache } from '../../../../config/initializers.js';
 import { formatTimeFromMilliseconds } from '../../../../utilities/utils.js';
 import { evalulate } from '../../../evaluater.js';
 import { chatClient } from '../../../../config/initializers.js';
+import logger from '../../../../utilities/logger.js';
 
 // Class to handle commands
 class CommandHandler {
@@ -19,8 +19,7 @@ class CommandHandler {
             return this.cache.get(command);
         }
         catch (err) {
-            writeToLogFile('error', `Error in getCommand: ${err}`)
-            console.error('Error in getCommand:', err);
+            logger.error(`Error in getCommand: ${err}`);
         }
     }
 
@@ -39,7 +38,7 @@ class CommandHandler {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in commandCooldownHandler: ${err}`)
+            logger.error(`Error in userCooldownHandler: ${err}`);
         }
     }
 
@@ -57,13 +56,12 @@ class CommandHandler {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in commandCooldownHandler: ${err}`)
+            logger.error(`Error in globalCooldownHandler: ${err}`);
         }
     }
 
     // Handler
     async commandHandler(command, parts, channel, user, message, msg, bot) {
-        console.log('commandHandler');
         try {
             const prefix = '!';
             const { isFirst, isHighlighted, userInfo, id, isReply, isCheer } = msg;
@@ -101,8 +99,7 @@ class CommandHandler {
             }
         }
         catch (err) {
-            writeToLogFile('error', `Error in commandHandler: ${err}`)
-            console.error('Error in commandHandler:', err);
+            logger.error(`Error in commandHandler: ${err}`);
         }
     }
 }
