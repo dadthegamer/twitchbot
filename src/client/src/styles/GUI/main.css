@@ -385,6 +385,7 @@ body::-webkit-scrollbar-track {
     align-items: center;
     justify-content: flex-start;
     overflow-y: none;
+    position: relative;
 }
 
 .content::-webkit-scrollbar {
