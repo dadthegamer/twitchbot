@@ -203,6 +203,8 @@ class CurrencyService {
 
     // Method to update a currency by id
     async updateCurrencyById(id, currency) {
+        // Convert currency name to lowercase
+        currency.name = currency.name.toLowerCase();
         try {
             const res = await this.dbConnection.collection(this.collectionName).updateOne({ _id: new ObjectId(id) }, { $set: currency });
             await this.getAllCurrencies();
@@ -302,8 +304,7 @@ class CurrencyService {
     }
 
     // Method to handle the restriction payout
-    async restrictionPayoutHandler(userId, currencyName) {
-        currencyName = currencyName.toLowerCase();
+    async userRolesHandler(userId, currencyName) {
         try {
             // Set the initial data
             const followersList = await usersDB.getFollowers();
@@ -322,23 +323,25 @@ class CurrencyService {
 
             // For each of the restrictions check if the viewer is in the corresponding list. If they are then add them to the roles array
             if (follower) {
-                if (followersList.includes(userId)) {
+                if (followersList.some(follower => follower.id === userId)) {
                     roles.push('follower');
                 }
             }
+
             if (subscriber) {
-                if (subscribersList.includes(userId)) {
+                if (subscribersList.some(sub => sub.id === userId)) {
                     roles.push('subscriber');
                 }
             }
+
             if (vip) {
-                if (vipsList.includes(userId)) {
+                if (vipsList.some(vip => vip.id === userId)) {
                     roles.push('vip');
                 }
             }
 
             if (moderator) {
-                if (moderatorsList.includes(userId)) {
+                if (moderatorsList.some(mod => mod.id === userId)) {
                     roles.push('moderator');
                 }
             }
@@ -354,6 +357,7 @@ class CurrencyService {
         catch (err) {
             console.log(`Error in restrictionPayoutHandler: ${err}`);
             logger.error(`Error in restrictionPayoutHandler: ${err}`);
+            return [];
         }
     }
 
@@ -363,7 +367,6 @@ class CurrencyService {
             for (const id of this.payoutIntervals) {
                 clearInterval(id);
             }
-    
             // Reset the intervals list
             this.payoutIntervals = [];
             const currencies = this.cache.get('currencies');
@@ -389,25 +392,31 @@ class CurrencyService {
                         console.log(`Paying out ${amount} ${name} to all viewers`);
                         return;
                     } else {
+                        const live = this.cache.get('live');
+                        // If the stream is not live then return
+                        if (!live) {
+                            return;
+                        }
                         // Get the viewers
                         const viewers = this.cache.get('currentViewers');
                         for (const viewer of viewers) {
                             // Check if the viewer is a follower, subscriber, vip, or moderator
-                            const payout = await this.restrictionPayoutHandler(viewer.userId, name);
-                            if (payout.length > 0) {
+                            const roles = await this.userRolesHandler(viewer.userId, name);
+                            if (roles.length > 0) {
+                                // Check restrictions first. If the viewer doesn't meet the restrictions then continue to the next viewer
                                 let bonus = 0
                                 const { moderator, subscriber, vip, activeChatUser, tier1, tier2, tier3 } = roleBonuses;
                                 // For each of the roles, check if the viewer has the role and add the bonus to the bonus variable
-                                if (payout.includes('moderator')) {
+                                if (roles.includes('moderator')) {
                                     bonus += moderator;
                                 }
-                                if (payout.includes('subscriber')) {
+                                if (roles.includes('subscriber')) {
                                     bonus += subscriber;
                                 }
-                                if (payout.includes('vip')) {
+                                if (roles.includes('vip')) {
                                     bonus += vip;
                                 }
-                                if (payout.includes('activeChatUser')) {
+                                if (roles.includes('activeChatUser')) {
                                     bonus += activeChatUser;
                                 }
                                 const totalPayout = amount + bonus;
@@ -419,15 +428,14 @@ class CurrencyService {
                                         await usersDB.setCurrency(viewer.userId, name, limit);
                                         continue;
                                     }
+                                } else {
+                                    // If the currency is not limited then add the total payout to the viewer
+                                    await usersDB.increaseCurrency(viewer.userId, name, totalPayout);
                                 }
-    
-                                // If the currency is not limited then add the total payout to the viewer
-                                await usersDB.increaseCurrency(viewer.userId, name, totalPayout);
                             }
                         }
                     }
                 }, interval * 60000);
-    
                 this.payoutIntervals.push(intervalId);
             }
         }

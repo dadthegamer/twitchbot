@@ -122,7 +122,7 @@ class TwitchApiClient {
         try {
             const data = await this.apiClient.subscriptions.getSubscriptionsPaginated(this.userId).getAll();
             const subs = data.map((sub) => ({
-                id: sub.userId,
+                userId: sub.userId,
                 userName: sub.userName,
                 userDisplayName: sub.userDisplayName,
                 tier: sub.tier,

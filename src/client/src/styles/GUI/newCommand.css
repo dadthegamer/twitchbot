@@ -15,7 +15,7 @@
     --font-color: #FFFFFF;
 }
 
-label {
+.command-name-inner label {
     color: var(--font-color);
     font-size: 1em;
     font-weight: 900;

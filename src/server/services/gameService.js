@@ -85,6 +85,50 @@ class GameService {
         }
     }
 
+    // Method to set the jackpot percentage in the database and cache
+    async updateJackpotPCT(jackpotPCT) {
+        try {
+            // Make sure the jackpot percentage is a number
+            jackpotPCT = Number(jackpotPCT);
+            const res = await this.dbConnection.collection(this.collectionName).updateOne({ id: 'jackpot' }, { $set: { jackpotPCT: jackpotPCT } });
+            // Update the cache with the new jackpot percentage
+            this.cache.set('jackpot', { jackpotPCT: jackpotPCT });
+            return res;
+        }
+        catch (error) {
+            logger.error(`Error in setJackpotPCT: ${error}`);
+        }
+    }
+
+    // Method to set the jackpot increase by amount in the database and cache
+    async updateIncreaseBy(min, max) {
+        try {
+            // Make sure the jackpot percentage is a number
+            min = Number(min);
+            max = Number(max);
+            const res = await this.dbConnection.collection(this.collectionName).updateOne({ id: 'jackpot' }, { $set: { increaseBy: { min: min, max: max } } });
+            // Update the cache with the new jackpot percentage
+            this.cache.set('jackpot', { increaseBy: { min: min, max: max } });
+            return res;
+        }
+        catch (error) {
+            logger.error(`Error in setJackpotPCT: ${error}`);
+        }
+    }
+
+    // Method to set which currency the jackpot is in
+    async setCurrency(currency) {
+        try {
+            const res = await this.dbConnection.collection(this.collectionName).updateOne({ id: 'jackpot' }, { $set: { currency: currency } });
+            // Update the cache with the new jackpot percentage
+            this.cache.set('jackpot', { currency: currency });
+            return res;
+        }
+        catch (error) {
+            logger.error(`Error in setCurrency: ${error}`);
+        }
+    }
+
     // Method to reset the jackpot amount in the database and cache based on the jackpot start amount
     async resetJackpot() {
         try {
