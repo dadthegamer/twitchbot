@@ -39,7 +39,7 @@ class ViewTimeService {
             setInterval(async () => {
                 await this.getCurrentViewers();
                 this.viewTimeHandler();
-            }, 5000);
+            }, 60000);
         } catch (err) {
             logger.error(`Error in viewTimeHandlerInterval: ${err}`);
         }
@@ -67,13 +67,12 @@ class ViewTimeService {
                     // Add them to the view time cache if they are not already there and add 1 minute to their view time. Set the TTL to 15 minutes.
                     const viewTime = this.viewTimeCache.get(viewer.userId);
                     if (!viewTime) {
-                        this.viewTimeCache.set(viewer.userId, 1, 900);
+                        this.viewTimeCache.set(viewer.userId, 1, 300);
                     } else {
-                        this.viewTimeCache.set(viewer.userId, viewTime + 1, 900);
+                        this.viewTimeCache.set(viewer.userId, viewTime + 1, 300);
                     }
                     // Check if the viewer has more than 15 minutes of view time. If they do increase the view time in the database by the amount of view time they have in the cache.
-                    if (this.viewTimeCache.get(viewer.userId) >= 15) {
-                        const user = currencyDB.getUser(viewer.userId);
+                    if (this.viewTimeCache.get(viewer.userId) >= 5) {
                         await usersDB.increaseViewTime(user, this.viewTimeCache.get(viewer.userId));
                         this.viewTimeCache.del(viewer.userId);
                     }

@@ -99,7 +99,6 @@ export async function getChattersWithoutBots() {
 export async function viewTimeHandler() {
     try {
         const live = cache.get('live');
-        console.log(live);
         const mintues = 1;
         if (!live) {
             return;

@@ -1138,12 +1138,6 @@ class UsersDB {
                     logger.error(`Error in increaseViewTime: ${error}`);
                 }
             }
-
-            // Check if the user is a follower. If they are not then return
-            const isFollower = await this.isFollower(userId);
-            if (!isFollower) {
-                return;
-            }
             const date = new Date();
             const lastSeen = date;
             let user = this.cache.get(userId);

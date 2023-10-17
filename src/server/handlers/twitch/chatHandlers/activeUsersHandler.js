@@ -1,11 +1,10 @@
-import { writeToLogFile } from "../../../utilities/logging.js";
 import NodeCache from 'node-cache';
-
+import logger from '../../../utilities/logger.js';
 
 // Class to handle active users
 class ActiveUsersHandler {
     constructor() {
-        this.cache = new NodeCache({ stdTTL: 10, checkperiod: 300 });
+        this.cache = new NodeCache({ stdTTL: 900, checkperiod: 60 });
         this.listenForExpiredKeys();
     }
 
@@ -19,11 +18,10 @@ class ActiveUsersHandler {
     // Method to add an active user to the cache
     addActiveUser(userId, displayName, color, user) {
         try {
-            this.cache.set(userId, { displayName, color, user }, 10);
+            this.cache.set(userId, { displayName, color, user }, 900);
         }
         catch (err) {
-            writeToLogFile('error', `Error in addActiveUser: ${err}`)
-            console.error('Error in addActiveUser:', err);
+            logger.error(`Error in addActiveUser: ${err}`);
         }
     }
 
@@ -33,8 +31,7 @@ class ActiveUsersHandler {
             this.cache.del(userId);
         }
         catch (err) {
-            writeToLogFile('error', `Error in removeActiveUser: ${err}`)
-            console.error('Error in removeActiveUser:', err);
+            logger.error(`Error in removeActiveUser: ${err}`);
         }
     }
 
@@ -44,8 +41,7 @@ class ActiveUsersHandler {
             return this.cache.get(userId);
         }
         catch (err) {
-            writeToLogFile('error', `Error in getActiveUser: ${err}`)
-            console.error('Error in getActiveUser:', err);
+            logger.error(`Error in getActiveUser: ${err}`);
         }
     }
 
@@ -55,8 +51,7 @@ class ActiveUsersHandler {
             return this.cache.mget(this.cache.keys());
         }
         catch (err) {
-            writeToLogFile('error', `Error in getAllActiveUsers: ${err}`)
-            console.error('Error in getAllActiveUsers:', err);
+            logger.error(`Error in getAllActiveUsers: ${err}`);
         }
     }
 
@@ -66,8 +61,7 @@ class ActiveUsersHandler {
             this.cache.flushAll();
         }
         catch (err) {
-            writeToLogFile('error', `Error in flush: ${err}`)
-            console.error('Error in flush:', err);
+            logger.error(`Error in flush: ${err}`);
         }
     }
 
@@ -77,8 +71,7 @@ class ActiveUsersHandler {
             return this.cache.getTtl(key);
         }
         catch (err) {
-            writeToLogFile('error', `Error in getTtl: ${err}`)
-            console.error('Error in getTtl:', err);
+            logger.error(`Error in getTtl: ${err}`);
         }
     }
     
