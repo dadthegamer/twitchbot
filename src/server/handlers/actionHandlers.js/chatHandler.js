@@ -9,7 +9,6 @@ export async function chatMessageHandler(message, context) {
         if (message.includes('$')) {
             try {
                 const newMessage = await variableHandler(message, userId);
-                console.log('New message:', newMessage);
                 chatClient.replyToMessage(newMessage, id);
             } catch (err) {
                 logger.error(`Error in variableHandler: ${err}`);

@@ -13,7 +13,7 @@ import logger from "../../../utilities/logger.js";
 // Message Handler
 export async function onMessageHandler(channel, user, message, msg, bot) {
     try {
-        let first = cache.get('first');
+        const streamData = cache.get('stream');
         const { isFirst, isHighlighted, userInfo, id, isReply, isCheer } = msg;
         const { userId, displayName, color, isVip, isSubscriber, isMod } = userInfo;
         webSocket.twitchChatMessage({ service: 'twitch', message, displayName, color });
@@ -28,11 +28,7 @@ export async function onMessageHandler(channel, user, message, msg, bot) {
                 return;
             }
         }
-        await arrivalHandler({ bot, msg, user, message, userDisplayName: displayName, userId, id });
-        // if (first.length < 3) {
-        //     firstMessageHandler({ bot, msg, user, message, userDisplayName: displayName, userId, id });
-        // }
-
+        await arrivalHandler({ bot, msg, user, message, userDisplayName: displayName, userId, id }, streamData);
         // Add the user to the active users cache if they are not already in it
         if (!activeUsersCache.getActiveUser(userId)) {
             activeUsersCache.addActiveUser(userId, displayName, color, user);

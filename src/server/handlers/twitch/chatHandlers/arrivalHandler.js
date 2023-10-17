@@ -1,23 +1,35 @@
 import { webSocket } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";
-import { usersDB } from "../../../config/initializers.js";
+import { usersDB, streamDB, currencyDB } from "../../../config/initializers.js";
+import { firstMessageHandler } from "./firstMessageHandler.js";
 
 export let alertQueue = [];
 let alertShowing = false;
 let alertTime = 8000;
 
 
-export async function arrivalHandler(context) {
+export async function arrivalHandler(context, streamData) {
     try {
-        const { bot, msg, userDisplayName, userId, say, timeout, reply, messageID } = context;
-        const userData = await usersDB.getUserByUserId(userId);
-        const arrived = userData.arrived;
-        if (arrived) {
+        // Check if the userId is in the streamData viewers array
+        if (!streamData.viewers.includes(context.userId)) {
             return;
         } else {
-            await usersDB.updateUserByUserId(userId, { arrived: true });
-            const points = await userData.currency.leaderboard;
-            addWelcomeAlert(userId, userDisplayName, points);
+            const { bot, msg, userDisplayName, userId, say, timeout, reply, messageID } = context;
+            const userData = await usersDB.getUserByUserId(userId);
+            const arrived = userData.arrived;
+            if (arrived) {
+                return;
+            } else {
+                await streamDB.addViewer(userId);
+                await usersDB.updateUserByUserId(userId, { arrived: true });
+                const points = await userData.currency.leaderboard;
+                await currencyDB.addCurrencyForArriving(userId);
+                addWelcomeAlert(userId, userDisplayName, points);
+                // Check if viewers length is less than 3
+                if (streamData.viewers.length < 3) {
+                    firstMessageHandler(context);
+                }
+            }
         }
     }
     catch (err) {

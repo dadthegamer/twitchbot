@@ -123,10 +123,6 @@ class StreamDB {
             // Check if a stream
             if (streamData) {
                 this.cache.set('stream', streamData);
-
-                // Set the stream id in the cache
-                const streamId = streamData._id;
-                this.cache.set('streamId', streamId);
                 return streamData;
             } else {
                 return null;
@@ -290,14 +286,94 @@ class StreamDB {
         }
     }
 
+    // Methodt to set the latest follower
+    async setLatestFollower(userData) {
+        try {
+            const stream = this.cache.get('stream');
+            stream.latestFollower = userData;
+            const query = { eventType: 'latestFollower' };
+            const update = {
+                $set: {
+                    latestFollower: userData,
+                }
+            };
+            const options = { upsert: true };
+            await this.dbConnection.collection('streamData').updateOne(query, update, options);
+            this.getLatestEvents();
+        }
+        catch (error) {
+            logger.error(`Error in setLatestFollower: ${error}`);
+        }
+    }
+
+    // Method to set the latest sub
+    async setLatestSub(userData) {
+        try {
+            const stream = this.cache.get('stream');
+            stream.latestSub = userData;
+            const query = { eventType: 'latestSub' };
+            const update = {
+                $set: {
+                    latestSub: userData,
+                }
+            };
+            const options = { upsert: true };
+            await this.dbConnection.collection('streamData').updateOne(query, update, options);
+            this.getLatestEvents();
+        }
+        catch (error) {
+            logger.error(`Error in setLatestSub: ${error}`);
+        }
+    }
+
+    // Method to set the latest cheer
+    async setLatestCheer(userData) {
+        try {
+            const stream = this.cache.get('stream');
+            stream.latestCheer = userData;
+            const query = { eventType: 'latestCheer' };
+            const update = {
+                $set: {
+                    latestCheer: userData,
+                }
+            };
+            const options = { upsert: true };
+            await this.dbConnection.collection('streamData').updateOne(query, update, options);
+            this.getLatestEvents();
+        }
+        catch (error) {
+            logger.error(`Error in setLatestCheer: ${error}`);
+        }
+    }
+
+    // Method to set the latest donation
+    async setLatestDonation(userData) {
+        try {
+            const stream = this.cache.get('stream');
+            stream.latestDonation = userData;
+            const query = { eventType: 'latestDonation' };
+            const update = {
+                $set: {
+                    latestDonation: userData,
+                }
+            };
+            const options = { upsert: true };
+            await this.dbConnection.collection('streamData').updateOne(query, update, options);
+            this.getLatestEvents();
+        }
+        catch (error) {
+            logger.error(`Error in setLatestDonation: ${error}`);
+        }
+    }
+
     // Method to get the latest event from the database in one query
     async getLatestEvents() {
         try {
             let events = [];
-            const latestFollower = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_follower' });
-            const latestSub = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_subscriber' });
-            const latestCheer = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_cheer' });
-            const latestDonation = await this.dbConnection.collection('streamData').findOne({ eventType: 'latest_donation' });
+            const latestFollower = await this.dbConnection.collection('streamData').findOne({ eventType: 'latestFollower' });
+            const latestSub = await this.dbConnection.collection('streamData').findOne({ eventType: 'latestSub' });
+            const latestCheer = await this.dbConnection.collection('streamData').findOne({ eventType: 'latestCheer' });
+            const latestDonation = await this.dbConnection.collection('streamData').findOne({ eventType: 'latestDonation' });
             events.push(latestFollower);
             events.push(latestSub);
             events.push(latestCheer);
