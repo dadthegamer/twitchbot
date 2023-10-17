@@ -31,10 +31,6 @@ class TwitchApiClient {
             const data = await this.apiClient.streams.getStreamByUserId(this.userId);
             if (data === null) {
                 this.cache.set('live', false);
-                this.cache.set('streamTitle', null);
-                this.cache.set('streamGame', null);
-                this.cache.set('streamStartedAt', null);
-                this.cache.set('gameBoxArt', null);
                 streamInfo = {
                     gameName: 'Just Chatting',
                     title: 'Offline',
@@ -55,6 +51,7 @@ class TwitchApiClient {
                     boxArtURL: boxart,
                 };
             }
+            this.cache.set('streamInfo', streamInfo);
             return streamInfo;
         }
         catch (error) {

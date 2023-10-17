@@ -5,9 +5,7 @@ import logger from "../../../utilities/logger.js";
 export async function onStreamOffline(e) {
     try {
         cache.set('live', false);
-        cache.set('streamTitle', '');
-        cache.set('streamGame', '');
-        cache.set('streamStartedAt', null);
+        cache.set('streamInfo', null);
         await streamDB.endStream();
         logger.info('Stream offline');
     }
@@ -23,23 +21,23 @@ export async function onStreamUpdate(e) {
 export async function onStreamOnline(e) {
     try {
         const streamInfo = await e.getStream();
-        const { title, gameName } = streamInfo;
+        const { title, gameName, startedAt, isMature, tags, gameId } = streamInfo;
+        const boxArtURL = await streamInfo.getThumbnailUrl(520, 720);
         cache.set('live', true);
-        cache.set('streamTitle', title);
-        cache.set('streamGame', gameName);
-        cache.set('streamStartedAt', new Date());
-        cache.set('streamSubs', 0);
-        cache.set('streamSubGoal', 0);
-        cache.set('streamBits', 0);
-        cache.set('streamDonations', 0);
-        cache.set('streamFollowers', 0);
+        const streamInfoData = {
+            title,
+            gameName,
+            startedAt,
+            isMature,
+            tags,
+            gameId,
+            boxArtURL
+        };
+        cache.set('streamInfo', streamInfoData);
         goalDB.setGoalCurrent('dailySubGoal', 0);
         const existingStream = await streamDB.getStreamData();
         if (existingStream !== null) {
-            cache.set('streamSubs', existingStream.total_subs);
-            cache.set('viewers', existingStream.viewers);
-            cache.set('streamDonations', existingStream.donations);
-            cache.set('streamBits', existingStream.bits);
+            return;
         } else {
             await streamDB.startStream(title, gameName);
             await usersDB.resetArrived();
