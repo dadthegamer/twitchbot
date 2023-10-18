@@ -7,7 +7,6 @@ import { evalulate } from "../../evaluater.js";
 export async function onRedemptionAdd(e) {
     try {
         const { rewardTitle, rewardCost, userName, userDisplayName, userId, input, id, status } = e;
-        evalulate({ type: 'createQuote' }, { bot: null, msg: null, userDisplayName, userId, rewardId: id, parts: null, input });
         switch (rewardTitle) {
             case 'Custom Shoutout':
                 usersDB.setUserValue(userId, 'shoutout', input);
@@ -17,7 +16,7 @@ export async function onRedemptionAdd(e) {
                 ttsHandler(input, profilePictureUrl);
                 break;
             case 'Add A Quote':
-                interactionsDB.createQuote(input, userDisplayName);
+                evalulate({ type: 'createQuote' }, { bot: null, msg: null, userDisplayName, userId, rewardId: id, parts: null, input });
                 break;
             case 'Dadb0t Roast':
                 const roast = await interactionsDB.getRandomRoast();
