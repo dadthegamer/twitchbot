@@ -16,6 +16,7 @@ import Commands from './components/Commands';
 import Dashboard from './components/Dashboard';
 import Games from './components/Games';
 import CamOverlay from './components/overlayComponents/CamOverlay';
+import Prediction from './components/overlayComponents/Prediction';
 
 function App() {
   const location = useLocation();
@@ -36,6 +37,7 @@ function App() {
         <Route path="progressbar" element={<ProgressBar />} />
         <Route path="startingsoon" element={<StartingSoon />} />
         <Route path="camoverlay" element={<CamOverlay />} />
+        <Route path="prediction" element={<Prediction />} />
       </Route>
 
       {/* Main Routes */}

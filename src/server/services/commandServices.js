@@ -112,7 +112,6 @@ class Commands {
                 return result;
             }
         } catch (error) {
-            console.log(error);
             logger.error(`Error in createCommand: ${error}`);
         }
     }

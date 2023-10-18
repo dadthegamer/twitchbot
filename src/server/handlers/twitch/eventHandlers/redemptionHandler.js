@@ -1,10 +1,13 @@
 import { usersDB, goalDB, interactionsDB } from "../../../config/initializers.js";
 import { ttsHandler } from "../../actionHandlers.js/ttsHandler.js";
 import logger from "../../../utilities/logger.js";;
+import { evalulate } from "../../evaluater.js";
+
 
 export async function onRedemptionAdd(e) {
     try {
         const { rewardTitle, rewardCost, userName, userDisplayName, userId, input, id, status } = e;
+        evalulate({ type: 'createQuote' }, { bot: null, msg: null, userDisplayName, userId, rewardId: id, parts: null, input });
         switch (rewardTitle) {
             case 'Custom Shoutout':
                 usersDB.setUserValue(userId, 'shoutout', input);

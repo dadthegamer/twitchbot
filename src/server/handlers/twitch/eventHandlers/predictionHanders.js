@@ -1,6 +1,5 @@
 import { cache } from "../../../config/initializers.js";
-import { writeToLogFile } from "../../../utilities/logging.js"
-import { addAlert } from "../../../handlers/alertHandler.js";
+import logger from "../../../utilities/logger.js";
 
 
 // Prediction events
@@ -29,8 +28,7 @@ export async function onPredictionStart(e) {
         });
     }
     catch (error) {
-        console.log(error);
-        writeToLogFile('error', `Error in onPredictionStart: ${error}`);
+        logger('error', `Error in onPredictionStart: ${error}`);
     }
 }
 
@@ -41,7 +39,7 @@ export async function onPredictionProgress(e) {
         }
     }
     catch (error) {
-        writeToLogFile('error', `Error in onPredictionProgress: ${error}`);
+        logger('error', `Error in onPredictionProgress: ${error}`);
     }
 }
 
@@ -53,7 +51,7 @@ export async function onPredictionLock(e) {
         // }
     }
     catch (error) {
-        writeToLogFile('error', `Error in onPredictionLock: ${error}`);
+        logger('error', `Error in onPredictionLock: ${error}`);
     }
 }
 
@@ -65,7 +63,7 @@ export async function onPredictionEnd(e) {
         // }
     }
     catch (error) {
-        writeToLogFile('error', `Error in onPredictionEnd: ${error}`);
+        logger('error', `Error in onPredictionEnd: ${error}`);
     }
 }
 
@@ -81,6 +79,6 @@ async function updatePrediction(outcomeId, channelPoints, users) {
         cache.set('prediction', prediction);
     }
     catch (error) {
-        writeToLogFile('error', `Error in updatePrediction: ${error}`);
+        logger('error', `Error in updatePrediction: ${error}`);
     }
 }

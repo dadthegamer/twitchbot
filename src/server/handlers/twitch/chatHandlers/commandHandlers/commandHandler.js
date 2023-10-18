@@ -16,7 +16,9 @@ class CommandHandler {
     // Method to get a command from the cache
     getCommand(command) {
         try {
-            return this.cache.get(command);
+            // Remove any numbers after the command. It will look like quote3, quote4, etc.
+            const commandName = command.replace(/[0-9]/g, '');
+            return this.cache.get(commandName);
         }
         catch (err) {
             logger.error(`Error in getCommand: ${err}`);
@@ -70,9 +72,9 @@ class CommandHandler {
             const commandData = await this.getCommand(commandName);
             if (commandData) {
                 const { handlers, permissions, enabled, userCooldown, globalCooldown, liveOnly } = commandData;
-                // if (!liveOnly === false && cache.get('live') === false) {
-                //     return;
-                // }
+                if (!liveOnly && cache.get('live')) {
+                    return;
+                }
                 if (enabled === false) {
                     return;
                 }
@@ -81,7 +83,7 @@ class CommandHandler {
                 if (permissions === 'everyone') {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
                         for (const handler of handlers) {
-                            await evalulate(handler, { bot, msg, userDisplayName: displayName, userId, messageID: id });
+                            await evalulate(handler, { bot, msg, userDisplayName: displayName, userId, messageID: id, parts, input: message, rewardId: null });
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
@@ -90,7 +92,7 @@ class CommandHandler {
                         return;
                     } else if (globalCooldownStatus !== true) {
                         const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
-                        console.log(`Global cooldown: ${timeLeft} seconds left`);
+                        chatClient.replyToMessage(`This command is on global cooldown. ${timeLeft} seconds left`, id);
                         return;
                     }
                 }
