@@ -1,4 +1,4 @@
-import { streamDB, currencyDB, goalDB } from "../../../config/initializers.js";
+import { streamDB, currencyDB, goalDB, streamathonService } from "../../../config/initializers.js";
 import { addAlert } from "../../../handlers/alertHandler.js";
 import logger from "../../../utilities/logger.js";
 
@@ -16,6 +16,8 @@ export async function onGiftSubscription(e) {
 
         // Sent alert
         await addAlert(gifterId, gifterDisplayName, 'giftedSub', `gifted ${amount} subs!`);
+
+        await streamathonService.addToSubTimer(amount);
     }
     catch (error) {
         logger.error(`Error in onGiftSubscription: ${error}`);

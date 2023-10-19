@@ -1,4 +1,4 @@
-import { usersDB, cache, streamDB, goalDB } from "../../../config/initializers.js";
+import { usersDB, cache, streamDB, goalDB, streamathonService } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";
 
 
@@ -7,6 +7,7 @@ export async function onStreamOffline(e) {
         cache.set('live', false);
         cache.set('streamInfo', null);
         await streamDB.endStream();
+        await streamathonService.stopStreamathonTimer();
         logger.info('Stream offline');
     }
     catch (error) {
@@ -43,6 +44,7 @@ export async function onStreamOnline(e) {
             await usersDB.resetArrived();
             await usersDB.resetStreamProperties();
         }
+        streamathonService.startStreamathon();
         logger.info('Stream online');
     }
     catch (error) {

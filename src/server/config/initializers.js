@@ -28,6 +28,7 @@ import GameService from '../services/gameService.js';
 import CounterService from '../services/counterService.js';
 import GoXLRClient from '../services/goXLRUtilityService.js';
 import getLumiaStreamSettings from '../services/lumiaStreamService.js';
+import StreamathonService from '../services/streamathonService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -107,6 +108,9 @@ const counterService = new CounterService(db.dbConnection, cache);
 // GoXLR client initialization
 const goXLRClient = new GoXLRClient();
 
+// Streamathon service initialization
+const streamathonService = new StreamathonService(db.dbConnection, cache);
+
 // Subscribe to donation events
 subscribeToDonationEvents();
 
@@ -139,5 +143,6 @@ export {
     channelPointsService,
     gameService,
     counterService,
-    goXLRClient
+    goXLRClient,
+    streamathonService
 };

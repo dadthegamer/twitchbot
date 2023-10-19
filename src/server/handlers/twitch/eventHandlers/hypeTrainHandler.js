@@ -1,6 +1,6 @@
-import { cache, currencyDB } from "../../../config/initializers.js";
+import { cache, currencyDB, streamathonService } from "../../../config/initializers.js";
 
-let currentLevel = 1;
+let currentLevel = 0;
 
 
 // Hype Train events
@@ -19,12 +19,12 @@ export async function onHypeTrainProgress(e) {
     if (level > currentLevel) {
         currentLevel = level;
         await currencyDB.rewardAllViewersWithCurrencyForHypeTrainProgress();
+        await streamathonService.addHypeTrainTimer();
     }
-
 }
 
 export async function onHypeTrainEnd(e) {
     console.log('Hype train ended');
     cache.set('hypeTrain', e);
-    currentLevel = 1;
+    currentLevel = 0;
 }

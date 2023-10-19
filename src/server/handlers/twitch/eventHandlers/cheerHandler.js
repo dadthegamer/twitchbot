@@ -1,4 +1,4 @@
-import { streamDB, currencyDB, goalDB } from "../../../config/initializers.js";
+import { streamDB, currencyDB, goalDB, streamathonService } from "../../../config/initializers.js";
 import { addAlert } from "../../../handlers/alertHandler.js";
 import logger from "../../../utilities/logger.js";
 
@@ -19,6 +19,7 @@ export async function onBits(e) {
         await addAlert(userId, userDisplayName, 'cheer', `cheered ${bits} bits!`);
         await currencyDB.addCurrencyForBits(userId, bits);
         await streamDB.increaseStreamProperty('bits', bits);
+        await streamathonService.addToBitsTimer(bits);
     }
     catch (error) {
         logger.error(`Error in onBits: ${error}`);
