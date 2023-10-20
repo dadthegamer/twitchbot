@@ -1081,6 +1081,7 @@ class UsersDB {
             // Check if the propery is in the viewTime object
             const viewTimeProperties = ['allTime', 'yearly', 'monthly', 'weekly', 'stream'];
             if (!viewTimeProperties.includes(property)) {
+                console.log(`Error in setViewTime: Property is not in the viewTime object`);
                 logger.error(`Error in setViewTime: Property is not in the viewTime object`);
                 return null;
             }

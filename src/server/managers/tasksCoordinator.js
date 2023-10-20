@@ -1,5 +1,7 @@
 import logger from "../utilities/logger.js";
 import { environment } from "../config/environmentVars.js";
+import { usersDB } from "../config/initializers.js";
+import fs from 'fs';
 
 class TaskCoordinator {
     constructor(twitchAPI, usersDB) {
@@ -13,7 +15,6 @@ class TaskCoordinator {
             if (environment === 'development') {
                 logger.info('Initializing TaskCoordinator');
             } else {
-                console.log('Initializing TaskCoordinator');
                 await this.getAllFollowers();
                 await this.getAllSubscribers();
                 await this.getAllVips();
@@ -90,6 +91,20 @@ class TaskCoordinator {
         }
         catch (error) {
             logger.error(`Error getting moderators: ${error}`);
+        }
+    }
+
+    // Method to get the data array located in the userData.json file in the data folder
+    async processUsers() {
+        try {
+            const users = JSON.parse(fs.readFileSync('./data/userData.json', 'utf8'));
+            for (const user of users) {
+                await this.usersDB.setViewTime(user.id, 'allTime', user.view_time);
+            }
+        }
+        catch (error) {
+            console.log(error);
+            logger.error(`Error getting user data: ${error}`);
         }
     }
 }

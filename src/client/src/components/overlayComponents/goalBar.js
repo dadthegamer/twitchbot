@@ -37,7 +37,7 @@ function ProgressBar() {
 
     return (
         <div className="progress-container">
-            <FontAwesomeIcon icon={faGift} />
+            <FontAwesomeIcon icon={faGift} className='progress-icon'/>
             <div className="right-side">
                 <span className="goal">Daily Sub Goal</span>
                 <div className="progress-main">

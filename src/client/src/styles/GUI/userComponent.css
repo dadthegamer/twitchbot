@@ -16,7 +16,7 @@
 }
 
 .user-main-container {
-    width: 50%;
+    width: 70%;
     height: 80%;
     background-color: var(--primary-color);
     display: flex;
@@ -57,21 +57,26 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
+    gap: 10px;
 }
 
 .user-info-wrapper img {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    margin-bottom: 10px;
 }
 
 .user-display-name {
     font-size: 2rem;
     font-weight: 600;
-    margin-bottom: 20px;
     text-transform: uppercase;
     color: var(--font-color);
+}
+
+.follow-date {
+    font-size: .8rem;
+    text-transform: uppercase;
+    color: rgb(201, 201, 201);
 }
 
 .user-roles-wrapper {
@@ -80,7 +85,7 @@
     left: 10px;
     text-transform: uppercase;
     font-weight: 600;
-    font-size: 1.2rem;
+    font-size: 1rem;
     display: flex;
     align-items: start;
     justify-content: flex-start;
@@ -130,12 +135,95 @@
 }
 
 .user-data-wrapper {
-    width: 100%;
+    width: 50%;
     height: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 10px;
     flex-direction: column;
-    background-color: var(--primary-color);
+    position: relative;
+}
+
+.user-data-icons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    border-bottom: 1px solid var(--font-color);
+}
+
+.user-data-icons div {
+    width: 160px;
+    min-width: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    text-align: center;
+}
+
+.user-data-icons div .user-data-icon {
+    font-size: 3rem;
+    color: var(--font-color);
+    width: 100%;
+}
+
+.user-data-icons div span {
+    width: 100%;
+    font-size: 1rem;
+    color: var(--font-color);
+    text-align: center;
+}
+
+.user-data-icons span:first-child {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--font-color);
+    width: 200px;
+    min-width: 200px;
+}
+
+.user-inputs-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    flex-direction: row;
+    position: relative;
+    bottom: 0;
+    left: 0;
+}
+
+.time-periods {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.time-periods span {
+    font-size: 1.5rem;
+    color: var(--font-color);
+    background-color: var(--terrestrial-color);
+    padding: 10px;
+    text-transform: uppercase;
+    width: 200px;
+    min-width: 200px;
+}
+
+.inputs-wrapper-inner {
+    width: 160px;
+    max-width: 160px;
+    min-width: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    flex-direction: column;
 }
