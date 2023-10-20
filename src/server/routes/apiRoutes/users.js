@@ -1,17 +1,16 @@
 import { Router } from 'express';
-import { writeToLogFile } from '../../utilities/logging.js';
 import { cache, usersDB } from '../../config/initializers.js';
+import logger from '../../utilities/logger.js';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
-    console.log('Getting all users');
     try {
         const users = await usersDB.getAllUsers();
         res.json(users);
     }
     catch (err) {
-        writeToLogFile('error', `Error in getting users: ${err}`);
+        logger.error(`Error in getting all users: ${err}`);
         res.status(500).send();
     }
 });
@@ -22,7 +21,7 @@ router.get('/:id', async (req, res) => {
         res.json(user);
     }
     catch (err) {
-        writeToLogFile('error', `Error in getting user: ${err}`);
+        logger.error(`Error in getting user by user ID: ${err}`);
         res.status(500).send();
     }
 });
@@ -42,8 +41,7 @@ router.put('/:id', async (req, res) => {
         res.json({ message: `Success` });
     }
     catch (err) {
-        writeToLogFile('error', `Error in updating user: ${err}`);
-        console.log(err);
+        logger.error(`Error in updating user: ${err}`);
         res.status(500).send();
     }
 });

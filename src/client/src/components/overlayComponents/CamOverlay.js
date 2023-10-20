@@ -6,7 +6,7 @@ function CamOverlay() {
     const [showAlertDetails, setShowAlertDetails] = useState(false);
     const [alertData, setAlertData] = useState({});
     const [connected, setConnected] = useState(false);
-    const [userName, setUserName] = useState('');
+    const [userName, setUserName] = useState('DadTheGam3r');
     const [animationDirection, setAnimationDirection] = useState('normal');
     const [animationDirection2, setAnimationDirection2] = useState('normal');
     const [alertColor, setAlertColor] = useState('#111111');
