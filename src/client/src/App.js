@@ -10,13 +10,15 @@ import Currency from './components/Currency';
 import ProgressBar from './components/overlayComponents/goalBar';
 import StartingSoon from './components/overlayComponents/startingSoon';
 import Quotes from './components/Quotes'
+import Streamathon from './components/Streamathon';
+import Prediction from './components/overlayComponents/Prediction';
 import Update from './components/Update';
 import Goals from './components/Goals';
 import Commands from './components/Commands';
 import Dashboard from './components/Dashboard';
 import Games from './components/Games';
 import CamOverlay from './components/overlayComponents/CamOverlay';
-import Prediction from './components/overlayComponents/Prediction';
+
 
 function App() {
   const location = useLocation();
@@ -50,6 +52,7 @@ function App() {
         <Route path="commands" element={<Commands />} />
         <Route path="/" element={<Dashboard />} />
         <Route path="games" element={<Games />} />
+        <Route path="streamathon" element={<Streamathon />} />
       </Route>
     </Routes>
   );

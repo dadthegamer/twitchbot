@@ -55,9 +55,20 @@ export class StreamathonService {
                         enabled: false,
                         perLevel: 0,
                     },
-                    tikTokFollowers: 0,
-                    tikTokLikes: 0,
-                    tikTokGifts: 0,
+                    tikTok: {
+                        followers: {
+                            time: 0,
+                            minimum: 0,
+                        },
+                        likes: {
+                            time: 0,
+                            minimum: 0,
+                        },
+                        gifts: {
+                            time: 0,
+                            minimum: 0,
+                        },
+                    }
                 },
             }
             // check if the name exists in the database. If not, create the initial streamathon settings and cache it
@@ -96,6 +107,8 @@ export class StreamathonService {
     async updateStreamathonSettings(streamathonSettings) {
         try {
             await this.cache.set('streamathonSettings', streamathonSettings);
+            // Remove the _id from the streamathon settings object
+            delete streamathonSettings._id;
             await this.dbConnection.collection(this.collectionName).updateOne(
                 { name: 'StreamathonSettings' },
                 { $set: streamathonSettings }
@@ -103,6 +116,7 @@ export class StreamathonService {
             return streamathonSettings;
         }
         catch (error) {
+            console.log(error);
             logger.error(`Error updating streamathon settings: ${error}`);
         }
     }
@@ -342,3 +356,5 @@ export class StreamathonService {
         }
     }
 }
+
+export default StreamathonService;

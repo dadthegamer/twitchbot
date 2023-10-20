@@ -9,6 +9,7 @@ export async function onHypeTrainBegin(e) {
     console.log('Hype train started');
     if (level > currentLevel) {
         currentLevel = level;
+        await streamathonService.addHypeTrainTimer();
         await currencyDB.rewardAllViewersWithCurrencyForHypeTrainProgress();
     }
 }
