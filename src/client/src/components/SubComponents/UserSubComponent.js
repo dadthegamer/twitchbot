@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark, faBan, faCrown, faHammer, faGift, faGem, faDollarSign, faClock } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/GUI/userComponent.css';
 
-function UserComponent({ userId }) {
+function UserComponent({ userId, onClose }) {
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -50,33 +50,99 @@ function UserComponent({ userId }) {
     // Function to handle the input change
     function handleInputChange(event) {
         // Get the input id and value
-        const { id, value } = event.target;
+        let { id, value } = event.target;
         console.log(id, value);
+
+        const updatedSettings = { ...userData };
+
+        // convert the value to a number
+        value = Number(value);
+
+        switch (id) {
+            case 'all-time-subs':
+                updatedSettings.subs.allTime = value;
+                break;
+            case 'yearly-subs':
+                updatedSettings.subs.yearly = value;
+                break;
+            case 'monthly-subs':
+                updatedSettings.subs.monthly = value;
+                break;
+            case 'weekly-subs':
+                updatedSettings.subs.weekly = value;
+                break;
+            case 'stream-subs':
+                updatedSettings.subs.stream = value;
+                break;
+            case 'all-time-bits':
+                updatedSettings.bits.allTime = value;
+                break;
+            case 'yearly-bits':
+                updatedSettings.bits.yearly = value;
+                break;
+            case 'monthly-bits':
+                updatedSettings.bits.monthly = value;
+                break;
+            case 'weekly-bits':
+                updatedSettings.bits.weekly = value;
+                break;
+            case 'stream-bits':
+                updatedSettings.bits.stream = value;
+                break;
+            case 'all-time-donations':
+                updatedSettings.donations.allTime = value;
+                break;
+            case 'yearly-donations':
+                updatedSettings.donations.yearly = value;
+                break;
+            case 'monthly-donations':
+                updatedSettings.donations.monthly = value;
+                break;
+            case 'weekly-donations':
+                updatedSettings.donations.weekly = value;
+                break;
+            case 'stream-donations':
+                updatedSettings.donations.stream = value;
+                break;
+            case 'all-time-view-time':
+                updatedSettings.viewTime.allTime = value;
+                break;
+            case 'yearly-view-time':
+                updatedSettings.viewTime.yearly = value;
+                break;
+            case 'monthly-view-time':
+                updatedSettings.viewTime.monthly = value;
+                break;
+            case 'weekly-view-time':
+                updatedSettings.viewTime.weekly = value;
+                break;
+            case 'stream-view-time':
+                updatedSettings.viewTime.stream = value;
+                break;
+            default:
+                break;
+        }
+
+        setUserData(updatedSettings);
         // Make an HTTP PUT request to update the user data
-        // fetch(`/api/users/${userId}`, {
-        //     method: 'PUT',
-        //     headers: {
-        //         'Content-Type': 'application/json',
-        //     },
-        //     body: JSON.stringify({
-        //         [id]: value,
-        //     }),
-        // })
-        //     .then((response) => response.json())
-        //     .then((data) => {
-        //         // Update the users state with the fetched data and sort the users alphabetically
-        //         setUserData(data);
-        //         console.log(data);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error updating user data:', error);
-        //     });
+        fetch(`/api/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                update: id,
+                value: value,
+            })
+        })
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
     }
 
 
     return (
         <div className="user-main-container">
-            <FontAwesomeIcon icon={faXmark} className="close-icon" />
+            <FontAwesomeIcon icon={faXmark} className="close-icon" onClick={onClose}/>
             {isLoading ? (
                 <p>Getting user data...</p>
             ) : (

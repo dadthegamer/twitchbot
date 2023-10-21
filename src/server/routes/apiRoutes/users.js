@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { cache, usersDB } from '../../config/initializers.js';
+import { usersDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
 
 const router = Router();
@@ -29,15 +29,74 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        // Get all the properties to update
-        const properties = Object.keys(req.body);
-        // Get the values tp update
-        const values = Object.values(req.body);
+        const { update, value } = req.body;
+        const userData = await usersDB.getUserByUserId(id);
 
-        // For each property, update the user
-        for (let i = 0; i < properties.length; i++) {
-            console.log(`Updating ${properties[i]} to ${values[i]}`);
+        switch (update) {
+            case 'all-time-subs':
+                userData.subs.allTime = value;
+                break;
+            case 'yearly-subs':
+                userData.subs.yearly = value;
+                break;
+            case 'monthly-subs':
+                userData.subs.monthly = value;
+                break;
+            case 'weekly-subs':
+                userData.subs.weekly = value;
+                break;
+            case 'stream-subs':
+                userData.subs.stream = value;
+                break;
+            case 'all-time-bits':
+                userData.bits.allTime = value;
+                break;
+            case 'yearly-bits':
+                userData.bits.yearly = value;
+                break;
+            case 'monthly-bits':
+                userData.bits.monthly = value;
+                break;
+            case 'weekly-bits':
+                userData.bits.weekly = value;
+                break;
+            case 'stream-bits':
+                userData.bits.stream = value;
+                break;
+            case 'all-time-donations':
+                userData.donations.allTime = value;
+                break;
+            case 'yearly-donations':
+                userData.donations.yearly = value;
+                break;
+            case 'monthly-donations':
+                userData.donations.monthly = value;
+                break;
+            case 'weekly-donations':
+                userData.donations.weekly = value;
+                break;
+            case 'stream-donations':
+                userData.donations.stream = value;
+                break;
+            case 'all-time-view-time':
+                userData.viewTime.allTime = value;
+                break;
+            case 'yearly-view-time':
+                userData.viewTime.yearly = value;
+                break;
+            case 'monthly-view-time':
+                userData.viewTime.monthly = value;
+                break;
+            case 'weekly-view-time':
+                userData.viewTime.weekly = value;
+                break;
+            case 'stream-view-time':
+                userData.viewTime.stream = value;
+                break;
+            default:
+                break;
         }
+        await usersDB.updateUserByUserId(id, userData);
         res.json({ message: `Success` });
     }
     catch (err) {

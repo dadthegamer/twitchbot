@@ -227,3 +227,7 @@
     gap: 10px;
     flex-direction: column;
 }
+
+.inputs-wrapper-inner input {
+    text-align: center;
+}

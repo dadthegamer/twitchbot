@@ -276,7 +276,7 @@ class UsersDB {
                 { upsert: true }
             );
             const user = await this.getUserByUserId(userId);
-            this.cache.set(userId, user);
+            this.cache.set(userId, update);
             return user;
         }
         catch (error) {
@@ -382,7 +382,7 @@ class UsersDB {
                         points: 0,
                     },
                     lastSeen: date,
-                    metaData: {}
+                    metaData: []
                 }
             };
             const options = { upsert: true };
@@ -455,7 +455,7 @@ class UsersDB {
                         points: 0,
                     },
                     lastSeen: date,
-                    metaData: {}
+                    metaData: []
                 }
             };
             const options = { upsert: true };
@@ -464,100 +464,6 @@ class UsersDB {
         }
         catch (error) {
             logger.error(`Error in newFollower: ${error}`);
-        }
-    }
-
-    // Method to set the metaData property for a user. if it does not exist then create it
-    async setMetaData(userId, property, value) {
-        try {
-            if (typeof userId !== 'string') {
-                userId = userId.toString();
-            }
-            // Check if the user exists in the database. If they do not then add them to the database
-            const userExists = this.getUserByUserId(userId);
-            if (!userExists) {
-                this.newUser(userId);
-            };
-            const user = await this.getUserByUserId(userId);
-            if (user.metaData === null) {
-                user.metaData = {};
-            }
-            user.metaData[property] = value;
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                { $set: { [`metaData.${property}`]: value } },
-                { upsert: true }
-            );
-            this.cache.set(userId, user);
-        }
-        catch (error) {
-            logger.error(`Error in setMetaData: ${error}`);
-        }
-    }
-
-    // Method to increase the metaData property for a user. if it does not exist then create it
-    async increaseMetaData(userId, property, amount) {
-        try {
-            if (typeof userId !== 'string') {
-                userId = userId.toString();
-            }
-            // Check if the user exists in the database. If they do not then add them to the database
-            const userExists = this.getUserByUserId(userId);
-            if (!userExists) {
-                this.newUser(userId);
-            };
-            const user = await this.getUserByUserId(userId);
-            if (user.metaData === null) {
-                user.metaData = {};
-            }
-            if (typeof amount !== 'number') {
-                try {
-                    amount = parseInt(amount);
-                    if (isNaN(amount)) {
-                        logger.error(`Error in increaseMetaData: Amount is not a number`);
-                        return null;
-                    }
-                }
-                catch (error) {
-                    logger.error(`Error in increaseMetaData: ${error}`);
-                }
-            }
-            if (property in user.metaData) {
-                user.metaData[property] += amount;
-            } else {
-                user.metaData[property] = amount;
-            }
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                { $inc: { [`metaData.${property}`]: amount } },
-                { upsert: true }
-            );
-            this.cache.set(userId, user);
-        }
-        catch (error) {
-            logger.error(`Error in increaseMetaData: ${error}`);
-        }
-    }
-
-    // Method to get the metaData property for a user
-    async getMetaData(userId, property) {
-        try {
-            if (typeof userId !== 'string') {
-                userId = userId.toString();
-            }
-            // Check if the user exists in the database. If they do not then add them to the database
-            const userExists = this.getUserByUserId(userId);
-            if (!userExists) {
-                this.newUser(userId);
-            };
-            const user = await this.getUserByUserId(userId);
-            if (user.metaData === null) {
-                user.metaData = {};
-            }
-            return user.metaData[property];
-        }
-        catch (error) {
-            logger.error(`Error in getMetaData: ${error}`);
         }
     }
 
@@ -1402,8 +1308,8 @@ class UsersDB {
         }
     }
 
-    // Method to update the metaData property for a user. if the property does not exist, it will be created. Take in the property name as a string and the value as a string.
-    async updateMetaData(userId, property, value) {
+    // Method to add meta data to a users metadata array. It will be a property and then the value. Example property: value
+    async addMetaData(userId, property, value) {
         try {
             // Check if userId is a string
             if (typeof userId !== 'string') {
@@ -1411,40 +1317,143 @@ class UsersDB {
             }
             // Check if property is a string
             if (typeof property !== 'string') {
-                logger.error(`Error in updateMetaData: Property is not a string`);
-                return null;
+                property = property.toString();
             }
             // Check if value is a string
             if (typeof value !== 'string') {
-                logger.error(`Error in updateMetaData: Value is not a string`);
-                return null;
+                value = value.toString();
             }
-            // Check if the user exists in the database. If they do not then add them to the database
-            const userExists = this.getUserByUserId(userId);
-            if (!userExists) {
-                this.newUser(userId);
-            };
             const date = new Date();
             const lastSeen = date;
             let user = this.cache.get(userId);
             if (!user) {
                 user = await this.getUserByUserId(userId);
             }
-            user.metaData[property] = value;
-            // Update the metaData property for the user in the database
+            const metaData = {};
+            metaData[property] = value;
+            user.metaData.push(metaData);
+            // Add the meta data to the user in the database
             await this.dbConnection.collection(this.collectionName).updateOne(
                 { id: userId },
-                {
-                    $set: {
-                        metaData: user.metaData,
-                        lastSeen: lastSeen
-                    }
-                },
+                { $push: { metaData: metaData } },
                 { upsert: true }
             );
             this.cache.set(userId, user);
         } catch (error) {
-            logger.error(`Error in updateMetaData: ${error}`);
+            logger.error(`Error in addMetaData: ${error}`);
+        }
+    }
+
+    // Method to set a meta data property for a user
+    async setMetaDataProperty(userId, property, value) {
+        try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if property is a string
+            if (typeof property !== 'string') {
+                property = property.toString();
+            }
+            // Check if value is a string
+            if (typeof value !== 'string') {
+                value = value.toString();
+            }
+            const date = new Date();
+            const lastSeen = date;
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            const metaData = {};
+            metaData[property] = value;
+            user.metaData.push(metaData);
+            // Add the meta data to the user in the database
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $set: { metaData: metaData } },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        } catch (error) {
+            logger.error(`Error in setMetaDataProperty: ${error}`);
+        }
+    }
+
+    // Method to increase a meta data property for a user if the value of the property in the database is a number
+    async increaseMetaDataProperty(userId, property, amount) {
+        try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if property is a string
+            if (typeof property !== 'string') {
+                property = property.toString();
+            }
+            // Check if amount is a number
+            if (typeof amount !== 'number') {
+                try {
+                    amount = parseInt(amount);
+                    if (isNaN(amount)) {
+                        logger.error(`Error in increaseMetaDataProperty: Amount is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseMetaDataProperty: ${error}`);
+                }
+            }
+            const date = new Date();
+            const lastSeen = date;
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            const metaData = {};
+            metaData[property] = value;
+            user.metaData.push(metaData);
+            // Add the meta data to the user in the database
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $inc: { [`metaData.${property}`]: amount } },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        } catch (error) {
+            logger.error(`Error in increaseMetaDataProperty: ${error}`);
+        }
+    }
+
+    // Method to remove a meta data property for a user
+    async removeMetaDataProperty(userId, property) {
+        try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if property is a string
+            if (typeof property !== 'string') {
+                property = property.toString();
+            }
+            const date = new Date();
+            const lastSeen = date;
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            const metaData = {};
+            metaData[property] = value;
+            user.metaData.push(metaData);
+            // Add the meta data to the user in the database
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $unset: { [`metaData.${property}`]: "" } },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+        } catch (error) {
+            logger.error(`Error in removeMetaDataProperty: ${error}`);
         }
     }
 }

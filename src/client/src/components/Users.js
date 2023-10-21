@@ -56,6 +56,10 @@ function Users() {
         setShowUserInfo(true);
     }
 
+    function handleCloseUserInfo() {
+        setShowUserInfo(false);
+    }
+
     return (
         <div className="content">
             <div className="search-bar">
@@ -75,7 +79,7 @@ function Users() {
                     ))}
                 </div>)}
             {showUserInfo && (
-                <UserComponent userId={userId} />
+                <UserComponent userId={userId} onClose={handleCloseUserInfo}/>
             )}
         </div>
     );
