@@ -1,5 +1,6 @@
 import logger from "../utilities/logger.js";
 import { cache } from "../config/initializers.js";
+import axios from 'axios';
 
 // Get the lumiastream key from the environment variables
 const apiKey = process.env.LUMIA_STREAM_KEY;
@@ -7,7 +8,7 @@ const url = process.env.STREAMING_PC_IP;
 
 async function getLumiaStreamSettings() {
     try {
-        const response = await fetch(`http://${url}:39231/api/retrieve?token=${apiKey}`, {
+        const response = await axios.get(`http://${url}:39231/api/retrieve?token=${apiKey}`, {
             method: 'GET',
         });
         const data = await response.json();
@@ -61,7 +62,7 @@ export async function sendCommand(command) {
 export async function turnLightsOff() {
     try {
         // Make a post request with the apiKey being sent as a parameter
-        const response = await fetch(`http://${url}:39231/api/send?token=${apiKey}`, {
+        const response = await axios.post(`http://${url}:39231/api/send?token=${apiKey}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
