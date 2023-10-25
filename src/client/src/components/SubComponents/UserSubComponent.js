@@ -6,6 +6,7 @@ import '../../styles/GUI/userComponent.css';
 function UserComponent({ userId, onClose }) {
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [currencies, setCurrencies] = useState(null);
 
     // Get the user data from the server
     useEffect(() => {
@@ -16,10 +17,25 @@ function UserComponent({ userId, onClose }) {
                 // Update the users state with the fetched data and sort the users alphabetically
                 setUserData(data);
                 console.log(data);
-                setIsLoading(false);
             })
             .catch((error) => {
                 console.error('Error fetching user data:', error);
+            });
+    }, []);
+
+    // Get the currencies from the server
+    useEffect(() => {
+        // Make an HTTP GET request to fetch currencies
+        fetch('/api/currency')
+            .then((response) => response.json())
+            .then((data) => {
+                // Update the currencies state with the fetched data
+                setCurrencies(data);
+                console.log(data);
+                setIsLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error fetching currencies:', error);
             });
     }, []);
 
@@ -139,10 +155,49 @@ function UserComponent({ userId, onClose }) {
             .catch(err => console.log(err));
     }
 
+    // Function to handle the currency change
+    function handleCurrencyChange(event) {
+        // Get the input id and value
+        let { id, value } = event.target;
+        const { currency } = event.target.dataset;
+
+        const updatedSettings = { ...userData };
+
+        // convert the value to a number
+        value = Number(value);
+
+        updatedSettings.currency[currency] = value;
+
+        setUserData(updatedSettings);
+    };
+
+    // Function to update the currency
+    function updateCurrency(event) {
+        // Get the input id and value
+        let { id, value } = event.target;
+        const { currency } = event.target.dataset;
+        console.log(id, value, currency);
+
+        // Make an HTTP PUT request to update the user data
+        fetch(`/api/users/${userId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                update: id,
+                value: value,
+                currency: currency,
+            })
+        })
+            .then(res => console.log(res))
+            .catch(err => console.log(err));
+    }
+
 
     return (
         <div className="user-main-container">
-            <FontAwesomeIcon icon={faXmark} className="close-icon" onClick={onClose}/>
+            <FontAwesomeIcon icon={faXmark} className="close-icon" onClick={onClose} />
             {isLoading ? (
                 <p>Getting user data...</p>
             ) : (
@@ -159,7 +214,7 @@ function UserComponent({ userId, onClose }) {
                     </div>
                     <div className='user-data-wrapper'>
                         <div className="user-data-icons">
-                        <span>Time Period</span>
+                            <span>Time Period</span>
                             <div>
                                 <FontAwesomeIcon icon={faGift} className="user-data-icon" />
                                 <span>Gifted Subs</span>
@@ -186,11 +241,11 @@ function UserComponent({ userId, onClose }) {
                                 <span>Stream</span>
                             </div>
                             <div className="inputs-wrapper-inner">
-                                <input type="text" id='all-time-subs' placeholder="All Time Subs" value={userData.subs.allTime ?? 0} onChange={handleInputChange}/>
-                                <input type="text" id='yearly-subs' placeholder="Yearly Subs" value={userData.subs.yearly ?? 0} onChange={handleInputChange}/>
-                                <input type="text" id='monthly-subs' placeholder="Monhtly Subs" value={userData.subs.monthly ?? 0} onChange={handleInputChange}/>
-                                <input type="text" id='weekly-subs' placeholder="Weekly Subs" value={userData.subs.weekly ?? 0} onChange={handleInputChange}/>
-                                <input type="text" id='stream-subs' placeholder="Stream Subs" value={userData.subs.stream ?? 0} onChange={handleInputChange}/>
+                                <input type="text" id='all-time-subs' placeholder="All Time Subs" value={userData.subs.allTime ?? 0} onChange={handleInputChange} />
+                                <input type="text" id='yearly-subs' placeholder="Yearly Subs" value={userData.subs.yearly ?? 0} onChange={handleInputChange} />
+                                <input type="text" id='monthly-subs' placeholder="Monhtly Subs" value={userData.subs.monthly ?? 0} onChange={handleInputChange} />
+                                <input type="text" id='weekly-subs' placeholder="Weekly Subs" value={userData.subs.weekly ?? 0} onChange={handleInputChange} />
+                                <input type="text" id='stream-subs' placeholder="Stream Subs" value={userData.subs.stream ?? 0} onChange={handleInputChange} />
                             </div>
                             <div className="inputs-wrapper-inner">
                                 <input type="text" id='all-time-bits' placeholder="All Time bits" value={userData.bits.allTime ?? 0} onChange={handleInputChange} />
@@ -213,6 +268,15 @@ function UserComponent({ userId, onClose }) {
                                 <input type="text" id='weekly-view-time' placeholder="Weekly view time" value={userData.viewTime.weekly ?? 0} onChange={handleInputChange} />
                                 <input type="text" id='stream-view-time' placeholder="Stream view time" value={userData.viewTime.stream ?? 0} onChange={handleInputChange} />
                             </div>
+                        </div>
+                        <h2>Currency</h2>
+                        <div className="user-currency-container">
+                            {currencies.map((currency) => (
+                                <div key={currency._id}>
+                                    <label htmlFor='currency'>{currency.name}</label>
+                                    <input type="text" id='currency' data-currency={currency.name} value={userData.currency[currency.name]} onChange={handleCurrencyChange} onBlur={updateCurrency}/>
+                                </div>)
+                            )}
                         </div>
                     </div>
                     <div className="user-actions-container">

@@ -231,3 +231,31 @@
 .inputs-wrapper-inner input {
     text-align: center;
 }
+
+.user-currency-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.user-currency-container div {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.user-currency-container label {
+    font-size: 1.5rem;
+    color: var(--font-color);
+    background-color: var(--terrestrial-color);
+    padding: 10px;
+    text-transform: uppercase;
+    width: 200px;
+    min-width: 200px;
+}

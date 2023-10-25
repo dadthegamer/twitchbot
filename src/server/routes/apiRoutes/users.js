@@ -29,7 +29,7 @@ router.get('/:id', async (req, res) => {
 router.put('/:id', async (req, res) => {
     try {
         const id = req.params.id;
-        const { update, value } = req.body;
+        let { update, value } = req.body;
         const userData = await usersDB.getUserByUserId(id);
 
         switch (update) {
@@ -93,6 +93,14 @@ router.put('/:id', async (req, res) => {
             case 'stream-view-time':
                 userData.viewTime.stream = value;
                 break;
+            case 'currency':
+                const { currency } = req.body;
+                // Conver to number
+                if (typeof value === 'string') {
+                    value = parseInt(value);
+                }
+                userData.currency[currency] = value;
+                break;
             default:
                 break;
         }
@@ -100,6 +108,7 @@ router.put('/:id', async (req, res) => {
         res.json({ message: `Success` });
     }
     catch (err) {
+        console.log(err);
         logger.error(`Error in updating user: ${err}`);
         res.status(500).send();
     }
