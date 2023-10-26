@@ -8,6 +8,8 @@ import SideNavbar from './components/SideNavBar';
 import TopNavbar from './components/TopNavBar';
 import Currency from './components/Currency';
 import ProgressBar from './components/overlayComponents/goalBar';
+import Leaderboard from './components/overlayComponents/Leaderboard';
+import Intermission from './components/overlayComponents/Intermission';
 import StartingSoon from './components/overlayComponents/startingSoon';
 import Quotes from './components/Quotes'
 import Streamathon from './components/Streamathon';
@@ -18,6 +20,7 @@ import Commands from './components/Commands';
 import Dashboard from './components/Dashboard';
 import Games from './components/Games';
 import CamOverlay from './components/overlayComponents/CamOverlay';
+
 
 
 function App() {
@@ -40,6 +43,8 @@ function App() {
         <Route path="startingsoon" element={<StartingSoon />} />
         <Route path="camoverlay" element={<CamOverlay />} />
         <Route path="prediction" element={<Prediction />} />
+        <Route path="leaderboard" element={<Leaderboard />} />
+        <Route path="intermission" element={<Intermission />} />
       </Route>
 
       {/* Main Routes */}

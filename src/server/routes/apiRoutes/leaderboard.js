@@ -6,12 +6,17 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
+        console.log('Getting leaderboard');
         let leaderboards = [];
 
         let leaderboard = [];
+        let data = {};
         const allTimeViewTime = await usersDB.getLeaderboardByViewTime('allTime');
         for (let i = 0; i < allTimeViewTime.length; i++) {
-            const data = {
+            if (allTimeViewTime[i].viewTime.allTime === 0) {
+                break;
+            };
+            data = {
                 displayName: allTimeViewTime[i].displayName,
                 profilePic: allTimeViewTime[i].profilePictureUrl,
                 amount: allTimeViewTime[i].viewTime.allTime,
@@ -25,10 +30,14 @@ router.get('/', async (req, res) => {
         });
     
         leaderboard = [];
-    
+        data = {};
+
         const monthlyViewTime = await usersDB.getLeaderboardByViewTime('monthly');
         for (let i = 0; i < monthlyViewTime.length; i++) {
-            const data = {
+            if (monthlyViewTime[i].viewTime.monthly === 0) {
+                break;
+            };
+            data = {
                 displayName: monthlyViewTime[i].displayName,
                 profilePic: monthlyViewTime[i].profilePictureUrl,
                 amount: monthlyViewTime[i].viewTime.monthly,
@@ -42,10 +51,15 @@ router.get('/', async (req, res) => {
         });
     
         leaderboard = [];
+        data = {};
+
     
         const weeklyViewTime = await usersDB.getLeaderboardByViewTime('weekly');
         for (let i = 0; i < weeklyViewTime.length; i++) {
-            const data = {
+            if (weeklyViewTime[i].viewTime.weekly === 0) {
+                break;
+            };
+            data = {
                 displayName: weeklyViewTime[i].displayName,
                 profilePic: weeklyViewTime[i].profilePictureUrl,
                 amount: weeklyViewTime[i].viewTime.weekly,
@@ -59,10 +73,15 @@ router.get('/', async (req, res) => {
         });
     
         leaderboard = [];
+        data = {};
+
     
         const streamViewTime = await usersDB.getLeaderboardByViewTime('stream');
         for (let i = 0; i < streamViewTime.length; i++) {
-            const data = {
+            if (streamViewTime[i].viewTime.stream === 0) {
+                break;
+            };
+            data = {
                 displayName: streamViewTime[i].displayName,
                 profilePic: streamViewTime[i].profilePictureUrl,
                 amount: streamViewTime[i].viewTime.stream,
@@ -76,10 +95,15 @@ router.get('/', async (req, res) => {
         });
     
         leaderboard = [];
+        data = {};
+
     
         const allTimeSubs = await usersDB.getLeaderboardBySubs('allTime');
         for (let i = 0; i < allTimeSubs.length; i++) {
-            const data = {
+            if (allTimeSubs[i].subs.allTime === 0) {
+                break;
+            };
+            data = {
                 displayName: allTimeSubs[i].displayName,
                 profilePic: allTimeSubs[i].profilePictureUrl,
                 amount: allTimeSubs[i].subs.allTime,
@@ -93,10 +117,15 @@ router.get('/', async (req, res) => {
         });
     
         leaderboard = [];
+        data = {};
+
     
         const yearlySubs = await usersDB.getLeaderboardBySubs('yearly');
         for (let i = 0; i < yearlySubs.length; i++) {
-            const data = {
+            if (yearlySubs[i].subs.yearly === 0) {
+                break;
+            };
+            data = {
                 displayName: yearlySubs[i].displayName,
                 profilePic: yearlySubs[i].profilePictureUrl,
                 amount: yearlySubs[i].subs.yearly,
@@ -110,10 +139,15 @@ router.get('/', async (req, res) => {
         });
     
         leaderboard = [];
+        data = {};
+
     
         const monthlySubs = await usersDB.getLeaderboardBySubs('monthly');
         for (let i = 0; i < monthlySubs.length; i++) {
-            const data = {
+            if (monthlySubs[i].subs.monthly === 0) {
+                break;
+            };
+            data = {
                 displayName: monthlySubs[i].displayName,
                 profilePic: monthlySubs[i].profilePictureUrl,
                 amount: monthlySubs[i].subs.monthly,
@@ -127,11 +161,16 @@ router.get('/', async (req, res) => {
         });
     
         leaderboard = [];
+        data = {};
+
     
         const weeklySubs = await usersDB.getLeaderboardBySubs('weekly');
         if (weeklySubs !== null) {
             for (let i = 0; i < weeklySubs.length; i++) {
-                const data = {
+                if (weeklySubs[i].subs.weekly === 0) {
+                    break;
+                };
+                data = {
                     displayName: weeklySubs[i].displayName,
                     profilePic: weeklySubs[i].profilePictureUrl,
                     amount: weeklySubs[i].subs.weekly,
@@ -152,11 +191,16 @@ router.get('/', async (req, res) => {
         }
     
         leaderboard = [];
+        data = {};
+
     
         const streamSubs = await usersDB.getLeaderboardBySubs('stream');
         if (streamSubs !== null) {
             for (let i = 0; i < streamSubs.length; i++) {
-                const data = {
+                if (streamSubs[i].subs.stream === 0) {
+                    break;
+                };
+                data = {
                     displayName: streamSubs[i].displayName,
                     profilePic: streamSubs[i].profilePictureUrl,
                     amount: streamSubs[i].subs.stream,
@@ -177,10 +221,15 @@ router.get('/', async (req, res) => {
         }
     
         leaderboard = [];
+        data = {};
+
     
         const allTimeBits = await usersDB.getLeaderboardByBits('allTime');
         for (let i = 0; i < allTimeBits.length; i++) {
-            const data = {
+            if (allTimeBits[i].bits.allTime === 0) {
+                break;
+            };
+            data = {
                 displayName: allTimeBits[i].displayName,
                 profilePic: allTimeBits[i].profilePictureUrl,
                 amount: allTimeBits[i].bits.allTime,
@@ -194,10 +243,15 @@ router.get('/', async (req, res) => {
         });
     
         leaderboard = [];
+        data = {};
+
     
         const yearlyBits = await usersDB.getLeaderboardByBits('yearly');
         for (let i = 0; i < yearlyBits.length; i++) {
-            const data = {
+            if (yearlyBits[i].bits.yearly === 0) {
+                break;
+            };
+            data = {
                 displayName: yearlyBits[i].displayName,
                 profilePic: yearlyBits[i].profilePictureUrl,
                 amount: yearlyBits[i].bits.yearly,
@@ -211,11 +265,16 @@ router.get('/', async (req, res) => {
         });
     
         leaderboard = [];
+        data = {};
+
     
         const monthlyBits = await usersDB.getLeaderboardByBits('monthly');
         if (monthlyBits !== null) {
             for (let i = 0; i < monthlyBits.length; i++) {
-                const data = {
+                if (monthlyBits[i].bits.monthly === 0) {
+                    break;
+                };
+                data = {
                     displayName: monthlyBits[i].displayName,
                     profilePic: monthlyBits[i].profilePictureUrl,
                     amount: monthlyBits[i].bits.monthly,
@@ -236,11 +295,16 @@ router.get('/', async (req, res) => {
         }
     
         leaderboard = [];
+        data = {};
+
     
         const weeklyBits = await usersDB.getLeaderboardByBits('weekly');
         if (weeklyBits !== null) {
             for (let i = 0; i < weeklyBits.length; i++) {
-                const data = {
+                if (weeklyBits[i].bits.weekly === 0) {
+                    break;
+                };
+                data = {
                     displayName: weeklyBits[i].displayName,
                     profilePic: weeklyBits[i].profilePictureUrl,
                     amount: weeklyBits[i].bits.weekly,
@@ -261,11 +325,16 @@ router.get('/', async (req, res) => {
         }
     
         leaderboard = [];
+        data = {};
+
     
         const streamBits = await usersDB.getLeaderboardByBits('stream');
         if (streamBits !== null) {
             for (let i = 0; i < streamBits.length; i++) {
-                const data = {
+                if (streamBits[i].bits.stream === 0) {
+                    break;
+                };
+                data = {
                     displayName: streamBits[i].displayName,
                     profilePic: streamBits[i].profilePictureUrl,
                     amount: streamBits[i].bits.stream,
@@ -286,13 +355,18 @@ router.get('/', async (req, res) => {
         }
     
         leaderboard = [];
+        data = {};
+
     
         const currencies = await currencyDB.getAllCurrencies();
         for (let i = 0; i < currencies.length; i++) {
             if (currencies[i].enabled) {
                 const currencyLeaderboard = await usersDB.getLeaderboardByCurrency(currencies[i].name);
                 for (let j = 0; j < currencyLeaderboard.length; j++) {
-                    const data = {
+                    if (currencyLeaderboard[j].currency[currencies[i].name] === 0) {
+                        break;
+                    };
+                    data = {
                         displayName: currencyLeaderboard[j].displayName,
                         profilePic: currencyLeaderboard[j].profilePictureUrl,
                         amount: currencyLeaderboard[j].currency[currencies[i].name],
