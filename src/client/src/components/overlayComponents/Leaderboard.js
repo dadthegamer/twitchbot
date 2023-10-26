@@ -59,7 +59,7 @@ function Leaderboard() {
                 currentLeaderboardIndex++;
                 setShowLeaderboard(false);
                 displayLeaderboard();
-            }, 2000); // Wait for 10 seconds before hiding
+            }, 10000); // Wait for 10 seconds before hiding
         } else {
             currentLeaderboardIndex++;
             displayLeaderboard(); // Call the function recursively to move to the next leaderboard

@@ -18,7 +18,7 @@ function Alert() {
     };
 
     useEffect(() => {
-        const socket = new WebSocket('ws://your-websocket-url');
+        const socket = new WebSocket('ws://192.168.1.34:3505');
 
         socket.onopen = () => {
             console.log('Connected to websocket server');
