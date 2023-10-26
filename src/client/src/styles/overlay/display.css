@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin&family=Montserrat:ital,wght@1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+    width: 1920px;
+    height: 1080px;
+}
+
+p {
+    font-size: 84px;
+    font-weight: 900;
+    color: black;
+}

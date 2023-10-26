@@ -8,6 +8,7 @@ import SideNavbar from './components/SideNavBar';
 import TopNavbar from './components/TopNavBar';
 import Currency from './components/Currency';
 import ProgressBar from './components/overlayComponents/goalBar';
+import Display from './components/overlayComponents/TVDisplay';
 import Leaderboard from './components/overlayComponents/Leaderboard';
 import Intermission from './components/overlayComponents/Intermission';
 import StartingSoon from './components/overlayComponents/startingSoon';
@@ -45,6 +46,7 @@ function App() {
         <Route path="prediction" element={<Prediction />} />
         <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="intermission" element={<Intermission />} />
+        <Route path="display" element={<Display />} />
       </Route>
 
       {/* Main Routes */}

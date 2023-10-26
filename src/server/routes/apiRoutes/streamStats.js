@@ -6,8 +6,7 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        const game = cache.get('streamGame');
-        const title = cache.get('streamTitle');
+        const streamInfo = cache.get('streamInfo');
         const live = cache.get('live');
         const currentViewers = cache.get('currentViewers');
         const streamStartedAt = cache.get('streamStartedAt');
@@ -15,8 +14,7 @@ router.get('/', async (req, res) => {
         const latestEvents = cache.get('latestEvents');
         const data = {
             streamInfo: {
-                game,
-                title,
+                streamInfo,
                 live,
                 currentViewers,
                 streamStartedAt,
