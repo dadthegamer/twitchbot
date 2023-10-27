@@ -7,7 +7,6 @@ function Leaderboard() {
     const [showLeaderboard, setShowLeaderboard] = useState(false);
     const [leaderboardTitle, setLeaderboardTitle] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-    const [currentLeaderboard, setCurrentLeaderboard] = useState(null);
     const [fetchedAllLeaderboards, setFetchedAllLeaderboards] = useState(false);
     const [currentLeaderboardData, setCurrentLeaderboardData] = useState([]);
     const [leaderboardDescription, setLeaderboardDescription] = useState('');

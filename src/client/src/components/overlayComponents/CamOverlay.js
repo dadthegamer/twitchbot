@@ -20,7 +20,7 @@ function CamOverlay() {
     useEffect(() => {
         // Function to initiate the WebSocket connection
         const connect = () => {
-            const ws = new WebSocket('ws://192.168.1.31:3505');
+            const ws = new WebSocket('ws://192.168.1.34:3505');
 
             ws.onopen = () => {
                 console.log('Connected to websocket server');
