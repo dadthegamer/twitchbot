@@ -6,7 +6,6 @@ function CamOverlay() {
     const [showAlertDetails, setShowAlertDetails] = useState(false);
     const [alertData, setAlertData] = useState({});
     const [connected, setConnected] = useState(false);
-    const [userName, setUserName] = useState('DadTheGam3r');
     const [animationDirection, setAnimationDirection] = useState('normal');
     const [animationDirection2, setAnimationDirection2] = useState('normal');
     const [alertColor, setAlertColor] = useState('#111111');
@@ -15,11 +14,10 @@ function CamOverlay() {
     const [socket, setSocket] = useState(null);
     const [displayAlertType, setDisplayAlertType] = useState(null);
 
-    const subsCountRef = useRef(subsCount);
-
     useEffect(() => {
         // Function to initiate the WebSocket connection
         const connect = () => {
+            if (connected) return;
             const ws = new WebSocket('ws://192.168.1.34:3505');
 
             ws.onopen = () => {
@@ -67,73 +65,19 @@ function CamOverlay() {
     }, []);
 
     useEffect(() => {
-        // Ref to track the current subs count
-    
-        // Function to get the current subs count from the server
-        const getSubsCount = async () => {
-            try {
-                const response = await fetch('/api/goals');
-                const data = await response.json();
-                for (let goal of data) {
-                    if (goal.name === 'monthlySubGoal') {
-                        subsCountRef.current = goal.current;  // Update the ref
-                        return goal;
-                    }
-                }
-            } catch (error) {
-                console.error('Error fetching subs count:', error);
-            }
-            return null; // Return null if the goal wasn't found or there was an error
-        };
-    
-        // Call the getSubsCount function initially
-    
-        // Call the getSubsCount function every 2 seconds. If the subs count changes, animate it
-        const intervalId = setInterval(() => {
-            getSubsCount().then((data) => {
-                if (data && data.current !== subsCount) {
-                    animateSubsCount(data.current);
-                }
-            });
-        }, 2000); // Adjust this interval for faster/slower counting
-    
-        // Clear the interval when the component unmounts
-        return () => clearInterval(intervalId);
-    }, []); // Empty dependency array to ensure this effect runs once
-
-
-
-
-    useEffect(() => {
-        // Function to animate the username
-        const animateUsername = () => {
-            const usernameElement = document.getElementById('username');
-            usernameElement.textContent = ''; // Clear the username
-
-            const usernameText = userName;
-            let index = 0;
-
-            const intervalId = setInterval(() => {
-                if (index < usernameText.length) {
-                    usernameElement.textContent += usernameText[index];
-                    index++;
-                } else {
-                    clearInterval(intervalId);
-                }
-            }, 100); // Adjust the speed of animation by changing the interval duration (in milliseconds)
-        };
-
-        // Call the animateUsername function initially
-        animateUsername();
-
-        // Call the animateUsername function every 10 seconds
-        const intervalId = setInterval(() => {
-            animateUsername();
-        }, 60000); // 10 seconds in milliseconds
-
-        // Clear the interval when the component unmounts
-        return () => clearInterval(intervalId);
-    }, [userName]);
+        const interval = setInterval(() => {
+            fetch('/api/goals')
+                .then(res => res.json())
+                .then(data => {
+                    // Find the sub goal data named dailySubGoal
+                    console.log(data);
+                    const subData = data.find(goal => goal.name === 'monthlySubGoal');
+                    const subGoal = subData.current;
+                    setSubsCount(subGoal);
+                });
+        }, 5000);
+        return () => clearInterval(interval);
+    }, []);
 
     const playAlert = (time)=> {
         showTheAlert();
@@ -252,9 +196,6 @@ function CamOverlay() {
                 borderColor: alertColor,
                 backgroundColor: 'transparent',
             }}>
-                <div className="cam-username">
-                    <span id='username'></span>
-                </div>
                 <div className="top-accent">
                     <div className="rectangle" style={{
                         backgroundColor: alertColor,

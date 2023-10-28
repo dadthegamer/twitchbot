@@ -93,26 +93,3 @@ export async function getChattersWithoutBots() {
         logger.error(`Error in getChattersWithoutBots: ${err}`);
     }
 }
-
-
-// Function to handle chatters
-export async function viewTimeHandler() {
-    try {
-        const live = cache.get('live');
-        const mintues = 1;
-        if (!live) {
-            return;
-        };
-        const chatters = await getChattersWithoutBots();
-        for (const chatter of chatters) {
-            const exists = usersDB.isFollower(chatter.userId);
-            if (exists) {
-                usersDB.increaseViewTime(chatter.userId, mintues);
-                usersDB.increaseUserValue(chatter.userId, 'leaderboard_points', 30);
-            }
-        }
-    }
-    catch (err) {
-        logger.error(`Error in viewTimeHandler: ${err}`);
-    }
-}

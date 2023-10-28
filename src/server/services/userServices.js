@@ -1096,6 +1096,9 @@ class UsersDB {
     // Method to increase the viewTime for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of minutes as a number.
     async increaseViewTime(userId, minutes) {
     try {
+        if (minutes === undefined) {
+            return;
+        }
         // Check if userId is a string
         if (typeof userId !== 'string') {
             userId = userId.toString();
@@ -1118,6 +1121,23 @@ class UsersDB {
         let user = this.cache.get(userId);
         if (!user) {
             user = await this.getUserByUserId(userId);
+        }
+
+        // Check if any of the view time properties are NaN. If they are then set them to 0
+        if (isNaN(user.viewTime.allTime)) {
+            user.viewTime.allTime = 0;
+        }
+        if (isNaN(user.viewTime.yearly)) {
+            user.viewTime.yearly = 0;
+        }
+        if (isNaN(user.viewTime.monthly)) {
+            user.viewTime.monthly = 0;
+        }
+        if (isNaN(user.viewTime.weekly)) {
+            user.viewTime.weekly = 0;
+        }
+        if (isNaN(user.viewTime.stream)) {
+            user.viewTime.stream = 0;
         }
         user.viewTime.allTime += minutes;
         user.viewTime.yearly += minutes;

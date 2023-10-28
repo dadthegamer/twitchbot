@@ -66,6 +66,9 @@ class ViewTimeService {
                 if (isFollower) {
                     // Add them to the view time cache if they are not already there and add 1 minute to their view time. Set the TTL to 15 minutes.
                     const viewTime = this.viewTimeCache.get(viewer.userId);
+                    if (viewTime === undefined) {
+                        this.viewTimeCache.set(viewer.userId, 1, 300);
+                    };
                     if (!viewTime) {
                         this.viewTimeCache.set(viewer.userId, 1, 300);
                     } else {
