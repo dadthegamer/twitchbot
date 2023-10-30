@@ -1,7 +1,8 @@
 import logger from "../utilities/logger.js";
 import { environment } from "../config/environmentVars.js";
-import { usersDB } from "../config/initializers.js";
+import { usersDB, cache } from "../config/initializers.js";
 import fs from 'fs';
+import { getChattersWithoutBots } from '../handlers/twitch/viewTimeHandler.js';
 
 class TaskCoordinator {
     constructor(twitchAPI, usersDB) {
@@ -20,7 +21,7 @@ class TaskCoordinator {
                 await this.getAllVips();
                 await this.getAllModerators();
                 await this.getBitsLeaderboard();
-                console.log('Task coordinator initialized');
+                await this.getViewers();
             }
         }
         catch (error) {
@@ -73,7 +74,7 @@ class TaskCoordinator {
         try {
             const vips = await this.twitchAPI.getChannelVips();
             for (const vip of vips) {
-                await this.usersDB.addVip(vip.userId);
+                await this.usersDB.addVip(vip.id);
             }
         }
         catch (error) {
@@ -105,6 +106,18 @@ class TaskCoordinator {
         catch (error) {
             console.log(error);
             logger.error(`Error getting user data: ${error}`);
+        }
+    }
+
+    // Method to get all viewers in chat every 2 minutes
+    async getViewers() {
+        try {
+            setInterval(async () => {
+                const viewers = await getChattersWithoutBots();
+                cache.set('currentViewers', viewers);
+            }, 120000);
+        } catch (error) {
+            logger.error(`Error in getViewers: ${error}`);
         }
     }
 }

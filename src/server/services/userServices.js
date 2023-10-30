@@ -213,6 +213,9 @@ class UsersDB {
     // Method to return rather a user is a follower or not from the cache
     async isFollower(userId) {
         try {
+            if (userId === undefined) {
+                return false;
+            }
             if (typeof userId !== 'string') {
                 userId = userId.toString();
             }
@@ -1096,7 +1099,8 @@ class UsersDB {
     // Method to increase the viewTime for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of minutes as a number.
     async increaseViewTime(userId, minutes) {
     try {
-        if (minutes === undefined) {
+        if (minutes === undefined || minutes === null) {
+            logger.error(`Error in increaseViewTime: Minutes is undefined`);
             return;
         }
         // Check if userId is a string

@@ -103,6 +103,23 @@ class GoalService {
     // Method to get all goals and store them in the cache
     async getAllGoals() {
         try {
+            // Check if the goals are in the cache. If they are return them. If not, get them from the database and store them in the cache
+            const goals = await this.cache.get('goals');
+            if (goals) {
+                return goals;
+            } else {
+                const goals = await this.dbConnection.collection(this.collectionName).find().toArray();
+                await this.cache.set('goals', goals);
+                return goals;
+            };
+        } catch (error) {
+            logger.error(`Error getting all goals: ${error}`);
+        }
+    }
+
+    // Method to get all goals in the database
+    async getAllGoalsDB() {
+        try {
             const goals = await this.dbConnection.collection(this.collectionName).find().toArray();
             await this.cache.set('goals', goals);
             return goals;
@@ -190,25 +207,24 @@ class GoalService {
                 logger.error(`Goal increase ${goalIncrease} is not a number`);
             }
         }
-        // Check and make sure the goal exists
-        const goalList = ['dailySubGoal', 'monthlySubGoal', 'dailyDonationGoal', 'monthlyDonationGoal', 'dailyBitsGoal', 'monthlyBitsGoal', 'dailyFollowersGoal', 'monthlyFollowersGoal']
-        if (!goalList.includes(goalName)) {
-            logger.error(`Goal ${goalName} does not exist`);
-            return;
-        }
         const goals = await this.cache.get('goals');
         // Check if the goal name exists
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
         }
         try {
+            // Increase the goal in the cache
+            const goalCache = goals.find(goal => goal.name === goalName);
+            goalCache.current += goalIncrease;
+            await this.cache.set('goals', goals);
+            // Increase the goal in the database
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $inc: { current: goalIncrease } });
-            await this.getAllGoals();
+            await this.getAllGoalsDB();
             // Check if the goal has been completed
             const goal = await this.getGoalByName(goalName);
             if (goal.current >= goal.goal) {
                 await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { completed: true } });
-            }
+            };
             return result;
         } catch (error) {
             logger.error(`Error increasing goal current: ${error}`);
@@ -259,7 +275,7 @@ class GoalService {
         try {
             this.increaseGoalCurrent('dailySubGoal', goalIncrease);
             this.increaseGoalCurrent('monthlySubGoal', goalIncrease);
-            await this.getAllGoals();
+            await this.getAllGoalsDB();
         } catch (error) {
             logger.error(`Error increasing subgoals: ${error}`);
         }

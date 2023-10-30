@@ -25,8 +25,13 @@ async function getLumiaStreamSettings() {
         return data;
     }
     catch (err) {
-        console.log(err);
-        logger.error(`Error in getLumiaStreamSettings: ${err}`);
+        const message = err.message;
+        // If the error message has 'ETIMEDOUT' in it, the server is offline
+        if (message.includes('ETIMEDOUT')) {
+            logger.error(`Error in getLumiaStreamSettings: ${err}`);
+        } else {
+            logger.error(`Error in getLumiaStreamSettings: ${err}`);
+        }
     }
 }
 

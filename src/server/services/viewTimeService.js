@@ -1,6 +1,6 @@
 import logger from "../utilities/logger.js";
 import { getChattersWithoutBots } from '../handlers/twitch/viewTimeHandler.js';
-import { currencyDB, usersDB } from '../config/initializers.js';
+import { cache, currencyDB, usersDB } from '../config/initializers.js';
 import NodeCache from 'node-cache';
 import { environment } from "../config/environmentVars.js";
 
@@ -52,24 +52,17 @@ class ViewTimeService {
             if (!live) {
                 return;
             };
-            const viewers = await this.getCurrentViewers();
-            if (!viewers) {
+            const viewers = cache.get('currentViewers');
+            if (!viewers || viewers.length === 0) {
                 return;
             }
             for (const viewer of viewers) {
-                if (environment === 'development') {
-                    console.log(`${viewer.userId} is a viewer`);
-                    return;
-                }
                 // Check if the viewer is a follower
                 const isFollower = usersDB.isFollower(viewer.userId);
                 if (isFollower) {
                     // Add them to the view time cache if they are not already there and add 1 minute to their view time. Set the TTL to 15 minutes.
                     const viewTime = this.viewTimeCache.get(viewer.userId);
-                    if (viewTime === undefined) {
-                        this.viewTimeCache.set(viewer.userId, 1, 300);
-                    };
-                    if (!viewTime) {
+                    if (!viewTime || viewTime === undefined) {
                         this.viewTimeCache.set(viewer.userId, 1, 300);
                     } else {
                         this.viewTimeCache.set(viewer.userId, viewTime + 1, 300);
@@ -79,11 +72,14 @@ class ViewTimeService {
                         await usersDB.increaseViewTime(viewer.userId, this.viewTimeCache.get(viewer.userId));
                         this.viewTimeCache.del(viewer.userId);
                     }
+                } else {
+                    continue;
+                }
             }
+        } catch (err) {
+            logger.error(`Error in viewTimeHandler: ${err}`);
         }
-    } catch (err) {
-        logger.error(`Error in viewTimeHandler: ${err}`);
-    }}
+    }
 }
 
 export default ViewTimeService;

@@ -10,23 +10,34 @@ class GoXLRClient {
     }
 
     connect() {
-        this.ws = new WebSocket(this.uri);
+        try {
+            this.ws = new WebSocket(this.uri);
 
-        this.ws.on('open', () => {
-            console.log('Connected to GoXLR API');
-        });
-
-        this.ws.on('message', (message) => {
-            this.handleMessage(JSON.parse(message));
-        });
-
-        this.ws.on('error', (error) => {
-            console.error(`Error: ${error.message}`);
-        });
-
-        this.ws.on('close', (code, reason) => {
-            console.log(`Connection closed, code: ${code}, reason: ${reason}`);
-        });
+            this.ws.on('open', () => {
+                console.log('Connected to GoXLR API');
+            });
+    
+            this.ws.on('message', (message) => {
+                this.handleMessage(JSON.parse(message));
+            });
+    
+            this.ws.on('error', (error) => {
+                console.error(`Error: ${error.message}`);
+            });
+    
+            this.ws.on('close', (code, reason) => {
+                console.log(`Connection closed, code: ${code}, reason: ${reason}`);
+            });
+        }
+        catch (err) {
+            const message = err.message;
+            // If the error message has 'ETIMEDOUT' in it, the server is offline
+            if (message.includes('ETIMEDOUT')) {
+                logger.error(`Error in GoXLRClient: ${err}`);
+            } else {
+                logger.error(`Error in GoXLRClient: ${err}`);
+            }
+        }
     }
 
     handleMessage(message) {
