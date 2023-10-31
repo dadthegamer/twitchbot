@@ -7,17 +7,18 @@ import logger from "../../../utilities/logger.js";
 export async function onFollow(e) {
     try {
         const { userId, userDisplayName } = e;
-        const userData = await usersDB.newUser(userId);
-        const profileImage = userData.profilePictureUrl;
+        const userData = e.getUser();
+        const { profilePictureUrl } = userData;
+        await usersDB.newUser(userId);
         const newFollowerData = {
             id: userId,
-            displayName: user,
-            profilePictureUrl: profileImage,
+            displayName: userDisplayName,
+            profilePictureUrl: profilePictureUrl,
         };
         await streamDB.setLatestEvent('latestFollower', newFollowerData);
         await currencyDB.addCurrencyForNewFollower(userId);
         addAlert(userId, userDisplayName, 'follow', 'followed!');
-        await streamDB.addFollower(user);
+        await streamDB.addFollower(userDisplayName);
         await streamathonService.addFollower();
     }
     catch (error) {
