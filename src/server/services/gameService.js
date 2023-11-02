@@ -69,6 +69,19 @@ class GameService {
         }
     }
 
+    // Method to get the jackpot from the database and set it in the cache
+    async getJackpotFromDB() {
+        try {
+            const data = await this.dbConnection.collection(this.collectionName).findOne({ id: 'jackpot' });
+            if (data) {
+                this.cache.set('jackpot', data);
+            }
+        }
+        catch (error) {
+            logger.error(`Error in getJackpotFromDB: ${error}`);
+        }
+    }
+
     // Method to increase the jackpot amount in the database and cache
     async increaseJackpot(amount) {
         try {
@@ -77,7 +90,7 @@ class GameService {
                 const jackpot = data.jackpot + amount;
                 await this.dbConnection.collection(this.collectionName).updateOne({ id: 'jackpot' }, { $set: { jackpot: jackpot } });
                 // Update the cache with the new jackpot amount
-                this.cache.set('jackpot', { jackpot: jackpot });
+                this.getJackpotFromDB();
             }
         }
         catch (error) {

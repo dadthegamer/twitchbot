@@ -57,7 +57,7 @@ export async function spinHandler(userDisplayName, userId, messageID) {
         const jackpotData = await getJackpot();
         const { currency, jackpotPCT } = jackpotData;
         const spin = getRandomInt(1, maxJackPot);
-        if (spin <= jackpotData.jackpotPCT) {
+        if (spin <= jackpotPCT) {
             const amount = jackpotData.jackpot;
             await usersDB.increaseCurrency(userId, jackpotData.currency, amount);
             const formatJackpot = numberWithCommas(amount);

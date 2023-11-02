@@ -58,7 +58,7 @@ class ViewTimeService {
             }
             for (const viewer of viewers) {
                 // Check if the viewer is a follower
-                const isFollower = usersDB.isFollower(viewer.userId);
+                const isFollower = await usersDB.isFollower(viewer.userId);
                 if (isFollower) {
                     // Add them to the view time cache if they are not already there and add 1 minute to their view time. Set the TTL to 15 minutes.
                     const viewTime = this.viewTimeCache.get(viewer.userId);

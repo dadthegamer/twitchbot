@@ -399,6 +399,9 @@ class CurrencyService {
                         }
                         // Get the viewers
                         const viewers = this.cache.get('currentViewers');
+                        if (viewers === undefined || viewers.length === 0) {
+                            return;
+                        }
                         for (const viewer of viewers) {
                             // Check if the viewer is a follower, subscriber, vip, or moderator
                             const roles = await this.userRolesHandler(viewer.userId, name);
