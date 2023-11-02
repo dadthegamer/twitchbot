@@ -49,7 +49,7 @@ function CamOverlay() {
                     if (!socket || socket.readyState === WebSocket.CLOSED || connected === false) {
                         connect();
                     }
-                }, 1000);
+                }, 2500);
             };
         }
 
@@ -73,6 +73,7 @@ function CamOverlay() {
                     console.log(data);
                     const subData = data.find(goal => goal.name === 'monthlySubGoal');
                     const subGoal = subData.current;
+                    console.log(subGoal);
                     setSubsCount(subGoal);
                 });
         }, 5000);

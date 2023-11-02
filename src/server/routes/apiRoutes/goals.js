@@ -14,7 +14,6 @@ router.get('/', async (req, res) => {
 });
 
 router.put('/', async (req, res) => {
-    console.log(req.body);
     try {
         let { goal, update } = req.body;
 

@@ -160,7 +160,6 @@ class GoalService {
 
     // Method to set a goal's current
     async setGoalCurrent(goalName, goalCurrent) {
-        console.log(goalCurrent);
         if (typeof goalCurrent !== 'number') {
             goalCurrent = parseInt(goalCurrent);
             // If the goalIncrease is not a number, then return an error
@@ -174,7 +173,7 @@ class GoalService {
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { current: goalCurrent } });
-            await this.getAllGoals();
+            await this.getAllGoalsDB();
             return result;
         } catch (error) {
             logger.error(`Error setting goal current: ${error}`);
@@ -190,7 +189,7 @@ class GoalService {
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { description: goalDescription } });
-            await this.getAllGoals();
+            await this.getAllGoalsDB();
             return result;
         } catch (error) {
             logger.error(`Error setting goal description: ${error}`);
@@ -240,7 +239,7 @@ class GoalService {
         try {
             console.log(`Goal ${goalName} enabled: ${enabled}`)
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { enabled } });
-            await this.getAllGoals();
+            await this.getAllGoalsDB();
             return result;
         } catch (error) {
             logger.error(`Error enabling goal: ${error}`);
@@ -255,7 +254,7 @@ class GoalService {
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { goal, current, description, handlers } });
-            await this.getAllGoals();
+            await this.getAllGoalsDB();
             return result;
         } catch (error) {
             logger.error(`Error updating goal: ${error}`);
@@ -331,7 +330,7 @@ class GoalService {
         }
         try {
             this.increaseGoalCurrent('dailyFollowersGoal', goalIncrease);
-            await this.getAllGoals();
+            await this.getAllGoalsDB();
         } catch (error) {
             logger.error(`Error increasing followers goal: ${error}`);
         }
