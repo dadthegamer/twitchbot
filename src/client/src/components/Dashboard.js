@@ -18,7 +18,6 @@ function Dashboard() {
                 setMessages(prevMessages => [...prevMessages, data.payload]);
             }
         };
-
         // Don't forget to close the WebSocket connection when the component unmounts
         return () => ws.close();
     }, []);

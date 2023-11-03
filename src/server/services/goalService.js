@@ -1,4 +1,5 @@
 import logger from "../utilities/logger.js";
+import { webSocket } from '../config/initializers.js';
 
 // User class 
 class GoalService {
@@ -108,8 +109,7 @@ class GoalService {
             if (goals) {
                 return goals;
             } else {
-                const goals = await this.dbConnection.collection(this.collectionName).find().toArray();
-                await this.cache.set('goals', goals);
+                const goals = await this.getAllGoalsDB();
                 return goals;
             };
         } catch (error) {
@@ -164,16 +164,20 @@ class GoalService {
             goalCurrent = parseInt(goalCurrent);
             // If the goalIncrease is not a number, then return an error
             if (isNaN(goalCurrent)) {
+                console.log(`Goal set ${goalCurrent} is not a number`);
                 logger.error(`Goal set ${goalCurrent} is not a number`);
             }
         }
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
+            console.log(`Goal ${goalName} does not exist`);
             logger.error(`Goal ${goalName} does not exist`);
         }
         try {
+            console.log(`Goal ${goalName} current: ${goalCurrent}`);
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { current: goalCurrent } });
             await this.getAllGoalsDB();
+            webSocket.subsUpdate();
             return result;
         } catch (error) {
             logger.error(`Error setting goal current: ${error}`);
@@ -205,12 +209,12 @@ class GoalService {
             if (isNaN(goalIncrease)) {
                 logger.error(`Goal increase ${goalIncrease} is not a number`);
             }
-        }
+        };
         const goals = await this.cache.get('goals');
         // Check if the goal name exists
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
-        }
+        };
         try {
             // Increase the goal in the cache
             const goalCache = goals.find(goal => goal.name === goalName);

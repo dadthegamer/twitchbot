@@ -16,7 +16,6 @@ router.get('/', async (req, res) => {
 router.put('/', async (req, res) => {
     try {
         let { goal, update } = req.body;
-
         switch (goal) {
             case 'Daily Sub Goal':
                 goal = 'dailySubGoal';

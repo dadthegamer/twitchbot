@@ -1,6 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/overlay/cam.css';
 
+const url = 'ws://localhost:8080';
+
+// let ws = new WebSocket(url);
+
 function CamOverlay() {
     const [showAlert, setShowAlert] = useState(false);
     const [showAlertDetails, setShowAlertDetails] = useState(false);
@@ -11,14 +15,12 @@ function CamOverlay() {
     const [alertColor, setAlertColor] = useState('#111111');
     const [fontColor, setFontColor] = useState('white');
     const [subsCount, setSubsCount] = useState(0);
-    const [socket, setSocket] = useState(null);
     const [displayAlertType, setDisplayAlertType] = useState(null);
+    const [socket, setSocket] = useState(null);
 
     useEffect(() => {
-        // Function to initiate the WebSocket connection
-        const connect = () => {
-            if (connected) return;
-            const ws = new WebSocket('ws://192.168.1.34:3505');
+        const establishConnection = () => {
+            const ws = new WebSocket(url);
 
             ws.onopen = () => {
                 console.log('Connected to websocket server');
@@ -28,65 +30,56 @@ function CamOverlay() {
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
+                console.log(data);
                 if (data.type === 'alert') {
                     console.log(data.payload);
                     setAlertData(data.payload);
                     playAlert(data.payload.alertTime);
-                }
+                } else if (data.type === 'subsUpdate') {
+                    console.log(data.payload);
+                    setSubsCount(data.payload.monthlySubs);
+                };
             };
 
             ws.onerror = (error) => {
                 console.error('WebSocket Error:', error);
             };
 
-            ws.onclose = (event) => {
-                console.log('Disconnected from WebSocket server');
+            ws.onclose = () => {
+                console.log('Disconnected');
                 setConnected(false);
-                setSocket(null);
-                // If connection is closed, try to reconnect after 1 second
-                setTimeout(() => {
-                    console.log('Attempting to reconnect...');
-                    if (!socket || socket.readyState === WebSocket.CLOSED || connected === false) {
-                        connect();
-                    }
-                }, 2500);
+                // Reconnection logic should not be here; it will be handled by the useEffect cleanup.
             };
-        }
 
-        // Initially connect
-        connect();
+            return ws;
+        };
+
+        let ws = establishConnection();
+
+        // Reconnection logic
+        const intervalId = setInterval(() => {
+            if (!connected && (!ws || ws.readyState === WebSocket.CLOSED)) {
+                console.log('Reconnecting...');
+                ws = establishConnection();
+            }
+        }, 5000);
 
         // Cleanup function to clear the resources when component unmounts
         return () => {
-            if (socket) {
-                socket.close();
+            clearInterval(intervalId); // Clear the interval for reconnection attempts
+            if (ws) {
+                ws.close(); // Close the WebSocket connection if it's open
             }
-        }
+        };
     }, []);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            fetch('/api/goals')
-                .then(res => res.json())
-                .then(data => {
-                    // Find the sub goal data named dailySubGoal
-                    console.log(data);
-                    const subData = data.find(goal => goal.name === 'monthlySubGoal');
-                    const subGoal = subData.current;
-                    console.log(subGoal);
-                    setSubsCount(subGoal);
-                });
-        }, 5000);
-        return () => clearInterval(interval);
-    }, []);
-
-    const playAlert = (time)=> {
+    const playAlert = (time) => {
         showTheAlert();
         console.log(alertData);
         setTimeout(() => {
             hideTheAlert();
         }
-        , (time-1000));
+            , (time - 1000));
     };
 
     const showTheAlert = () => {

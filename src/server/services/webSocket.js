@@ -1,8 +1,10 @@
-// server.js
 import { WebSocketServer } from 'ws';
 import { getRandomInt } from '../utilities/utils.js';
 import logger from '../utilities/logger.js';
+import { cache, goalDB } from '../config/initializers.js';
 
+
+let connectedDevices = 0;
 // Calss for the WebSocket server
 export class WebSocket {
     constructor() {
@@ -11,17 +13,21 @@ export class WebSocket {
             logger.info('WebSocket server started on port 8080...');
         });
         this.wss.on('connection', (ws) => {
+            this.subsUpdate();
             console.log('Client connected');
+            connectedDevices++;
             this.notification({ 
                 notification: 'Connected to websocket',
                 classification: 'info',
                 read: false,
                 createdAt: new Date()
                 });
+            console.log(`Connected devices: ${connectedDevices}`);
             ws.on('message', (message) => {
                 console.log(`Received message => ${message}`);
             });
             ws.on('close', () => {
+                connectedDevices--;
                 console.log('Client disconnected');
             });
         });
@@ -52,11 +58,6 @@ export class WebSocket {
         return this.wss.clients;
     }
 
-    // Method to send updates when subdata is updated
-    subsUpdate(payload) {
-        this.broadcastMessage('subsUpdate', payload);
-    }
-
     // Method to send welcome message
     welcomeMessage(payload) {
         this.broadcastMessage('welcome', payload);
@@ -75,6 +76,21 @@ export class WebSocket {
             message: data.message,
         }
         this.broadcastMessage('tts', payload);
+    }
+
+    // Method to send sub update
+    subsUpdate() {
+        const data = cache.get('goals');
+        const monthlySubsData = data.find(goal => goal.name === 'monthlySubGoal');
+        const monthlySubs = monthlySubsData.current;
+
+        const streamSubsData = data.find(goal => goal.name === 'dailySubGoal');
+        const streamSubs = streamSubsData.current;
+        const payload = {
+            monthlySubs,
+            streamSubs,
+        }
+        this.broadcastMessage('subsUpdate', payload);
     }
 
     // Method to send a new notification

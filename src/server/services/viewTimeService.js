@@ -37,7 +37,6 @@ class ViewTimeService {
     async viewTimeHandlerInterval() {
         try {
             setInterval(async () => {
-                await this.getCurrentViewers();
                 this.viewTimeHandler();
             }, 60000);
         } catch (err) {

@@ -21,6 +21,7 @@ class TaskCoordinator {
                 await this.getAllVips();
                 await this.getAllModerators();
                 await this.getBitsLeaderboard();
+                await getChattersWithoutBots();
                 await this.getViewers();
             }
         }
@@ -115,7 +116,7 @@ class TaskCoordinator {
             setInterval(async () => {
                 const viewers = await getChattersWithoutBots();
                 cache.set('currentViewers', viewers);
-            }, 120000);
+            }, 60000);
         } catch (error) {
             logger.error(`Error in getViewers: ${error}`);
         }
