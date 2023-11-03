@@ -4,7 +4,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Cabin', sans-serif;
 }
 
 :root {
@@ -23,6 +22,7 @@
     justify-content: center;
     width: 100%;
     gap: 10px;
+    font-family: 'Cabin', sans-serif;
 }
 
 .goal-container {

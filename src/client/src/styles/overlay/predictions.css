@@ -4,11 +4,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
-}
-
-body {
-    font-family: 'Montserrat', sans-serif;
 }
 
 :root {
@@ -35,6 +30,7 @@ body {
     min-width: var(--width);
     overflow: hidden;
     animation: popIn 0.25s ease-in-out;
+    font-family: 'Montserrat', sans-serif;
 }
 
 #prediction-title {

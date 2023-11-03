@@ -164,17 +164,14 @@ class GoalService {
             goalCurrent = parseInt(goalCurrent);
             // If the goalIncrease is not a number, then return an error
             if (isNaN(goalCurrent)) {
-                console.log(`Goal set ${goalCurrent} is not a number`);
                 logger.error(`Goal set ${goalCurrent} is not a number`);
             }
         }
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
-            console.log(`Goal ${goalName} does not exist`);
             logger.error(`Goal ${goalName} does not exist`);
         }
         try {
-            console.log(`Goal ${goalName} current: ${goalCurrent}`);
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { current: goalCurrent } });
             await this.getAllGoalsDB();
             webSocket.subsUpdate();

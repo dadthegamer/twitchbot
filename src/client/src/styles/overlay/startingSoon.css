@@ -12,11 +12,6 @@
     inherits: false;
 }
 
-/* body {
-    background-color: transparent !important;
-    font-family: 'Montserrat', sans-serif !important;
-} */
-
 .first-container {
     display: flex;
     flex-direction: column;
@@ -75,6 +70,7 @@
     border-image: linear-gradient(var(--angle), red, blue);
     border-image-slice: 1;
     animation: rotate 10s linear infinite;
+    font-family: 'Montserrat', sans-serif !important;
 }
 
 .social-icons {

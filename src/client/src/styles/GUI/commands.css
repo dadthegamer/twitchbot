@@ -4,7 +4,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Cabin', sans-serif;
 }
 
 :root {
@@ -25,6 +24,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    font-family: 'Cabin', sans-serif;
 }
 
 .search-bar {

@@ -7,7 +7,6 @@ import Users from './components/Users';
 import SideNavbar from './components/SideNavBar';
 import TopNavbar from './components/TopNavBar';
 import Currency from './components/Currency';
-import ProgressBar from './components/overlayComponents/goalBar';
 import Display from './components/overlayComponents/TVDisplay';
 import Leaderboard from './components/overlayComponents/Leaderboard';
 import Intermission from './components/overlayComponents/Intermission';
@@ -21,7 +20,7 @@ import Commands from './components/Commands';
 import Dashboard from './components/Dashboard';
 import Games from './components/Games';
 import CamOverlay from './components/overlayComponents/CamOverlay';
-
+import ProgressBar from './components/overlayComponents/goalBar';
 
 
 function App() {
@@ -30,6 +29,7 @@ function App() {
   useEffect(() => {
     if (location.pathname.startsWith('/overlay')) {
       document.body.style.backgroundColor = 'transparent';
+      document.body.style.fontFamily = 'Roboto, sans-serif';
     } else {
       document.body.style.backgroundColor = '#11111';
       document.body.style.fontFamily = 'Cabin, sans-serif'

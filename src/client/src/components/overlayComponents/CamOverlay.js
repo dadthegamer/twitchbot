@@ -3,7 +3,6 @@ import '../../styles/overlay/cam.css';
 
 const url = 'ws://localhost:8080';
 
-// let ws = new WebSocket(url);
 
 function CamOverlay() {
     const [showAlert, setShowAlert] = useState(false);

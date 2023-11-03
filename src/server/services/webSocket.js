@@ -83,12 +83,18 @@ export class WebSocket {
         const data = cache.get('goals');
         const monthlySubsData = data.find(goal => goal.name === 'monthlySubGoal');
         const monthlySubs = monthlySubsData.current;
+        const monthlySubGoal = monthlySubsData.goal;
 
         const streamSubsData = data.find(goal => goal.name === 'dailySubGoal');
         const streamSubs = streamSubsData.current;
+        const streamSubGoal = streamSubsData.goal;
+
+
         const payload = {
             monthlySubs,
+            monthlySubGoal,
             streamSubs,
+            streamSubGoal,
         }
         this.broadcastMessage('subsUpdate', payload);
     }

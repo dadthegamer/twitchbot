@@ -4,7 +4,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Cabin', sans-serif;
 }
 
 :root {
@@ -31,6 +30,7 @@
     position: fixed;
     top: 0;
     left: 0;
+    font-family: 'Cabin', sans-serif;
 }
 
 .actions-header {

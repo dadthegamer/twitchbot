@@ -4,7 +4,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Montserrat', sans-serif;
 }
 
 :root {
@@ -13,10 +12,6 @@
     --terrestrial-color: #1F1F1F;
     --secondary-color: #005AFF;
     --font-color: #FFFFFF;
-}
-
-body {
-    font-family: 'Montserrat', sans-serif;
 }
 
 .intermission-container {
