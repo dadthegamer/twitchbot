@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/overlay/cam.css';
 
-const url = 'ws://localhost:8080';
-
+// const url = 'ws://localhost:8080';
+const url = 'ws://192..168.1.34:3505';
 
 function CamOverlay() {
     const [showAlert, setShowAlert] = useState(false);

@@ -3,7 +3,7 @@ import '../../styles/overlay/progressBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGift } from '@fortawesome/free-solid-svg-icons';
 
-const url = 'ws://localhost:8080';
+const url = 'ws://192..168.1.34:3505';
 
 function ProgressBar() {
     const [connected, setConnected] = useState(false);
