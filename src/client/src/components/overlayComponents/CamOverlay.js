@@ -45,7 +45,6 @@ function CamOverlay() {
             ws.onclose = () => {
                 console.log('Disconnected');
                 setConnected(false);
-                // Reconnection logic should not be here; it will be handled by the useEffect cleanup.
             };
 
             return ws;

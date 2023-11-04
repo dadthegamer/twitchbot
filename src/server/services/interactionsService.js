@@ -7,6 +7,7 @@ class InteractionsDbService {
         this.cache = cache;
         this.getRoasts();
         this.getAllQuotes();
+        this.getTvMessage();
     }
 
     // Method to get all the roasts from the database
@@ -165,6 +166,35 @@ class InteractionsDbService {
         }
         catch (err) {
             logger.error(`Error in deleteQuote: ${err}`);
+        }
+    }
+
+    // Method to set the message that is displayed on the tv
+    async setTvMessage(message) {
+        try {
+            await this.dbConnection.collection('gameSettings').updateOne({ id: 'display' }, 
+                { $set: 
+                    { 
+                    message: message
+                    } 
+                }
+            );
+            this.cache.set('tvMessage', message);
+        }
+        catch (err) {
+            logger.error(`Error in setTvMessage: ${err}`);
+        }
+    }
+
+    // Method to get the message that is displayed on the tv and store it in the cache
+    async getTvMessage() {
+        try {
+            const tvMessage = await this.dbConnection.collection('gameSettings').findOne({ id: 'display' });
+            this.cache.set('tvMessage', tvMessage.message);
+            return tvMessage.message;
+        }
+        catch (err) {
+            logger.error(`Error in getTvMessage: ${err}`);
         }
     }
 }

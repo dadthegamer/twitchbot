@@ -4,6 +4,7 @@ import { ttsHandler } from "./actionHandlers.js/ttsHandler.js";
 import { usersDB, interactionsDB } from "../config/initializers.js";
 import logger from "../utilities/logger.js";
 import { replyHandler } from "./actionHandlers.js/replyHandler.js";
+import { displayHandler } from "./actionHandlers.js/displayHandler.js";
 
 
 // Method to evaluate the handler
@@ -61,6 +62,12 @@ export async function evalulate(handler, context) {
                 }
                 catch (err) {
                     logger.error(`Error in createQuote: ${err}`);
+                }
+            case 'setMessage':
+                try {
+                    displayHandler(input);
+                } catch (err) {
+                    logger.error(`Error in setMessage: ${err}`);
                 }
             default:
                 console.log(`Handler not found: ${handler}`);

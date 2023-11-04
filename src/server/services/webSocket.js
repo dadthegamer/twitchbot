@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 import { getRandomInt } from '../utilities/utils.js';
 import logger from '../utilities/logger.js';
-import { cache, chatClient } from '../config/initializers.js';
+import { cache, chatClient, interactionsDB } from '../config/initializers.js';
 
 
 let connectedDevices = 0;
@@ -14,6 +14,7 @@ export class WebSocket {
         });
         this.wss.on('connection', (ws) => {
             this.subsUpdate();
+            this.displayMessage();
             console.log('Client connected');
             connectedDevices++;
             this.notification({ 
@@ -141,5 +142,14 @@ export class WebSocket {
     // Method to send a chat message from tiktok chat
     tiktokChatMessage(payload) {
         this.broadcastMessage('chatMessage', payload);
+    }
+
+    // Method to send a message to the display
+    displayMessage() {
+        const message = cache.get('tvMessage');
+        const payload = {
+            message,
+        };
+        this.broadcastMessage('displayMessage', payload);
     }
 }
