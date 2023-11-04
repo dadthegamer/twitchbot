@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 import { getRandomInt } from '../utilities/utils.js';
 import logger from '../utilities/logger.js';
-import { cache, goalDB } from '../config/initializers.js';
+import { cache, chatClient } from '../config/initializers.js';
 
 
 let connectedDevices = 0;
@@ -24,7 +24,19 @@ export class WebSocket {
                 });
             console.log(`Connected devices: ${connectedDevices}`);
             ws.on('message', (message) => {
-                console.log(`Received message => ${message}`);
+                try {
+                    const data = JSON.parse(message);
+                    if (data.type === 'chatMessage') {
+                        if (data.payload.service === 'twitch') {
+                            console.log(data.payload);
+                            chatClient.say(data.payload.message);
+                        } else if (data.payload.service === 'tiktok') {
+                            console.log(data.payload);
+                        }
+                    }
+                } catch (error) {
+                    logger.error(`Error parsing message in websocket: ${error}`);
+                }
             });
             ws.on('close', () => {
                 connectedDevices--;
@@ -35,10 +47,14 @@ export class WebSocket {
 
     // Method to send a message to the client
     broadcastMessage(type, payload) {
-        const message = JSON.stringify({ type, payload });
-        this.wss.clients.forEach((client) => {
-            client.send(message);
-        });
+        try {
+            const message = JSON.stringify({ type, payload });
+            this.wss.clients.forEach((client) => {
+                client.send(message);
+            });
+        } catch (error) {
+            logger.error(`Error sending message in websocket: ${error}`);
+        }
     }
 
     // Method to send a message to the client
@@ -70,33 +86,41 @@ export class WebSocket {
 
     // Method to send a new TTS message
     TTS(data) {
-        const payload = {
-            id: getRandomInt(100000, 999999),
-            img: data.img,
-            message: data.message,
+        try {
+            const payload = {
+                id: getRandomInt(100000, 999999),
+                img: data.img,
+                message: data.message,
+            }
+            this.broadcastMessage('tts', payload);
+        } catch (error) {
+            logger.error(`Error sending TTS message in websocket: ${error}`);
         }
-        this.broadcastMessage('tts', payload);
     }
 
     // Method to send sub update
     subsUpdate() {
-        const data = cache.get('goals');
-        const monthlySubsData = data.find(goal => goal.name === 'monthlySubGoal');
-        const monthlySubs = monthlySubsData.current;
-        const monthlySubGoal = monthlySubsData.goal;
-
-        const streamSubsData = data.find(goal => goal.name === 'dailySubGoal');
-        const streamSubs = streamSubsData.current;
-        const streamSubGoal = streamSubsData.goal;
-
-
-        const payload = {
-            monthlySubs,
-            monthlySubGoal,
-            streamSubs,
-            streamSubGoal,
+        try {
+            const data = cache.get('goals');
+            const monthlySubsData = data.find(goal => goal.name === 'monthlySubGoal');
+            const monthlySubs = monthlySubsData.current;
+            const monthlySubGoal = monthlySubsData.goal;
+    
+            const streamSubsData = data.find(goal => goal.name === 'dailySubGoal');
+            const streamSubs = streamSubsData.current;
+            const streamSubGoal = streamSubsData.goal;
+    
+    
+            const payload = {
+                monthlySubs,
+                monthlySubGoal,
+                streamSubs,
+                streamSubGoal,
+            }
+            this.broadcastMessage('subsUpdate', payload);
+        } catch (error) {
+            logger.error(`Error sending subs update in websocket: ${error}`);
         }
-        this.broadcastMessage('subsUpdate', payload);
     }
 
     // Method to send a new notification

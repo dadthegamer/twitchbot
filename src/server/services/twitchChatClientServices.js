@@ -3,6 +3,7 @@ import { ChatClient } from '@twurple/chat';
 import { environment } from '../config/environmentVars.js';
 import { onMessageHandler } from '../handlers/twitch/chatHandlers/onMessage.js';
 import logger from "../utilities/logger.js";
+import { cache } from '../config/initializers.js';
 
 // Class to connect to Twitch chat
 class TwitchChatClient {
@@ -16,15 +17,17 @@ class TwitchChatClient {
             rejoinChannelsOnReconnect: true,
             isAlwaysMod: true,
         });
+        cache.set('twitchChatConnected', false)
     }
 
     // Method to connect to Twitch chat
     async connectToBotChat() {
         try {
+            cache.set('twitchChatConnected', true)
             this.chatClient.connect();
             this.chatClient.join('dadthegam3r');
             this.chatClient.onConnect(() => {
-                if (environment === 'production'){
+                if (environment === 'production') {
                     this.chatClient.say('dadthegam3r', 'The Dadb0t is online!');
                 } else {
                     console.log('The Dadb0t is online!')
@@ -32,7 +35,6 @@ class TwitchChatClient {
             });
             this.chatClient.onDisconnect(() => {
                 logger.error('Disconnected from Twitch chat');
-                this.reconnect();
             });
             this.chatClient.onMessage(async (channel, user, message, msg) => {
                 await onMessageHandler(channel, user, message, msg, this.bot)
@@ -40,6 +42,33 @@ class TwitchChatClient {
         }
         catch (error) {
             logger.error(`Error connecting to Twitch chat: ${error}`);
+        }
+    }
+
+    // Method to disconnect from Twitch chat
+    async disconnectFromBotChat() {
+        try {
+            this.chatClient.quit();
+            this.chatClient.part('dadthegam3r');
+            cache.set('twitchChatConnected', false)
+        }
+        catch (error) {
+            logger.error(`Error disconnecting from Twitch chat: ${error}`);
+        }
+    }
+
+    // Method to toogle the connection status of Twitch chat
+    async toggleConnection() {
+        try {
+            if (cache.get('twitchChatConnected')) {
+                this.disconnectFromBotChat();
+            }
+            else {
+                this.connectToBotChat();
+            }
+        }
+        catch (error) {
+            logger.error(`Error toggling Twitch chat connection: ${error}`);
         }
     }
 

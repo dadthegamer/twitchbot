@@ -8,13 +8,16 @@ import { onBits } from '../handlers/twitch/eventHandlers/cheerHandler.js';
 import { onFollow } from '../handlers/twitch/eventHandlers/followHandler.js';
 import { onGiftSubscription } from '../handlers/twitch/eventHandlers/giftSubscription.js';
 import { onSubscription } from '../handlers/twitch/eventHandlers/subHandler.js';
+import { cache } from '../config/initializers.js';
 
+let listener;
 // Event listener for Twitch events
-export async function startEventListener(apiClient) {
+export async function initializerEventListener(apiClient) {
     const userId = '64431397';
     try {
-        const listener = new EventSubWsListener({ apiClient });
-        listener.start();
+        cache.set('twitchConnected', false);
+        listener = new EventSubWsListener({ apiClient });
+
 
         // Event listeners for predictions
         listener.onChannelPredictionBegin(userId, onPredictionStart);
@@ -49,3 +52,44 @@ export async function startEventListener(apiClient) {
         throw new Error(`Error starting event listener: ${error}`);
     }
 }
+
+export async function startEventListener() {
+    try {
+        await listener.start();
+        logger.info('Event listener started');
+        cache.set('twitchConnected', true);
+    }
+    catch (error) {
+        logger.error(`Error starting event listener: ${error}`);
+        throw new Error(`Error starting event listener: ${error}`);
+    }
+};
+
+export async function stopEventListener() {
+    try {
+        await listener.stop();
+        logger.info('Event listener stopped');
+        cache.set('twitchConnected', false);
+    }
+    catch (error) {
+        logger.error(`Error stopping event listener: ${error}`);
+        throw new Error(`Error stopping event listener: ${error}`);
+    }
+};
+
+// Function to toggle the event listener on and off based on the current status
+export async function toggleEventListener() {
+    try {
+        const status = cache.get('twitchConnected');
+        if (status) {
+            await stopEventListener();
+        }
+        else {
+            await startEventListener();
+        }
+    }
+    catch (error) {
+        logger.error(`Error toggling event listener: ${error}`);
+        throw new Error(`Error toggling event listener: ${error}`);
+    }
+};

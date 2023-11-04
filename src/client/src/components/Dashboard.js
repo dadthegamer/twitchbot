@@ -5,13 +5,23 @@ import { faTiktok, faTwitch } from '@fortawesome/free-brands-svg-icons';
 import TwitchMessage from './SubComponents/twitchMessage';
 
 
+const url = 'ws://localhost:8080';
+
+
 function Dashboard() {
     const [messages, setMessages] = useState([]);
-    const [messageType, setMessageType] = useState(''); 
+    const [messageType, setMessageType] = useState('');
+    const [service, setService] = useState('twitch');
+    const [ws, setWs] = useState(null);
 
     // Connect to the websocket server and display any messages that come through
     useEffect(() => {
-        const ws = new WebSocket('ws://localhost:8080');
+        const ws = new WebSocket(url);
+
+        ws.onopen = () => {
+            console.log('Connected to the websocket server');
+            setWs(ws);
+        };
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.type === 'chatMessage') {
@@ -21,6 +31,26 @@ function Dashboard() {
         // Don't forget to close the WebSocket connection when the component unmounts
         return () => ws.close();
     }, []);
+
+    const handleMessageServiceChange = (event) => {
+        setService(event.target.value);
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            const message = event.target.value;
+            const payload = {
+                message,
+                service
+            };
+            const data = {
+                type: 'chatMessage',
+                payload
+            };
+            ws.send(JSON.stringify(data));
+            event.target.value = '';
+        }
+    }
 
     return (
         <div className="content">
@@ -35,8 +65,16 @@ function Dashboard() {
                     })}
                 </div>
                 <div className='input-container'>
-                    <FontAwesomeIcon icon={faTiktok} className='fa-icon'/>
-                    <input type="text" placeholder='type a message' id='chat-input' />
+                    <select
+                        value={service}
+                        onChange={handleMessageServiceChange}
+                        className="service-dropdown"
+                        id="service-selector"
+                    >
+                        <option value="twitch">Twitch</option>
+                        <option value="tiktok">TikTok</option>
+                    </select>
+                    <input type="text" placeholder='type a message' id='chat-input' onKeyDown={handleKeyDown} />
                 </div>
             </div>
         </div>
