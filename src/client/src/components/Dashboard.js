@@ -3,20 +3,17 @@ import '../styles/GUI/dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTiktok, faTwitch } from '@fortawesome/free-brands-svg-icons';
 import TwitchMessage from './SubComponents/twitchMessage';
-
-
-const url = 'ws://localhost:8080';
+import { wsurl } from '../config';
 
 
 function Dashboard() {
     const [messages, setMessages] = useState([]);
-    const [messageType, setMessageType] = useState('');
     const [service, setService] = useState('twitch');
     const [ws, setWs] = useState(null);
 
     // Connect to the websocket server and display any messages that come through
     useEffect(() => {
-        const ws = new WebSocket(url);
+        const ws = new WebSocket(wsurl);
 
         ws.onopen = () => {
             console.log('Connected to the websocket server');

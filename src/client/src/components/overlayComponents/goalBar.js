@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import '../../styles/overlay/progressBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGift } from '@fortawesome/free-solid-svg-icons';
+import { wsurl } from '../../config';
 
-const url = 'ws://192.168.1.34:3505';
 
 function ProgressBar() {
     const [connected, setConnected] = useState(false);
@@ -16,7 +16,7 @@ function ProgressBar() {
     // useEffect hook to update the sub data every 5 seconds
     useEffect(() => {
         const establishConnection = () => {
-            const ws = new WebSocket(url);
+            const ws = new WebSocket(wsurl);
 
             ws.onopen = () => {
                 console.log('Connected to websocket server');

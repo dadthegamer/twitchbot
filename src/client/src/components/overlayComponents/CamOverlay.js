@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/overlay/cam.css';
-
-// const url = 'ws://localhost:8080';
-const url = 'ws://192.168.1.34:3505';
+import { wsurl } from '../../config';
 
 function CamOverlay() {
     const [showAlert, setShowAlert] = useState(false);
@@ -19,7 +17,7 @@ function CamOverlay() {
 
     useEffect(() => {
         const establishConnection = () => {
-            const ws = new WebSocket(url);
+            const ws = new WebSocket(wsurl);
 
             ws.onopen = () => {
                 console.log('Connected to websocket server');
