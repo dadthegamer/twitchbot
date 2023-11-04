@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
-import { tokenDB, cache } from './config/initializers.js';
+import { tokenDB, cache, twitchApi } from './config/initializers.js';
 import logger from './utilities/logger.js';
 
 config();
@@ -17,7 +17,6 @@ export { __dirname };
 
 const app = express();
 const port = 3001;
-
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

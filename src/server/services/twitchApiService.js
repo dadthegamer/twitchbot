@@ -480,7 +480,7 @@ class TwitchApiClient {
         catch (error) {
             // Parse the error message to see if the error is because the reward already exists
             if (error.message.includes('CREATE_CUSTOM_REWARD_DUPLICATE_REWARD')) {
-                return { error: 'Reward already exists'}
+                return { error: 'Reward already exists' }
             }
             logger.error(`Error creating custom reward: ${error}`);
         }
@@ -527,6 +527,31 @@ class TwitchApiClient {
         }
         catch (error) {
             logger.error(`Error creating clip: ${error}`);
+        }
+    }
+
+    // Method to get a random clip from a channel
+    async getRandomClip(userId) {
+        try {
+            let clips = [];
+            const response = await this.apiClient.clips.getClipsForBroadcasterPaginated(userId).getAll();
+            const data = response.map((clip) => ({
+                id: clip.id,
+                title: clip.title,
+                url: clip.url,
+                thumbnailUrl: clip.thumbnailUrl,
+                views: clip.views,
+                duration: clip.duration,
+                creationDate: clip.creationDate,
+            }));
+            clips = [...clips, ...data];
+            const clip = clips[Math.floor(Math.random() * clips.length)];
+            console.log(clip);
+            return clip;
+        }
+        catch (error) {
+            console.log(error);
+            logger.error(`Error getting random clip: ${error}`);
         }
     }
 }

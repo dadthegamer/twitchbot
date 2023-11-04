@@ -8,6 +8,7 @@ function Display() {
     const [socket, setSocket] = useState(null);
     const [message, setMessage] = useState(null);
     const [showMessage, setShowMessage] = useState(true);
+    const [showVideo, setShowVideo] = useState(false);
 
     useEffect(() => {
         const establishConnection = () => {
@@ -64,6 +65,9 @@ function Display() {
     return (
         <div>
             {showMessage && <div className="display">{message}</div>}
+            {showVideo && <div className="video">
+                <video src="https://clips.twitch.tv/AgreeableTriumphantCrabsGrammarKing-Afe5GDRuQBzbyudq"></video>
+            </div>}
         </div>
     )
 }

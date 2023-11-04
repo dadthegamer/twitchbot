@@ -25,6 +25,7 @@ class TwitchChannelPointsService {
 
             // for each channel reward insert it into the database if it does not exist
             for (const channelReward of channelRewards) {
+                channelReward.handlers = [];
                 const channelRewardExists = await this.dbConnection.collection(this.collectionName).findOne({ id: channelReward.id });
                 if (!channelRewardExists) {
                     await this.dbConnection.collection(this.collectionName).insertOne(channelReward);

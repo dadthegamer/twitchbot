@@ -121,6 +121,8 @@ class TaskCoordinator {
             logger.error(`Error in getViewers: ${error}`);
         }
     }
+
+    // Method to get all the channel points rewards
 }
 
 
