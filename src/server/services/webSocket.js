@@ -34,6 +34,9 @@ export class WebSocket {
                         } else if (data.payload.service === 'tiktok') {
                             console.log(data.payload);
                         }
+                    } else if (data.type === 'displayMessage') {
+                        cache.set('tvMessage', data.payload.message);
+                        this.displayMessage();
                     }
                 } catch (error) {
                     logger.error(`Error parsing message in websocket: ${error}`);

@@ -16,7 +16,8 @@
 
 .chat-container {
     position: fixed;
-    width: calc(100% - 275px);
+    left: 275px;
+    width: calc(100% - 600px);
     height: calc(100% - 90px);
     background-color: var(--background-color);
     display: flex;
@@ -98,4 +99,41 @@
     color: var(--font-color);
     font-size: 1.2rem;
     border-radius: 0;
+}
+
+.dashboard-right-side-container {
+    position: fixed;
+    right: 10px;
+    top: 80px;
+    width: 300px;
+    height: 100%;
+    background-color: var(--background-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 1rem;
+    align-items: center;
+    overflow: hidden;
+}
+
+.dashboard-right-side-container div {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 1rem;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--primary-color);
+}
+
+.tv-display-container {
+    height: 200px;
+    min-height: 200px;
+}
+
+.tv-display-container input {
+    height: 100%;
+    text-align: center;
 }
