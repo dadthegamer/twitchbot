@@ -35,23 +35,23 @@ const CommandSubComponent = ({ commandNameProp, commandIdProp, commandEnabledPro
             </div>
             <div className="command-right-options">
                 <div className="switch-container">
-                    <input type="checkbox" className="checkbox" id={`toggle-command-checkbox-${commandName}`} checked={enabled}  />
+                    <input type="checkbox" className="checkbox" id={`toggle-command-checkbox-${commandName}`} checked={enabled} />
                     <label className="switch" htmlFor={`toggle-command-checkbox-${commandName}`}>
                         <span className="slider"></span>
                     </label>
                 </div>
-                <FontAwesomeIcon icon={faEllipsisVertical} className="fa-icon" onClick={handleEditMenu}/>
+                <FontAwesomeIcon icon={faEllipsisVertical} className="fa-icon" onClick={handleEditMenu} />
                 {editMenu && (
                     <div className="command-menu">
-                    <div>
-                        <FontAwesomeIcon icon={faEdit} className="fa-icon" />
-                        <span>Edit</span>
+                        <div>
+                            <FontAwesomeIcon icon={faEdit} className="fa-icon" />
+                            <span>Edit</span>
+                        </div>
+                        <div onClick={handleDeleteCommand}>
+                            <FontAwesomeIcon icon={faTrash} className="fa-icon" />
+                            <span>Delete</span>
+                        </div>
                     </div>
-                    <div onClick={handleDeleteCommand}>
-                        <FontAwesomeIcon icon={faTrash} className="fa-icon" />
-                        <span>Delete</span>
-                    </div>
-                </div>
                 )}
             </div>
         </div>

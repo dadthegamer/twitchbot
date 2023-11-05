@@ -68,6 +68,7 @@ import updateRouter from './routes/apiRoutes/update.js';
 import goalsRouter from './routes/apiRoutes/goals.js';
 import gamesRouter from './routes/apiRoutes/games.js';
 import streamathonRouter from './routes/apiRoutes/streamathon.js';
+import channelPointsRouter from './routes/apiRoutes/channelPoints.js';
 
 // Import GUI routes
 import guiRouter from './routes/gui.js';
@@ -86,6 +87,7 @@ app.use('/api/update', updateRouter);
 app.use('/api/goals', goalsRouter);
 app.use('/api/games', gamesRouter);
 app.use('/api/streamathon', streamathonRouter);
+app.use('/api/channelpoints', channelPointsRouter);
 
 // Overlay routes
 app.use('/overlay', overlayRouter);
