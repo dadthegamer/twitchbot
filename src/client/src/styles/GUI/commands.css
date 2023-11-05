@@ -288,3 +288,75 @@ label {
     color: var(--background-color);
     transition: all .2s ease-in-out;
 }
+
+.permissions-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    gap: 5px;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    color: var(--font-color);
+}
+
+.permissions-container div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.action-buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+#save-command-btn {
+    background-color: var(--secondary-color);
+}
+
+#delete-command-btn {
+    background-color: #ff0000;
+}
+
+.command-actions-main-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    border-radius: 5px;
+}
+
+.command-actions-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding:10px;
+    border-bottom: 1px solid var(--primary-color);
+}
+
+.command-actions-selections {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 100%;
+    min-height: 50px;
+    padding: 10px;
+}

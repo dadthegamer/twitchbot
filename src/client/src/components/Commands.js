@@ -10,8 +10,7 @@ import NewCommand from './NewCommand'
 function Commands() {
     const [commands, setCommands] = useState([]);
     const [editCommand, setEditCommand] = useState(false);
-    const [showActions, setShowActions] = useState(false);
-    const [newCommand, setNewCommand] = useState(true);
+    const [newCommand, setNewCommand] = useState(false);
 
     useEffect(() => {
         fetch('/api/commands')
@@ -19,11 +18,19 @@ function Commands() {
             .then(commands => setCommands(commands));
     }, []);
 
+    const handleNewCommandClose = () => {
+        setNewCommand(false);
+    };
+
+    const handleNewCommandClick = () => {
+        setNewCommand(true);
+    };
+
     return (
         <div className="content">
-        {newCommand ? <NewCommand /> : null}
+            {newCommand ? <NewCommand handleNewCommandClose={handleNewCommandClose}/> : null}
             <div className="options-container">
-                <button id="new-command-button">New Command</button>
+                <button id="new-command-button" onClick={handleNewCommandClick}>New Command</button>
                 <div className="search-bar">
                     <FontAwesomeIcon icon={faSearch} className="fa-icon" />
                     <input type="text" placeholder='search for commands...'/>

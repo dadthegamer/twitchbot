@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { Routes, Route, Outlet, useLocation } from 'react-router-dom';
 import { createPortal } from 'react-dom';
 import Users from './components/Users';
+import ChannelPoints from './components/ChannelPoints';
 import SideNavbar from './components/SideNavBar';
 import TopNavbar from './components/TopNavBar';
 import Currency from './components/Currency';
@@ -60,6 +61,7 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="games" element={<Games />} />
         <Route path="streamathon" element={<Streamathon />} />
+        <Route path="channelpoints" element={<ChannelPoints />} />
       </Route>
     </Routes>
   );

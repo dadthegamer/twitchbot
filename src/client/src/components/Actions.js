@@ -3,14 +3,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faXmark } from '@fortawesome/free-solid-svg-icons';
 import '../styles/GUI/actions.css';
 import Chat from './SubComponents/SubActions/Chat';
+import TTS from './SubComponents/SubActions/TTS';
+import Display from './SubComponents/SubActions/Display';
 
-function Actions() {
+
+function Actions({onAddAction}) {
     const [search, setSearch] = useState('');
     const [showActions, setShowActions] = useState(true);
 
-    const handleActionSelected = () => {
-        console.log('Action selected');
+    const handleActionSelected = (actionData) => {
         setShowActions(false);
+        onAddAction(actionData);
     }
 
     const handleCloseActions = () => {
@@ -22,6 +25,30 @@ function Actions() {
             title: "Chat",
             component: <Chat onActionSelected={handleActionSelected} />
         },
+        {
+            title: "TTS",
+            component: <TTS onActionSelected={handleActionSelected} />
+        },
+        {
+            title: "Display",
+            component: <Display onActionSelected={handleActionSelected} />
+        },
+        {
+            title: "Sound",
+            component: <div>Sound</div>
+        },
+        {
+            title: "Spin",
+            component: <div>Spin</div>
+        },
+        {
+            title: "Lumia Stream Command",
+            component: <div>Lumia Stream Command</div>
+        },
+        {
+            title: "Counter",
+            component: <div>Counter</div>
+        }
         // Add more actions here with similar format
     ];
 

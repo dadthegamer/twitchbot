@@ -80,7 +80,7 @@ class CommandHandler {
                 }
                 const userCooldownStatus = await this.userCooldownHandler(userId, commandName, userCooldown);
                 const globalCooldownStatus = await this.globalCooldownHandler(commandName, globalCooldown);
-                if (permissions === 'everyone') {
+                if (permissions.includes('everyone' || permissions === 'everyone')) {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
                         for (const handler of handlers) {
                             await evalulate(handler, { bot, msg, userDisplayName: displayName, userId, messageID: id, parts, input: message, rewardId: null });
