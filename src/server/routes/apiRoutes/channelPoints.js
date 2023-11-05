@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import logger from '../../utilities/logger.js';
-import { channelPointsService, cache } from '../../config/initializers.js';
+import { channelPointsService } from '../../config/initializers.js';
 
 const router = Router();
 

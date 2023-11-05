@@ -6,23 +6,14 @@ import axios from 'axios';
 const apiKey = process.env.LUMIA_STREAM_KEY;
 const url = process.env.STREAMING_PC_IP;
 
-async function getLumiaStreamSettings() {
+export async function getLumiaStreamSCommands() {
     try {
         const response = await axios.get(`http://${url}:39231/api/retrieve?token=${apiKey}`, {
             method: 'GET',
         });
-        const data = await response.json();
-        console.log(data);
-
-        // Cache the commands
-        const commands = data.data.options['chat-command'].values;
-        cache.set('lumiaStreamCommands', commands);
-
-        // Cache the lights
-        const lights = data.data.lights;
-        cache.set('lumiaStreamLights', lights);
-        turnLightsOff();
-        return data;
+        const data = response.data.data
+        const chatCommands = data.options['chat-command'].values;
+        return cache.set('lumiaStreamCommands', chatCommands);
     }
     catch (err) {
         const message = err.message;
@@ -32,6 +23,22 @@ async function getLumiaStreamSettings() {
         } else {
             logger.error(`Error in getLumiaStreamSettings: ${err}`);
         }
+    }
+}
+
+// Get the commands from the cache. If they don't exist, get them from the api
+export async function getLumiaStreamCommands() {
+    try {
+        const commands = cache.get('lumiaStreamCommands');
+        if (commands) {
+            return commands;
+        } else {
+            await getLumiaStreamSCommands();
+            return cache.get('lumiaStreamCommands');
+        }
+    }
+    catch (err) {
+        logger.error(`Error in getLumiaStreamCommands: ${err}`);
     }
 }
 
@@ -48,11 +55,11 @@ export async function sendCommand(command) {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                        "type": "chat-command",
-                        "params": {
-                            "value": `${command}`,
-                        }
-                    }),
+                    "type": "chat-command",
+                    "params": {
+                        "value": `${command}`,
+                    }
+                }),
             });
         }
         catch (err) {
@@ -73,11 +80,11 @@ export async function turnLightsOff() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                    "type": "lights-off",
-                    "params": {
-                        "value": "off",
-                    }
-                }),
+                "type": "lights-off",
+                "params": {
+                    "value": "off",
+                }
+            }),
         });
     }
     catch (err) {
@@ -85,4 +92,4 @@ export async function turnLightsOff() {
     }
 }
 
-export default getLumiaStreamSettings;
+export default getLumiaStreamSCommands;
