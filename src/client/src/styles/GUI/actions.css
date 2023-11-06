@@ -16,17 +16,15 @@
 
 .actions-main-container {
     width: 100%;
-    height: 100%;
+    height: 500px;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
     gap: 10px;
     align-items: center;
     border-radius: 5px;
     padding: 10px;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--secondary-color) var(--primary-color);
-    background-color: var(--primary-color);
+    overflow-y: hidden;
     position: fixed;
     top: 0;
     left: 0;
@@ -41,7 +39,6 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 10px;
-    background-color: var(--primary-color);
     border-bottom: 1px solid var(--background-color);
 }
 

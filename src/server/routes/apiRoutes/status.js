@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { cache, chatClient } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
 import { toggleEventListener } from '../../services/twitchEventListenerServices.js';
+import { toggleTikTokConnection } from '../../services/tikTokService.js';
 
 const router = Router();
 
@@ -43,6 +44,17 @@ router.put('/twitch', async (req, res) => {
     }
     catch (err) {
         logger.error(`Error in updating twitch status: ${err}`);
+    }
+});
+
+router.put('/tiktok', async (req, res) => {
+    try {
+        console.log('tiktok status update');
+        await toggleTikTokConnection();
+        res.json({ success: true });
+    }
+    catch (err) {
+        logger.error(`Error in updating tiktok status: ${err}`);
     }
 });
 

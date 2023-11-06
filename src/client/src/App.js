@@ -8,6 +8,7 @@ import ChannelPoints from './components/ChannelPoints';
 import SideNavbar from './components/SideNavBar';
 import TopNavbar from './components/TopNavBar';
 import Currency from './components/Currency';
+import TikTok from './components/TikTok';
 import Display from './components/overlayComponents/TVDisplay';
 import Leaderboard from './components/overlayComponents/Leaderboard';
 import Intermission from './components/overlayComponents/Intermission';
@@ -62,6 +63,7 @@ function App() {
         <Route path="games" element={<Games />} />
         <Route path="streamathon" element={<Streamathon />} />
         <Route path="channelpoints" element={<ChannelPoints />} />
+        <Route path="tiktok" element={<TikTok />} />
       </Route>
     </Routes>
   );

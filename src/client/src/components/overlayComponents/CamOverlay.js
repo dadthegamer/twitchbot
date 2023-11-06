@@ -171,13 +171,18 @@ function CamOverlay() {
 
     // Function to play the alert sound
     const playAlertSound = (audio) => {
-        const newAudio = new Audio(audio);
-        newAudio.play();
-
-        return () => {
-            newAudio.pause();
-            newAudio.remove();
-        };
+        try {
+            const newAudio = new Audio(audio);
+            newAudio.play();
+    
+            return () => {
+                newAudio.pause();
+                newAudio.remove();
+            };
+        }
+        catch (err) {
+            console.log(err);
+        }
     };
 
     return (

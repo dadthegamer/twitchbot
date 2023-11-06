@@ -48,8 +48,8 @@ export async function initializerEventListener(apiClient) {
         listener.onChannelFollow(userId, userId, onFollow);
     }
     catch (error) {
+        console.log(`Error starting event listener: ${error}`);
         logger.error(`Error starting event listener: ${error}`);
-        throw new Error(`Error starting event listener: ${error}`);
     }
 }
 
@@ -61,7 +61,6 @@ export async function startEventListener() {
     }
     catch (error) {
         logger.error(`Error starting event listener: ${error}`);
-        throw new Error(`Error starting event listener: ${error}`);
     }
 };
 
@@ -73,7 +72,6 @@ export async function stopEventListener() {
     }
     catch (error) {
         logger.error(`Error stopping event listener: ${error}`);
-        throw new Error(`Error stopping event listener: ${error}`);
     }
 };
 
@@ -90,6 +88,5 @@ export async function toggleEventListener() {
     }
     catch (error) {
         logger.error(`Error toggling event listener: ${error}`);
-        throw new Error(`Error toggling event listener: ${error}`);
     }
 };

@@ -15,6 +15,15 @@ export class WebSocket {
         this.wss.on('connection', (ws) => {
             this.subsUpdate();
             this.displayMessage();
+            this.alert({
+                displayName: 'Connected',
+                alertType: 'sub',
+                alertMessage: 'Connected to websocket',
+                alertTime: 5000,
+                message: 'Test alert',
+                profileImg: 'https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png',
+                sound: '/audio/sub.mp3',
+            });
             console.log('Client connected');
             connectedDevices++;
             this.notification({ 
@@ -29,7 +38,6 @@ export class WebSocket {
                     const data = JSON.parse(message);
                     if (data.type === 'chatMessage') {
                         if (data.payload.service === 'twitch') {
-                            console.log(data.payload);
                             chatClient.say(data.payload.message);
                         } else if (data.payload.service === 'tiktok') {
                             console.log(data.payload);
@@ -143,7 +151,12 @@ export class WebSocket {
     }
 
     // Method to send a chat message from tiktok chat
-    tiktokChatMessage(payload) {
+    tiktokChatMessage(message, username) {
+        const payload = {
+            message,
+            username,
+            service: 'tiktok',
+        };
         this.broadcastMessage('chatMessage', payload);
     }
 

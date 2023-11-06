@@ -3,6 +3,7 @@ import '../styles/GUI/dashboard.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTiktok, faTwitch } from '@fortawesome/free-brands-svg-icons';
 import TwitchMessage from './SubComponents/twitchMessage';
+import TikTokMessage from './SubComponents/TikTokMessage';
 import { wsurl } from '../config';
 
 
@@ -22,6 +23,7 @@ function Dashboard() {
         };
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
+            console.log(data);
             if (data.type === 'chatMessage') {
                 setMessages(prevMessages => [...prevMessages, data.payload]);
             } else if (data.type === 'displayMessage') {
@@ -86,7 +88,7 @@ function Dashboard() {
                         if (message.service === 'twitch') {
                             return <TwitchMessage key={index} message={message.message} username={message.displayName} color={message.color} />
                         } else if (message.service === 'tiktok') {
-                            return <TwitchMessage key={index} message={message.message} username={message.username} color={message.color} />
+                            return <TikTokMessage key={index} message={message.message} username={message.username} />
                         }
                     })}
                 </div>

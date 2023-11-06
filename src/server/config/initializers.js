@@ -55,7 +55,6 @@ const twitchApi = new TwitchApiClient(authProvider.authProvider, cache);
 
 // Chat client initialization
 const chatClient = new TwitchChatClient(authProvider.authProvider);
-await chatClient.connectToBotChat();
 
 // Chat log service initialization
 const chatLogService = new ChatLogService(db.dbConnection);

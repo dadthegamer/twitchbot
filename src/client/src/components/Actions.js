@@ -5,19 +5,14 @@ import '../styles/GUI/actions.css';
 import Chat from './SubComponents/SubActions/Chat';
 import TTS from './SubComponents/SubActions/TTS';
 import Display from './SubComponents/SubActions/Display';
+import Sound from './SubComponents/SubActions/Sound';
 
-
-function Actions({onAddAction}) {
+function Actions({ onAddAction, onActionsClose }) {
     const [search, setSearch] = useState('');
-    const [showActions, setShowActions] = useState(true);
 
     const handleActionSelected = (actionData) => {
-        setShowActions(false);
         onAddAction(actionData);
-    }
-
-    const handleCloseActions = () => {
-        setShowActions(false);
+        onActionsClose();
     }
 
     const actionList = [
@@ -35,7 +30,7 @@ function Actions({onAddAction}) {
         },
         {
             title: "Sound",
-            component: <div>Sound</div>
+            component: <Sound onActionSelected={handleActionSelected} />
         },
         {
             title: "Spin",
@@ -52,7 +47,9 @@ function Actions({onAddAction}) {
         // Add more actions here with similar format
     ];
 
-    const filteredActions = actionList.filter(action => 
+    actionList.sort((a, b) => a.title.localeCompare(b.title));
+
+    const filteredActions = actionList.filter(action =>
         action.title.toLowerCase().includes(search.toLowerCase())
     );
 
@@ -62,31 +59,27 @@ function Actions({onAddAction}) {
 
 
     return (
-        <div>
-            {showActions && (
-                <div className="actions-main-container">
-                    <div className="actions-header">
-                        <h2>Actions</h2>
-                        <FontAwesomeIcon icon={faXmark} className="fa-icon" onClick={handleCloseActions}/>
+        <div className="actions-main-container">
+            <div className="actions-header">
+                <h2>Actions</h2>
+                <FontAwesomeIcon icon={faXmark} className="fa-icon" onClick={onActionsClose} />
+            </div>
+            <div className="actions-search-bar">
+                <FontAwesomeIcon icon={faSearch} className="fa-icon" />
+                <input
+                    type="text"
+                    placeholder="Search for actions..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+            </div>
+            <div className="actions-container">
+                {filteredActions.map((action, index) => (
+                    <div key={index}>
+                        {action.component}
                     </div>
-                    <div className="actions-search-bar">
-                        <FontAwesomeIcon icon={faSearch} className="fa-icon" />
-                        <input
-                            type="text"
-                            placeholder="Search for actions..."
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                    </div>
-                    <div className="actions-container">
-                        {filteredActions.map((action, index) => (
-                            <div key={index}>
-                                {action.component}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
+                ))}
+            </div>
         </div>
     )
 }

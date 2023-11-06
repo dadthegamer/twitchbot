@@ -1,12 +1,14 @@
 import { WebcastPushConnection } from 'tiktok-live-connector';
 import logger from "../utilities/logger.js";
-import { webSocket } from '../config/initializers.js';
+import { webSocket, cache } from '../config/initializers.js';
+
 
 let connected = false;
+let tiktokLiveConnection;
 
-export async function initializeTikTokConnection(username) {
+export function initializeTikTokConnection(username) {
     try {
-        let tiktokLiveConnection = new WebcastPushConnection(username);
+        tiktokLiveConnection = new WebcastPushConnection(username);
 
         // Connect to the chat
         tiktokLiveConnection.connect().then(state => {
@@ -35,6 +37,7 @@ export async function initializeTikTokConnection(username) {
         // Listen to chat messages
         tiktokLiveConnection.on('chat', data => {
             console.log(`${data.uniqueId} (userId:${data.userId}) writes: ${data.comment}`);
+            webSocket.tiktokChatMessage(data.comment, data.uniqueId);
         })
     
         // Receive gifts sent to the streamer
@@ -44,6 +47,7 @@ export async function initializeTikTokConnection(username) {
     
         // Recieve likes sent to the streamer
         tiktokLiveConnection.on('like', data => {
+            cache.set('tiktokLikes', data.totalLikeCount);
             console.log(`${data.uniqueId} sent ${data.likeCount} likes, total likes: ${data.totalLikeCount}`);
         })
     
@@ -62,9 +66,37 @@ export async function initializeTikTokConnection(username) {
             console.log(`${data.uniqueId} joins the stream!`);
             // tiktokLiveConnection.sendChatMessage(`Welcome to the stream ${data.userId}!`);
         })
+        cache.set('tiktokConnected', true);
     }
     catch (err) {
         console.log(err);
         logger.error(`Error initializing TikTok connection: ${err}`);
+    }
+}
+
+// Function to disconnect from the chat
+export async function disconnectTikTok() {
+    try {
+        await tiktokLiveConnection.disconnect();
+        connected = false;
+        cache.set('tiktokConnected', false);
+        logger.info('Disconnected from TikTok');
+    }
+    catch (err) {
+        logger.error(`Error disconnecting from TikTok: ${err}`);
+    }
+}
+
+// Function to toggle the connection
+export async function toggleTikTokConnection() {
+    try {
+        if (connected) {
+            await disconnectTikTok();
+        } else {
+            initializeTikTokConnection('marinevetmike');
+        }
+    }
+    catch (err) {
+        logger.error(`Error toggling TikTok connection: ${err}`);
     }
 }

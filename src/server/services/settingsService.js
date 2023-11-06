@@ -7,6 +7,7 @@ class SettingsService {
         this.dbConnection = dbConnection;
         this.cache = cache;
         this.setIntialSettings();
+        this.getAllSettings();
     }
 
     // Method to set the initial database values for OBS settings
@@ -134,6 +135,18 @@ class SettingsService {
         }
         catch (error) {
             logger.error(`Error updating API key: ${error}`);
+        }
+    }
+
+    // Method to update the tiktok username
+    async updateTikTokUsername(username) {
+        try {
+            const res = await this.dbConnection.collection('settings').findOneAndUpdate({ name: 'tikTokSettings' }, { $set: { username: username } }, { returnOriginal: false });
+            await this.getAllSettings();
+            return res;
+        }
+        catch (error) {
+            logger.error(`Error updating TikTok username: ${error}`);
         }
     }
 }

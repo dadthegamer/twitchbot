@@ -12,21 +12,21 @@ function getQueue() {
 };
 
 // Function to add a user to the queue
-function addUserToQueue(user) {
+function addUserToQueue(userId) {
     // Check if the user is already in the queue
     const queue = getQueue();
-    if (queue.includes(user)) {
+    if (queue.includes(userId)) {
         return;
     } else {
-        queue.push(user);
+        queue.push(userId);
         cache.set('queue', queue);
     };
 };
 
 // Function to remove a user from the queue
-function removeUserFromQueue(user) {
+function removeUserFromQueue(userId) {
     const queue = getQueue();
-    const index = queue.indexOf(user);
+    const index = queue.indexOf(userId);
     queue.splice(index, 1);
     cache.set('queue', queue);
 };
