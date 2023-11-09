@@ -5,6 +5,7 @@ import { usersDB, interactionsDB } from "../config/initializers.js";
 import logger from "../utilities/logger.js";
 import { replyHandler } from "./actionHandlers.js/replyHandler.js";
 import { displayHandler } from "./actionHandlers.js/displayHandler.js";
+import { addToQueue, removeFromQueue, getQueue } from "./actionHandlers.js/queue.js";
 
 
 // Method to evaluate the handler
@@ -69,6 +70,25 @@ export async function evalulate(handler, context) {
                 } catch (err) {
                     logger.error(`Error in setMessage: ${err}`);
                 }
+            case 'queue':
+                if (handler.response === 'add') {
+                    const res = await addToQueue(userDisplayName);
+                    if (res) {
+                        chatMessageHandler(`@${userDisplayName} has been added to the queue!`, context);
+                        break;
+                    } else {
+                        chatMessageHandler(`@${userDisplayName} is already in the queue!`, context);
+                        break;
+                    };
+                } else if (handler.response === 'remove') {
+                    await removeFromQueue(userDisplayName);
+                    chatMessageHandler(`@${userDisplayName} has been removed from the queue!`, context);
+                    break;
+                } else if (handler.response === 'get') {
+                    const queue = await getQueue();
+                    chatMessageHandler(`The queue is: ${queue.join(', ')}`, context);
+                    break;
+                };
             default:
                 console.log(`Handler not found: ${handler}`);
                 logger.error(`Handler not found: ${handler}`);

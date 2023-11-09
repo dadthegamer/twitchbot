@@ -101,6 +101,7 @@ class CommandHandler {
             }
         }
         catch (err) {
+            console.log(err);
             logger.error(`Error in commandHandler: ${err}`);
         }
     }

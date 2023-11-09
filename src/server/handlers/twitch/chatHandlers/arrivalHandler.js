@@ -44,7 +44,7 @@ function welcomeAlertHandler() {
             alertShowing = true;
             webSocket.welcomeMessage(alert);
             setTimeout(() => {
-                alertShowing = false;   
+                alertShowing = false;
             }, alertTime);
         }
     }
@@ -57,9 +57,9 @@ export async function addWelcomeAlert(userId, userName, currency) {
     try {
         const profilePic = await usersDB.getUserProfileImageUrl(userId);
         alertQueue.push({
-                    img: profilePic,
-                    points: currency,
-                    displayName: userName,
+            img: profilePic,
+            points: currency,
+            displayName: userName,
         });
     }
     catch (err) {

@@ -53,6 +53,7 @@ export async function setJackpot(amount) {
 
 // Function to handle the spin
 export async function spinHandler(userDisplayName, userId, messageID) {
+    console.log('spinHandler');
     try {
         const jackpotData = await getJackpot();
         const { currency, jackpotPCT } = jackpotData;

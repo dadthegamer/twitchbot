@@ -6,6 +6,7 @@ import Chat from './SubComponents/SubActions/Chat';
 import TTS from './SubComponents/SubActions/TTS';
 import Display from './SubComponents/SubActions/Display';
 import Sound from './SubComponents/SubActions/Sound';
+import Queue from './SubComponents/SubActions/Queue';
 
 function Actions({ onAddAction, onActionsClose }) {
     const [search, setSearch] = useState('');
@@ -43,6 +44,14 @@ function Actions({ onAddAction, onActionsClose }) {
         {
             title: "Counter",
             component: <div>Counter</div>
+        },
+        {
+            title: "Queue",
+            component: <Queue onActionSelected={handleActionSelected} />
+        },
+        {
+            title: "Quote",
+            component: <div>Quote</div>
         }
         // Add more actions here with similar format
     ];

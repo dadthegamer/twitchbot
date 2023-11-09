@@ -1,7 +1,5 @@
 import { cache } from "../../../config/initializers.js";
-import { writeToLogFile } from "../../../utilities/logging.js";
 import { environment } from "../../../config/environmentVars.js";
-import { firstMessageHandler } from "./firstMessageHandler.js";
 import { activeUsersCache } from "../../../config/initializers.js";
 import { commandHandler } from "../../../config/initializers.js";
 import { knownBots } from "../viewTimeHandler.js";
@@ -21,6 +19,7 @@ export async function onMessageHandler(channel, user, message, msg, bot) {
         const prefix = '!';
         const command = parts[0];
         if (command.startsWith(prefix)) {
+            console.log('commandHandler');
             commandHandler.commandHandler(command, parts, channel, user, message, msg, bot);
         }
         if (environment === 'production') {
