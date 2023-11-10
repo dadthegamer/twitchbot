@@ -61,6 +61,7 @@
 
 .command-container {
     width: 100%;
+    min-width: 100%;
     height: 100px;
     background-color: var(--primary-color);
     border-radius: 5px;
@@ -68,6 +69,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
+    cursor: pointer;
 }
 
 .command-name {
@@ -161,6 +163,7 @@
     transform: translate(-50%, -50%);
     background-color: var(--primary-color);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    cursor: default;
 }
 
 .new-command-main-container.show {

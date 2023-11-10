@@ -50,6 +50,11 @@ function Dashboard() {
                 payload
             };
             ws.send(JSON.stringify(data));
+            if (service === 'twitch') {
+                setMessages(prevMessages => [...prevMessages, { displayName: 'TheDadB0t', message, service: 'twitch' }]);
+            } else if (service === 'tiktok') {
+                setMessages(prevMessages => [...prevMessages, { message, service: 'tiktok' }]);
+            }
             event.target.value = '';
         }
     }
@@ -108,7 +113,7 @@ function Dashboard() {
             <div className="dashboard-right-side-container">
                 <div className='tv-display-container'>
                     <span>TV Display</span>
-                    <input type="text" id='tv-message' placeholder='test' value={tvMessage} onChange={handleInputChange} onKeyDown={handleDisplayChange}/>
+                    <input type="text" id='tv-message' placeholder='tv message...' value={tvMessage} onChange={handleInputChange} onKeyDown={handleDisplayChange}/>
                 </div>
                 <div className="power-panel-container">
                     <span>Power Panel</span>

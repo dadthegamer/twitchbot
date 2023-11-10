@@ -3,11 +3,12 @@ import Confirmation from './confirm';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlayCircle, faEllipsisVertical, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import '../../styles/GUI/commands.css';
+import EditCommand from './EditCommand';
 
-const CommandSubComponent = ({ commandNameProp, commandIdProp, commandEnabledProp }) => {
-    const [commandName, setCommandName] = useState(commandNameProp);
-    const [commandId, setCommandId] = useState(commandIdProp);
-    const [enabled, setEnabled] = useState(commandEnabledProp);
+const CommandSubComponent = ({ commandData }) => {
+    const [commandName, setCommandName] = useState(commandData.name);
+    const [commandId, setCommandId] = useState(commandData._id);
+    const [enabled, setEnabled] = useState(commandData.enabled);
     const [editCommand, setEditCommand] = useState(false);
     const [editMenu, setEditMenu] = useState(false);
 
@@ -27,8 +28,19 @@ const CommandSubComponent = ({ commandNameProp, commandIdProp, commandEnabledPro
             command.remove();
         }
     };
+
+    const setEditCommandTrue = () => {
+        console.log('edit command true')
+        setEditCommand(true);
+    };
+
+    const setEditCommandFalse = () => {
+        console.log('edit command false')
+        setEditCommand(false);
+    };
+
     return (
-        <div className="command-container">
+        <div className="command-container" onClick={setEditCommandTrue}>
             <div className="command-left-options">
                 <FontAwesomeIcon icon={faPlayCircle} className="fa-icon" />
                 <span className="command-name">{commandName}</span>
@@ -54,6 +66,7 @@ const CommandSubComponent = ({ commandNameProp, commandIdProp, commandEnabledPro
                     </div>
                 )}
             </div>
+            {editCommand ? <EditCommand handleNewCommandClose={setEditCommandFalse} CommandData={commandData} /> : null}
         </div>
     );
 }

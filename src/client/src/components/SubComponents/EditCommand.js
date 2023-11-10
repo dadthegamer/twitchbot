@@ -1,20 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import '../styles/GUI/newCommand.css';
-import Actions from './Actions';
+import React, { useState } from 'react';
+import Actions from '../Actions';
 
 
-function NewCommand({ handleNewCommandClose }) {
-    const [commandName, setCommandName] = useState(null);
-    const [description, setDescription] = useState(null);
+function EditCommand({ handleNewCommandClose, CommandData }) {
+    const [commandName, setCommandName] = useState(CommandData.name);
+    const [description, setDescription] = useState(CommandData.description);
     const [showActions, setShowActions] = useState(false);
-    const [actions, setActions] = useState([]);
-    const [globalCooldown, setGlobalCooldown] = useState(0);
-    const [userCooldown, setUserCooldown] = useState(0);
-    const [permissions, setPermissions] = useState(['everyone']);
+    const [actions, setActions] = useState([CommandData.handlers]);
+    const [globalCooldown, setGlobalCooldown] = useState(CommandData.globalCooldown);
+    const [userCooldown, setUserCooldown] = useState(CommandData.userCooldown);
+    const [permissions, setPermissions] = useState(CommandData.permissions);
     const [everyone, setEveryone] = useState(true);
     const [subscriber, setSubscriber] = useState(false);
     const [vip, setVip] = useState(false);
     const [mods, setMods] = useState(false);
+
+    console.log(actions);
 
     // Function to add action to actions array
     const addAction = (action) => {
@@ -115,22 +116,22 @@ function NewCommand({ handleNewCommandClose }) {
         <div className="new-command-main-container">
             <div className="new-command-container">
                 <div className="new-command-header">
-                    <h1>New Command</h1>
+                    <h1>Edit Command</h1>
                 </div>
                 <div className="new-command-body">
                     <div className='command-name-inner'>
                         <label htmlFor="">Command Name</label>
-                        <input type="text" placeholder="command name..." onChange={(e) => setCommandName(e.target.value)} />
+                        <input type="text" placeholder="command name..." value={commandName} onChange={(e) => setCommandName(e.target.value)} />
                     </div>
                     <div className='command-name-inner'>
                         <label htmlFor="">Description</label>
-                        <input type="text" placeholder="command description..." onChange={(e) => setDescription(e.target.value)} />
+                        <input type="text" placeholder="command description..." value={description} onChange={(e) => setDescription(e.target.value)} />
                     </div>
                     <div className='command-name-inner'>
                         <label htmlFor="">Global Cooldown</label>
-                        <input type="text" placeholder="global cooldown..." onChange={(e) => setGlobalCooldown(e.target.value)} value={globalCooldown} />
+                        <input type="text" placeholder="global cooldown..." value={globalCooldown} onChange={(e) => setGlobalCooldown(e.target.value)} />
                         <label htmlFor="">User Cooldown</label>
-                        <input type="text" placeholder="user cooldown..." onChange={(e) => setUserCooldown(e.target.value)} value={userCooldown} />
+                        <input type="text" placeholder="user cooldown..." value={userCooldown} onChange={(e) => setUserCooldown(e.target.value)} />
                     </div>
                     <div className='permissions-container'>
                         <h2>Permissions</h2>
@@ -158,7 +159,7 @@ function NewCommand({ handleNewCommandClose }) {
                             <h2>Actions</h2>
                             <div className="new-command-actions">
                                 <button className="add-action-btn" onClick={() => setShowActions(true)}>Add Action</button>
-                                {showActions ? <Actions onAddAction={handleActionAdded} onActionsClose={handleShowActions}/> : null}
+                                {showActions ? <Actions onAddAction={handleActionAdded} onActionsClose={handleShowActions} /> : null}
                             </div>
                         </div>
                         <div className='command-actions-selections'>
@@ -166,7 +167,7 @@ function NewCommand({ handleNewCommandClose }) {
                                 <span>No actions</span>
                             ) : (
                                 <div>
-                                    {actions.map((action, index) => (
+                                    {actions[0].map((action, index) => (
                                         <div key={index} className='actions-main-wrapper' onClick={handleEditAction}>
                                             <span>{action.name}</span>
                                             <button onClick={() => removeAction(action)}>Remove</button>
@@ -179,7 +180,7 @@ function NewCommand({ handleNewCommandClose }) {
                 </div>
             </div>
             <div className='action-buttons-container'>
-                <button id='delete-command-btn' onClick={handleNewCommandClose}>Cancel</button>
+                <button id='cancel-command-btn' onClick={handleNewCommandClose}>Cancel</button>
                 <button id='save-command-btn' onClick={handleSaveCommand}>Save</button>
             </div>
         </div>
@@ -187,4 +188,4 @@ function NewCommand({ handleNewCommandClose }) {
 }
 
 
-export default NewCommand;
+export default EditCommand;

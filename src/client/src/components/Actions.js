@@ -7,6 +7,8 @@ import TTS from './SubComponents/SubActions/TTS';
 import Display from './SubComponents/SubActions/Display';
 import Sound from './SubComponents/SubActions/Sound';
 import Queue from './SubComponents/SubActions/Queue';
+import Spin from './SubComponents/SubActions/Spin';
+import LumiaStream from './SubComponents/SubActions/LumiaStream';
 
 function Actions({ onAddAction, onActionsClose }) {
     const [search, setSearch] = useState('');
@@ -35,11 +37,11 @@ function Actions({ onAddAction, onActionsClose }) {
         },
         {
             title: "Spin",
-            component: <div>Spin</div>
+            component: <Spin onActionSelected={handleActionSelected} />
         },
         {
             title: "Lumia Stream Command",
-            component: <div>Lumia Stream Command</div>
+            component: <LumiaStream onActionSelected={handleActionSelected} />
         },
         {
             title: "Counter",

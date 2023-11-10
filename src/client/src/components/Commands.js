@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import CommandSubComponent from './SubComponents/CommandSubComponent';
 import '../styles/GUI/commands.css';
-import Actions from './Actions';
 import NewCommand from './NewCommand'
 
 
@@ -28,21 +27,17 @@ function Commands() {
 
     return (
         <div className="content">
-            {newCommand ? <NewCommand handleNewCommandClose={handleNewCommandClose}/> : null}
+            {newCommand ? <NewCommand handleNewCommandClose={handleNewCommandClose} /> : null}
             <div className="options-container">
                 <button id="new-command-button" onClick={handleNewCommandClick}>New Command</button>
                 <div className="search-bar">
                     <FontAwesomeIcon icon={faSearch} className="fa-icon" />
-                    <input type="text" placeholder='search for commands...'/>
+                    <input type="text" placeholder='search for commands...' />
                 </div>
             </div>
             <div className="commands-main-container">
                 {commands.map((command) => (
-                    <CommandSubComponent
-                        commandNameProp={command.name}
-                        commandIdProp={command._id}
-                        commandEnabledProp={command.enabled}
-                    />
+                    <CommandSubComponent key={command._id} commandData={command} />
                 ))}
             </div>
         </div>
