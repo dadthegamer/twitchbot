@@ -50,10 +50,6 @@ import twitchAuthRouter from './routes/authRoutes/twitchAuth.js';
 import twitchCallbackRouter from './routes/authRoutes/twitchCallback.js';
 import twitchAdminAuthRouter from './routes/authRoutes/twitchAdminAuth.js';
 
-// Import overlay routes
-import overlayRouter from './routes/overlayRoute.js';
-
-
 // Import API routes
 import commandsRouter from './routes/apiRoutes/commands.js';
 import currencyRouter from './routes/apiRoutes/currency.js';
@@ -87,10 +83,6 @@ app.use('/api/games', gamesRouter);
 app.use('/api/streamathon', streamathonRouter);
 app.use('/api/channelpoints', channelPointsRouter);
 app.use('/api/lumiastream', lumiaStreamRouter);
-
-// Overlay routes
-app.use('/overlay', overlayRouter);
-app.use(express.static(path.join(__dirname, 'public')));
 
 
 // Twitch authentication
