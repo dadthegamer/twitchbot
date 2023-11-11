@@ -71,9 +71,6 @@ import streamathonRouter from './routes/apiRoutes/streamathon.js';
 import channelPointsRouter from './routes/apiRoutes/channelPoints.js';
 import lumiaStreamRouter from './routes/apiRoutes/lumiaStream.js';
 
-// Import GUI routes
-import guiRouter from './routes/gui.js';
-
 // Api routes
 app.use('/api/commands', commandsRouter);
 app.use('/api/currency', currencyRouter);
@@ -100,9 +97,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auth/twitch', twitchAuthRouter);
 app.use('/auth/twitch/callback', twitchCallbackRouter);
 app.use('/auth/twitch/admin', twitchAdminAuthRouter);
-
-// GUI routes
-app.use('/', guiRouter);
 
 
 app.listen(port, () => {
