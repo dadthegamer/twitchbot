@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { writeToLogFile } from '../../utilities/logging.js';
 import { cache } from '../../config/initializers.js';
+import logger from '../../utilities/logger.js';
 
 const router = Router();
 
@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
         }
     }
     catch (err) {
-        writeToLogFile('error', `Error in getting prediction: ${err}`);
+        logger.error(`Error in prediction.js: ${err}`);
         res.status(500).send();
     }
 });

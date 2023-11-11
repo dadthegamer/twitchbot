@@ -1,4 +1,6 @@
-// Poll events
+import logger from "../../../utilities/logger.js";
+
+
 export async function onPollBegin(e) {
     try {
         const pollId = e.id;
@@ -10,7 +12,7 @@ export async function onPollBegin(e) {
         }
     }
     catch (error) {
-        writeToLogFile('error', `Error in onPollBegin: ${error}`);
+        logger.error(`Error in onPollBegin: ${error}`);
     }
 }
 

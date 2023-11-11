@@ -1,6 +1,6 @@
-import { writeToLogFile } from '../utilities/logging.js';
 import { twitchApi } from '../config/initializers.js';
 import { environment } from '../config/environmentVars.js';
+import logger from '../utilities/logger.js';
 
 // User class 
 export class RaffleService {
@@ -18,7 +18,7 @@ export class RaffleService {
             this.cache.set('raffleEntries', raffleEntries)
             return raffleEntries;
         } catch (error) {
-            writeToLogFile('error', `Error getting all raffle entries: ${error}`);
+            logger.error(`Error getting all raffle entries: ${error}`);
         }
     }
 
@@ -28,7 +28,7 @@ export class RaffleService {
             const raffleEntries = await this.dbConnection.collection(this.collectionName).find({ userId: userId }).toArray();
             return raffleEntries.length;
         } catch (error) {
-            writeToLogFile('error', `Error getting raffle entries by userId: ${error}`);
+            logger.error(`Error getting raffle entries by userId: ${error}`);
         }
     }
 
@@ -40,7 +40,7 @@ export class RaffleService {
                 await this.dbConnection.collection(this.collectionName).insertOne({ userId: userId });
             }
         } catch (error) {
-            writeToLogFile('error', `Error adding raffle entries: ${error}`);
+            logger.error(`Error adding raffle entries: ${error}`);
         }
     }
 
@@ -49,7 +49,7 @@ export class RaffleService {
         try {
             await this.dbConnection.collection(this.collectionName).deleteMany({ userId: userId });
         } catch (error) {
-            writeToLogFile('error', `Error removing all raffle entries: ${error}`);
+            logger.error(`Error removing all raffle entries: ${error}`);
         }
     }
 
@@ -61,7 +61,7 @@ export class RaffleService {
             const userInfo = await twitchApi.getUserDataById(winner.userId);
             return userInfo;
         } catch (error) {
-            writeToLogFile('error', `Error getting raffle winner: ${error}`);
+            logger.error(`Error getting raffle winner: ${error}`);
         }
     }
 }

@@ -19,6 +19,6 @@ export async function onDonation(data) {
         await addDonation(id, amount);
     }
     catch (error) {
-        writeToLogFile('error', `Error in onDonation: ${error}`);
+        logger.error(`Error in onDonation: ${error}`);
     }
 }

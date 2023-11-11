@@ -1,7 +1,7 @@
-import { writeToLogFile } from "../../../utilities/logging.js";
 import { chatClient } from "../../../config/initializers.js";
 import { usersDB } from "../../../config/initializers.js";
 import { webSocket } from "../../../config/initializers.js";
+import logger from "../../../utilities/logger.js";
 
 export async function setWelcomeMessage(userId, displayName) {
     const userData = await getUserData(userId);
@@ -23,9 +23,9 @@ export async function setWelcomeMessage(userId, displayName) {
             }
         }
         await addWelcomeAlert(userId, displayName);
-        writeToLogFile('info', `Welcome message sent for ${displayName}`);
+        logger.info(`Welcome message set for ${displayName}`);
     }
     catch (err) {
-        writeToLogFile('error', `Error in setWelcomeMessage: ${err}`)
+        logger.error(`Error in setWelcomeMessage: ${err}`);
     }
 }

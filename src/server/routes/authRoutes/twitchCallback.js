@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { exchangeCode } from '@twurple/auth';
 import { twitchApi, usersDB, tokenDB } from '../../config/initializers.js';
 import axios from 'axios';
+import logger from '../../utilities/logger.js';
 
 const router = Router();
 
@@ -19,7 +20,7 @@ async function getUserDataByToken(token) {
     }
     catch (error) {
         console.log(error);
-        writeToLogFile('error', `Error getting user data by token: ${error}`);
+        logger.error(`Error in getUserDataByToken: ${error}`);
     }
 }
 
@@ -44,7 +45,7 @@ router.get('/', async (req, res) => {
         res.redirect('http://localhost:3000/');
     }
     catch (error) {
-        console.error(error);
+        logger.error(`Error in twitchCallback.js: ${error}`);
         res.redirect('http://localhost:3000/');
     }
 });

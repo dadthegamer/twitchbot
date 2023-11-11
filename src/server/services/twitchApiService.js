@@ -344,7 +344,6 @@ class TwitchApiClient {
             return pollData;
         }
         catch (error) {
-            console.log(error);
             logger.error(`Error getting latest poll: ${error}`);
         }
     }
@@ -459,7 +458,7 @@ class TwitchApiClient {
         const managedRewards = this.cache.get('channelRewardsManaged');
         const reward = managedRewards.find((r) => r.id === rewardId);
         if (!reward) {
-            writeToLogFile('error', `Error updating custom reward: ${rewardId} is not a managed reward.`);
+            logger.error(`Error updating custom reward: Reward ID ${rewardId} is not managed by this bot`);
             return;
         }
         try {

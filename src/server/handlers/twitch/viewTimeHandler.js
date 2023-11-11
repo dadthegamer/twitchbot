@@ -1,7 +1,4 @@
-import { usersDB } from "../../config/initializers.js";
 import { twitchApi } from "../../config/initializers.js";
-import { writeToLogFile } from "../../utilities/logging.js";
-import { cache } from "../../config/initializers.js";
 import NodeCache from "node-cache";
 import logger from "../../utilities/logger.js";
 

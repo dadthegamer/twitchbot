@@ -1,5 +1,5 @@
 import { webSocket } from '../config/initializers.js';
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from '../utilities/logger.js';
 
 
 let alertQueue = [];
@@ -19,7 +19,7 @@ function streamathonAlertHandler() {
         }
     }
     catch (err) {
-        writeToLogFile('error', `Error in alertHandler for alerts: ${err}`);
+        logger.error(`Error in streamathonAlertHandler: ${err}`);
     }
 }
 
@@ -32,7 +32,7 @@ export async function addAlert(userName, time) {
         alertQueue.push(alert);
     }
     catch (err) {
-        writeToLogFile('error', `Error in addAlert: ${err}`);
+        logger.error(`Error in addAlert: ${err}`);
     }
 }
 

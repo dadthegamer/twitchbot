@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { writeToLogFile } from '../../utilities/logging.js';
 import { cache, usersDB, interactionsDB } from '../../config/initializers.js';
+import logger from '../../utilities/logger.js';
 
 const router = Router();
 
@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     }
     catch (err) {
         console.error('Error in GET /quotes:', err);
-        writeToLogFile(err);
+        logger.error(`Error in GET /quotes: ${err}`);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
@@ -26,7 +26,7 @@ router.get('/:id', async (req, res) => {
     }
     catch (err) {
         console.error('Error in GET /quotes/:id:', err);
-        writeToLogFile(err);
+        logger.error(`Error in GET /quotes/:id: ${err}`);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
@@ -40,7 +40,7 @@ router.post('/', async (req, res) => {
     }
     catch (err) {
         console.error('Error in POST /quotes:', err);
-        writeToLogFile(err);
+        logger.error(`Error in POST /quotes: ${err}`);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
@@ -54,7 +54,7 @@ router.put('/:id', async (req, res) => {
         res.json(quote);
     }
     catch (err) {
-        writeToLogFile(err);
+        logger.error(`Error in PUT /quotes/:id: ${err}`);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
@@ -72,7 +72,7 @@ router.delete('/:id', async (req, res) => {
     }
     catch (err) {
         console.error('Error in DELETE /quotes/:id:', err);
-        writeToLogFile(err);
+        logger.error(`Error in DELETE /quotes/:id: ${err}`);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

@@ -1,8 +1,7 @@
 import { Router } from 'express';
-
+import logger from '../../shared/logger.js';
 
 const router = Router();
-
 
 router.get('/', async (req, res) => {
     res.sendFile('dashboard.html', { root: './public/html/gui' });
@@ -16,7 +15,7 @@ router.get('/:page', async (req, res) => {
     }
     catch (error) {
         res.status(404).send('Not found');
-        writeToLogFile('error', `Error in gui.js: ${error}`);
+        logger.error(`Error in gui.js: ${error}`);
     }
 });
 

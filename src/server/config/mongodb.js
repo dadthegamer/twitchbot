@@ -106,7 +106,7 @@ class MongoDBConnection {
             await this.dbConnection.collection(oldName).rename(newName);
         }
         catch (error) {
-            writeToLogFile('error', `Error renaming collection: ${error}`);
+            logger.error(`Error renaming collection: ${error}`);
         }
     }
 
@@ -130,7 +130,6 @@ class MongoDBConnection {
             });
         }
         catch (error) {
-            console.log(error);
             logger.error(`Error backing up database: ${error}`);
         }
     }

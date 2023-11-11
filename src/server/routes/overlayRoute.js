@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { writeToLogFile } from '../utilities/logging.js';
+import logger from '../utilities/logger.js';
 
 const router = Router();
 
@@ -9,7 +9,7 @@ router.get('/:element', async (req, res) => {
         res.sendFile(`${element}.html`, { root: './public/html' });
     } catch (error) {
         res.status(404).send("Not found");
-        writeToLogFile('error', `Error in overlay.js: ${error}`);
+        logger.error(`Error in gui.js: ${error}`);
     }
 });
 

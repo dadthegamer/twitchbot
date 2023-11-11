@@ -1,6 +1,6 @@
 import Axios from "axios";
 import { usersDB } from "../config/initializers.js";
-import { writeToLogFile } from "../utilities/logging.js";
+import logger from "../utilities/logger.js";
 
 const url = process.env.FIREBOT_URL;
 const leaderBoardKey = '4254bd80-11c6-11ed-8d35-7964b0db002f'
@@ -22,8 +22,7 @@ async function setLeaderboardPoints(userId, points) {
         const options = { upsert: true };
         await collection.findOneAndUpdate(query, update, options);
     } catch (error) {
-        console.log(`Error setting leaderboard points: ${error}`);
-        writeToLogFile('error', `Error setting leaderboard points: ${error}`);
+        logger.error(`Error setting leaderboard points: ${error}`);
     }
 }
 
@@ -33,8 +32,7 @@ async function updateFirebotUserData(firebotData) {
         console.log(`Updating user data for ${firebotData.username} (${firebotData.minutesInChannel})`);
         usersDB.setUserValue(firebotData._id, 'view_time', firebotData.minutesInChannel);
     } catch (error) {
-        console.log(`Error updating user data: ${error}`);
-        writeToLogFile('error', `Error updating user data: ${error}`);
+        logger.error(`Error updating user data: ${error}`);
     }
 }
 
@@ -52,7 +50,7 @@ async function getFirebotUserData() {
         }
         return response.data;
     } catch (error) {
-        console.log(`Error retrieving Firebot user data: ${error}`);
+        logger.error(`Error retrieving Firebot user data: ${error}`);
     }
 }
 
@@ -67,7 +65,7 @@ async function getFirebotQuotes() {
         }
         return response.data;
     } catch (error) {
-        console.log(`Error retrieving Firebot user data: ${error}`);
+        logger.error(`Error retrieving Firebot quotes: ${error}`);
     }
 }
 
@@ -77,7 +75,7 @@ async function getFirebotCurrency() {
         const response = await Axios.get(`${url}/api/v1/currency/`);
         return currency;
     } catch (error) {
-        console.log(`Error retrieving Firebot currency data: ${error}`);
+        logger.error(`Error retrieving Firebot currency: ${error}`);
     }
 }
 
@@ -92,7 +90,7 @@ async function storeFirebotQuote(quote) {
             await collection.insertOne(quote);
         }
     } catch (error) {
-        console.log(`Error storing quote: ${error}`);
+        logger.error(`Error storing Firebot quote: ${error}`);
     }
 }
 
@@ -101,11 +99,9 @@ export async function initializeFirebot() {
         await getFirebotUserData();
         // await getFirebotQuotes();
         console.log('Firebot initialized');
-        writeToLogFile('info', 'Firebot initialized');
     }
     catch (error) {
-        console.log(`Error initializing Firebot: ${error}`);
-        writeToLogFile('error', `Error initializing Firebot: ${error}`);
+        logger.error(`Error initializing Firebot: ${error}`);
     }
 }
 
