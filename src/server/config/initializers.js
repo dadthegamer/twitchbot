@@ -29,6 +29,7 @@ import CounterService from '../services/counterService.js';
 import GoXLRClient from '../services/goXLRUtilityService.js';
 import getLumiaStreamSettings from '../services/lumiaStreamService.js';
 import StreamathonService from '../services/streamathonService.js';
+import TikTokService from '../services/tikTokService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -110,6 +111,9 @@ const goXLRClient = new GoXLRClient();
 // Streamathon service initialization
 const streamathonService = new StreamathonService(db.dbConnection, cache);
 
+// TikTok service initialization
+const tikTokService = new TikTokService(db.dbConnection);
+
 // Subscribe to donation events
 subscribeToDonationEvents();
 
@@ -143,5 +147,6 @@ export {
     gameService,
     counterService,
     goXLRClient,
-    streamathonService
+    streamathonService,
+    tikTokService,
 };

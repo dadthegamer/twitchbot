@@ -9,6 +9,7 @@ import Sound from './SubComponents/SubActions/Sound';
 import Queue from './SubComponents/SubActions/Queue';
 import Spin from './SubComponents/SubActions/Spin';
 import LumiaStream from './SubComponents/SubActions/LumiaStream';
+import Quote from './SubComponents/SubActions/Quote';
 
 function Actions({ onAddAction, onActionsClose }) {
     const [search, setSearch] = useState('');
@@ -53,7 +54,7 @@ function Actions({ onAddAction, onActionsClose }) {
         },
         {
             title: "Quote",
-            component: <div>Quote</div>
+            component: <Quote onActionSelected={handleActionSelected} />
         }
         // Add more actions here with similar format
     ];

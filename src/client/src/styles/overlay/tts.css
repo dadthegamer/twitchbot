@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,900&family=Permanent+Marker&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background-color: #111111;
+    --primary-color: #1b1b1b;
+    --terrestrial-color: #1F1F1F;
+    --secondary-color: #005AFF;
+    --font-color: #FFFFFF;
+}
+
+.tts-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+    align-items: center;
+    background-color: rgba(0, 0, 0, .50);
+    border: 2px solid black;
+    width: 500px;
+    min-width: 500px;
+    min-height: 250px;
+    height: 250px;
+    border-radius: 10px;
+    position: absolute;
+    top: 99%;
+    left: 50%;
+    color: var(--font-color);
+    padding: 10px;
+    font-size: 24px;
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase;
+    text-align: center;
+    animation: slideUp .25s ease-in-out forwards;
+    opacity: 1;
+}
+
+.tts-container img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: -50px;
+    border: 2px solid black;
+    box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
+    -webkit-box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.75);
+}
+
+@keyframes slideUp {
+    0% {
+        top: 110%;
+    }
+
+    100% {
+        top: 50%;
+    }
+}
+
+@keyframes slideDown {
+    0% {
+        top: 50%;
+        opacity: 1;
+    }
+    100% {
+        top: 120%;
+        opacity: 0;
+    }
+}

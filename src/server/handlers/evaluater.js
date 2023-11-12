@@ -27,8 +27,9 @@ export async function evalulate(handler, context) {
                 const profile_image = await usersDB.getUserProfileImageUrl(userId);
                 ttsHandler(handler.response, profile_image);
                 break;
-            case 'getQuote':
-                try {
+            case 'quote':
+                const quoteAction = handler.response;
+                if (quoteAction === 'get') {
                     const command = parts[0];
                     const split = command.split(' ');
                     const quoteIndex = split[0].replace(/[^0-9]/g, '');
@@ -41,12 +42,7 @@ export async function evalulate(handler, context) {
                     } else {
                         return;
                     }
-                }
-                catch (err) {
-                    logger.error(`Error in getQuote: ${err}`);
-                }
-            case 'createQuote':
-                try {
+                } else if (quoteAction === 'create') {
                     const quote = input;
                     if (!quote) {
                         return;
@@ -60,10 +56,7 @@ export async function evalulate(handler, context) {
                     } else {
                         return;
                     }
-                }
-                catch (err) {
-                    logger.error(`Error in createQuote: ${err}`);
-                }
+                };
             case 'setMessage':
                 try {
                     displayHandler(input);

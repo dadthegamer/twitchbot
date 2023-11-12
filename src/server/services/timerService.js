@@ -2,8 +2,9 @@ import cron from 'node-cron';
 
 // This class manages the timers
 class TimerManager {
-    constructor() {
+    constructor(cacheService) {
         this.timers = []; // Store timers in-memory
+        this.cacheService = cacheService;
     }
 
     // Initialize timers from database when the app starts

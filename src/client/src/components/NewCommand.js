@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../styles/GUI/newCommand.css';
 import Actions from './Actions';
 

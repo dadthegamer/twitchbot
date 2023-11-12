@@ -10,6 +10,7 @@ import TopNavbar from './components/TopNavBar';
 import Currency from './components/Currency';
 import TikTok from './components/TikTok';
 import Display from './components/overlayComponents/TVDisplay';
+import TextToSpeech from './components/overlayComponents/TextToSpeech';
 import Leaderboard from './components/overlayComponents/Leaderboard';
 import Intermission from './components/overlayComponents/Intermission';
 import StartingSoon from './components/overlayComponents/startingSoon';
@@ -49,6 +50,7 @@ function App() {
         <Route path="leaderboard" element={<Leaderboard />} />
         <Route path="intermission" element={<Intermission />} />
         <Route path="display" element={<Display />} />
+        <Route path="tts" element={<TextToSpeech />} />
       </Route>
 
       {/* Main Routes */}

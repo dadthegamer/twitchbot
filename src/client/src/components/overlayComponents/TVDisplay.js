@@ -62,6 +62,8 @@ function Display() {
             }
         };
     }, []);
+
+    
     return (
         <div>
             {showMessage && <div className="display">{message}</div>}

@@ -1561,6 +1561,82 @@ class UsersDB {
             logger.error(`Error in removeMetaDataProperty: ${error}`);
         }
     }
+
+    // Method to set the tiktok username for a user
+    async setTikTokUsername(userId, tiktokUsername) {
+        try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if tiktokUsername is a string
+            if (typeof tiktokUsername !== 'string') {
+                tiktokUsername = tiktokUsername.toString();
+            }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
+            // Set the tiktokUsername property for the user in the cache and then the database
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            };
+            user.tiktokUsername = tiktokUsername;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $set:
+                        { tiktokUsername: tiktokUsername }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in setTikTokUsername: ${error}`);
+        }
+    }
+
+    // Method to get increase the TikTok likes for a user
+    async increaseTikTokLikes(user, likes) {
+        try {
+            if (likes === undefined || likes === null) {
+                logger.error(`Error in increaseViewTime: Minutes is undefined`);
+                return;
+            }
+            // Check if likes is a number
+            if (typeof likes !== 'number') {
+                try {
+                    likes = parseInt(likes);
+                    if (isNaN(likes)) {
+                        logger.error(`Error in increaseViewTime: Minutes is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseViewTime: ${error}`);
+                }
+            }
+
+            // Increase the all time, yearly, monthly, weekly and stream TikTok likes for the user in the database
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { tiktokUsername: user },
+                {
+                    $inc: {
+                        'tiktokLikes.allTime': likes,
+                        'tiktokLikes.yearly': likes,
+                        'tiktokLikes.monthly': likes,
+                        'tiktokLikes.weekly': likes,
+                        'tiktokLikes.stream': likes
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in tikTokLikes: ${error}`);
+        }
+    }
 }
 
 
