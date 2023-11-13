@@ -260,7 +260,7 @@ label {
     overflow-y: scroll;
 }
 
-.actions-main-container {
+/* .actions-main-container {
     display: grid;
     grid-template-columns: repeat(1, 1fr);
     grid-template-rows: 1fr;
@@ -290,7 +290,7 @@ label {
     background-color: var(--font-color);
     color: var(--background-color);
     transition: all .2s ease-in-out;
-}
+} */
 
 .permissions-container {
     display: flex;
@@ -310,15 +310,6 @@ label {
     justify-content: space-between;
     align-items: center;
     gap: 10px;
-}
-
-.action-buttons-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
 }
 
 #save-command-btn {

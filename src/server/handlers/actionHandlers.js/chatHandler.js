@@ -4,12 +4,11 @@ import logger from '../../utilities/logger.js';
 
 export async function chatMessageHandler(message, context) {
     try {
-        const { bot, msg, userDisplayName, userId, say, timeout, reply } = context;
+        const { userId } = context;
         if (message.includes('$')) {
             try {
-                const { id, isFirst, isCheer, isReply, bits, userInfo } = msg;
                 const newMessage = await variableHandler(message, userId);
-                chatClient.replyToMessage(newMessage, id);
+                chatClient.say(newMessage);
             } catch (err) {
                 logger.error(`Error in variableHandler: ${err}`);
             }
@@ -18,7 +17,6 @@ export async function chatMessageHandler(message, context) {
         }
     }
     catch (err) {
-        console.log('Error in chatHandler:', err);
         logger.error(`Error in chatHandler: ${err}`);
     }
 }

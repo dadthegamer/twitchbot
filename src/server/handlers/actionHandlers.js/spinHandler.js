@@ -21,7 +21,6 @@ export async function increaseJackpot(amount) {
         cache.set('jackpot', cache.get('jackpot') + amount);
     }
     catch (err) {
-        console.log(err);
         logger.error(`Error in increaseJackpot: ${err}`);
     }
 }
@@ -33,7 +32,6 @@ export async function getJackpot() {
         return jackpot;
     }
     catch (err) {
-        console.log(err);
         logger.error(`Error in getJackpot: ${err}`);
     }
 }
@@ -45,15 +43,13 @@ export async function setJackpot(amount) {
         return jackpot;
     }
     catch (err) {
-        console.log(err);
         logger.error(`Error in setJackpot: ${err}`);
     }
 }
 
 
 // Function to handle the spin
-export async function spinHandler(userDisplayName, userId, messageID) {
-    console.log('spinHandler');
+export async function spinHandler(userDisplayName, userId, messageID = null) {
     try {
         const jackpotData = await getJackpot();
         const { currency, jackpotPCT } = jackpotData;
@@ -83,7 +79,6 @@ export async function spinHandler(userDisplayName, userId, messageID) {
         }
     }
     catch (err) {
-        console.log(err);
         logger.error(`Error in spinHandler: ${err}`);
     }
 }

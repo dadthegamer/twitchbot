@@ -1,5 +1,6 @@
 import { twitchApi } from '../config/initializers.js';
 import logger from '../utilities/logger.js';
+import { evalulate } from '../handlers/evaluater.js';
 
 // Class to connect to Twitch chat
 class TwitchChannelPointsService {
@@ -149,6 +150,33 @@ class TwitchChannelPointsService {
         }
         catch (error) {
             logger.error(`Error toggling custom reward in TwitchChannelPointsService: ${error}`);
+        }
+    }
+
+    // Method to handle a channel reward redemption
+    async handleRewardRedemption(rewardId, userId, userDisplayName, userInput) {
+        try {
+            // Get all the channel rewards from the cache
+            const channelRewards = this.cache.get('channelRewards');
+            // Find the channel reward by the rewardId passed in
+            const channelReward = channelRewards.find(channelReward => channelReward.id === rewardId);
+            // If the channel reward does not exist return
+            if (!channelReward) {
+                return;
+            } else {
+                const handlers = channelReward.handlers;
+                if (!handlers) {
+                    return;
+                } else {
+                    // For each handler evaluate the handler
+                    for (const handler of handlers) {
+                        await this.evalulate(handler, { userId, userDisplayName, userInput });
+                    }
+                }
+            }
+        }
+        catch (error) {
+            logger.error(`Error handling reward redemption in TwitchChannelPointsService: ${error}`);
         }
     }
 }

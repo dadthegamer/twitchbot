@@ -8,10 +8,6 @@ function ChannelPointSubComponent({ rewardData }) {
     const [editMenu, setEditMenu] = useState(false);
     const [enabled, setEnabled] = useState(rewardData.isEnabled);
 
-    const handleEditMenu = () => {
-        setEditMenu(!editMenu);
-    };
-
     const handleDeleteReward = () => {
         // Make a DELETE request to the server to delete the command
         const response = fetch(`/api/channelpoints/${rewardData.title}`, {
@@ -65,7 +61,6 @@ function ChannelPointSubComponent({ rewardData }) {
                         </label>
                     </div>
                 )}
-                <FontAwesomeIcon icon={faEllipsisVertical} className="fa-icon" onClick={handleEditMenu} />
                 {editMenu && (
                     <div className="command-menu">
                         <div>

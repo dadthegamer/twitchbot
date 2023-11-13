@@ -10,8 +10,8 @@ import { addToQueue, removeFromQueue, getQueue } from "./actionHandlers.js/queue
 
 // Method to evaluate the handler
 export async function evalulate(handler, context) {
-    const { bot, msg, userDisplayName, userId, messageID, parts, input, rewardId } = context;
     try {
+        const { bot, msg, userDisplayName, userId, messageID, parts, input } = context;
         const { type } = handler;
         switch (type) {
             case 'chat':

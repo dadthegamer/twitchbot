@@ -14,6 +14,8 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
     const [globalCooldown, setGlobalCooldown] = useState(0);
     const [background, setBackground] = useState(null);
     const [autofill, setAutofill] = useState(false);
+    const [maxRedemptions, setMaxRedemptions] = useState(0);
+    const [maxRedemptionsPerUser, setMaxRedemptionsPerUser] = useState(0);
 
     useEffect(() => {
         setBackground(generateRandomColor());
@@ -35,7 +37,6 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
 
     // Callback function to add actions to actions array
     const handleActionAdded = (action) => {
-        console.log(action);
         addAction(action);
     }
 
@@ -53,6 +54,60 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
     const handleEditAction = () => {
         console.log('edit action');
     }
+
+    const handleNameChange = (e) => {
+        setChannelPointName(e.target.value);
+    }
+
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
+    }
+
+    const handleCostChange = (e) => {
+        setCost(e.target.value);
+    }
+
+    const handleInputRequiredChange = (e) => {
+        setUserInputRequired(e.target.checked);
+    }
+
+    const handleCooldownChange = (e) => {
+        setGlobalCooldown(e.target.value);
+    }
+
+    const handleMaxRedemptionsChange = (e) => {
+        setMaxRedemptions(e.target.value);
+    }
+
+    const handleSaveReward = () => {
+        // Send a post request to the server to save the reward
+        const reward = {
+            title: channelPointName,
+            prompt: description,
+            userInputRequired: userInputRequired,
+            cost: cost,
+            backgroundColor: background,
+            globalCooldown: globalCooldown,
+            maxRedemptionsPerStream: maxRedemptions,
+            maxRedemptionsPerUserPerStream: maxRedemptionsPerUser,
+            handlers: actions
+        }
+        const res = fetch('/api/rewards', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(reward)
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data);
+                handleNewChannelPointClose();
+            })
+            .catch((err) => console.log(err));
+    }
+
+
     return (
         <div className='new-redemption-main-container'>
             <div className="new-redemption-container">
@@ -62,20 +117,20 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
                 <div className="new-redemption-body">
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">Name</label>
-                        <input type="text" id='reward-name' placeholder='name of reward...' />
+                        <input type="text" id='reward-name' placeholder='name of reward...' value={channelPointName} onChange={handleNameChange} />
                     </div>
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">Description</label>
-                        <input type="text" id='reward-description' placeholder='description of the reward...' />
+                        <input type="text" id='reward-description' placeholder='description of the reward...' value={description} onChange={handleDescriptionChange} />
                     </div>
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">Cost</label>
-                        <input type="text" id='reward-cost' placeholder='cost of the reward...' />
+                        <input type="text" id='reward-cost' placeholder='cost of the reward...' value={cost} onChange={handleCostChange} />
                     </div>
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">User Input Required?</label>
                         <div className="switch-container">
-                            <input type="checkbox" className="checkbox" id={`toggle-command-checkbox`} checked={userInputRequired} />
+                            <input type="checkbox" className="checkbox" id={`toggle-command-checkbox`} checked={userInputRequired} onChange={handleInputRequiredChange} />
                             <label className="switch" htmlFor={`toggle-command-checkbox`}>
                                 <span className="slider"></span>
                             </label>
@@ -94,21 +149,21 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">Redemption Cooldown</label>
                         <div>
-                            <input type="text" id='reward-cost' placeholder='cost of the reward...' />
+                            <input type="text" id='reward-cooldown' placeholder='redemption cooldown...' value={globalCooldown} onChange={handleCooldownChange} />
                             <span className='input-description'>Time between each redemption</span>
                         </div>
                     </div>
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">Max Redemptions Per Stream</label>
                         <div>
-                            <input type="text" id='reward-cost' placeholder='cost of the reward...' />
+                            <input type="text" id='max-redemptions-per-stream' placeholder='max redemptions per stream...' value={maxRedemptions} onChange={handleMaxRedemptionsChange} />
                             <span className='input-description'>Set the maximum Redemptions per stream</span>
                         </div>
                     </div>
                     <div className="redemption-body-inner">
-                        <label htmlFor="reward-name">Max Redemptions Per User Per Stream</label>
+                        <label htmlFor="max-redemptions-per-stream-per-user">Max Redemptions Per User Per Stream</label>
                         <div>
-                            <input type="text" id='reward-cost' placeholder='cost of the reward...' />
+                            <input type="text" id='max-redemptions-per-stream-per-user' placeholder='max redemptions per stream per user...' value={maxRedemptionsPerUser}/>
                             <span className='input-description'>Set the maximum Redemptions per user per stream</span>
                         </div>
                     </div>
@@ -138,8 +193,8 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
                 </div>
             </div>
             <div className='action-buttons-container'>
-                <button id='delete-command-btn' >Cancel</button>
-                <button id='save-command-btn' >Save</button>
+                <button id='delete-command-btn' onClick={handleNewChannelPointClose}>Cancel</button>
+                <button id='save-command-btn' onClick={handleSaveReward}>Save</button>
             </div>
         </div>
     );

@@ -10,7 +10,7 @@ function ChannelPoints() {
     const [showActions, setShowActions] = useState(true);
     const [channelPoints, setChannelPoints] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [newChannelPoint, setNewChannelPoint] = useState(true);
+    const [newChannelPoint, setNewChannelPoint] = useState(false);
 
     // Get the channel points from the server and set the state as well as set the loading state to false
     useEffect(() => {
@@ -42,10 +42,14 @@ function ChannelPoints() {
         setNewChannelPoint(true);
     }
 
+    const handleNewChannelPointClose = () => {
+        setNewChannelPoint(false);
+    }
+
     return (
         <div className='content'>
         {newChannelPoint ? (
-            <NewChannelPoint />
+            <NewChannelPoint handleNewChannelPointClose={handleNewChannelPointClose}/>
             ) : null}
             <div className="options-container">
                 <button id="new-command-button" onClick={handleNewChannelPointClick}>New Reward</button>

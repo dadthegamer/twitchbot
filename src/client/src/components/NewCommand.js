@@ -158,7 +158,7 @@ function NewCommand({ handleNewCommandClose }) {
                             <h2>Actions</h2>
                             <div className="new-command-actions">
                                 <button className="add-action-btn" onClick={() => setShowActions(true)}>Add Action</button>
-                                {showActions ? <Actions onAddAction={handleActionAdded} onActionsClose={handleShowActions}/> : null}
+                                {showActions ? <Actions onAddAction={handleActionAdded} onActionsClose={handleShowActions} /> : null}
                             </div>
                         </div>
                         <div className='command-actions-selections'>
