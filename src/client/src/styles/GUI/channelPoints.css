@@ -34,6 +34,11 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
+    cursor: pointer;
+}
+
+.channel-point-container:hover {
+    background-color: var(--terrestrial-color);
 }
 
 .channel-point-container div {

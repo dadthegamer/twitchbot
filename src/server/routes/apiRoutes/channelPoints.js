@@ -31,7 +31,8 @@ router.get('/:id', async (req, res) => {
 // Endpoint to create a channel point
 router.post('/', async (req, res) => {
     try {
-        const response = await channelPointsService.createCustomReward(req.body);
+        const { title, prompt, cost, userInputRequired, backgroundColor, globalCooldown, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, handlers } = req.body;
+        const response = await channelPointsService.createCustomReward(title, prompt, cost, userInputRequired, backgroundColor, globalCooldown, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, handlers);
         res.json(response);
     }
     catch (err) {
@@ -55,8 +56,9 @@ router.put('/:id', async (req, res) => {
 // Endpoint to delete a channel point
 router.delete('/:id', async (req, res) => {
     try {
+        console.log('req.params.id: ', req.params.id);
         const response = await channelPointsService.deleteChannelReward(req.params.id);
-        res.json(response);
+        res.json( { success: true });
     }
     catch (err) {
         console.log('Error in deleting a channel point from the api: ', err)
@@ -67,12 +69,13 @@ router.delete('/:id', async (req, res) => {
 // Endpoint to toggle a channel point
 router.put('/toggle/:id', async (req, res) => {
     try {
-        const response = await channelPointsService.toggleChannelReward(req.params.id);
-        res.json(response);
+        await channelPointsService.toggleChannelReward(req.params.id, req.body.isEnabled);
+        res.json({ success: true });
     }
     catch (err) {
         console.log('Error in toggling a channel point from the api: ', err)
         logger.error(`Error in toggling a channel point from the api: ${err}`);
+        res.json({ success: false });
     }
 });
 

@@ -455,7 +455,7 @@ class TwitchApiClient {
     // Method to update a custom reward
     async updateCustomReward(rewardId, data) {
         // Check if reward ID is in the managed rewards cache. If it isnt then return an error
-        const managedRewards = this.cache.get('channelRewardsManaged');
+        const managedRewards = this.cache.get('managedChannelRewards');
         const reward = managedRewards.find((r) => r.id === rewardId);
         if (!reward) {
             logger.error(`Error updating custom reward: Reward ID ${rewardId} is not managed by this bot`);
@@ -474,14 +474,33 @@ class TwitchApiClient {
     async createCustomReward(data) {
         try {
             const response = await this.apiClient.channelPoints.createCustomReward(this.userId, data);
-            return response.id;
+            const reward = {
+                id: response.id,
+                title: response.title,
+                prompt: response.prompt,
+                cost: response.cost,
+                isEnabled: response.isEnabled,
+                userInputRequired: response.userInputRequired,
+                maxRedemptionsPerStream: response.maxRedemptionsPerStream,
+                maxRedemptionsPerUserPerStream: response.maxRedemptionsPerUserPerStream,
+                globalCooldown: response.globalCooldown,
+                isPaused: response.isPaused,
+                isInStock: response.isInStock,
+                backgroundColor: response.backgroundColor,
+                autoFulfill: response.autoFulfill,
+                redemptionsThisStream: response.redemptionsThisStream,
+                cooldownExpiryDate: response.cooldownExpiryDate,
+            };
+            return reward;
         }
         catch (error) {
             // Parse the error message to see if the error is because the reward already exists
             if (error.message.includes('CREATE_CUSTOM_REWARD_DUPLICATE_REWARD')) {
                 return { error: 'Reward already exists' }
+            } else {
+                console.log(error);
+                logger.error(`Error creating custom reward: ${error}`);
             }
-            logger.error(`Error creating custom reward: ${error}`);
         }
     }
 

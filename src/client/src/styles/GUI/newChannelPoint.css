@@ -23,6 +23,8 @@
     align-items: center;
     margin-top: 10px;
     position: fixed;
+    top: 10%;
+    left: 32.5%;
     z-index: 99;
     background-color: var(--primary-color);
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);

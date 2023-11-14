@@ -1,4 +1,4 @@
-import { twitchApi } from '../config/initializers.js';
+import { channelPointsService, twitchApi } from '../config/initializers.js';
 import logger from '../utilities/logger.js';
 import { evalulate } from '../handlers/evaluater.js';
 
@@ -24,7 +24,7 @@ class TwitchChannelPointsService {
                     channelReward.managed = true;
                 }
             }
-            // for each channel reward insert it into the database if it does not exist
+            // For each channel reward insert it into the database if it does not exist
             for (const channelReward of channelRewards) {
                 channelReward.handlers = [];
                 const channelRewardExists = await this.dbConnection.collection(this.collectionName).findOne({ id: channelReward.id });
@@ -32,8 +32,18 @@ class TwitchChannelPointsService {
                     await this.dbConnection.collection(this.collectionName).insertOne(channelReward);
                 }
             }
+
+            // Now get all the channel rewards from the database and remove any channel rewards that are not in the Twitch api
+            const channelRewardsFromDatabase = await this.dbConnection.collection(this.collectionName).find().toArray();
+            for (const channelRewardFromDatabase of channelRewardsFromDatabase) {
+                const channelReward = channelRewards.find(channelReward => channelReward.id === channelRewardFromDatabase.id);
+                if (!channelReward) {
+                    await this.dbConnection.collection(this.collectionName).deleteOne({ id: channelRewardFromDatabase.id });
+                }
+            }
             // Cache the channel rewards
             this.cache.set('channelRewards', channelRewards);
+            this.cache.set('managedChannelRewards', managedChannelRewards);
         }
         catch (error) {
             logger.error(`Error getting channel rewards in TwitchChannelPointsService: ${error}`);
@@ -68,7 +78,7 @@ class TwitchChannelPointsService {
     }
 
     // Method to create a new channel reward
-    async createCustomReward(autoFill = true, backgroundColor, cost, globalCooldown, isEnabled = true, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, prompt, title, userInputRequired) {
+    async createCustomReward(title, prompt, cost, userInputRequired, backgroundColor, globalCooldown, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, handlers, autoFill = true, isEnabled = true, ) {
         try {
             // Check if the reward already exists. Convert name to lowercase to make sure the name is not case sensitive
             const channelRewards = this.cache.get('channelRewards');
@@ -78,9 +88,20 @@ class TwitchChannelPointsService {
                 return;
             }
             const channelReward = await twitchApi.createCustomReward({ autoFill, backgroundColor, cost, globalCooldown, isEnabled, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, prompt, title, userInputRequired });
+            console.log(channelReward);
             if (channelReward) {
+                const rewardData = {
+                    title: channelReward.title,
+                    prompt: channelReward.prompt,
+                    cost: channelReward.cost,
+                    backgroundColor: channelReward.backgroundColor,
+                    globalCooldown: channelReward.globalCooldown,
+                    maxRedemptionsPerStream: channelReward.maxRedemptionsPerStream,
+                    maxRedemptionsPerUserPerStream: channelReward.maxRedemptionsPerUserPerStream,
+                }
                 // Add the new channel reward to the cache
                 const channelRewards = this.cache.get('channelRewards');
+                channelReward.handlers = handlers;
                 channelRewards.push(channelReward);
                 this.cache.set('channelRewards', channelRewards);
 
@@ -90,6 +111,7 @@ class TwitchChannelPointsService {
             return { channelReward: channelReward };
         }
         catch (error) {
+            console.log(error);
             logger.error(`Error creating custom reward in TwitchChannelPointsService: ${error}`);
             return { error: error };
         }
@@ -99,16 +121,20 @@ class TwitchChannelPointsService {
     async deleteChannelReward(id) {
         try {
             // Get the channel reward from the cache
-            const channelRewards = this.cache.get('channelRewards');
+            const channelRewards = this.cache.get('managedChannelRewards');
             // Find the channel reward by the id passed in and get the id of the channel reward
             const channelReward = channelRewards.find(channelReward => channelReward.id === id);
-            // Delete the channel reward from the cache
-            this.cache.set('channelRewards', channelRewards.filter(channelReward => channelReward.id !== id));
-            // Delete the channel reward from the database
-            await this.dbConnection.collection(this.collectionName).deleteOne({ id: id });
-            // Delete the channel reward from the Twitch api
-            await twitchApi.deleteChannelReward(id);
-            return { channelReward: channelReward };
+            if (!channelReward) {
+                return;
+            }
+            const res = await twitchApi.deleteCustomReward(id);
+            if (res.success) {
+                // Delete the channel reward from the cache
+                this.cache.set('channelRewards', channelRewards.filter(channelReward => channelReward.id !== id));
+                // Delete the channel reward from the database
+                await this.dbConnection.collection(this.collectionName).deleteOne({ id: id });
+                return { channelReward: channelReward };
+            }
         }
         catch (error) {
             logger.error(`Error deleting custom reward in TwitchChannelPointsService: ${error}`);
@@ -149,6 +175,7 @@ class TwitchChannelPointsService {
             await this.dbConnection.collection(this.collectionName).updateOne({ id: id }, { $set: { ...updatedChannelReward } });
         }
         catch (error) {
+            console.log(error);
             logger.error(`Error toggling custom reward in TwitchChannelPointsService: ${error}`);
         }
     }

@@ -1,41 +1,35 @@
 import React, { useEffect, useState } from 'react';
-import '../styles/GUI/newChannelPoint.css';
-import Actions from './Actions';
+import Actions from '../Actions';
+import '../../styles/GUI/newChannelPoint.css';
 
 
-function NewChannelPoint({ handleNewChannelPointClose }) {
-    const [channelPointName, setChannelPointName] = useState('');
-    const [description, setDescription] = useState('');
+function EditReward({ handleRewareClose, rewardData }) {
+    const [channelPointName, setChannelPointName] = useState(rewardData.title);
+    const [description, setDescription] = useState(rewardData.prompt);
     const [showActions, setShowActions] = useState(false);
     const [actions, setActions] = useState([]);
-    const [userInputRequired, setUserInputRequired] = useState(false);
-    const [cost, setCost] = useState(0);
-    const [globalCooldown, setGlobalCooldown] = useState(0);
-    const [background, setBackground] = useState('');
-    const [autofill, setAutofill] = useState(false);
-    const [maxRedemptions, setMaxRedemptions] = useState(0);
-    const [maxRedemptionsPerUser, setMaxRedemptionsPerUser] = useState(0);
+    const [userInputRequired, setUserInputRequired] = useState(rewardData.userInputRequired);
+    const [cost, setCost] = useState(rewardData.cost);
+    const [globalCooldown, setGlobalCooldown] = useState(rewardData.globalCooldown);
+    const [background, setBackground] = useState(rewardData.backgroundColor);
+    const [autofill, setAutofill] = useState(rewardData.autoFulfill);
+    const [maxRedemptions, setMaxRedemptions] = useState(rewardData.maxRedemptionsPerStream);
+    const [maxRedemptionsPerUser, setMaxRedemptionsPerUser] = useState(rewardData.maxRedemptionsPerUserPerStream);
+    const [managed, setManaged] = useState(null);
 
     useEffect(() => {
-        setBackground(generateRandomColor());
+        if (!rewardData.managed || rewardData.managed === undefined) {
+            setManaged(false);
+        } else {
+            setManaged(rewardData.managed);
+        }
     }, []);
-
-    // Function to generate a random hex color
-    const generateRandomColor = () => {
-        const randomColor = Math.floor(Math.random() * 16777215).toString(16);
-        return `#${randomColor}`;
-    }
-
     const setBackgroundColor = (color) => {
         setBackground(color);
     };
 
-    const handleShowActions = (e) => {
+    const handleShowActions = () => {
         setShowActions(false);
-        // If the keydown is escape, then close the actions
-        if (e.keyCode === 27) {
-            setShowActions(false);
-        }
     }
 
     // Callback function to add actions to actions array
@@ -96,7 +90,7 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
             handlers: actions
         }
         const res = fetch('/api/channelpoints', {
-            method: 'POST',
+            method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -105,7 +99,23 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
             .then((res) => res.json())
             .then((data) => {
                 console.log(data);
-                handleNewChannelPointClose();
+                handleRewareClose();
+            })
+            .catch((err) => console.log(err));
+    }
+
+    const handleDeleteReward = () => {
+        const res = fetch(`/api/channelpoints/${rewardData.id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ id: rewardData.id })
+        })
+            .then((res) => res.json())
+            .then((data) => {
+                console.log(data);
+                handleRewareClose();
             })
             .catch((err) => console.log(err));
     }
@@ -115,25 +125,25 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
         <div className='new-redemption-main-container'>
             <div className="new-redemption-container">
                 <div className="new-redemption-header">
-                    <h1>New Channel Reward</h1>
+                    <h1>Edit Channel Reward</h1>
                 </div>
                 <div className="new-redemption-body">
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">Name</label>
-                        <input type="text" id='reward-name' placeholder='name of reward...' value={channelPointName} onChange={handleNameChange} />
+                        <input type="text" id='reward-name' placeholder='name of reward...' disabled={!managed} value={channelPointName} onChange={handleNameChange} />
                     </div>
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">Description</label>
-                        <input type="text" id='reward-description' placeholder='description of the reward...' value={description} onChange={handleDescriptionChange} />
+                        <input type="text" id='reward-description' placeholder='description of the reward...' disabled={!managed} value={description} onChange={handleDescriptionChange} />
                     </div>
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">Cost</label>
-                        <input type="text" id='reward-cost' placeholder='cost of the reward...' value={cost} onChange={handleCostChange} />
+                        <input type="text" id='reward-cost' placeholder='cost of the reward...' disabled={!managed} value={cost} onChange={handleCostChange} />
                     </div>
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">User Input Required?</label>
                         <div className="switch-container">
-                            <input type="checkbox" className="checkbox" id={`toggle-command-checkbox`} checked={userInputRequired} onChange={handleInputRequiredChange} />
+                            <input type="checkbox" className="checkbox" id={`toggle-command-checkbox`} disabled={!managed} checked={userInputRequired} onChange={handleInputRequiredChange} />
                             <label className="switch" htmlFor={`toggle-command-checkbox`}>
                                 <span className="slider"></span>
                             </label>
@@ -146,27 +156,28 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
                             id="background-color"
                             value={background}
                             onChange={(e) => setBackgroundColor(e.target.value)}
+                            disabled={!managed}
                         />
-                        <input type="text" value={background} onChange={(e) => setBackgroundColor(e.target.value)} />
+                        <input type="text" value={background} onChange={(e) => setBackgroundColor(e.target.value)} disabled={!managed}/>
                     </div>
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">Redemption Cooldown</label>
                         <div>
-                            <input type="text" id='reward-cooldown' placeholder='redemption cooldown...' value={globalCooldown} onChange={handleCooldownChange} />
+                            <input type="text" id='reward-cooldown' placeholder='redemption cooldown...' disabled={!managed} value={globalCooldown} onChange={handleCooldownChange} />
                             <span className='input-description'>Time between each redemption</span>
                         </div>
                     </div>
                     <div className="redemption-body-inner">
                         <label htmlFor="reward-name">Max Redemptions Per Stream</label>
                         <div>
-                            <input type="text" id='max-redemptions-per-stream' placeholder='max redemptions per stream...' value={maxRedemptions} onChange={handleMaxRedemptionsChange} />
+                            <input type="text" id='max-redemptions-per-stream' placeholder='max redemptions per stream...' disabled={!managed} value={maxRedemptions} onChange={handleMaxRedemptionsChange} />
                             <span className='input-description'>Set the maximum Redemptions per stream</span>
                         </div>
                     </div>
                     <div className="redemption-body-inner">
                         <label htmlFor="max-redemptions-per-stream-per-user">Max Redemptions Per User Per Stream</label>
                         <div>
-                            <input type="text" id='max-redemptions-per-stream-per-user' placeholder='max redemptions per stream per user...' value={maxRedemptionsPerUser}/>
+                            <input type="text" id='max-redemptions-per-stream-per-user' placeholder='max redemptions per stream per user...' disabled={!managed} value={maxRedemptionsPerUser} />
                             <span className='input-description'>Set the maximum Redemptions per user per stream</span>
                         </div>
                     </div>
@@ -196,7 +207,8 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
                 </div>
             </div>
             <div className='action-buttons-container'>
-                <button id='delete-command-btn' onClick={handleNewChannelPointClose}>Cancel</button>
+                <button id='delete-command-btn' onClick={handleDeleteReward}>Delete</button>
+                <button id='delete-command-btn' onClick={handleRewareClose}>Cancel</button>
                 <button id='save-command-btn' onClick={handleSaveReward}>Save</button>
             </div>
         </div>
@@ -204,4 +216,4 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
 }
 
 
-export default NewChannelPoint;
+export default EditReward;

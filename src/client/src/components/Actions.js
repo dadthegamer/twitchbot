@@ -74,7 +74,7 @@ function Actions({ onAddAction, onActionsClose }) {
         <div className="actions-main-container">
             <div className="actions-header">
                 <h2>Actions</h2>
-                <FontAwesomeIcon icon={faXmark} className="fa-icon" onClick={onActionsClose} />
+                <FontAwesomeIcon icon={faXmark} className="fa-icon" onClick={onActionsClose} onKeyDown={onActionsClose}/>
             </div>
             <div className="actions-search-bar">
                 <FontAwesomeIcon icon={faSearch} className="fa-icon" />
