@@ -56,7 +56,6 @@ router.put('/:id', async (req, res) => {
 // Endpoint to delete a channel point
 router.delete('/:id', async (req, res) => {
     try {
-        console.log('req.params.id: ', req.params.id);
         const response = await channelPointsService.deleteChannelReward(req.params.id);
         res.json( { success: true });
     }

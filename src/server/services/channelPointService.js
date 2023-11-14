@@ -128,7 +128,8 @@ class TwitchChannelPointsService {
                 return;
             }
             const res = await twitchApi.deleteCustomReward(id);
-            if (res.success) {
+            console.log(res);
+            if (res) {
                 // Delete the channel reward from the cache
                 this.cache.set('channelRewards', channelRewards.filter(channelReward => channelReward.id !== id));
                 // Delete the channel reward from the database
@@ -137,6 +138,7 @@ class TwitchChannelPointsService {
             }
         }
         catch (error) {
+            console.log(error);
             logger.error(`Error deleting custom reward in TwitchChannelPointsService: ${error}`);
         }
     }

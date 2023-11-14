@@ -10,6 +10,12 @@ import Queue from './SubComponents/SubActions/Queue';
 import Spin from './SubComponents/SubActions/Spin';
 import LumiaStream from './SubComponents/SubActions/LumiaStream';
 import Quote from './SubComponents/SubActions/Quote';
+import Counter from './SubComponents/SubActions/Counter';
+import Announce from './SubComponents/SubActions/Announce';
+import Poll from './SubComponents/SubActions/Poll';
+import Delay from './SubComponents/SubActions/Delay';
+import Discord from './SubComponents/SubActions/Discord';
+import Currency from './SubComponents/SubActions/Currency';
 
 function Actions({ onAddAction, onActionsClose }) {
     const [search, setSearch] = useState('');
@@ -46,7 +52,7 @@ function Actions({ onAddAction, onActionsClose }) {
         },
         {
             title: "Counter",
-            component: <div>Counter</div>
+            component: <Counter onActionSelected={handleActionSelected} />
         },
         {
             title: "Queue",
@@ -55,7 +61,27 @@ function Actions({ onAddAction, onActionsClose }) {
         {
             title: "Quote",
             component: <Quote onActionSelected={handleActionSelected} />
-        }
+        },
+        {
+            title: "Announce",
+            component: <Announce onActionSelected={handleActionSelected} />
+        },
+        {
+            title: "Poll",
+            component: <Poll onActionSelected={handleActionSelected} />
+        },
+        {
+            title: "Delay",
+            component: <Delay onActionSelected={handleActionSelected} />
+        },
+        {
+            title: "Discord",
+            component: <Discord onActionSelected={handleActionSelected} />
+        },
+        {
+            title: "Currency",
+            component: <Currency onActionSelected={handleActionSelected} />
+        },
         // Add more actions here with similar format
     ];
 
