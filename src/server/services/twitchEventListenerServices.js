@@ -58,6 +58,7 @@ export async function startEventListener() {
         await listener.start();
         logger.info('Event listener started');
         cache.set('twitchConnected', true);
+        return;
     }
     catch (error) {
         logger.error(`Error starting event listener: ${error}`);
@@ -69,6 +70,7 @@ export async function stopEventListener() {
         await listener.stop();
         logger.info('Event listener stopped');
         cache.set('twitchConnected', false);
+        return;
     }
     catch (error) {
         logger.error(`Error stopping event listener: ${error}`);
@@ -81,9 +83,11 @@ export async function toggleEventListener() {
         const status = cache.get('twitchConnected');
         if (status) {
             await stopEventListener();
+            return;
         }
         else {
             await startEventListener();
+            return;
         }
     }
     catch (error) {

@@ -6,7 +6,6 @@ import logger from "../../../utilities/logger.js";
 //Subscription events
 export async function onSubscription(e) {
     try {
-        // Deconstruct event data
         const { userName, userDisplayName, userId, cumulativeMonths, durationMonths, streakMonths } = e;
         const tier = e.tier / 1000;
         const userData = await e.getUser();

@@ -1,6 +1,6 @@
 import { usersDB, cache, streamDB, goalDB, streamathonService } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";
-
+import { startEventListener } from "../../services/twitchEventListenerServices.js";
 
 export async function onStreamOffline(e) {
     try {
@@ -43,6 +43,11 @@ export async function onStreamOnline(e) {
             await streamDB.startStream(title, gameName);
             await usersDB.resetArrived();
             await usersDB.resetStreamProperties();
+        }
+        const twitchConnected = cache.get('twitchConnected');
+        if (!twitchConnected) {
+            startEventListener();
+            return;
         }
         streamathonService.startStreamathon();
         logger.info('Stream online');
