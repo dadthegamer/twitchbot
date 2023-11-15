@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const logsDirectory = path.resolve(__dirname, 'logs');
+const logsDirectory = path.resolve(__dirname, './logs');
 
 const logger = createLogger({
     level: 'info',
@@ -21,7 +21,7 @@ const logger = createLogger({
             filename: '%DATE%.log',
             datePattern: 'YYYY-MM-DD',
             zippedArchive: true,
-            maxFiles: '7d', // Keep logs for 7 days
+            maxFiles: '7d', 
         }),
     ],
 });

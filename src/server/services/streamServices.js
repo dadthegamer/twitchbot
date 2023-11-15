@@ -207,6 +207,7 @@ class StreamDB {
                 { $set: { [property]: stream[property] } }
             );
             this.cache.set('stream', stream);
+            return;
         } catch (error) {
             logger.error(`Error in increaseStreamProperty: ${error}`);
         }
@@ -274,12 +275,13 @@ class StreamDB {
             const query = { eventType: eventType };
             const update = {
                 $set: {
-                    [eventType]: userData,
+                    [eventType]: eventData,
                 }
             };
             const options = { upsert: true };
             await this.dbConnection.collection('streamData').updateOne(query, update, options);
             this.getLatestEvents();
+            return;
         }
         catch (error) {
             logger.error(`Error in setLatestEvent: ${error}`);

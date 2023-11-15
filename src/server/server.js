@@ -93,4 +93,5 @@ app.use('/auth/twitch/admin', twitchAdminAuthRouter);
 
 app.listen(port, () => {
     console.log(`Server is running`);
+    logger.info(`Server is running`);
 });

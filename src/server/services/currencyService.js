@@ -197,7 +197,6 @@ class CurrencyService {
             return currency;
         } catch (err) {
             logger.error(`Error in getCurrencyById: ${err}`);
-            throw err; // Rethrow the error so it can be handled appropriately in the calling code
         }
     }
 
@@ -212,7 +211,6 @@ class CurrencyService {
             return res;
         } catch (err) {
             logger.error(`Error in updateCurrencyById: ${err}`);
-            throw err; // Rethrow the error so it can be handled appropriately in the calling code
         }
     }
 
@@ -225,7 +223,6 @@ class CurrencyService {
             return res;
         } catch (err) {
             logger.error(`Error in deleteCurrencyById: ${err}`);
-            throw err; // Rethrow the error so it can be handled appropriately in the calling code
         }
     }
 
@@ -577,6 +574,7 @@ class CurrencyService {
                     await usersDB.increaseCurrency(userId, name, follower);
                 }
             }
+            return;
         }
         catch (err) {
             logger.error(`Error in addCurrencyForNewFollower: ${err}`);

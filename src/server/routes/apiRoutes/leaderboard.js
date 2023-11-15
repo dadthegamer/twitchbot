@@ -6,7 +6,6 @@ const router = Router();
 
 router.get('/', async (req, res) => {
     try {
-        console.log('Getting leaderboard');
         let leaderboards = [];
 
         let leaderboard = [];

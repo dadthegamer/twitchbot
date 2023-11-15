@@ -18,6 +18,7 @@ export async function onGiftSubscription(e) {
         await addAlert(gifterId, gifterDisplayName, 'giftedSub', `gifted ${amount} subs!`);
 
         await streamathonService.addToSubTimer(amount);
+        logger.info(`Gift subscription event: ${gifterDisplayName} gifted ${amount} subs!`);
     }
     catch (error) {
         logger.error(`Error in onGiftSubscription: ${error}`);

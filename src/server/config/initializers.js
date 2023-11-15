@@ -30,6 +30,7 @@ import GoXLRClient from '../services/goXLRUtilityService.js';
 import getLumiaStreamSettings from '../services/lumiaStreamService.js';
 import StreamathonService from '../services/streamathonService.js';
 import TikTokService from '../services/tikTokService.js';
+import { startEventListener } from '../services/twitchEventListenerServices.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -121,6 +122,10 @@ addBotsToKnownBots();
 startAlertsHandler();
 startWelcomeAlerts();
 getLumiaStreamSettings();
+if (process.env.NODE_ENV !== 'production') {
+    console.log('Starting event listener');
+    startEventListener();
+}
 
 export {
     db,

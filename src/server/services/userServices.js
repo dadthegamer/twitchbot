@@ -382,7 +382,7 @@ class UsersDB {
                         stream: 0
                     },
                     currency: {
-                        points: 0,
+                        reffle: 0,
                     },
                     lastSeen: date,
                     metaData: []
@@ -391,7 +391,7 @@ class UsersDB {
             const options = { upsert: true };
             const res = await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
             this.cache.set(userData.id, userData);
-            return res.value;
+            return res;
         }
         catch (error) {
             logger.error(`Error in newFollower: ${error}`);
@@ -541,7 +541,6 @@ class UsersDB {
                 );
             }
         } catch (error) {
-            console.log(`Error in increaseCurrency: ${error}`);
             logger.error(`Error in increaseCurrency: ${error}`);
         }
     }
@@ -1179,6 +1178,7 @@ class UsersDB {
                 { upsert: true }
             );
             this.cache.set(userId, user);
+            logger.info(`Increased view time for ${userId} by ${minutes} minutes`);
         } catch (error) {
             logger.error(`Error in increaseViewTime: ${error}`);
         }
