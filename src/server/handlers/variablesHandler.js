@@ -16,8 +16,9 @@ variables.push('user')
 variables.push('randomQuote')
 variables.push('quote')
 variables.push('currency')
+variables.push('rewardInput')
 
-export async function variableHandler(context, userId) {
+export async function variableHandler(context, userId = null) {
     try {
         const varsWithProps = context.match(/\$[a-zA-Z]+\.[a-zA-Z]+/g);
         const varsNoProps = context.match(/\$[a-zA-Z]+\[\d+\]/g);
@@ -63,8 +64,6 @@ export async function updateVariable(variable, context, userId, property = null)
             case 'followAge':
                 return 'testing this variable';
             case 'user':
-                console.log('User variable');
-                // Return the user's display name
                 const user = await usersDB.getUserByUserId(userId);
                 if (user === null) {
                     return null;
@@ -129,12 +128,13 @@ export async function updateVariable(variable, context, userId, property = null)
                 const quoteId = parseInt(property);
                 const quote = await interactionsDB.getQuoteById(quoteId);
                 return quote.text;
+            case 'rewardInput':
+                return context;
             default:
                 return null;
         }
     }
     catch (err) {
-        console.log(err);
         logger.error(`Error in updateVariable from variable ${context}: ${err}`);
     }
 }

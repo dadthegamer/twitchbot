@@ -3,7 +3,7 @@ import '../styles/GUI/newChannelPoint.css';
 import Actions from './Actions';
 
 
-function NewChannelPoint({ handleNewChannelPointClose }) {
+function NewChannelPoint({ handleNewChannelPointClose, rewardData }) {
     const [channelPointName, setChannelPointName] = useState('');
     const [description, setDescription] = useState('');
     const [showActions, setShowActions] = useState(false);
@@ -95,6 +95,14 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
             maxRedemptionsPerUserPerStream: maxRedemptionsPerUser,
             handlers: actions
         }
+        if (reward.title === '') {
+            alert('Please enter a name for the reward');
+            return;
+        }
+        if (reward.cost === 0) {
+            alert('Please enter a cost for the reward');
+            return;
+        }
         const res = fetch('/api/channelpoints', {
             method: 'POST',
             headers: {
@@ -104,7 +112,7 @@ function NewChannelPoint({ handleNewChannelPointClose }) {
         })
             .then((res) => res.json())
             .then((data) => {
-                console.log(data);
+                rewardData(reward);
                 handleNewChannelPointClose();
             })
             .catch((err) => console.log(err));

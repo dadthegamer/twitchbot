@@ -52,10 +52,17 @@ function ChannelPoints() {
         setEditReward(true);
     }
 
+    // Handly adding a reward
+    const handleAddReward = (data) => {
+        console.log(`Adding reward: ${data}`);
+        setChannelPoints([...channelPoints, data]);
+    }
+
+
     return (
         <div className='content'>
             {newChannelPoint ? (
-                <NewChannelPoint handleNewChannelPointClose={handleNewChannelPointClose} />
+                <NewChannelPoint handleNewChannelPointClose={handleNewChannelPointClose} rewardData={handleAddReward}/>
             ) : null}
             <div className="options-container">
                 <button id="new-command-button" onClick={handleNewChannelPointClick}>New Reward</button>

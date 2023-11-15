@@ -78,7 +78,7 @@ class TwitchChannelPointsService {
     }
 
     // Method to create a new channel reward
-    async createCustomReward(title, prompt, cost, userInputRequired, backgroundColor, globalCooldown, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, handlers, autoFill = true, isEnabled = true, ) {
+    async createCustomReward(title, prompt, cost, userInputRequired, backgroundColor, globalCooldown, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, handlers, autoFill = true, isEnabled = true,) {
         try {
             // Check if the reward already exists. Convert name to lowercase to make sure the name is not case sensitive
             const channelRewards = this.cache.get('channelRewards');
@@ -88,7 +88,6 @@ class TwitchChannelPointsService {
                 return;
             }
             const channelReward = await twitchApi.createCustomReward({ autoFill, backgroundColor, cost, globalCooldown, isEnabled, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, prompt, title, userInputRequired });
-            console.log(channelReward);
             if (channelReward) {
                 const rewardData = {
                     title: channelReward.title,
@@ -121,20 +120,19 @@ class TwitchChannelPointsService {
     async deleteChannelReward(id) {
         try {
             // Get the channel reward from the cache
-            const channelRewards = this.cache.get('managedChannelRewards');
+            const managedRewards = this.cache.get('managedChannelRewards');
             // Find the channel reward by the id passed in and get the id of the channel reward
-            const channelReward = channelRewards.find(channelReward => channelReward.id === id);
+            const channelReward = managedRewards.find(channelReward => channelReward.id === id);
             if (!channelReward) {
                 return;
-            }
-            const res = await twitchApi.deleteCustomReward(id);
-            console.log(res);
-            if (res) {
+            } else {
+                const channelRewards = this.cache.get('channelRewards');
                 // Delete the channel reward from the cache
                 this.cache.set('channelRewards', channelRewards.filter(channelReward => channelReward.id !== id));
                 // Delete the channel reward from the database
                 await this.dbConnection.collection(this.collectionName).deleteOne({ id: id });
-                return { channelReward: channelReward };
+                // Delete the channel reward from Twitch
+                await twitchApi.deleteCustomReward(id);
             }
         }
         catch (error) {
