@@ -15,9 +15,11 @@ export async function arrivalHandler(context, streamData) {
             return;
         } else {
             const { bot, msg, userDisplayName, userId, say, timeout, reply, messageID } = context;
+            logger.info(`Arrival Handler: ${userDisplayName} has arrived!`);
             const userData = await usersDB.getUserByUserId(userId);
             const arrived = userData.arrived;
             if (arrived) {
+                logger.info(`${userDisplayName} has already arrived!`);
                 return;
             } else {
                 await streamDB.addViewer(userId);

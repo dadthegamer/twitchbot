@@ -22,12 +22,12 @@ export async function onMessageHandler(channel, user, message, msg, bot) {
             console.log('commandHandler');
             commandHandler.commandHandler(command, parts, channel, user, message, msg, bot);
         }
+        await arrivalHandler({ bot, msg, user, message, userDisplayName: displayName, userId, id }, streamData);
         if (environment === 'production') {
             if (knownBots.has(userId)) {
                 return;
             }
         }
-        await arrivalHandler({ bot, msg, user, message, userDisplayName: displayName, userId, id }, streamData);
         // Add the user to the active users cache if they are not already in it
         if (!activeUsersCache.getActiveUser(userId)) {
             activeUsersCache.addActiveUser(userId, displayName, color, user);
