@@ -42,7 +42,7 @@ const webSocket = new WebSocket();
 const goalDB = new GoalService(db.dbConnection, cache);
 
 // ViewTimeDB initialization
-const viewTimeDB = new ViewTimeService(db.dbConnection, cache);
+const viewTimeDB = new ViewTimeService(db.dbConnection);
 
 // SchedulerService initialization
 const schedulerService = new SchedulerService(db.dbConnection);

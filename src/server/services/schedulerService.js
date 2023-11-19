@@ -12,12 +12,12 @@ export class SchedulerService {
 
     initialize() {
         try {
-            // this.getAllFollowers();
-            // this.getAllSubscribers();
+            this.getAllFollowers();
+            this.getAllSubscribers();
             this.addBotsToKnownBots();
-            // this.getAllModerators();
-            // this.getBitsLeaderboard();
-            // this.getAllVips();
+            this.getAllModerators();
+            this.getBitsLeaderboard();
+            this.getAllVips();
             this.getChattersInterval();
         }
         catch (error) {
@@ -64,7 +64,7 @@ export class SchedulerService {
     // Method to get all the followers for a channel and udpate the database
     async getAllFollowers() {
         try {
-            const followers = await this.twitchAPI.getFollowers();
+            const followers = await twitchApi.getFollowers();
             for (const follower of followers) {
                 await usersDB.addUserManually(follower.userId, follower.followDate);
             }
@@ -77,7 +77,7 @@ export class SchedulerService {
     // Method to get all the subscribers for a channel and update the database
     async getAllSubscribers() {
         try {
-            const subscribers = await this.twitchAPI.getChannelSubscribers();
+            const subscribers = await twitchApi.getChannelSubscribers();
             for (const subscriber of subscribers) {
                 await usersDB.addSubscriber(subscriber.userId);
             }
@@ -90,7 +90,7 @@ export class SchedulerService {
     // method to get all the VIP's for a channel and update the database
     async getAllVips() {
         try {
-            const vips = await this.twitchAPI.getChannelVips();
+            const vips = await twitchApi.getChannelVips();
             for (const vip of vips) {
                 await usersDB.addVip(vip.id);
             }
@@ -103,7 +103,7 @@ export class SchedulerService {
     // Method to get all the moderators for a channel and update the database
     async getAllModerators() {
         try {
-            const moderators = await this.twitchAPI.getChannelModerators();
+            const moderators = await twitchApi.getChannelModerators();
             for (const moderator of moderators) {
                 await usersDB.addModerator(moderator.userId);
             }

@@ -24,7 +24,6 @@ export class WebSocket {
                 profileImg: 'https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png',
                 sound: '/audio/sub.mp3',
             });
-            console.log('Client connected');
             connectedDevices++;
             this.notification({ 
                 notification: 'Connected to websocket',
@@ -32,7 +31,7 @@ export class WebSocket {
                 read: false,
                 createdAt: new Date()
                 });
-            console.log(`Connected devices: ${connectedDevices}`);
+            console.log(`Client Connected | Connected devices: ${connectedDevices}`);
             ws.on('message', (message) => {
                 try {
                     const data = JSON.parse(message);

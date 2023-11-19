@@ -5,9 +5,8 @@ import NodeCache from 'node-cache';
 
 // Currency Class
 class ViewTimeService {
-    constructor(dbConnection, cache) {
+    constructor(dbConnection) {
         this.dbConnection = dbConnection;
-        this.cache = cache;
         this.viewTimeCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
         this.viewTimeHandlerInterval();
         this.listenForExpiredKeys();
@@ -40,10 +39,11 @@ class ViewTimeService {
                 const viewers = cache.get('currentViewers');
                 if (!viewers || viewers.length === 0 || viewers === undefined) {
                     return;
-                }
-                for (const viewer of viewers) {
-                    const { userId, userName, userDisplayName } = viewer;
-                    console.log(`Viewer: ${userDisplayName}`);
+                } else {
+                    for (const viewer of viewers) {
+                        const { userId, userName, userDisplayName } = viewer;
+                        console.log(`Viewer: ${userDisplayName}`);
+                    }
                 }
             } else {
                 const live = cache.get('live');

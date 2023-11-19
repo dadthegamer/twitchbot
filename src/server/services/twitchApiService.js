@@ -2,7 +2,6 @@ import { ApiClient } from '@twurple/api';
 import logger from "../utilities/logger.js";
 import axios from 'axios';
 import { initializerEventListener } from './twitchEventListenerServices.js';
-import { usersDB } from '../config/initializers.js';
 
 // Class for the Twitch API client
 class TwitchApiClient {
