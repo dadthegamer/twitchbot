@@ -48,10 +48,7 @@ const viewTimeDB = new ViewTimeService(db.dbConnection, cache);
 const schedulerService = new SchedulerService(db.dbConnection);
 
 startAlertsHandler();
-if (process.env.NODE_ENV !== 'production') {
-    console.log('Starting event listener');
-    startEventListener();
-}
+startEventListener();
 
 export {
     db,

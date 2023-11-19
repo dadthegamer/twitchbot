@@ -1,6 +1,5 @@
 import logger from "../utilities/logger.js";
-import { getChattersWithoutBots } from '../handlers/twitch/viewTimeHandler.js';
-import { cache, usersDB, twitchApi } from '../config/initializers.js';
+import { cache, usersDB } from '../config/initializers.js';
 import NodeCache from 'node-cache';
 
 
