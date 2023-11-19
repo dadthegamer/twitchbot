@@ -12,12 +12,12 @@ export class SchedulerService {
 
     initialize() {
         try {
-            this.getAllFollowers();
-            this.getAllSubscribers();
+            // this.getAllFollowers();
+            // this.getAllSubscribers();
             this.addBotsToKnownBots();
-            this.getAllModerators();
-            this.getBitsLeaderboard();
-            this.getAllVips();
+            // this.getAllModerators();
+            // this.getBitsLeaderboard();
+            // this.getAllVips();
             this.getChattersInterval();
         }
         catch (error) {
@@ -32,7 +32,7 @@ export class SchedulerService {
             setInterval(async () => {
                 const chatters = await twitchApi.getChatters();
                 if (process.env.NODE_ENV !== 'development') {
-                    const bots = knownBots.keys();
+                    const bots = this.knownBots.keys();
                     const chattersWithoutBots = chatters.filter((chatter) => !bots.includes(chatter.userId));
                     cache.set('currentViewers', chattersWithoutBots);
                     return chattersWithoutBots;
