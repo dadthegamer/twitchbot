@@ -8,7 +8,7 @@ class ViewTimeService {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
-        this.viewTimeCache = new NodeCache( { stdTTL: 300, checkperiod: 60 });
+        this.viewTimeCache = new NodeCache({ stdTTL: 300, checkperiod: 60 });
         this.viewTimeHandlerInterval();
         this.listenForExpiredKeys();
         this.viewTimeThreshold = 5;
@@ -42,25 +42,8 @@ class ViewTimeService {
                     return;
                 }
                 for (const viewer of viewers) {
-                    // Check if the viewer is a follower
                     const { userId, userName, userDisplayName } = viewer;
-                    const isFollower = await usersDB.isFollower(userId);
-                    if (isFollower) {
-                        // Add them to the view time cache if they are not already there and add 1 minute to their view time. Set the TTL to 15 minutes.
-                        const viewTime = this.viewTimeCache.get(userId);
-                        if (!viewTime || viewTime === undefined) {
-                            this.viewTimeCache.set(userId, 1, 300);
-                        } else {
-                            this.viewTimeCache.set(userId, viewTime + 1, 300);
-                        }
-                        // Check if the viewer has more than 5 minutes of view time. If they do increase the view time in the database by the amount of view time they have in the cache.
-                        if (this.viewTimeCache.get(userId) >= this.viewTimeThreshold) {
-                            await usersDB.increaseViewTime(userId, this.viewTimeCache.get(userId));
-                            this.viewTimeCache.del(userId);
-                        }
-                    } else {
-                        continue;
-                    }
+                    console.log(`Viewer: ${userDisplayName}`);
                 }
             } else {
                 const live = cache.get('live');
@@ -72,21 +55,21 @@ class ViewTimeService {
                         return;
                     }
                     for (const viewer of viewers) {
+                        const { userId, userName, userDisplayName } = viewer;
                         // Check if the viewer is a follower
-                        const isFollower = await usersDB.isFollower(viewer.userId);
+                        const isFollower = await usersDB.isFollower(userId);
                         if (isFollower) {
                             // Add them to the view time cache if they are not already there and add 1 minute to their view time. Set the TTL to 15 minutes.
-                            const viewTime = this.viewTimeCache.get(viewer.userId);
+                            const viewTime = this.viewTimeCache.get(userId);
                             if (!viewTime || viewTime === undefined) {
-                                this.viewTimeCache.set(viewer.userId, 1, 300);
+                                this.viewTimeCache.set(userId, 1, 300);
                             } else {
-                                this.viewTimeCache.set(viewer.userId, viewTime + 1, 300);
+                                this.viewTimeCache.set(userId, viewTime + 1, 300);
                             }
-                            console.log(`Increaseing View Time: ${this.viewTimeCache.get(viewer.userId)}`)
                             // Check if the viewer has more than 5 minutes of view time. If they do increase the view time in the database by the amount of view time they have in the cache.
-                            if (this.viewTimeCache.get(viewer.userId) >= 5) {
-                                await usersDB.increaseViewTime(viewer.userId, this.viewTimeCache.get(viewer.userId));
-                                this.viewTimeCache.del(viewer.userId);
+                            if (viewTime >= this.viewTimeThreshold) {
+                                await usersDB.increaseViewTime(userId, viewTime);
+                                this.viewTimeCache.del(userId);
                             }
                         } else {
                             continue;

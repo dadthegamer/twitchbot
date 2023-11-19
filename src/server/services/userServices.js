@@ -1145,19 +1145,19 @@ class UsersDB {
                 user.viewTime.allTime = 0;
             };
 
-            if (user.viewTime.yearly === undefined) {
+            if (user.viewTime.yearly === undefined || isNaN(user.viewTime.yearly)) {
                 user.viewTime.yearly = 0;
             };
 
-            if (user.viewTime.monthly === undefined) {
+            if (user.viewTime.monthly === undefined || isNaN(user.viewTime.monthly)) {
                 user.viewTime.monthly = 0;
             };
 
-            if (user.viewTime.weekly === undefined) {
+            if (user.viewTime.weekly === undefined || isNaN(user.viewTime.weekly)) {
                 user.viewTime.weekly = 0;
             };
 
-            if (user.viewTime.stream === undefined) {
+            if (user.viewTime.stream === undefined || isNaN(user.viewTime.stream)) {
                 user.viewTime.stream = 0;
             };
             user.viewTime.allTime += minutes;
@@ -1185,6 +1185,7 @@ class UsersDB {
             this.cache.set(userId, user);
             logger.info(`Increased view time for ${userId} by ${minutes} minutes`);
         } catch (error) {
+            console.log(`Error in increaseViewTime: ${error}`);
             logger.error(`Error in increaseViewTime: ${error}`);
         }
     }
