@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin&family=Montserrat:ital,wght@1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background-color: #111111;
+    --primary-color: #1b1b1b;
+    --terrestrial-color: #1F1F1F;
+    --secondary-color: #005AFF;
+    --font-color: #FFFFFF;
+}
+
+.actions-main-container {
+    width: 1000px;
+    height: 800px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+    align-items: center;
+    border-radius: 5px;
+    padding: 10px;
+    overflow-y: auto;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Cabin', sans-serif;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    -webkit-overflow-scrolling: touch;
+    z-index: 91;
+    background-color: var(--primary-color);
+
+    &::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: var(--primary-color);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--background-color);
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+}
+
+.actions-header {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    border-bottom: 1px solid var(--background-color);
+}
+
+.actions-search-bar {
+    width: 100%;
+    height: 60px;
+    min-height: 60px;
+    background-color: var(--background-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px;
+    border-radius: 5px;
+}
+
+.actions-search-bar input {
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+    border: none;
+    outline: none;
+    border-radius: 5px;
+    padding: 0 20px;
+    color: var(--font-color);
+    font-size: 1em;
+}
+
+.actions-search-bar input::placeholder {
+    color: var(--font-color);
+}
+
+.actions-search-bar i {
+    font-size: 1.2em;
+    color: var(--font-color);
+    margin-left: 10px;
+}
+
+.actions-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: var(--primary-color);
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: var(--background-color);
+        border-radius: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+}
+
+.action-container {
+    width: 100%;
+    height: 175px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 10px;
+    align-items: center;
+    border-radius: 5px;
+    padding: 10px;
+    text-align: center;
+    position: relative;
+}
+
+.action-container:hover {
+    background-color: var(--font-color);
+    color: #111111;
+}
+
+.action-container:hover span {
+    color: #111111;
+}
+
+.action-icon {
+    width: 50px;
+    height: 50px;
+}
+
+.action-container span {
+    font-size: 16px;
+    color: var(--font-color);
+    opacity: 0.65;
+    position: relative;
+}
+
+.actions-form-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1000px;
+    height: 500px;
+    background-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px;
+    z-index: 90;
+    gap: 10px;
+}
+
+.actions-form-header {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.actions-form-header h2 {
+    font-size: 1.5em;
+    color: var(--font-color);
+}
+
+.actions-form-container-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+    position: relative;
+}
+
+.command-actions-selections {
+    width: 100%;
+}
+
+.actions-main-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: center;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: var(--primary-color);
+    width: 100%;
+    min-width: 800px;
+    position: relative;
+}
+
+.action-buttons-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 10px;
+    margin-right: 10px;
+}

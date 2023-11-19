@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --height: 600px;
+    --width: 800px;
+}
+
+
+.prediction-container {
+    position: relative;
+    margin: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    background-color: rgba(0, 0, 0, .65);
+    border: 1px solid #000000;
+    color: white;
+    width: fit-content;
+    border-radius: 5px;
+    width: var(--width);
+    max-width: var(--width);
+    min-width: var(--width);
+    overflow: hidden;
+    animation: popIn 0.25s ease-in-out;
+    font-family: 'Montserrat', sans-serif;
+}
+
+#prediction-title {
+    font-size: 3rem;
+    font-weight: 600;
+    border-bottom: 1px solid #fff;
+    width: 100%;
+    text-align: center;
+    color: #ffffff;
+    padding-bottom: 5px;
+}
+
+.outcomes-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    border-bottom: 1px solid #fff;
+    padding-bottom: 10px;
+}
+
+/* .outcome:nth-child(1) {
+    color: #387ae1
+}
+
+.outcome:nth-child(2) {
+    color: #f5009b;
+} */
+
+.outcome {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 2px;
+    width: 100%;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.inner-outcome {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.pct-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+}
+
+.progress-bar-container {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    background-color: #252525;
+    border-radius: 2px;
+}
+
+.progress-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 0%;
+    background-color: #00ff00;
+    border-radius: 2px;
+    transition: width 0.5s ease-in-out;
+}
+
+
+.bottom-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    font-size: 2rem;
+}
+
+.bottom-container div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2px;
+}
+
+.label {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
