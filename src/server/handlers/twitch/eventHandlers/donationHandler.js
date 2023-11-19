@@ -15,7 +15,6 @@ export async function onDonation(data) {
             profile_image_url: profileImage,
         };
         await setLatestEvent('latest_donation', userData);
-        await streamDB.setLatestEvent('latestDonation', newCheerData);
         await addDonation(id, amount);
     }
     catch (error) {

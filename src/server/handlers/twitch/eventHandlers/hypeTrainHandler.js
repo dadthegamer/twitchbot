@@ -7,21 +7,21 @@ let currentLevel = 0;
 export async function onHypeTrainBegin(e) {
     const { id, goal, topContributions, level, progress } = e;
     console.log('Hype train started');
-    if (level > currentLevel) {
-        currentLevel = level;
-        await streamathonService.addHypeTrainTimer();
-        await currencyDB.rewardAllViewersWithCurrencyForHypeTrainProgress();
-    }
+    // if (level > currentLevel) {
+    //     currentLevel = level;
+    //     await streamathonService.addHypeTrainTimer();
+    //     await currencyDB.rewardAllViewersWithCurrencyForHypeTrainProgress();
+    // }
 }
 
 export async function onHypeTrainProgress(e) {
     const { id, goal, topContributions, level, progress } = e;
     cache.set('hypeTrain', e);
-    if (level > currentLevel) {
-        currentLevel = level;
-        await currencyDB.rewardAllViewersWithCurrencyForHypeTrainProgress();
-        await streamathonService.addHypeTrainTimer();
-    }
+    // if (level > currentLevel) {
+    //     currentLevel = level;
+    //     await currencyDB.rewardAllViewersWithCurrencyForHypeTrainProgress();
+    //     await streamathonService.addHypeTrainTimer();
+    // }
 }
 
 export async function onHypeTrainEnd(e) {

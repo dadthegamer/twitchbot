@@ -34,14 +34,6 @@ export async function onStreamOnline(e) {
         };
         cache.set('streamInfo', streamInfoData);
         goalDB.setGoalCurrent('dailySubGoal', 0);
-        const existingStream = await streamDB.getStreamData();
-        if (existingStream !== null) {
-            return;
-        } else {
-            await streamDB.startStream(title, gameName);
-            await usersDB.resetArrived();
-            await usersDB.resetStreamProperties();
-        }
         const twitchConnected = cache.get('twitchConnected');
         if (!twitchConnected) {
             startEventListener();
