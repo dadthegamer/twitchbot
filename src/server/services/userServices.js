@@ -311,12 +311,10 @@ class UsersDB {
                 user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
                 if (user === null) {
                     const twitchUser = await twitchApi.getUserDataById(userId);
-                    this.newFollower(twitchUser);
+                    this.newUser(twitchUser);
                     user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
                 }
                 if (user.profilePictureUrl === null) {
-                    const twitchUser = await twitchApi.getUserDataById(userId);
-                    this.setUserValue(userId, 'profilePictureUrl', twitchUser.profilePictureUrl);
                     user = await this.getUserByUserId(userId);
                 }
                 this.cache.set(userId, user);
