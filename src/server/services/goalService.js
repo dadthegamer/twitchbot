@@ -133,6 +133,7 @@ class GoalService {
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
+            return;
         }
         try {
             const goals = await this.cache.get('goals');
@@ -148,6 +149,7 @@ class GoalService {
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
+            return;
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { goal: goalGoal } });
@@ -170,6 +172,7 @@ class GoalService {
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
+            return;
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { current: goalCurrent } });
@@ -187,6 +190,7 @@ class GoalService {
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
+            return;
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { description: goalDescription } });
@@ -211,6 +215,7 @@ class GoalService {
         // Check if the goal name exists
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
+            return;
         };
         try {
             // Increase the goal in the cache
@@ -236,6 +241,7 @@ class GoalService {
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
+            return;
         }
         try {
             console.log(`Goal ${goalName} enabled: ${enabled}`)
@@ -252,6 +258,7 @@ class GoalService {
         const goals = await this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
+            return;
         }
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { goal, current, description, handlers } });
@@ -270,6 +277,7 @@ class GoalService {
             // If the goalIncrease is not a number, then return an error
             if (isNaN(goalIncrease)) {
                 logger.error(`Goal increase ${goalIncrease} is not a number`);
+                return;
             }
         }
         try {
@@ -289,6 +297,7 @@ class GoalService {
             // If the goalIncrease is not a number, then return an error
             if (isNaN(goalIncrease)) {
                 logger.error(`Goal increase ${goalIncrease} is not a number`);
+                return;
             }
         }
         try {
@@ -308,6 +317,7 @@ class GoalService {
             // If the goalIncrease is not a number, then return an error
             if (isNaN(goalIncrease)) {
                 logger.error(`Goal increase ${goalIncrease} is not a number`);
+                return;
             }
         }
         try {
@@ -327,6 +337,7 @@ class GoalService {
             // If the goalIncrease is not a number, then return an error
             if (isNaN(goalIncrease)) {
                 logger.error(`Goal increase ${goalIncrease} is not a number`);
+                return;
             }
         }
         try {
