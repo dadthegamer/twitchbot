@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/overlay/cam.css';
 import { wsurl } from '../../config';
 
@@ -191,7 +191,7 @@ function CamOverlay() {
                 borderColor: alertColor,
                 backgroundColor: 'transparent',
             }}>
-                {/* <div className="top-accent">
+                <div className="top-accent">
                     <div className="rectangle" style={{
                         backgroundColor: alertColor,
                     }}></div>
@@ -212,7 +212,7 @@ function CamOverlay() {
                     <div className="triangle triangle-2" style={{
                         borderColor: alertColor,
                     }}></div>
-                </div> */}
+                </div>
                 <div className="monthly-subs-container">
                     <span>MONTHLY SUBS</span>
                     <span id='subs'>{subsCount}</span>
