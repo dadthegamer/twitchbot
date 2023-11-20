@@ -1,5 +1,5 @@
 # Use a Node.js base image
-FROM node:16-alpine
+FROM node:lts-alpine
 
 # Set the working directory
 WORKDIR /app
@@ -11,7 +11,7 @@ COPY package*.json ./
 RUN npm install
 
 # Copy app source code
-COPY . .
+COPY . /app
 
 # Build the app
 RUN npm run build
