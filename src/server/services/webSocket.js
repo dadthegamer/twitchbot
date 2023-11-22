@@ -20,7 +20,6 @@ export class WebSocket {
                 alertType: 'sub',
                 alertMessage: 'Connected to websocket',
                 alertTime: 5000,
-                message: 'Test alert',
                 profileImg: 'https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png',
                 sound: '/audio/sub.mp3',
             });
@@ -92,6 +91,7 @@ export class WebSocket {
 
     // Method to send an alert
     alert(payload) {
+        console.log(payload);
         this.broadcastMessage('alert', payload);
     }
 

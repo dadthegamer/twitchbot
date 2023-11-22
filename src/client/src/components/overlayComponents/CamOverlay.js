@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../../styles/overlay/cam.css';
 import { wsurl } from '../../config';
 
@@ -14,6 +14,7 @@ function CamOverlay() {
     const [subsCount, setSubsCount] = useState(0);
     const [displayAlertType, setDisplayAlertType] = useState(null);
     const [socket, setSocket] = useState(null);
+    const [alertSound, setAlertSound] = useState(null);
 
     useEffect(() => {
         const establishConnection = () => {
@@ -31,6 +32,7 @@ function CamOverlay() {
                 if (data.type === 'alert') {
                     console.log(data.payload);
                     setAlertData(data.payload);
+                    setAlertSound(data.payload.sound);
                     playAlert(data.payload.alertTime);
                 } else if (data.type === 'subsUpdate') {
                     console.log(data.payload);
@@ -70,24 +72,38 @@ function CamOverlay() {
     }, []);
 
     const playAlert = (time) => {
-        showTheAlert();
-        console.log(alertData);
-        setTimeout(() => {
-            hideTheAlert();
+        try {
+            showTheAlert();
+            setTimeout(() => {
+                hideTheAlert();
+            }
+                , (time - 1000));
         }
-            , (time - 1000));
+        catch (err) {
+            console.log(err);
+        }
     };
 
     const showTheAlert = () => {
-        setAlertColorBasedOnAlertType(alertData.alertType);
-        playAlertSound(alertData.sound);
-        setShowAlert(true);
-        setAnimationDirection('normal');
-        setAnimationDirection2('normal');
-
-        setTimeout(() => {
-            setShowAlertDetails(true);
-        }, 500);
+        try {
+            if (!alertData) {
+                return;
+            }
+            console.log(`Showing alert: ${alertData}`)
+            setAlertColorBasedOnAlertType(alertData.alertType);
+            setAlertSound(alertData.sound);
+            playAlertSound();
+            setShowAlert(true);
+            setAnimationDirection('normal');
+            setAnimationDirection2('normal');
+    
+            setTimeout(() => {
+                setShowAlertDetails(true);
+            }, 500);
+        }
+        catch (err) {
+            console.log(err);
+        }
     };
 
     // Function to hide the alert
@@ -153,26 +169,10 @@ function CamOverlay() {
         }
     }
 
-    // Function to animate the subs count from the current value to the new value
-    const animateSubsCount = (newSubsCount) => {
-        const increment = subsCount < newSubsCount ? 1 : -1;  // Determine direction
-
-        const intervalId = setInterval(() => {
-            setSubsCount((prev) => {
-                if ((increment > 0 && prev < newSubsCount) || (increment < 0 && prev > newSubsCount)) {
-                    return prev + increment;
-                } else {
-                    clearInterval(intervalId);
-                    return newSubsCount;  // Ensure we set the exact final value
-                }
-            });
-        }, 50);  // Adjust this interval for faster/slower counting
-    };
-
     // Function to play the alert sound
-    const playAlertSound = (audio) => {
+    const playAlertSound = () => {
         try {
-            const newAudio = new Audio(audio);
+            const newAudio = new Audio(alertSound);
             newAudio.play();
     
             return () => {
@@ -191,7 +191,7 @@ function CamOverlay() {
                 borderColor: alertColor,
                 backgroundColor: 'transparent',
             }}>
-                <div className="top-accent">
+                {/* <div className="top-accent">
                     <div className="rectangle" style={{
                         backgroundColor: alertColor,
                     }}></div>
@@ -212,11 +212,11 @@ function CamOverlay() {
                     <div className="triangle triangle-2" style={{
                         borderColor: alertColor,
                     }}></div>
-                </div>
-                <div className="monthly-subs-container">
+                </div> */}
+                {/* <div className="monthly-subs-container">
                     <span>MONTHLY SUBS</span>
                     <span id='subs'>{subsCount}</span>
-                </div>
+                </div> */}
             </div>
             {showAlert && (
                 <div className={`alert-container`}>

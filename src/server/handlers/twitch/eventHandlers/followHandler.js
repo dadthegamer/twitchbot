@@ -10,7 +10,7 @@ export async function onFollow(e) {
         const userData = await e.getUser();
         const { profilePictureUrl } = userData;
         await usersDB.newUser(userId);
-        addAlert(userId, userDisplayName, 'follow', 'followed!');
+        addAlert(userId, userDisplayName, 'follow', 'followed!', profilePictureUrl);
         logger.info(`${userDisplayName} followed!`);
     }
     catch (error) {

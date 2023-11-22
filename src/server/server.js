@@ -19,6 +19,8 @@ export { __dirname };
 const app = express();
 const port = 3001;
 
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -54,10 +56,16 @@ import twitchAuthRouter from './routes/authRoutes/twitchAuth.js';
 import twitchCallbackRouter from './routes/authRoutes/twitchCallback.js';
 import twitchAdminAuthRouter from './routes/authRoutes/twitchAdminAuth.js';
 
+//API routes
+import statusRouter from './routes/apiRoutes/status.js';
+
 // Twitch authentication
 app.use('/auth/twitch', twitchAuthRouter);
 app.use('/auth/twitch/callback', twitchCallbackRouter);
 app.use('/auth/twitch/admin', twitchAdminAuthRouter);
+
+// API routes
+app.use('/api/status', statusRouter);
 
 
 app.listen(port, () => {

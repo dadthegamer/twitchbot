@@ -13,7 +13,7 @@ export async function onSubscription(e) {
         await usersDB.setUserValue(e.userId, 'cumulativeMonths', cumulativeMonths);
         await usersDB.setUserValue(e.userId, 'durationMonths', durationMonths);
         await usersDB.setUserValue(e.userId, 'streakMonths', streakMonths);
-        await addAlert('resub', `${userDisplayName} re-subscribed at tier ${tier}!`, profileImage);
+        await addAlert(userId, 'resub', `${userDisplayName} re-subscribed at tier ${tier}!`, profileImage);
         logger.info(`Subscription event: ${userDisplayName} re-subscribed at tier ${tier}!`);
     }
     catch (error) {
