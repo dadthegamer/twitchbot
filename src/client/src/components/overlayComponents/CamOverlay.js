@@ -92,7 +92,7 @@ function CamOverlay() {
             console.log(`Showing alert: ${alertData}`)
             setAlertColorBasedOnAlertType(alertData.alertType);
             setAlertSound(alertData.sound);
-            playAlertSound();
+            // playAlertSound();
             setShowAlert(true);
             setAnimationDirection('normal');
             setAnimationDirection2('normal');
