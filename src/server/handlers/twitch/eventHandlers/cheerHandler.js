@@ -12,6 +12,7 @@ export async function onBits(e) {
         await goalDB.increaseBitsGoals(bits);
         await addAlert(userId, userDisplayName, 'cheer', `cheered ${bits} bits!`, profileImage);
         logger.info(`Cheer event: ${userDisplayName} cheered ${bits} bits!`);
+        console.log(`Cheer event: ${userDisplayName} cheered ${bits} bits!`);
     }
     catch (error) {
         logger.error(`Error in onBits: ${error}`);

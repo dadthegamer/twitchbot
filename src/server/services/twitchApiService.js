@@ -9,18 +9,15 @@ class TwitchApiClient {
         this.apiClient = new ApiClient({ authProvider: authProvider });
         this.userId = '64431397';
         this.cache = cache;
-        initializerEventListener(this.apiClient);
         this.getStreamInfo();
+        this.getAllEventSubSubscriptions();
+        this.deleteAllSubscriptions();
+        initializerEventListener(this.apiClient);
     }
 
     // Method to return the api client
     getApiClient() {
         return this.apiClient;
-    }
-
-    // Method to start the event listener
-    async startEventListener() {
-        startEventListener(this.apiClient);
     }
 
     // Method to get the current stream information
@@ -569,6 +566,28 @@ class TwitchApiClient {
         catch (error) {
             console.log(error);
             logger.error(`Error getting random clip: ${error}`);
+        }
+    }
+
+    // Method to delete all event sub subscriptions
+    async deleteAllSubscriptions() {
+        try {
+            await this.apiClient.eventSub.deleteAllSubscriptions();
+        }
+        catch (error) {
+            logger.error(`Error deleting all event sub subscriptions: ${error}`);
+        }
+    }
+
+    // Method to get all event sub subscriptions
+    async getAllEventSubSubscriptions() {
+        try {
+            const data = await this.apiClient.eventSub.getSubscriptions();
+            return data;
+        }
+        catch (error) {
+            console.log(error);
+            logger.error(`Error getting all event sub subscriptions: ${error}`);
         }
     }
 }

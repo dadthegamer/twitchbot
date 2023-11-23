@@ -18,7 +18,6 @@ export async function initializerEventListener(apiClient) {
         cache.set('twitchConnected', false);
         listener = new EventSubWsListener({ apiClient });
 
-
         // Event listeners for predictions
         listener.onChannelPredictionBegin(userId, onPredictionStart);
         listener.onChannelPredictionProgress(userId, onPredictionProgress);
@@ -46,6 +45,7 @@ export async function initializerEventListener(apiClient) {
 
         // Event listener for follows
         listener.onChannelFollow(userId, userId, onFollow);
+        console.log('Event listener initialized');
     }
     catch (error) {
         console.log(`Error starting event listener: ${error}`);
@@ -58,6 +58,7 @@ export async function startEventListener() {
         await listener.start();
         logger.info('Event listener started');
         cache.set('twitchConnected', true);
+        console.log('Event listener started');
         return;
     }
     catch (error) {
