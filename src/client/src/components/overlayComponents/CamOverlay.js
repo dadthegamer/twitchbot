@@ -14,7 +14,7 @@ function CamOverlay() {
     const [subsCount, setSubsCount] = useState(0);
     const [displayAlertType, setDisplayAlertType] = useState(null);
     const [socket, setSocket] = useState(null);
-    const [alertSound, setAlertSound] = useState(null);
+    
 
     useEffect(() => {
         const establishConnection = () => {
@@ -28,14 +28,12 @@ function CamOverlay() {
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
-                console.log(data);
                 if (data.type === 'alert') {
                     console.log(data.payload);
                     setAlertData(data.payload);
-                    setAlertSound(data.payload.sound);
                     playAlert(data.payload.alertTime);
+                    playAlertSound(data.payload.sound);
                 } else if (data.type === 'subsUpdate') {
-                    console.log(data.payload);
                     setSubsCount(data.payload.monthlySubs);
                 };
             };
@@ -89,10 +87,7 @@ function CamOverlay() {
             if (!alertData) {
                 return;
             }
-            console.log(`Showing alert: ${alertData}`)
             setAlertColorBasedOnAlertType(alertData.alertType);
-            setAlertSound(alertData.sound);
-            // playAlertSound();
             setShowAlert(true);
             setAnimationDirection('normal');
             setAnimationDirection2('normal');
@@ -170,18 +165,17 @@ function CamOverlay() {
     }
 
     // Function to play the alert sound
-    const playAlertSound = () => {
-        try {
-            const newAudio = new Audio(alertSound);
-            newAudio.play();
-    
-            return () => {
-                newAudio.pause();
-                newAudio.remove();
+    const playAlertSound = (soundUrl) => {
+        if (soundUrl) {
+            const audio = new Audio(soundUrl);
+            audio.onerror = (e) => {
+                console.error('Error loading audio file:', e);
             };
-        }
-        catch (err) {
-            console.log(err);
+            audio.play().catch((err) => {
+                console.log(err);
+            });
+        } else {
+            console.log('No alert sound to play');
         }
     };
 

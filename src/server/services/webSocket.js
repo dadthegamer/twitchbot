@@ -21,7 +21,7 @@ export class WebSocket {
                 alertMessage: 'Connected to websocket',
                 alertTime: 5000,
                 profileImg: 'https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png',
-                sound: '/audio/sub.mp3',
+                sound: '/audio/newSubscriber.mp3',
             });
             connectedDevices++;
             this.notification({ 
@@ -91,7 +91,6 @@ export class WebSocket {
 
     // Method to send an alert
     alert(payload) {
-        console.log(payload);
         this.broadcastMessage('alert', payload);
     }
 

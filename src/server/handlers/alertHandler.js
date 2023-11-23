@@ -28,9 +28,9 @@ async function getSound(type) {
     try {
         switch (type) {
             case 'sub':
-                return `/audio/sub.mp3`;
+                return `/audio/newSubscriber.mp3`;
             case 'resub':
-                return `/audio/sub.mp3`;
+                return `/audio/newSubscriber.mp3`;
             case 'giftedSub':
                 return `/audio/giftedSubs.mp3`;
             case 'raid':

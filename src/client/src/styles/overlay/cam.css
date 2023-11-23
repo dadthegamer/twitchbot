@@ -66,7 +66,7 @@ body {
     flex-direction: row;
     align-items: center;
     z-index: 98;
-    gap: 10px;
+    gap: 0px;
     overflow: hidden;
     position: absolute;
     bottom: 23px;
