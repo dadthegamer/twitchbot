@@ -34,6 +34,7 @@ export async function onStreamOnline(e) {
         };
         cache.set('streamInfo', streamInfoData);
         goalDB.setGoalCurrent('dailySubGoal', 0);
+        usersDB.resetStreamProperties();
         const twitchConnected = cache.get('twitchConnected');
         if (!twitchConnected) {
             startEventListener();

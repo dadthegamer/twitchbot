@@ -941,18 +941,10 @@ class UsersDB {
                 {},
                 {
                     $set: {
-                        viewTime: {
-                            stream: 0
-                        },
-                        subs: {
-                            stream: 0
-                        },
-                        bits: {
-                            stream: 0
-                        },
-                        donations: {
-                            stream: 0
-                        }
+                        'viewTime.stream': 0,
+                        'subs.stream': 0,
+                        'bits.stream': 0,
+                        'donations.stream': 0
                     }
                 }
             );
@@ -971,25 +963,16 @@ class UsersDB {
                 {},
                 {
                     $set: {
-                        viewTime: {
-                            weekly: 0
-                        },
-                        subs: {
-                            weekly: 0
-                        },
-                        bits: {
-                            weekly: 0
-                        },
-                        donations: {
-                            weekly: 0
-                        }
+                        'viewTime.weekly': 0,
+                        'subs.weekly': 0,
+                        'bits.weekly': 0,
+                        'donations.weekly': 0
                     }
                 }
             );
             const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             this.cache.set('users', users);
-        }
-        catch (error) {
+        } catch (error) {
             logger.error(`Error in resetWeeklyProperties: ${error}`);
         }
     }
@@ -1001,25 +984,16 @@ class UsersDB {
                 {},
                 {
                     $set: {
-                        viewTime: {
-                            monthly: 0
-                        },
-                        subs: {
-                            monthly: 0
-                        },
-                        bits: {
-                            monthly: 0
-                        },
-                        donations: {
-                            monthly: 0
-                        }
+                        'viewTime.monthly': 0,
+                        'subs.monthly': 0,
+                        'bits.monthly': 0,
+                        'donations.monthly': 0
                     }
                 }
             );
             const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             this.cache.set('users', users);
-        }
-        catch (error) {
+        } catch (error) {
             logger.error(`Error in resetMonthlyProperties: ${error}`);
         }
     }
@@ -1031,25 +1005,16 @@ class UsersDB {
                 {},
                 {
                     $set: {
-                        viewTime: {
-                            yearly: 0
-                        },
-                        subs: {
-                            yearly: 0
-                        },
-                        bits: {
-                            yearly: 0
-                        },
-                        donations: {
-                            yearly: 0
-                        }
+                        'viewTime.yearly': 0,
+                        'subs.yearly': 0,
+                        'bits.yearly': 0,
+                        'donations.yearly': 0
                     }
                 }
             );
             const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             this.cache.set('users', users);
-        }
-        catch (error) {
+        } catch (error) {
             logger.error(`Error in resetYearlyProperties: ${error}`);
         }
     }
