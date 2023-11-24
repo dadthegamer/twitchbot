@@ -1,7 +1,7 @@
 import { Bot } from '@twurple/easy-bot';
 import { ChatClient } from '@twurple/chat';
 import { environment } from '../config/environmentVars.js';
-import { onMessageHandler } from '../handlers/twitch/chatHandlers/onMessage.js';
+import { onMessageHandler } from '../handlers/twitch/onMessage.js';
 import logger from "../utilities/logger.js";
 import { cache } from '../config/initializers.js';
 
@@ -16,8 +16,10 @@ class TwitchChatClient {
             authProvider: this.authProvider,
             rejoinChannelsOnReconnect: true,
             isAlwaysMod: true,
+            requestMembershipEvents: true,
         });
         cache.set('twitchChatConnected', false)
+        this.connectToBotChat();
     }
 
     // Method to connect to Twitch chat
@@ -38,6 +40,13 @@ class TwitchChatClient {
             });
             this.chatClient.onMessage(async (channel, user, message, msg) => {
                 await onMessageHandler(channel, user, message, msg, this.bot)
+            });
+            this.chatClient.onMessageRatelimit((channel, message, msg) => {
+                logger.error(`Ratelimited: ${message} - ${msg}`);
+            });
+            this.chatClient.onDisconnect(() => {
+                cache.set('twitchChatConnected', false)
+                logger.error('Disconnected from Twitch chat');
             });
         }
         catch (error) {

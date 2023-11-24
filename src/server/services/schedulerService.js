@@ -6,7 +6,7 @@ import NodeCache from "node-cache";
 export class SchedulerService {
     constructor(dbConnection) {
         this.dbConnection = dbConnection;
-        this.knownBots = new NodeCache();
+        this.knownBots = this.knownBots = new NodeCache();
         this.initialize();
     }
 
@@ -50,7 +50,7 @@ export class SchedulerService {
     // Method to get the bits leaderboard
     async getBitsLeaderboard() {
         try {
-            const leaderboard = await this.twitchAPI.getBitsLeaderboard();
+            const leaderboard = await twitchApi.getBitsLeaderboard();
             for (const user of leaderboard) {
                 await usersDB.setBitsManually(user.userId, user.amount);
             }
@@ -117,72 +117,78 @@ export class SchedulerService {
         this.knownBots.set('671284746', {
             id: '671284746',
             username: 'thedadb0t',
-            display_name: 'TheDadB0t',
+            displayName: 'TheDadB0t',
         });
         this.knownBots.set('64431397', {
             id: '671284746',
             username: 'dadthegam3r',
-            display_name: 'DadTheGam3r',
+            displayName: 'DadTheGam3r',
         });
         this.knownBots.set('447685927', {
             id: 447685927,
             username: 'playwithviewersbot',
-            display_name: 'PlayWithViewersBot',
+            displayName: 'PlayWithViewersBot',
         });
         this.knownBots.set('25681094', {
             id: 25681094,
             username: 'commanderroot',
-            display_name: 'CommanderRoot',
+            displayName: 'CommanderRoot',
         })
         this.knownBots.set('605116711', {
             id: 605116711,
             username: 'lumiastream',
-            display_name: 'LumiaStream',
+            displayName: 'LumiaStream',
         })
         this.knownBots.set('451658633', {
             id: 451658633,
             username: 'streamlootsbot',
-            display_name: 'StreamlootsBot',
+            displayName: 'StreamlootsBot',
         })
         this.knownBots.set('196328541', {
             id: 196328541,
             username: 'lumiathingamabot',
-            display_name: 'LumiaThingamaBot',
+            displayName: 'LumiaThingamaBot',
         })
         this.knownBots.set('406576975', {
             id: 406576975,
             username: 'anotherttvviewer',
-            display_name: 'AnotherTTVViewer',
+            displayName: 'AnotherTTVViewer',
         })
         this.knownBots.set('191739645', {
             id: 191739645,
             username: '01ella',
-            display_name: '01Ella',
+            displayName: '01Ella',
         })
         this.knownBots.set('654447790', {
             id: '654447790',
             username: 'aliceydra',
-            display_name: 'aliceydra'
+            displayName: 'aliceydra'
         })
         this.knownBots.set('43547909', {
             id: '43547909',
             username: 'drapsnatt',
-            userDisplayName: 'Drapsnatt'
+            displayName: 'Drapsnatt'
         })
         this.knownBots.set('909524085', {
             id: '909524085',
             username: 'morgane2k7',
-            display_name: 'Morgane2k7'
+            displayName: 'Morgane2k7'
         })
         this.knownBots.set('100135110', {
             id: '100135110',
             username: 'streamelements',
-            display_name: 'StreamElements'
+            displayName: 'StreamElements'
         })
         this.knownBots.set('216527497', {
             id: '216527497',
             username: 'soundalerts',
-            display_name: 'SoundAlerts'
+            displayName: 'SoundAlerts'
         })
+    }
+
+    // method to return the known bots
+    getKnownBots() {
+        const bots = this.knownBots.data;
+        return bots;
     }
 };
