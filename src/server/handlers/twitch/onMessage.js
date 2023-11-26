@@ -7,6 +7,8 @@ import logger from "../../utilities/logger.js";
 // Message Handler
 export async function onMessageHandler(channel, user, message, msg, bot) {
     try {
+        const { isFirst, isHighlight, userInfo, id, isReply, isCheer, isReturningChatter } = msg;
+        const { userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster } = userInfo;
         if (environment === 'production') {
             console.log(message);
             const knownBots = schedulerService.getKnownBots();
@@ -20,8 +22,6 @@ export async function onMessageHandler(channel, user, message, msg, bot) {
             console.log(message);
         }
         const streamData = cache.get('stream');
-        const { isFirst, isHighlight, userInfo, id, isReply, isCheer, isReturningChatter } = msg;
-        const { userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster } = userInfo;
         webSocket.twitchChatMessage({ service: 'twitch', message, displayName, color });
         const parts = message.split(' ');
         const prefix = '!';

@@ -225,11 +225,7 @@ class UsersDB {
                 if (!user) {
                     return false;
                 } else {
-                    if (user.followDate !== null) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    return true;
                 }
             } else {
                 const user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });

@@ -16,10 +16,26 @@ export async function initializerEventListener(apiClient) {
     const userId = '64431397';
     try {
         cache.set('twitchConnected', false);
-        listener = new EventSubWsListener({ apiClient });
+        listener = new EventSubWsListener({ apiClient, logger: { minLevel: 'debug' } });
+
+        listener.onUserSocketDisconnect(() => {
+            cache.set('twitchConnected', false);
+            console.log('Event listener disconnected');
+            startEventListener();
+        });
+
+        listener.onSubscriptionCreateSuccess(() => async (event) =>{
+            console.log(event);
+        });
+
+        listener.onSubscriptionCreateFailure(() => async (event) =>{
+            console.log(event);
+        });
 
         // Event listeners for predictions
-        listener.onChannelPredictionBegin(userId, onPredictionStart);
+        listener.onChannelPredictionBegin(userId, async (event) => {
+            await onPredictionStart(event);
+        });
         listener.onChannelPredictionProgress(userId, onPredictionProgress);
         listener.onChannelPredictionLock(userId, onPredictionLock);
         listener.onChannelPredictionEnd(userId, onPredictionEnd);

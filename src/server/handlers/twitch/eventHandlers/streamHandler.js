@@ -30,11 +30,11 @@ export async function onStreamOnline(e) {
             isMature,
             tags,
             gameId,
-            boxArtURL
+            boxArtURL,
         };
         cache.set('streamInfo', streamInfoData);
         goalDB.setGoalCurrent('dailySubGoal', 0);
-        usersDB.resetStreamProperties();
+        await usersDB.resetStreamProperties();
         const twitchConnected = cache.get('twitchConnected');
         if (!twitchConnected) {
             startEventListener();

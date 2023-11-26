@@ -21,6 +21,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@twurple/api": "^7.0.1",
     "@twurple/auth": "^7.0.1",
+    "@twurple/chat": "^7.0.5",
     "@twurple/easy-bot": "^7.0.1",
     "@twurple/eventsub-ws": "^7.0.1",
     "adm-zip": "^0.5.10",

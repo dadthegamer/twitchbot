@@ -40,7 +40,7 @@ export class SchedulerService {
                     cache.set('currentViewers', chatters);
                     return chatters;
                 }
-            }, 60000);
+            }, 5 * 60 * 1000);
         }
         catch (err) {
             logger.error(`Error in getChattersWithoutBots: ${err}`);
@@ -188,7 +188,6 @@ export class SchedulerService {
 
     // method to return the known bots
     getKnownBots() {
-        const bots = this.knownBots.data;
-        return bots;
+        return this.knownBots.keys();
     }
 };

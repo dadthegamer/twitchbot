@@ -6,8 +6,9 @@ import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
-import { schedulerService } from './config/initializers.js';
+import { schedulerService, usersDB } from './config/initializers.js';
 import logger from './utilities/logger.js';
+
 
 config();
 

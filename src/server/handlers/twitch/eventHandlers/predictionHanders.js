@@ -26,6 +26,7 @@ export async function onPredictionStart(e) {
             locked: false,
             predictionWindow: lockDate - startDate,
         });
+        return;
     }
     catch (error) {
         logger('error', `Error in onPredictionStart: ${error}`);

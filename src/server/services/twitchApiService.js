@@ -6,7 +6,7 @@ import { initializerEventListener } from './twitchEventListenerServices.js';
 // Class for the Twitch API client
 class TwitchApiClient {
     constructor(authProvider, cache) {
-        this.apiClient = new ApiClient({ authProvider: authProvider });
+        this.apiClient = new ApiClient({ authProvider: authProvider, logger: { minLevel: 'debug' } });
         this.userId = '64431397';
         this.cache = cache;
         this.getStreamInfo();

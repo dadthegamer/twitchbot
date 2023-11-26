@@ -42,37 +42,45 @@ class ViewTimeService {
                 } else {
                     for (const viewer of viewers) {
                         const { userId, userName, userDisplayName } = viewer;
-                        console.log(`Viewer: ${userDisplayName}`);
+                        const isFollower = await usersDB.isFollower(userId);
+                        if (isFollower) {
+                            console.log(`Viewer: ${userDisplayName}`);
+                        } else {
+                            continue;
+                        }
                     }
                 }
             } else {
                 const live = cache.get('live');
                 if (!live) {
+                    console.log('Stream is not live');
                     return;
                 } else {
                     const viewers = cache.get('currentViewers');
                     if (!viewers || viewers.length === 0) {
+                        console.log('No viewers');
                         return;
-                    }
-                    for (const viewer of viewers) {
-                        const { userId, userName, userDisplayName } = viewer;
-                        // Check if the viewer is a follower
-                        const isFollower = await usersDB.isFollower(userId);
-                        if (isFollower) {
-                            // Add them to the view time cache if they are not already there and add 1 minute to their view time. Set the TTL to 15 minutes.
-                            const viewTime = this.viewTimeCache.get(userId);
-                            if (!viewTime || viewTime === undefined) {
-                                this.viewTimeCache.set(userId, 1, 300);
+                    } else {
+                        for (const viewer of viewers) {
+                            const { userId, userName, userDisplayName } = viewer;
+                            // Check if the viewer is a follower
+                            const isFollower = await usersDB.isFollower(userId);
+                            if (isFollower) {
+                                // Add them to the view time cache if they are not already there and add 1 minute to their view time. Set the TTL to 15 minutes.
+                                const viewTime = this.viewTimeCache.get(userId);
+                                if (!viewTime || viewTime === undefined) {
+                                    this.viewTimeCache.set(userId, 1, 300);
+                                } else {
+                                    this.viewTimeCache.set(userId, viewTime + 1, 300);
+                                }
+                                // Check if the viewer has more than 5 minutes of view time. If they do increase the view time in the database by the amount of view time they have in the cache.
+                                if (viewTime >= this.viewTimeThreshold) {
+                                    await usersDB.increaseViewTime(userId, viewTime);
+                                    this.viewTimeCache.del(userId);
+                                }
                             } else {
-                                this.viewTimeCache.set(userId, viewTime + 1, 300);
+                                continue;
                             }
-                            // Check if the viewer has more than 5 minutes of view time. If they do increase the view time in the database by the amount of view time they have in the cache.
-                            if (viewTime >= this.viewTimeThreshold) {
-                                await usersDB.increaseViewTime(userId, viewTime);
-                                this.viewTimeCache.del(userId);
-                            }
-                        } else {
-                            continue;
                         }
                     }
                 }

@@ -30,10 +30,10 @@ const authProvider = new AuthProviderManager(tokenDB);
 await authProvider.addAllUsersToAuthProvider();
 
 // Twitch API client initialization
-const twitchApi = new TwitchApiClient(authProvider.authProvider, cache);
+const twitchApi = new TwitchApiClient(authProvider.getAuthProvider(), cache);
 
 // Chat client initialization
-const chatClient = new TwitchChatClient(authProvider.authProvider);
+const chatClient = new TwitchChatClient(authProvider.getAuthProvider());
 
 // Websocket initialization
 const webSocket = new WebSocket();
