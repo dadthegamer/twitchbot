@@ -389,7 +389,7 @@ class UsersDB {
             };
             const options = { upsert: true };
             const res = await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
-            this.cache.set(userData.id, userData);
+            this.cache.set(userId, update);
             return res;
         }
         catch (error) {

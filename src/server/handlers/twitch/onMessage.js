@@ -1,6 +1,6 @@
 import { cache } from "../../config/initializers.js";
 import { environment } from "../../config/environmentVars.js";
-import { webSocket, schedulerService } from "../../config/initializers.js";
+import { webSocket } from "../../config/initializers.js";
 import logger from "../../utilities/logger.js";
 
 
@@ -9,15 +9,6 @@ export async function onMessageHandler(channel, user, message, msg, bot) {
     try {
         const { isFirst, isHighlight, userInfo, id, isReply, isCheer, isReturningChatter } = msg;
         const { userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster } = userInfo;
-        if (environment === 'production') {
-            console.log(message);
-            const knownBots = schedulerService.getKnownBots();
-            console.log(knownBots);
-            if (knownBots.has(userId)) {
-                console.log('This is a known bot');
-                return;
-            }
-        }
         if (environment === 'development') {
             console.log(message);
         }
