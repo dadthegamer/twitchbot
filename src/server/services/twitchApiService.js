@@ -2,6 +2,7 @@ import { ApiClient } from '@twurple/api';
 import logger from "../utilities/logger.js";
 import axios from 'axios';
 import { initializerEventListener } from './twitchEventListenerServices.js';
+import { environment } from '../config/environmentVars.js';
 
 // Class for the Twitch API client
 class TwitchApiClient {
@@ -572,8 +573,10 @@ class TwitchApiClient {
     // Method to delete all event sub subscriptions
     async deleteAllSubscriptions() {
         try {
-            await this.apiClient.eventSub.deleteAllSubscriptions();
-        }
+            if (environment === 'development') {
+                await this.apiClient.eventSub.deleteAllSubscriptions();
+                }
+            }
         catch (error) {
             logger.error(`Error deleting all event sub subscriptions: ${error}`);
         }

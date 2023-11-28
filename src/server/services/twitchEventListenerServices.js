@@ -22,7 +22,6 @@ export async function initializerEventListener(apiClient) {
         listener.onUserSocketDisconnect(() => async () => {
             cache.set('twitchConnected', false);
             console.log('Event listener disconnected');
-            await listener.start();
         });
 
         listener.onSubscriptionCreateSuccess(() => async (event) =>{
