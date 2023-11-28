@@ -16,12 +16,13 @@ export async function initializerEventListener(apiClient) {
     const userId = '64431397';
     try {
         cache.set('twitchConnected', false);
-        listener = new EventSubWsListener({ apiClient, logger: { minLevel: 'debug' } });
+        const listener = new EventSubWsListener({ apiClient: apiClient, logger: { minLevel: 'debug' } });
+        await listener.start();
 
-        listener.onUserSocketDisconnect(() => {
+        listener.onUserSocketDisconnect(() => async () => {
             cache.set('twitchConnected', false);
             console.log('Event listener disconnected');
-            startEventListener();
+            await listener.start();
         });
 
         listener.onSubscriptionCreateSuccess(() => async (event) =>{
@@ -36,31 +37,62 @@ export async function initializerEventListener(apiClient) {
         listener.onChannelPredictionBegin(userId, async (event) => {
             await onPredictionStart(event);
         });
-        listener.onChannelPredictionProgress(userId, onPredictionProgress);
-        listener.onChannelPredictionLock(userId, onPredictionLock);
-        listener.onChannelPredictionEnd(userId, onPredictionEnd);
+        
+        listener.onChannelPredictionProgress(userId, async (event) => {
+            onPredictionProgress(event);
+        });
+
+        listener.onChannelPredictionLock(userId, async (event) => {
+            onPredictionLock(event);
+        });
+
+        listener.onChannelPredictionEnd(userId, async (event) => {
+            onPredictionEnd(event);
+        });
 
         // Event listeners for channel points
-        listener.onChannelRedemptionAdd(userId, onRedemptionAdd);
+        listener.onChannelRedemptionAdd(userId, async (event) => {
+            await onRedemptionAdd(event);
+        });
 
         // Event listeners for raids
-        listener.onChannelRaidTo(userId, onRaid);
+        listener.onChannelRaidTo(userId, async (event) => {
+            await onRaid(event);
+        });
 
         // Event listener for stream events
-        listener.onStreamOnline(userId, onStreamOnline);
-        listener.onStreamOffline(userId, onStreamOffline);
-        listener.onChannelUpdate(userId, onStreamUpdate);
+        listener.onStreamOnline(userId, async (event) => {
+            await onStreamOnline(event);
+        });
+
+        listener.onStreamOffline(userId, async (event) => {
+            await onStreamOffline(event);
+        });
+
+        listener.onChannelUpdate(userId, async (event) => {
+            await onStreamUpdate(event);
+        });
 
         // Event listener for subscriptions
-        listener.onChannelSubscriptionGift(userId, onGiftSubscription);
-        listener.onChannelSubscriptionMessage(userId, onSubscription);
+        listener.onChannelSubscriptionGift(userId, async (event) => {
+            await onGiftSubscription(event);
+        });
+
+        listener.onChannelSubscriptionMessage(userId, async (event) => {
+            await onSubscription(event);
+        });
 
 
         // Event listerner for bits
-        listener.onChannelCheer(userId, onBits);
+        listener.onChannelCheer(userId, async (event) => {
+            await onBits(event);
+        });
 
         // Event listener for follows
-        listener.onChannelFollow(userId, userId, onFollow);
+        listener.onChannelFollow(userId, userId, async (event) => {
+            await onFollow(event);
+        });
+
         console.log('Event listener initialized');
     }
     catch (error) {

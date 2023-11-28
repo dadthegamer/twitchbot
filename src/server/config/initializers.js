@@ -47,7 +47,6 @@ const viewTimeDB = new ViewTimeService(db.dbConnection);
 // SchedulerService initialization
 const schedulerService = new SchedulerService(db.dbConnection);
 
-startAlertsHandler();
 startEventListener();
 
 export {
