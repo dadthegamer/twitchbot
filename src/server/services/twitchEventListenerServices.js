@@ -9,7 +9,7 @@ import { onFollow } from '../handlers/twitch/eventHandlers/followHandler.js';
 import { onGiftSubscription } from '../handlers/twitch/eventHandlers/giftSubscription.js';
 import { onSubscription } from '../handlers/twitch/eventHandlers/subHandler.js';
 import { cache } from '../config/initializers.js';
-import { port, hostIp, environment, appSecret } from '../config/environmentVars.js';
+import { eventListenerPort, hostName, environment, appSecret } from '../config/environmentVars.js';
 import { NgrokAdapter } from '@twurple/eventsub-ngrok'
 import { twitchApi } from '../config/initializers.js';
 
@@ -17,6 +17,9 @@ import { twitchApi } from '../config/initializers.js';
 export async function initializerEventListener(apiClient) {
     const userId = '64431397';
     try {
+        if (!hostName || hostName === '') {
+            throw new Error('Hostname is undefined');
+        };
         if (environment === 'development') {
             await twitchApi.deleteAllSubscriptions();
         };
@@ -24,8 +27,8 @@ export async function initializerEventListener(apiClient) {
         cache.set('twitchConnected', false);
         const secret = appSecret || 'testsecret1234321';
         const adapter = new ReverseProxyAdapter({
-            hostName: hostIp,
-            port: port || 8081,
+            hostName: hostName,
+            port: eventListenerPort || 8081,
             pathPrefix: '/twitch/eventsub',
             usePathPrefixInHandlers: true
         });

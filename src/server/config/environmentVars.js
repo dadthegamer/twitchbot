@@ -3,8 +3,8 @@ import { config } from 'dotenv';
 config();
 
 const uri = `mongodb://${process.env.MONGO_INITDB_DATABASE_HOST}:${process.env.MONGO_INITDB_DATABASE_PORT}`;
-const port = process.env.PORT;
-const hostIp = process.env.HOSTIP;
+const eventListenerPort = process.env.EVENTLISTENERPORT;
+const hostName = process.env.HOSTNAME;
 const dbName = 'website';
 const twitchClientId = process.env.TWITCH_CLIENT_ID;
 const twitchClientSecret = process.env.TWITCH_CLIENT_SECRET;
@@ -36,7 +36,7 @@ export {
     apiNinjaKey,
     amazonAccessKey,
     amazonSecretKey,
-    port,
-    hostIp,
+    eventListenerPort,
+    hostName,
     appSecret,
 }
