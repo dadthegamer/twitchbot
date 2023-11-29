@@ -8,6 +8,7 @@ export class SchedulerService {
         this.dbConnection = dbConnection;
         this.knownBots = this.knownBots = new NodeCache();
         this.initialize();
+        this.intervalSeconds = 60;
     }
 
     initialize() {
@@ -40,7 +41,7 @@ export class SchedulerService {
                     cache.set('currentViewers', chatters);
                     return chatters;
                 }
-            }, 5 * 60 * 1000);
+            }, this.this.intervalSeconds * 1000);
         }
         catch (err) {
             logger.error(`Error in getChattersWithoutBots: ${err}`);
