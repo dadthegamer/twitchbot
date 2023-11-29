@@ -4,6 +4,7 @@ import { twitchApi, usersDB, tokenDB } from '../../config/initializers.js';
 import axios from 'axios';
 import logger from '../../utilities/logger.js';
 
+
 const router = Router();
 
 
@@ -34,9 +35,7 @@ router.get('/', async (req, res) => {
         const tokenData = await exchangeCode(clientId, clientSecret, code, redirectUri);
         const userData = await getUserDataByToken(tokenData.accessToken);
         await tokenDB.storeUserAuthToken(userData.id, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn);
-        if (!req.session.userData) {
-            req.session.userData = userData;
-        }
+        req.session.userData = userData;
         // if (userData.id === '64431397') {
         //     await twitchApiClient.addUserToAuthProvider(userData.id);
         // } else if (userData.id === '671284746') {

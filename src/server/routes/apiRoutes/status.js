@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { cache, chatClient } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
+import isLoggedIn from '../../middleware/loggedin.js';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', isLoggedIn, async (req, res) => {
     try {
         res.json({ online: true });
     }
