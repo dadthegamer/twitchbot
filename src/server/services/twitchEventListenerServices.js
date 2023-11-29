@@ -10,7 +10,6 @@ import { onGiftSubscription } from '../handlers/twitch/eventHandlers/giftSubscri
 import { onSubscription } from '../handlers/twitch/eventHandlers/subHandler.js';
 import { cache } from '../config/initializers.js';
 import { eventListenerPort, hostName, environment, appSecret } from '../config/environmentVars.js';
-import { NgrokAdapter } from '@twurple/eventsub-ngrok'
 import { twitchApi } from '../config/initializers.js';
 
 // Event listener for Twitch events

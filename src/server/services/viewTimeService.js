@@ -53,12 +53,10 @@ class ViewTimeService {
             } else {
                 const live = cache.get('live');
                 if (!live) {
-                    console.log('Stream is not live');
                     return;
                 } else {
                     const viewers = cache.get('currentViewers');
                     if (!viewers || viewers.length === 0) {
-                        console.log('No viewers');
                         return;
                     } else {
                         for (const viewer of viewers) {
