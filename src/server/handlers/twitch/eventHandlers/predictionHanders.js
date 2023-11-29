@@ -5,6 +5,7 @@ import logger from "../../../utilities/logger.js";
 // Prediction events
 export async function onPredictionStart(e) {
     try {
+        const { predictionTitle, lockDate, startDate} = await e
         const outcomeArray = [];
         e.outcomes.forEach((outcome) => {
             outcomeArray.push({
@@ -15,9 +16,6 @@ export async function onPredictionStart(e) {
                 users: 0,
             });
         });
-        const startDate = e.startDate;
-        const lockDate = e.lockDate;
-        const predictionTitle = e.title;
         cache.set('prediction', {
             title: predictionTitle,
             outcomes: outcomeArray,

@@ -7,13 +7,27 @@ import { environment } from '../config/environmentVars.js';
 // Class for the Twitch API client
 class TwitchApiClient {
     constructor(authProvider, cache) {
-        this.apiClient = new ApiClient({ authProvider: authProvider, logger: { minLevel: 'debug' } });
+        this.apiClient = new ApiClient({ authProvider: authProvider, logger: { custom: { log: (level, message) => {
+            logger.info(`Twitch API Client: ${level} - ${message}`);
+            // if (level === 'error') {
+            //     logger.error(message);
+            // } else if (level === 'warn') {
+            //     logger.warn(message);
+            // } else if (level === 'info') {
+            //     logger.info(message);
+            // } else if (level === 'debug') {
+            //     logger.info(message);
+            // } else if (level === 'trace') {
+            //     logger.trace(message);
+            // } else if (level === 'crit') {
+            //     logger.crit(message);
+            // }
+        }}}});
         this.userId = '64431397';
         this.cache = cache;
         this.getStreamInfo();
         this.getAllEventSubSubscriptions();
         this.deleteAllSubscriptions();
-        initializerEventListener(this.apiClient);
     }
 
     // Method to return the api client

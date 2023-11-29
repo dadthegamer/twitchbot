@@ -14,6 +14,7 @@ function CamOverlay() {
     const [subsCount, setSubsCount] = useState(0);
     const [displayAlertType, setDisplayAlertType] = useState(null);
     const [socket, setSocket] = useState(null);
+    const [alertMessage, setAlertMessage] = useState('');
     
 
     useEffect(() => {
@@ -33,6 +34,7 @@ function CamOverlay() {
                     setAlertData(data.payload);
                     playAlert(data.payload.alertTime);
                     playAlertSound(data.payload.sound);
+                    setAlertMessage(data.payload.alertMessage);
                 } else if (data.type === 'subsUpdate') {
                     setSubsCount(data.payload.monthlySubs);
                 };
@@ -226,8 +228,7 @@ function CamOverlay() {
                             <div className='alert-details-inner' style={{
                                 animationDirection: animationDirection, // Apply animation direction here
                             }}>
-                                <span id='alert-username'>{alertData.displayName}</span>
-                                <span id='alert-message'>{alertData.alertMessage}</span>
+                                <span id='alert-message'>{alertMessage}</span>
                             </div>
                             <div className="img-container">
                                 <img src={alertData.profileImg} alt="" />

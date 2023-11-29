@@ -1,4 +1,4 @@
-import { EventSubWsListener } from '@twurple/eventsub-ws';
+import { ReverseProxyAdapter, EventSubHttpListener } from '@twurple/eventsub-http'
 import { onPredictionStart, onPredictionEnd, onPredictionLock, onPredictionProgress } from '../handlers/twitch/eventHandlers/predictionHanders.js';
 import { onRedemptionAdd } from '../handlers/twitch/eventHandlers/redemptionHandler.js';
 import { onRaid } from '../handlers/twitch/eventHandlers/raidHandler.js';
@@ -9,34 +9,45 @@ import { onFollow } from '../handlers/twitch/eventHandlers/followHandler.js';
 import { onGiftSubscription } from '../handlers/twitch/eventHandlers/giftSubscription.js';
 import { onSubscription } from '../handlers/twitch/eventHandlers/subHandler.js';
 import { cache } from '../config/initializers.js';
+import { port, hostIp, environment, appSecret } from '../config/environmentVars.js';
+import { NgrokAdapter } from '@twurple/eventsub-ngrok'
+import { twitchApi } from '../config/initializers.js';
 
-let listener;
 // Event listener for Twitch events
 export async function initializerEventListener(apiClient) {
     const userId = '64431397';
     try {
+        if (environment === 'development') {
+            await twitchApi.deleteAllSubscriptions();
+        };
+        let listener;
         cache.set('twitchConnected', false);
-        const listener = new EventSubWsListener({ apiClient: apiClient, logger: { minLevel: 'debug' } });
+        const secret = appSecret || 'testsecret1234321';
+        const adapter = new ReverseProxyAdapter({
+            hostName: hostIp,
+            port: port || 8081,
+            pathPrefix: '/twitch/eventsub',
+            usePathPrefixInHandlers: true
+        });
+        listener = new EventSubHttpListener({ adapter: adapter, apiClient, secret, logger: { minLevel: 'debug' } });
         await listener.start();
 
-        listener.onUserSocketDisconnect(() => async () => {
-            cache.set('twitchConnected', false);
-            console.log('Event listener disconnected');
+        listener.onSubscriptionCreateSuccess(() => async (event) => {
+            console.log(event);
+            logger.info(`Subscription created: ${event}`);
         });
 
-        listener.onSubscriptionCreateSuccess(() => async (event) =>{
+        listener.onSubscriptionCreateFailure(() => async (event) => {
             console.log(event);
-        });
-
-        listener.onSubscriptionCreateFailure(() => async (event) =>{
-            console.log(event);
+            logger.error(`Error creating subscription: ${event}`);
         });
 
         // Event listeners for predictions
         listener.onChannelPredictionBegin(userId, async (event) => {
+            console.log(event);
             await onPredictionStart(event);
         });
-        
+
         listener.onChannelPredictionProgress(userId, async (event) => {
             onPredictionProgress(event);
         });
@@ -100,45 +111,45 @@ export async function initializerEventListener(apiClient) {
     }
 }
 
-export async function startEventListener() {
-    try {
-        await listener.start();
-        logger.info('Event listener started');
-        cache.set('twitchConnected', true);
-        console.log('Event listener started');
-        return;
-    }
-    catch (error) {
-        logger.error(`Error starting event listener: ${error}`);
-    }
-};
+// export async function startEventListener() {
+//     try {
+//         await listener.start();
+//         logger.info('Event listener started');
+//         cache.set('twitchConnected', true);
+//         console.log('Event listener started');
+//         return;
+//     }
+//     catch (error) {
+//         logger.error(`Error starting event listener: ${error}`);
+//     }
+// };
 
-export async function stopEventListener() {
-    try {
-        await listener.stop();
-        logger.info('Event listener stopped');
-        cache.set('twitchConnected', false);
-        return;
-    }
-    catch (error) {
-        logger.error(`Error stopping event listener: ${error}`);
-    }
-};
+// export async function stopEventListener() {
+//     try {
+//         await listener.stop();
+//         logger.info('Event listener stopped');
+//         cache.set('twitchConnected', false);
+//         return;
+//     }
+//     catch (error) {
+//         logger.error(`Error stopping event listener: ${error}`);
+//     }
+// };
 
-// Function to toggle the event listener on and off based on the current status
-export async function toggleEventListener() {
-    try {
-        const status = cache.get('twitchConnected');
-        if (status) {
-            await stopEventListener();
-            return;
-        }
-        else {
-            await startEventListener();
-            return;
-        }
-    }
-    catch (error) {
-        logger.error(`Error toggling event listener: ${error}`);
-    }
-};
+// // Function to toggle the event listener on and off based on the current status
+// export async function toggleEventListener() {
+//     try {
+//         const status = cache.get('twitchConnected');
+//         if (status) {
+//             await stopEventListener();
+//             return;
+//         }
+//         else {
+//             await startEventListener();
+//             return;
+//         }
+//     }
+//     catch (error) {
+//         logger.error(`Error toggling event listener: ${error}`);
+//     }
+// };

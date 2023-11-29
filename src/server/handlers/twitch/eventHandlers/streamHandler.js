@@ -1,6 +1,5 @@
 import { usersDB, cache, goalDB } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";
-import { startEventListener } from "../../../services/twitchEventListenerServices.js";
 
 export async function onStreamOffline(e) {
     try {
