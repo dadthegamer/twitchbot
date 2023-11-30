@@ -59,15 +59,15 @@ export async function initializerEventListener(apiClient) {
         });
 
         listener.onChannelPredictionProgress(userId, async (event) => {
-            onPredictionProgress(event);
+            await onPredictionProgress(event);
         });
 
         listener.onChannelPredictionLock(userId, async (event) => {
-            onPredictionLock(event);
+            await onPredictionLock(event);
         });
 
         listener.onChannelPredictionEnd(userId, async (event) => {
-            onPredictionEnd(event);
+            await onPredictionEnd(event);
         });
 
         // Event listeners for channel points
