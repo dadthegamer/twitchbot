@@ -2,7 +2,7 @@ import { ApiClient } from '@twurple/api';
 import logger from "../utilities/logger.js";
 import axios from 'axios';
 import { initializerEventListener } from './twitchEventListenerServices.js';
-import { environment } from '../config/environmentVars.js';
+import { environment, streamerUserId } from '../config/environmentVars.js';
 
 // Class for the Twitch API client
 class TwitchApiClient {
@@ -23,7 +23,7 @@ class TwitchApiClient {
             //     logger.crit(message);
             // }
         }}}});
-        this.userId = '64431397';
+        this.userId = streamerUserId;
         this.cache = cache;
         this.getStreamInfo();
         this.getAllEventSubSubscriptions();

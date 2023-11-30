@@ -1,6 +1,6 @@
 import { Bot } from '@twurple/easy-bot';
 import { ChatClient } from '@twurple/chat';
-import { environment } from '../config/environmentVars.js';
+import { environment, userName } from '../config/environmentVars.js';
 import { onMessageHandler } from '../handlers/twitch/onMessage.js';
 import logger from "../utilities/logger.js";
 import { cache } from '../config/initializers.js';
@@ -10,9 +10,9 @@ class TwitchChatClient {
     constructor(authProvider) {
         this.authProvider = authProvider;
         this.chatClient = new ChatClient({ authProvider: this.authProvider, channels: ['dadthegam3r'] });
-        this.channel = 'dadthegam3r';
+        this.channel = userName;
         this.bot = new Bot({
-            channels: ['dadthegam3r'],
+            channels: [userName],
             authProvider: this.authProvider,
             rejoinChannelsOnReconnect: true,
             isAlwaysMod: true,

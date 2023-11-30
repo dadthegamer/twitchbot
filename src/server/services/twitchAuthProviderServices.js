@@ -1,12 +1,13 @@
 import { RefreshingAuthProvider } from '@twurple/auth';
 import { ApiClient } from '@twurple/api';
 import logger from "../utilities/logger.js";
+import { streamerUserId } from '../config/environmentVars.js';
 
 
 // Class for the Twitch API client
 class AuthProviderManager {
     constructor(tokenDBInstance) {
-        this.userId = '64431397';
+        this.userId = streamerUserId;
         this.clientId = process.env.TWITCH_CLIENT_ID;
         this.clientSecret = process.env.TWITCH_CLIENT_SECRET;
         this.tokenDB = tokenDBInstance;

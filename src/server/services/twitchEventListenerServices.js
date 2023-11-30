@@ -9,12 +9,12 @@ import { onFollow } from '../handlers/twitch/eventHandlers/followHandler.js';
 import { onGiftSubscription } from '../handlers/twitch/eventHandlers/giftSubscription.js';
 import { onSubscription } from '../handlers/twitch/eventHandlers/subHandler.js';
 import { cache } from '../config/initializers.js';
-import { eventListenerPort, hostName, environment, appSecret } from '../config/environmentVars.js';
+import { eventListenerPort, hostName, environment, appSecret, streamerUserId } from '../config/environmentVars.js';
 import { twitchApi } from '../config/initializers.js';
 
 // Event listener for Twitch events
 export async function initializerEventListener(apiClient) {
-    const userId = '64431397';
+    const userId = streamerUserId;
     try {
         if (!hostName || hostName === '') {
             throw new Error('Hostname is undefined');

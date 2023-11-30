@@ -3,7 +3,7 @@ import { exchangeCode } from '@twurple/auth';
 import { twitchApi, usersDB, tokenDB, authProvider } from '../../config/initializers.js';
 import axios from 'axios';
 import logger from '../../utilities/logger.js';
-import { hostName } from '../../config/environmentVars.js';
+import { hostName, botId, streamerUserId } from '../../config/environmentVars.js';
 
 
 const router = Router();
@@ -37,7 +37,7 @@ router.get('/', async (req, res) => {
         const userData = await getUserDataByToken(tokenData.accessToken);
         req.session.userData = userData;
         await usersDB.newUser(userData.id, userData.email);
-        if (userData.id === '64431397' || userData.id === '671284746') {
+        if (userData.id === streamerUserId || userData.id === botId) {
             tokenData.userId = userData.id;
             await tokenDB.storeUserAuthToken(userData.id, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn);
             await authProvider.addUserToAuthProvider(tokenData);
