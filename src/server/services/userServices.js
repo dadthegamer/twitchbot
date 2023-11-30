@@ -324,14 +324,20 @@ class UsersDB {
     }
 
     // Method to add a user to the database and cache from t he stream directly
-    async newUser(userId) {
+    async newUser(userId, email = null) {
         try {
             if (typeof userId !== 'string') {
                 userId = userId.toString();
             }
             const user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
             if (user) {
-                return;
+                // If the user is in the database then check if they have an email. If they do not then update the email
+                if (user.email === null || user.email === undefined) {
+                    await this.setUserValue(userId, 'email', email);
+                    return;
+                } else {
+                    return;
+                }
             }
             const userData = await twitchApi.getUserDataById(userId);
             const date = new Date();
@@ -346,6 +352,7 @@ class UsersDB {
                     followDate: date,
                     lastSeen: date,
                     arrived: true,
+                    email: email,
                     viewTime: {
                         allTime: 0,
                         yearly: 0,
@@ -515,6 +522,11 @@ class UsersDB {
                 catch (error) {
                     logger.error(`Error in increaseCurrency: ${error}`);
                 }
+            }
+            // Check if the user exists. If they do not then return
+            const user = await this.getUserByUserId(userId);
+            if (!user) {
+                return;
             }
             if (environment === 'development') {
                 console.log(`increaseUserValue: ${userId} ${currency} ${amount}`);
@@ -1083,12 +1095,12 @@ class UsersDB {
                     logger.error(`Error in increaseViewTime: ${error}`);
                 }
             }
-            const date = new Date();
-            const lastSeen = date;
             let user = this.cache.get(userId);
             if (!user) {
-                user = await this.getUserByUserId(userId);
+                return;
             }
+            const date = new Date();
+            const lastSeen = date;
 
             if (user.viewTime === undefined) {
                 user.viewTime = {

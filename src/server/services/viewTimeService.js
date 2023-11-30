@@ -42,12 +42,7 @@ class ViewTimeService {
                 } else {
                     for (const viewer of viewers) {
                         const { userId, userName, userDisplayName } = viewer;
-                        const isFollower = await usersDB.isFollower(userId);
-                        if (isFollower) {
-                            console.log(`Viewer: ${userDisplayName}`);
-                        } else {
-                            continue;
-                        }
+                        console.log(`Viewer: ${userDisplayName}`);
                     }
                 }
             } else {
@@ -60,10 +55,8 @@ class ViewTimeService {
                         return;
                     } else {
                         for (const viewer of viewers) {
-                            const { userId, userName, userDisplayName } = viewer;
-                            // Check if the viewer is a follower
-                            const isFollower = await usersDB.isFollower(userId);
-                            if (isFollower) {
+                            try {
+                                const { userId, userName, userDisplayName } = viewer;
                                 // Add them to the view time cache if they are not already there and add 1 minute to their view time. Set the TTL to 15 minutes.
                                 const viewTime = this.viewTimeCache.get(userId);
                                 if (!viewTime || viewTime === undefined) {
@@ -76,8 +69,9 @@ class ViewTimeService {
                                     await usersDB.increaseViewTime(userId, viewTime);
                                     this.viewTimeCache.del(userId);
                                 }
-                            } else {
-                                continue;
+                            }
+                            catch (err) {
+                                logger.error(`Error in increasing view time in viewTimeHandler: ${err}`);
                             }
                         }
                     }

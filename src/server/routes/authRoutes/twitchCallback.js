@@ -3,6 +3,7 @@ import { exchangeCode } from '@twurple/auth';
 import { twitchApi, usersDB, tokenDB, authProvider } from '../../config/initializers.js';
 import axios from 'axios';
 import logger from '../../utilities/logger.js';
+import { hostName } from '../../config/environmentVars.js';
 
 
 const router = Router();
@@ -34,20 +35,18 @@ router.get('/', async (req, res) => {
         const redirectUri = process.env.TWITCH_REDIRECT_URI;
         const tokenData = await exchangeCode(clientId, clientSecret, code, redirectUri);
         const userData = await getUserDataByToken(tokenData.accessToken);
-        await tokenDB.storeUserAuthToken(userData.id, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn);
         req.session.userData = userData;
-        if (userData.id === '64431397') {
+        await usersDB.newUser(userData.id, userData.email);
+        if (userData.id === '64431397' || userData.id === '671284746') {
             tokenData.userId = userData.id;
-            await authProvider.addUserToAuthProvider(tokenData);
-        } else if (userData.id === '671284746') {
-            tokenData.userId = userData.id;
+            await tokenDB.storeUserAuthToken(userData.id, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn);
             await authProvider.addUserToAuthProvider(tokenData);
         }
-        res.redirect('http://localhost:3000/');
+        res.redirect(`https://${hostName}/`);
     }
     catch (error) {
         logger.error(`Error in twitchCallback.js: ${error}`);
-        res.redirect('http://localhost:3000/');
+        res.redirect(`https://${hostName}/`);
     }
 });
 
