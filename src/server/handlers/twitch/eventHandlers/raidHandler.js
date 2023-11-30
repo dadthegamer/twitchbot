@@ -6,7 +6,7 @@ import logger from "../../../utilities/logger.js";
 export async function onRaid(e) {
     try {
         const { raidingBroadcasterDisplayName, raidingBroadcasterId, viewers } = await e;
-        await addAlert(raidingBroadcasterId, raidingBroadcasterDisplayName, 'raid', `raided with ${viewers} viewers!`);
+        await addAlert(raidingBroadcasterId, raidingBroadcasterDisplayName, 'raid', `${raidingBroadcasterDisplayName} raided with ${viewers} viewers!`);
         logger.info(`${raidingBroadcasterDisplayName} Raided with ${viewers} viewers!`);
     }
     catch (error) {

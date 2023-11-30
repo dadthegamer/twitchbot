@@ -16,7 +16,7 @@ export async function onGiftSubscription(e) {
         await goalDB.increaseSubGoals(amount);
 
         // Sent alert
-        await addAlert(gifterId, gifterDisplayName, 'giftedSub', `gifted ${amount} tier ${tier} subs!`, profileImage);
+        await addAlert(gifterId, gifterDisplayName, 'giftedSub', `${gifterDisplayName} gifted ${amount} tier ${tier} subs!`, profileImage);
         logger.info(`Gift subscription event: ${gifterDisplayName} gifted ${amount} tier ${tier} subs!`);
     }
     catch (error) {
