@@ -6,13 +6,15 @@ import logger from "../utilities/logger.js";
 import { replyHandler } from "./actionHandlers.js/replyHandler.js";
 import { displayHandler } from "./actionHandlers.js/displayHandler.js";
 import { addToQueue, removeFromQueue, getQueue } from "./actionHandlers.js/queue.js";
+import { variableHandler } from "./variablesHandler.js";
 
 
 // Method to evaluate the handler
-export async function evalulate(handler, context) {
+export async function actionEvalulate(handler, context) {
     try {
         const { bot, msg, userDisplayName, userId, messageID, parts, input } = context;
-        const { type } = handler;
+        const { type, response } = handler;
+        await variableHandler(response, userId);
         switch (type) {
             case 'chat':
                 chatMessageHandler(handler.response, context);
@@ -83,7 +85,6 @@ export async function evalulate(handler, context) {
                     break;
                 };
             default:
-                console.log(`Handler not found: ${handler}`);
                 logger.error(`Handler not found: ${handler}`);
         }
     }

@@ -31,6 +31,7 @@ class Commands {
             this.createCommand('followage', [{type: 'chat', response: '$followage'}], 'Flex your follow age to the chat', 'everyone', true, 0, 0, false);
             this.createCommand('viewtime', [{type: 'chat', response: '$viewTime'}], 'Flex your view time to the chat', 'everyone', true, 0, 0, false);
             this.createCommand('uptime', [{type: 'chat', response: '$uptime'}], 'Shows how long the stream has been live', 'everyone', true, 0, 0, false);
+            this.createCommand('quote', [{type: 'chat', response: '$uptime'}], 'Shows how long the stream has been live', 'everyone', true, 0, 0, false);
         }
         catch (err) {
             logger.error(`Error in createInitialCommands: ${err}`);
