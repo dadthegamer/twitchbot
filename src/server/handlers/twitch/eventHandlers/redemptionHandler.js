@@ -8,7 +8,7 @@ export async function onRedemptionAdd(e) {
         const { profilePictureUrl } = userData;
         logger.info('info', `Redemption: ${rewardTitle} | ${rewardCost} | ${userName} | ${userDisplayName} | ${userId} | ${input} | ${id} | ${status}`);
         console.log(`Redemption: ${rewardTitle} | ${rewardCost} | ${userName} | ${userDisplayName} | ${userId} | ${input} | ${id} | ${status}`)
-        addAlert(userId, userDisplayName, 'follow', `${userDisplayName} redeemed`, profilePictureUrl);
+        // addAlert(userId, userDisplayName, 'follow', `${userDisplayName} redeemed`, profilePictureUrl);
     }
     catch (error) {
         console.log(`Error in onRedemptionAdd: ${error}`);

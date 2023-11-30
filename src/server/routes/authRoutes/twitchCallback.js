@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { exchangeCode } from '@twurple/auth';
-import { twitchApi, usersDB, tokenDB } from '../../config/initializers.js';
+import { twitchApi, usersDB, tokenDB, authProvider } from '../../config/initializers.js';
 import axios from 'axios';
 import logger from '../../utilities/logger.js';
 
@@ -36,11 +36,13 @@ router.get('/', async (req, res) => {
         const userData = await getUserDataByToken(tokenData.accessToken);
         await tokenDB.storeUserAuthToken(userData.id, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn);
         req.session.userData = userData;
-        // if (userData.id === '64431397') {
-        //     await twitchApiClient.addUserToAuthProvider(userData.id);
-        // } else if (userData.id === '671284746') {
-        //     await twitchApiClient.addUserToAuthProvider(userData.id);
-        // }
+        if (userData.id === '64431397') {
+            tokenData.userId = userData.id;
+            await authProvider.addUserToAuthProvider(tokenData);
+        } else if (userData.id === '671284746') {
+            tokenData.userId = userData.id;
+            await authProvider.addUserToAuthProvider(tokenData);
+        }
         res.redirect('http://localhost:3000/');
     }
     catch (error) {

@@ -44,6 +44,14 @@ export async function initializerEventListener(apiClient) {
             logger.error(`Error creating subscription: ${event}`);
         });
 
+        listener.onVerify((success, subscription) => async (event) => {
+            if (!success) {
+                console.log(`Failed to verify subscription: ${event}`);
+                logger.error(`Failed to verify subscription: ${event}`);
+                return;
+            }
+        });
+
         // Event listeners for predictions
         listener.onChannelPredictionBegin(userId, async (event) => {
             console.log(event);

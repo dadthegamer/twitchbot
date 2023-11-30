@@ -1,4 +1,5 @@
 import logger from "../utilities/logger.js";
+import bcrypt  from "bcrypt";
 
 // Class for token data
 class TokenDB {

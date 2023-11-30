@@ -62,4 +62,5 @@ export {
     goalDB,
     viewTimeDB,
     schedulerService,
+    authProvider,
 };
