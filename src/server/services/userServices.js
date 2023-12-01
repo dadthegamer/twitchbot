@@ -1156,7 +1156,6 @@ class UsersDB {
             this.cache.set(userId, user);
             logger.info(`Increased view time for ${userId} by ${minutes} minutes`);
         } catch (error) {
-            console.log(`Error in increaseViewTime: ${error}`);
             logger.error(`Error in increaseViewTime: ${error}`);
         }
     }

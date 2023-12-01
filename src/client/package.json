@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "proxy": "http://localhost:3001/",
+  "proxy": "https://dadthegamer.gg",
   "private": true,
   "dependencies": {
     "@agoric/harden": "^0.2.0",

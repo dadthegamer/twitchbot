@@ -77,7 +77,7 @@ function CamOverlay() {
             setTimeout(() => {
                 hideTheAlert();
             }
-                , (time - 1000));
+                , (time - 1500));
         }
         catch (err) {
             console.log(err);

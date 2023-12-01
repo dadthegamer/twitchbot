@@ -5,7 +5,6 @@ config();
 const uri = `mongodb://${process.env.MONGO_INITDB_DATABASE_HOST}:${process.env.MONGO_INITDB_DATABASE_PORT}`;
 const eventListenerPort = process.env.EVENTLISTENERPORT;
 const hostName = process.env.HOSTNAME;
-const dbName = 'website';
 const twitchClientId = process.env.TWITCH_CLIENT_ID;
 const twitchClientSecret = process.env.TWITCH_CLIENT_SECRET;
 const environment = process.env.NODE_ENV;
@@ -26,7 +25,6 @@ const botId = process.env.BOTID;
 
 export {
     uri,
-    dbName,
     twitchClientId,
     twitchClientSecret,
     environment,

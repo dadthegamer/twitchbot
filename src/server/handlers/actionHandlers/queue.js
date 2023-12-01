@@ -1,4 +1,3 @@
-import { variableHandler } from '../variablesHandler.js';
 import { cache } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
 

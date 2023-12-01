@@ -6,7 +6,6 @@ const router = Router();
 
 router.get('/', (req, res) => {
     logger.info('GET /auth/twitch');
-    console.log(twitchRedirectUri)
     const clientId = twitchClientId;
     const scopes = encodeURIComponent(
         'user:read:email'

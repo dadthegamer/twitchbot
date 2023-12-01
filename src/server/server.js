@@ -37,7 +37,11 @@ store.on('error', (error) => {
 });
 
 // Get the secret key from the environment variables if there is one if not use the default one
-const secret = process.env.SESSION_SECRET || 'XRxs!4ins3E!8NK6jM@LehijGsHmSQ';
+const secret = process.env.SESSION_SECRET
+
+if (!secret) {
+    throw new Error('SESSION_SECRET environment variable not set');
+}
 
 
 app.use(

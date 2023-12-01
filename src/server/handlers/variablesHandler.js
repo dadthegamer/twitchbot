@@ -72,11 +72,35 @@ export async function updateVariable(variable, context, userId, property = null)
                     return user.displayName;
                 }
             case 'upTime':
-                const uptime = cache.get('uptime');
-                if (uptime === null) {
+                const live = cache.get('live');
+                if (!live) {
                     return 'Stream is not live';
                 } else {
-                    return uptime;
+                    const streamInfo = cache.get('streamInfo');
+                    const upTime = streamInfo.startedAt;
+                    const now = new Date();
+                    const diff = now - upTime;
+                    const seconds = Math.floor(diff / 1000);
+                    const minutes = Math.floor(seconds / 60);
+                    const hours = Math.floor(minutes / 60);
+                    const days = Math.floor(hours / 24);
+                    const hoursRemainder = hours % 24;
+                    const minutesRemainder = minutes % 60;
+                    const secondsRemainder = seconds % 60;
+                    let upTimeString = '';
+                    if (days > 0) {
+                        upTimeString += `${days}d `;
+                    }
+                    if (hoursRemainder > 0) {
+                        upTimeString += `${hoursRemainder}h `;
+                    }
+                    if (minutesRemainder > 0) {
+                        upTimeString += `${minutesRemainder}m `;
+                    }
+                    if (secondsRemainder > 0) {
+                        upTimeString += `${secondsRemainder}s`;
+                    }
+                    return upTimeString;
                 }
             case 'watchTime':
                 const userData = await usersDB.getUserByUserId(userId);

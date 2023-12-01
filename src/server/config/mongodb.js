@@ -8,9 +8,13 @@ config();
 
 class MongoDBConnection {
     constructor() {
+        // Console log the environment variables
+        console.log('Environment variables:');
         this.host = process.env.MONGO_INITDB_DATABASE_HOST;
         this.port = process.env.MONGO_INITDB_DATABASE_PORT;
-        this.uri = `mongodb://${this.host}:${this.port}`;
+        this.userName = process.env.MONGO_INITDB_DATABASE_USERNAME;
+        this.password = process.env.MONGO_INITDB_DATABASE_PASSWORD;
+        this.uri = `mongodb://${this.host}:${this.port}?authMechanism=DEFAULT`;
         this.client = new MongoClient(this.uri);
         this.dbName = 'twitchBot';
         this.dbConnection = null;

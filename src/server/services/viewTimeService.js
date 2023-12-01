@@ -51,7 +51,7 @@ class ViewTimeService {
                     return;
                 } else {
                     const viewers = cache.get('currentViewers');
-                    if (!viewers || viewers.length === 0) {
+                    if (viewers === undefined || viewers.length === 0) {
                         return;
                     } else {
                         for (const viewer of viewers) {

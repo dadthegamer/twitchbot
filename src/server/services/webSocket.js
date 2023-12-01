@@ -50,7 +50,8 @@ export class WebSocket {
             });
             ws.on('close', () => {
                 connectedDevices--;
-                console.log('Client disconnected');
+                console.log(`Client disconnected | Connected devices: ${connectedDevices}`);
+
             });
         });
     }

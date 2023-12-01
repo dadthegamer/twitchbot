@@ -47,7 +47,6 @@ export async function setJackpot(amount) {
     }
 }
 
-
 // Function to handle the spin
 export async function spinHandler(userDisplayName, userId, messageID = null) {
     try {
