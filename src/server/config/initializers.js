@@ -11,6 +11,7 @@ import ViewTimeService from '../services/viewTimeService.js';
 import TwitchApiClient from '../services/twitchApiService.js';
 import { SchedulerService } from '../services/schedulerService.js';
 import { initializerEventListener } from '../services/twitchEventListenerServices.js';
+import CommandService from '../services/commandService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -47,6 +48,9 @@ const viewTimeDB = new ViewTimeService(db.dbConnection);
 // SchedulerService initialization
 const schedulerService = new SchedulerService(db.dbConnection);
 
+// CommandService initialization
+const commandHandler = new CommandService(db.dbConnection);
+
 
 initializerEventListener(twitchApi. getApiClient());
 startAlertsHandler();
@@ -63,4 +67,5 @@ export {
     viewTimeDB,
     schedulerService,
     authProvider,
+    commandHandler
 };

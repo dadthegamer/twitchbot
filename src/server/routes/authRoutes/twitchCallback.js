@@ -29,7 +29,9 @@ async function getUserDataByToken(token) {
 
 router.get('/', async (req, res) => {
     try {
+        console.log('GET /auth/twitch/callback');
         const code = req.query.code;
+        console.log(`code: ${code}`);
         const clientId = process.env.TWITCH_CLIENT_ID;
         const clientSecret = process.env.TWITCH_CLIENT_SECRET;
         const redirectUri = process.env.TWITCH_REDIRECT_URI;
@@ -45,8 +47,9 @@ router.get('/', async (req, res) => {
         res.redirect(`https://${hostName}/`);
     }
     catch (error) {
+        console.log(error);
         logger.error(`Error in twitchCallback.js: ${error}`);
-        res.redirect(`https://${hostName}/`);
+        res.send(error);
     }
 });
 

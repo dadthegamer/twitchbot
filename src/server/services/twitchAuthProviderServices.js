@@ -71,7 +71,7 @@ class AuthProviderManager {
                 logger.error(`No token data found for user ${tokenData.userId}.`);
                 return;
             }
-            if (tokenData.userId === '671284746') {
+            if (tokenData.userId === this.userId) {
                 this.authProvider.addUser(tokenData.userId, tokenData, ['chat']);
             } else {
                 this.authProvider.addUser(tokenData.userId, tokenData);

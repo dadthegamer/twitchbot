@@ -1,12 +1,16 @@
 import NodeCache from 'node-cache';
 import logger from '../utilities/logger.js';
+import { chatClient } from '../config/initializers.js';
+import { actionEvalulate } from '../handlers/evaluator.js';
 
 
 // Command Class
-class Commands {
+class CommandService {
     constructor(dbConnection) {
         this.dbConnection = dbConnection;
         this.cache = new NodeCache();
+        this.userCooldownCache = new NodeCache({ stdTTL: 0, checkperiod: 300 });
+        this.globalCooldownCache = new NodeCache({ stdTTL: 0, checkperiod: 300 });
         this.listenForExpiredKeys();
         this.setInitialCacheValues();
     }
@@ -27,11 +31,11 @@ class Commands {
     // Create initial commands
     async createInitialCommands() {
         try {
-            this.createCommand('spin', [{type: 'spin'}], 'Run the spin', 'everyone', true, 0, 0, false);
-            this.createCommand('followage', [{type: 'chat', response: '$followage'}], 'Flex your follow age to the chat', 'everyone', true, 0, 0, false);
-            this.createCommand('viewtime', [{type: 'chat', response: '$viewTime'}], 'Flex your view time to the chat', 'everyone', true, 0, 0, false);
-            this.createCommand('uptime', [{type: 'chat', response: '$uptime'}], 'Shows how long the stream has been live', 'everyone', true, 0, 0, false);
-            this.createCommand('quote', [{type: 'chat', response: '$uptime'}], 'Shows how long the stream has been live', 'everyone', true, 0, 0, false);
+            this.createCommand('spin', [{ type: 'spin' }], 'Run the spin', 'everyone', true, 0, 0, false);
+            this.createCommand('followage', [{ type: 'chat', response: '$followage' }], 'Flex your follow age to the chat', 'everyone', true, 0, 0, false);
+            this.createCommand('viewtime', [{ type: 'chat', response: '$viewTime' }], 'Flex your view time to the chat', 'everyone', true, 0, 0, false);
+            this.createCommand('uptime', [{ type: 'chat', response: '$uptime' }], 'Shows how long the stream has been live', 'everyone', true, 0, 0, false);
+            this.createCommand('quote', [{ type: 'chat', response: '$quote' }], 'Get a quote from the database. Example !quote gets a random quote and !quote69 gets the 69th quote.', 'everyone', true, 0, 0, false);
         }
         catch (err) {
             logger.error(`Error in createInitialCommands: ${err}`);
@@ -88,6 +92,43 @@ class Commands {
         }
         catch (err) {
             logger.error(`Error in getCommand: ${err}`);
+        }
+    }
+
+    // User cooldown handler
+    async userCooldownHandler(userId, commandName, userCooldown) {
+        if (userCooldown === 0) {
+            return true;
+        }
+        try {
+            const key = `${userId}-${commandName}`;
+            if (this.userCooldownCache.has(key)) {
+                return this.userCooldownCache.getTtl(key);
+            } else {
+                this.userCooldownCache.set(key, true, userCooldown);
+                return true;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in userCooldownHandler: ${err}`);
+        }
+    }
+
+    // Global cooldown handler
+    async globalCooldownHandler(commandName, globalCooldown) {
+        if (globalCooldown === 0) {
+            return true;
+        }
+        try {
+            if (this.globalCooldownCache.has(commandName)) {
+                return this.globalCooldownCache.getTtl(commandName);
+            } else {
+                this.globalCooldownCache.set(commandName, true, globalCooldown);
+                return true;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in globalCooldownHandler: ${err}`);
         }
     }
 
@@ -192,6 +233,51 @@ class Commands {
         }
     }
 
+    // Handler
+    async commandHandler(command, user, message, msg) {
+        console.log('commandHandler');
+        try {
+            const prefix = '!';
+            const { isFirst, isHighlighted, userInfo, id, isReply, isCheer } = msg;
+            const { userId, displayName, color, isVip, isSubscriber, isMod } = userInfo;
+            const commandName = command.slice(prefix.length);
+            const commandData = await this.getCommand(commandName);
+            if (commandData) {
+                const { handlers, permissions, enabled, userCooldown, globalCooldown, liveOnly } = commandData;
+                if (enabled === false) {
+                    return;
+                }
+                if (liveOnly && !cache.get('live')) {
+                    return;
+                }
+                const userCooldownStatus = await this.userCooldownHandler(userId, commandName, userCooldown);
+                const globalCooldownStatus = await this.globalCooldownHandler(commandName, globalCooldown);
+                if (permissions.includes('everyone' || permissions === 'everyone')) {
+                    if (userCooldownStatus === true && globalCooldownStatus === true) {
+                        for (const handler of handlers) {
+                            await actionEvalulate(handler, { displayName, userId, messageID: id, });
+                        }
+                    } else if (userCooldownStatus !== true) {
+                        // Calculate time left in seconds
+                        const timeLeft = formatTimeFromMilliseconds(userCooldownStatus - Date.now());
+                        chatClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
+                        return;
+                    } else if (globalCooldownStatus !== true) {
+                        const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
+                        chatClient.replyToMessage(`This command is on global cooldown. ${timeLeft} seconds left`, id);
+                        return;
+                    }
+                }
+            } else {
+                return;
+            }
+        }
+        catch (err) {
+            console.log(err);
+            logger.error(`Error in commandHandler: ${err}`);
+        }
+    }
+
     // Method to flush the cache and reload all commands from the database
     async reloadCommands() {
         try {
@@ -204,4 +290,4 @@ class Commands {
     }
 }
 
-export default Commands;
+export default CommandService;

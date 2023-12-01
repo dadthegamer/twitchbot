@@ -1,6 +1,6 @@
 import { Bot } from '@twurple/easy-bot';
 import { ChatClient } from '@twurple/chat';
-import { environment, userName } from '../config/environmentVars.js';
+import { environment, streamerUserName } from '../config/environmentVars.js';
 import { onMessageHandler } from '../handlers/twitch/onMessage.js';
 import logger from "../utilities/logger.js";
 import { cache } from '../config/initializers.js';
@@ -9,10 +9,10 @@ import { cache } from '../config/initializers.js';
 class TwitchChatClient {
     constructor(authProvider) {
         this.authProvider = authProvider;
-        this.chatClient = new ChatClient({ authProvider: this.authProvider, channels: ['dadthegam3r'] });
-        this.channel = userName;
+        this.chatClient = new ChatClient({ authProvider: this.authProvider, channels: [streamerUserName] });
+        this.channel = streamerUserName;
         this.bot = new Bot({
-            channels: [userName],
+            channels: [streamerUserName],
             authProvider: this.authProvider,
             rejoinChannelsOnReconnect: true,
             isAlwaysMod: true,
@@ -27,10 +27,11 @@ class TwitchChatClient {
         try {
             cache.set('twitchChatConnected', true)
             this.chatClient.connect();
-            this.chatClient.join('dadthegam3r');
+            this.chatClient.join(streamerUserName);
             this.chatClient.onConnect(() => {
+                console.log('Connected to Twitch chat');
                 if (environment === 'production') {
-                    this.chatClient.say('dadthegam3r', 'The Dadb0t is online!');
+                    this.chatClient.say(this.channel, 'The Dadb0t is online!');
                 } else {
                     console.log('The Dadb0t is online!')
                 }
@@ -39,7 +40,7 @@ class TwitchChatClient {
                 logger.error('Disconnected from Twitch chat');
             });
             this.chatClient.onMessage(async (channel, user, message, msg) => {
-                await onMessageHandler(channel, user, message, msg, this.bot)
+                await onMessageHandler(channel, user, message, msg)
             });
             this.chatClient.onMessageRatelimit((channel, message, msg) => {
                 logger.error(`Ratelimited: ${message} - ${msg}`);
@@ -58,7 +59,7 @@ class TwitchChatClient {
     async disconnectFromBotChat() {
         try {
             this.chatClient.quit();
-            this.chatClient.part('dadthegam3r');
+            this.chatClient.part(this.channel);
             cache.set('twitchChatConnected', false)
         }
         catch (error) {

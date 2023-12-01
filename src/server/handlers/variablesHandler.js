@@ -17,6 +17,7 @@ variables.push('randomQuote')
 variables.push('quote')
 variables.push('currency')
 variables.push('rewardInput')
+variables.push('args')
 
 export async function variableHandler(context, userId = null) {
     try {

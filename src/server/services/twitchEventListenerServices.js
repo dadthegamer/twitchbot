@@ -32,7 +32,7 @@ export async function initializerEventListener(apiClient) {
             usePathPrefixInHandlers: true
         });
         listener = new EventSubHttpListener({ adapter: adapter, apiClient, secret, logger: { minLevel: 'debug' } });
-        await listener.start();
+        listener.start();
 
         listener.onSubscriptionCreateSuccess(() => async (event) => {
             console.log(event);

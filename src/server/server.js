@@ -59,6 +59,7 @@ import twitchAdminAuthRouter from './routes/authRoutes/twitchAdminAuth.js';
 
 //API routes
 import statusRouter from './routes/apiRoutes/status.js';
+import commandsRouter from './routes/apiRoutes/commands.js';
 
 // Twitch authentication
 app.use('/auth/twitch', twitchAuthRouter);
@@ -67,6 +68,7 @@ app.use('/auth/twitch/admin', twitchAdminAuthRouter);
 
 // API routes
 app.use('/api/status', statusRouter);
+app.use('/api/commands', commandsRouter);
 
 
 app.listen(port, () => {

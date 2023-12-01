@@ -19,7 +19,7 @@ const apiNinjaKey = process.env.API_NINJA_KEY;
 const amazonAccessKey = process.env.AMAZON_ACCESS_KEY_ID;
 const amazonSecretKey = process.env.AMAZON_SECRET_KEY;
 const appSecret = process.env.APP_SECRET;
-const userName = process.env.USERNAME;
+const streamerUserName = process.env.STREAMERUSERNAME;
 const streamerUserId = process.env.USERID;
 const botId = process.env.BOTID;
 
@@ -42,7 +42,7 @@ export {
     eventListenerPort,
     hostName,
     appSecret,
-    userName,
+    streamerUserName,
     streamerUserId,
     botId
 }
