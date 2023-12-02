@@ -41,7 +41,7 @@ export class SchedulerService {
                     cache.set('currentViewers', chatters);
                     return chatters;
                 }
-            }, this.this.intervalSeconds * 1000);
+            }, this.intervalSeconds * 1000);
         }
         catch (err) {
             logger.error(`Error in getChattersWithoutBots: ${err}`);

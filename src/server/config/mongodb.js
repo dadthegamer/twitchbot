@@ -8,8 +8,6 @@ config();
 
 class MongoDBConnection {
     constructor() {
-        // Console log the environment variables
-        console.log('Environment variables:');
         this.host = process.env.MONGO_INITDB_DATABASE_HOST;
         this.port = process.env.MONGO_INITDB_DATABASE_PORT;
         this.userName = process.env.MONGO_INITDB_DATABASE_USERNAME;

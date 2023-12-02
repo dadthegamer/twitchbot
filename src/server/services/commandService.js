@@ -235,13 +235,13 @@ class CommandService {
 
     // Handler
     async commandHandler(command, user, message, msg) {
-        console.log('commandHandler');
         try {
             const prefix = '!';
             const { isFirst, isHighlighted, userInfo, id, isReply, isCheer } = msg;
             const { userId, displayName, color, isVip, isSubscriber, isMod } = userInfo;
             const commandName = command.slice(prefix.length);
-            const commandData = await this.getCommand(commandName);
+            const commandNameTrimmed = commandName.replace(/[0-9]/g, '');
+            const commandData = await this.getCommand(commandNameTrimmed);
             if (commandData) {
                 const { handlers, permissions, enabled, userCooldown, globalCooldown, liveOnly } = commandData;
                 if (enabled === false) {
@@ -255,7 +255,7 @@ class CommandService {
                 if (permissions.includes('everyone' || permissions === 'everyone')) {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
                         for (const handler of handlers) {
-                            await actionEvalulate(handler, { displayName, userId, messageID: id, });
+                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
@@ -273,7 +273,6 @@ class CommandService {
             }
         }
         catch (err) {
-            console.log(err);
             logger.error(`Error in commandHandler: ${err}`);
         }
     }

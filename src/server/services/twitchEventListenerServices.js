@@ -102,7 +102,6 @@ export async function initializerEventListener(apiClient) {
             await onSubscription(event);
         });
 
-
         // Event listerner for bits
         listener.onChannelCheer(userId, async (event) => {
             await onBits(event);
