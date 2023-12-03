@@ -13,6 +13,7 @@ class CommandService {
         this.globalCooldownCache = new NodeCache({ stdTTL: 0, checkperiod: 300 });
         this.listenForExpiredKeys();
         this.setInitialCacheValues();
+        this.createInitialCommands();
     }
 
     // Method to get all the commands from the database and add them to the cache
@@ -36,6 +37,8 @@ class CommandService {
             this.createCommand('viewtime', [{ type: 'chat', response: '$viewTime' }], 'Flex your view time to the chat', 'everyone', true, 0, 0, false);
             this.createCommand('uptime', [{ type: 'chat', response: '$uptime' }], 'Shows how long the stream has been live', 'everyone', true, 0, 0, false);
             this.createCommand('quote', [{ type: 'chat', response: '$quote' }], 'Get a quote from the database. Example !quote gets a random quote and !quote69 gets the 69th quote.', 'everyone', true, 0, 0, false);
+            this.createCommand('clip', [{ type: 'clip' }], 'Create a clip', 'everyone', true, 0, 0, false);
+            this.createCommand('queue', [{ type: 'queue', action: 'get' }], 'Get the current queue', true, 0, 0, false);
         }
         catch (err) {
             logger.error(`Error in createInitialCommands: ${err}`);

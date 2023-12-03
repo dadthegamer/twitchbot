@@ -1,20 +1,19 @@
-import { cache } from '../../config/initializers.js';
+import { cache, chatClient, interactionsDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
 
 // Function to add a user to the queue
 export async function addToQueue(displayName){
     // Add user to queue if they are not already in it
     try {
-        const queue = cache.get('queue');
-        if (!queue.includes(displayName)) {
-            queue.push(displayName);
-            cache.set('queue', queue);
-            return true;
+        const res = await interactionsDB.addToQueue(displayName);
+        if (!res) {
+            chatClient.say(`${displayName} is already in the queue!`);
         } else {
-            return false;
+            chatClient.say(`${displayName} has been added to the queue at position ${res}!`);
         }
     }
     catch (err) {
+        console.log(err);
         logger.error(`Error in addToQueue: ${err}`);
     }
 }
@@ -22,13 +21,11 @@ export async function addToQueue(displayName){
 // Function to remove a user from the queue
 export async function removeFromQueue(displayName){
     try {
-        const queue = cache.get('queue');
-        if (queue.includes(displayName)) {
-            queue.splice(queue.indexOf(displayName), 1);
-            cache.set('queue', queue);
-            return true;
+        const res = await interactionsDB.removeFromQueue(displayName);
+        if (!res) {
+            chatClient.say(`${displayName} is not in the queue!`);
         } else {
-            return false;
+            chatClient.say(`${displayName} has been removed from the queue!`);
         }
     }
     catch (err) {
@@ -39,8 +36,12 @@ export async function removeFromQueue(displayName){
 // Function to get the queue
 export async function getQueue(){
     try {
-        const queue = cache.get('queue');
-        return queue;
+        const queue = await interactionsDB.getQueue();
+        if (queue.length > 0) {
+            chatClient.say(`The queue is currently: ${queue.join(', ')}`);
+        } else {
+            chatClient.say('The queue is currently empty!');
+        }
     }
     catch (err) {
         logger.error(`Error in getQueue: ${err}`);

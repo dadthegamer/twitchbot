@@ -559,6 +559,27 @@ class TwitchApiClient {
         }
     }
 
+    // Method to get a clip by ID
+    async getClipById(clipId) {
+        try {
+            const data = await this.apiClient.clips.getClipById(clipId);
+            const clip = {
+                id: data.id,
+                title: data.title,
+                url: data.url,
+                thumbnailUrl: data.thumbnailUrl,
+                views: data.views,
+                creationDate: data.creationDate,
+                broadcasterDisplayName: data.broadcasterDisplayName,
+                embedUrl: data.embedUrl,
+            };
+            return clip;
+        }
+        catch (error) {
+            logger.error(`Error getting clip by ID: ${error}`);
+        }
+    }
+
     // Method to get a random clip from a channel
     async getRandomClip(userId) {
         try {

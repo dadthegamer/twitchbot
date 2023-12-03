@@ -6,6 +6,8 @@ import { displayHandler } from "./actionHandlers/displayHandler.js";
 import { spinHandler } from "./actionHandlers/spinHandler.js";
 import { addToQueue, removeFromQueue, getQueue } from "./actionHandlers/queue.js";
 import { getQuoteById, getRandomQuote, createQuote } from "./actionHandlers/quote.js";
+import { createClip } from "./actionHandlers/clips.js";
+
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context) {
@@ -65,6 +67,9 @@ export async function actionEvalulate(handler, context) {
                     default:
                         logger.error(`Quote action not found: ${action}`);
                 }
+                break;
+            case 'clip':
+                createClip();
                 break;
             default:
                 logger.error(`Handler not found: ${handler}`);

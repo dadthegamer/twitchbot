@@ -8,6 +8,7 @@ class InteractionsDbService {
         this.getRoasts();
         this.getAllQuotes();
         this.getTvMessage();
+        this.getQueue();
     }
 
     // Method to get all the roasts from the database
@@ -195,6 +196,89 @@ class InteractionsDbService {
         }
         catch (err) {
             logger.error(`Error in getTvMessage: ${err}`);
+        }
+    }
+
+    // Method to get the queue from the database and store it in the cache
+    async getQueue() {
+        try {
+            const queue = await this.dbConnection.collection('gameSettings').findOne({ id: 'queue' });
+            this.cache.set('queue', queue.queue);
+            return queue.queue;
+        }
+        catch (err) {
+            logger.error(`Error in getQueue: ${err}`);
+        }
+    }
+
+    // Method to add a user to the queue
+    async addToQueue(displayName) {
+        try {
+            const queue = await this.cache.get('queue');
+            if (!queue) {
+                await this.dbConnection.collection('gameSettings').insertOne({ id: 'queue', queue: [] });
+                this.cache.set('queue', []);
+            };
+            if (!queue.includes(displayName)) {
+                queue.push(displayName);
+                await this.dbConnection.collection('gameSettings').updateOne({ id: 'queue' }, 
+                    { $set: 
+                        { 
+                        queue: queue
+                        } 
+                    }
+                );
+                this.cache.set('queue', queue);
+                const position = queue.indexOf(displayName) + 1;
+                return position;
+            } else {
+                return false;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in addToQueue: ${err}`);
+        }
+    }
+
+    // Method to remove a user from the queue
+    async removeFromQueue(displayName) {
+        try {
+            const queue = await this.cache.get('queue');
+            if (queue.includes(displayName)) {
+                queue.splice(queue.indexOf(displayName), 1);
+                await this.dbConnection.collection('gameSettings').updateOne({ id: 'queue' }, 
+                    { $set: 
+                        { 
+                        queue: queue
+                        } 
+                    }
+                );
+                this.cache.set('queue', queue);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in removeFromQueue: ${err}`);
+        }
+    }
+
+    // Method to clear the queue
+    async clearQueue() {
+        try {
+            await this.dbConnection.collection('gameSettings').updateOne({ id: 'queue' }, 
+                { $set: 
+                    { 
+                    queue: []
+                    } 
+                }
+            );
+            this.cache.set('queue', []);
+            return true;
+        }
+        catch (err) {
+            logger.error(`Error in clearQueue: ${err}`);
         }
     }
 }
