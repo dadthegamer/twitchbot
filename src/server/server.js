@@ -74,18 +74,26 @@ import twitchAuthRouter from './routes/authRoutes/twitchAuth.js';
 import twitchCallbackRouter from './routes/authRoutes/twitchCallback.js';
 import twitchAdminAuthRouter from './routes/authRoutes/twitchAdminAuth.js';
 
+// Discord authentication
+import discordAuthRouter from './routes/authRoutes/discordAuth.js';
+import discordCallbackRouter from './routes/authRoutes/discordCallback.js';
+
 //API routes
 import statusRouter from './routes/apiRoutes/status.js';
-// import commandsRouter from './routes/apiRoutes/commands.js';
+import commandsRouter from './routes/apiRoutes/commands.js';
 
 // Twitch authentication
 app.use('/auth/twitch', twitchAuthRouter);
 app.use('/auth/twitch/callback', twitchCallbackRouter);
 app.use('/auth/twitch/admin', twitchAdminAuthRouter);
 
+// Discord authentication
+app.use('/auth/discord', discordAuthRouter);
+app.use('/auth/discord/callback', discordCallbackRouter);
+
 // API routes
 app.use('/api/status', statusRouter);
-// app.use('/api/commands', commandsRouter);
+app.use('/api/commands', commandsRouter);
 
 
 app.listen(port, () => {

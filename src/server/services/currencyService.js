@@ -1,11 +1,11 @@
 import { cache, usersDB } from '../config/initializers.js';
 import { environment } from '../config/environmentVars.js';
-import { getChattersWithoutBots } from '../handlers/twitch/viewTimeHandler.js';
 import NodeCache from 'node-cache';
 import { activeUsersCache } from '../config/initializers.js';
 import logger from '../utilities/logger.js';
-import { commands } from '../config/initializers.js';
+import { commandHandler } from '../config/initializers.js';
 import { ObjectId } from 'mongodb';
+
 
 // Currency Class
 class CurrencyService {
@@ -91,7 +91,7 @@ class CurrencyService {
                     limit: false,
                 };
                 await this.dbConnection.collection(this.collectionName).insertOne(currency);
-                commands.createCommand('points', [{ type: 'chat', response: '$user you curreny have $currency.points points and rank $rank.points' }], 'Check how many points you have', 'everyone', true, 0, 0, false);
+                commandHandler.createCommand('points', [{ type: 'chat', response: '$user you curreny have $currency.points points and rank $rank.points' }], 'Check how many points you have', 'everyone', true, 0, 0, false);
                 return currency;
             }
         } catch (err) {
@@ -613,7 +613,7 @@ class CurrencyService {
             return;
         }
         try {
-            const viewers = await getChattersWithoutBots();
+            const viewers = cache.get('currentViewers');
             for (const viewer of viewers) {
                 await usersDB.increaseCurrency(viewer.userId, name, amount);
             }

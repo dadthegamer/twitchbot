@@ -1614,6 +1614,78 @@ class UsersDB {
             logger.error(`Error in tikTokLikes: ${error}`);
         }
     }
+
+    // Method to store the discord username
+    async setDiscordUsername(userId, username) {
+        try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if username is a string
+            if (typeof username !== 'string') {
+                username = username.toString();
+            }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
+            // Set the discordUsername property for the user in the cache and then the database
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            };
+            user.discordUsername = username;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $set:
+                        { discordUsername: username }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in setDiscordUsername: ${error}`);
+        }
+    }
+
+    // Method to store the discord id
+    async setDiscordId(userId, discordId) {
+        try {
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if discordId is a string
+            if (typeof discordId !== 'string') {
+                discordId = discordId.toString();
+            }
+            // Check if the user exists in the database. If they do not then add them to the database
+            const userExists = this.getUserByUserId(userId);
+            if (!userExists) {
+                this.newUser(userId);
+            };
+            // Set the discordId property for the user in the cache and then the database
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            };
+            user.discordId = discordId;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $set:
+                        { discordId: discordId }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in setDiscordId: ${error}`);
+        }
+    }
 }
 
 

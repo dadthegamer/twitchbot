@@ -15,6 +15,10 @@ import CommandService from '../services/commandService.js';
 import InteractionsDbService from '../services/interactiveService.js';
 import GameService from '../services/gameService.js';
 import TwitchChannelPointService from '../services/channelPointService.js';
+import StreamDB from '../services/streamService.js';
+import CurrencyService from '../services/currencyService.js';
+import ChatLogService from '../services/chatLogService.js';
+import ActiveUsersCache from '../services/activeUsersService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -63,7 +67,22 @@ const gameService = new GameService(db.dbConnection, cache);
 // Channel Points Service initialization
 const channelPointService = new TwitchChannelPointService(cache, db.dbConnection);
 
+// StreamDB initialization
+const streamDB = new StreamDB(db.dbConnection, cache);
+
+// CurrencyService initialization
+const currencyDB = new CurrencyService(db.dbConnection, cache);
+
+// ChatLogService initialization
+const chatLogService = new ChatLogService(db.dbConnection);
+
+// ActiveUsersCache initialization
+const activeUsersCache = new ActiveUsersCache();
+
+// Event Listener initialization
 initializerEventListener(twitchApi. getApiClient());
+
+// Start the alerts handler
 startAlertsHandler();
 
 export {
@@ -81,5 +100,9 @@ export {
     commandHandler,
     interactionsDB,
     gameService,
-    channelPointService
+    channelPointService,
+    streamDB,
+    currencyDB,
+    chatLogService,
+    activeUsersCache
 };

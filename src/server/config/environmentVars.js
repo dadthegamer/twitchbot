@@ -21,6 +21,9 @@ const appSecret = process.env.APP_SECRET;
 const streamerUserName = process.env.STREAMERUSERNAME;
 const streamerUserId = process.env.USERID;
 const botId = process.env.BOTID;
+const discordClientID = process.env.DISCORD_CLIENT_ID;
+const discordClientSecret = process.env.DISCORD_CLIENT_SECRET;
+const discordRedirectURI = encodeURIComponent(process.env.DISCORD_REDIRECT_URI);
 
 
 export {
@@ -42,5 +45,8 @@ export {
     appSecret,
     streamerUserName,
     streamerUserId,
-    botId
+    botId,
+    discordClientID,
+    discordClientSecret,
+    discordRedirectURI
 }

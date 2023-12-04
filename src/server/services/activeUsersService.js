@@ -4,7 +4,6 @@ import NodeCache from 'node-cache';
 export class ActiveUsersCache {
     constructor() {
         this.cache = new NodeCache({ stdTTL: 900, checkperiod: 120 });
-        this.listenForExpiredKeys();
     }
 
     // Method to return the cache
@@ -41,11 +40,6 @@ export class ActiveUsersCache {
         const randomKey = keys[Math.floor(Math.random() * keys.length)];
         return this.cache.get(randomKey);
     }
-
-    // Listen for expired keys
-    listenForExpiredKeys() {
-        this.on('expired', (key, value) => {
-            this.delete(key);
-        });
-    }
 }
+
+export default ActiveUsersCache;
