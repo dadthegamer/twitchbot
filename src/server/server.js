@@ -8,7 +8,17 @@ import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
 import { schedulerService, usersDB } from './config/initializers.js';
 import logger from './utilities/logger.js';
+// Import heapdump for debugging
+import heapdump from 'heapdump';
 
+setInterval(() => {
+    const usedMemory = process.memoryUsage();
+    console.log('Memory Usage (in MB):');
+    console.log('  rss: ' + (usedMemory.rss / (1024 * 1024)).toFixed(2) + ' MB');
+    console.log('  heapTotal: ' + (usedMemory.heapTotal / (1024 * 1024)).toFixed(2) + ' MB');
+    console.log('  heapUsed: ' + (usedMemory.heapUsed / (1024 * 1024)).toFixed(2) + ' MB');
+    console.log('  external: ' + (usedMemory.external / (1024 * 1024)).toFixed(2) + ' MB');
+}, 60 * 1000);
 
 config();
 
@@ -16,6 +26,9 @@ config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 export { __dirname };
+
+// const heapdumpPath = path.join(__dirname, 'heapdump');
+// heapdump.writeSnapshot(heapdumpPath + Date.now() + '.heapsnapshot');
 
 const app = express();
 const port = 3001;
@@ -63,7 +76,7 @@ import twitchAdminAuthRouter from './routes/authRoutes/twitchAdminAuth.js';
 
 //API routes
 import statusRouter from './routes/apiRoutes/status.js';
-import commandsRouter from './routes/apiRoutes/commands.js';
+// import commandsRouter from './routes/apiRoutes/commands.js';
 
 // Twitch authentication
 app.use('/auth/twitch', twitchAuthRouter);
@@ -72,7 +85,7 @@ app.use('/auth/twitch/admin', twitchAdminAuthRouter);
 
 // API routes
 app.use('/api/status', statusRouter);
-app.use('/api/commands', commandsRouter);
+// app.use('/api/commands', commandsRouter);
 
 
 app.listen(port, () => {

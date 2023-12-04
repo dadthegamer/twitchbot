@@ -25,6 +25,7 @@ class UsersDB {
             }
         }
         catch (error) {
+            console.log(error);
             logger.error(`Error in getAllUsers: ${error}`);
             return null;
         }

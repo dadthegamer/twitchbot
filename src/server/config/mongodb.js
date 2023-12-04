@@ -12,7 +12,7 @@ class MongoDBConnection {
         this.port = process.env.MONGO_INITDB_DATABASE_PORT;
         this.userName = process.env.MONGO_INITDB_DATABASE_USERNAME;
         this.password = process.env.MONGO_INITDB_DATABASE_PASSWORD;
-        this.uri = `mongodb://${this.host}:${this.port}?authMechanism=DEFAULT`;
+        this.uri = `mongodb://${this.host}:${this.port}`;
         this.client = new MongoClient(this.uri);
         this.dbName = 'twitchBot';
         this.dbConnection = null;

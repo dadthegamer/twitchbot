@@ -176,15 +176,13 @@ class TwitchApiClient {
     // Method to get all the chatter's in the channel
     async getChatters() {
         try {
-            let chatters = [];
             const response = await this.apiClient.chat.getChattersPaginated(this.userId).getAll();
             const data = response.map((chatter) => ({
                 userId: chatter.userId,
                 userName: chatter.userName,
                 userDisplayName: chatter.userDisplayName,
             }));
-            chatters = [...chatters, ...data];
-            return chatters;
+            return data;
         }
         catch (error) {
             console.log(error);

@@ -20,6 +20,7 @@ export class SchedulerService {
             this.getBitsLeaderboard();
             this.getAllVips();
             this.getChattersInterval();
+            twitchApi.getChatters();
         }
         catch (error) {
             logger.error(`Error initializing SchedulerService: ${error}`);
@@ -41,7 +42,7 @@ export class SchedulerService {
                     cache.set('currentViewers', chatters);
                     return chatters;
                 }
-            }, this.intervalSeconds * 1000);
+            }, 60 * 1000);
         }
         catch (err) {
             logger.error(`Error in getChattersWithoutBots: ${err}`);

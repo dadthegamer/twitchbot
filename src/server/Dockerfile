@@ -13,6 +13,9 @@ RUN npm install
 # Copy app source code
 COPY . /app
 
+#Set the max memory size for node
+ENV NODE_OPTIONS="--max-old-space-size=8192"
+
 # Expose port and start app
 EXPOSE 3001
 CMD ["npm", "start"]

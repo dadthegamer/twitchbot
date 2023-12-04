@@ -14,7 +14,7 @@ import { initializerEventListener } from '../services/twitchEventListenerService
 import CommandService from '../services/commandService.js';
 import InteractionsDbService from '../services/interactiveService.js';
 import GameService from '../services/gameService.js';
-
+import TwitchChannelPointService from '../services/channelPointService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -60,6 +60,9 @@ const interactionsDB = new InteractionsDbService(db.dbConnection, cache);
 // GameService initialization
 const gameService = new GameService(db.dbConnection, cache);
 
+// Channel Points Service initialization
+const channelPointService = new TwitchChannelPointService(cache, db.dbConnection);
+
 initializerEventListener(twitchApi. getApiClient());
 startAlertsHandler();
 
@@ -77,5 +80,6 @@ export {
     authProvider,
     commandHandler,
     interactionsDB,
-    gameService
+    gameService,
+    channelPointService
 };

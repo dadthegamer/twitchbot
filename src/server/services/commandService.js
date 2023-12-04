@@ -239,6 +239,7 @@ class CommandService {
     // Handler
     async commandHandler(command, user, message, msg) {
         try {
+            console.log(command);
             const prefix = '!';
             const { isFirst, isHighlighted, userInfo, id, isReply, isCheer } = msg;
             const { userId, displayName, color, isVip, isSubscriber, isMod } = userInfo;

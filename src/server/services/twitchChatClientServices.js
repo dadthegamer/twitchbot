@@ -40,6 +40,7 @@ class TwitchChatClient {
                 logger.error('Disconnected from Twitch chat');
             });
             this.chatClient.onMessage(async (channel, user, message, msg) => {
+                console.log(message);
                 await onMessageHandler(channel, user, message, msg)
             });
             this.chatClient.onMessageRatelimit((channel, message, msg) => {
