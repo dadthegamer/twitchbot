@@ -8,8 +8,7 @@ import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
 import { schedulerService, usersDB } from './config/initializers.js';
 import logger from './utilities/logger.js';
-// Import heapdump for debugging
-import heapdump from 'heapdump';
+
 
 setInterval(() => {
     const usedMemory = process.memoryUsage();
@@ -47,6 +46,7 @@ const store = new MongoDBStoreSession({
 
 store.on('error', (error) => {
     console.error('Session store error:', error);
+    logger.error('Session store error:', error);
 });
 
 // Get the secret key from the environment variables if there is one if not use the default one
