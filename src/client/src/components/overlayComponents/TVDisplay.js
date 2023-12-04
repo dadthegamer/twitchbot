@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/overlay/display.css';
-import { wsurl } from '../../config';
 
 
 function Display() {
@@ -9,6 +8,10 @@ function Display() {
     const [message, setMessage] = useState(null);
     const [showMessage, setShowMessage] = useState(true);
     const [showVideo, setShowVideo] = useState(false);
+
+
+    const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
+
 
     useEffect(() => {
         const establishConnection = () => {

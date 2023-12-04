@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import '../../styles/overlay/progressBar.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGift } from '@fortawesome/free-solid-svg-icons';
-import { wsurl } from '../../config';
 
 
 function ProgressBar() {
@@ -12,6 +11,8 @@ function ProgressBar() {
     const [goal, setGoal] = useState(0);
     const [progressStyle, setProgressStyle] = useState({ width: '0%' });
     const [isLoading, setIsLoading] = useState(true);
+
+    const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
 
     // useEffect hook to update the sub data every 5 seconds
     useEffect(() => {

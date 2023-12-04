@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/overlay/tts.css';
-import { wsurl } from '../../config';
 
 
 function TextToSpeech() {
@@ -11,6 +10,8 @@ function TextToSpeech() {
     const [socket, setSocket] = useState(null);
 
     const queueRef = useRef([]);
+
+    const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
 
     useEffect(() => {
         const establishConnection = () => {

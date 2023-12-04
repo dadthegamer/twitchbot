@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { wsurl } from '../../config';
 
 
 function Welcome() {
@@ -7,6 +6,8 @@ function Welcome() {
     const [socket, setSocket] = useState(null);
     const [username, setUsername] = useState(null);
     const [userImg, setUserImg] = useState(null);
+
+    const wsurl = process.env.WEBSOCKET_URL || 'ws://localhost:3001';
 
     useEffect(() => {
         const establishConnection = () => {

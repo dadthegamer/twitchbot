@@ -4,7 +4,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTiktok, faTwitch } from '@fortawesome/free-brands-svg-icons';
 import TwitchMessage from './SubComponents/twitchMessage';
 import TikTokMessage from './SubComponents/TikTokMessage';
-import { wsurl } from '../config';
 
 
 function Dashboard() {
@@ -12,6 +11,8 @@ function Dashboard() {
     const [service, setService] = useState('twitch');
     const [ws, setWs] = useState(null);
     const [tvMessage, setTvMessage] = useState('');
+
+    const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
 
     // Connect to the websocket server and display any messages that come through
     useEffect(() => {
