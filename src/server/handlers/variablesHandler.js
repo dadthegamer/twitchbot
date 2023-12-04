@@ -21,10 +21,9 @@ variables.push('args')
 
 export async function variableHandler(context, userId = null) {
     try {
-        const varsWithProps = context.match(/\$[a-zA-Z]+\.[a-zA-Z]+/g);
-        const varsNoProps = context.match(/\$[a-zA-Z]+\[\d+\]/g);
-        console.log(`varsWithProps: ${varsWithProps}`);
-        console.log(`varsNoProps: ${varsNoProps}`);
+        console.log(`context: ${context}`);
+        const varsWithProps = context.match(/\$[a-zA-Z]+(\.[a-zA-Z]+)?/g);
+        const varsNoProps = context.match(/\$[a-zA-Z]+(\[\d+\])?/g);
         if (varsWithProps) {
             for (const variable of varsWithProps) {
                 const [varName, varProperty] = variable.slice(1).split('.');
@@ -63,9 +62,48 @@ export async function variableHandler(context, userId = null) {
 
 export async function updateVariable(variable, context, userId, property = null) {
     try {
+        const userData = await usersDB.getUserByUserId(userId);
         switch (variable) {
             case 'followAge':
-                return 'testing this variable';
+                const followDate = userData.followDate
+                if (followDate === null) {
+                    return 'You are not following the channel';
+                } else {
+                    // Calculate the difference between the follow date and now down  to the second
+                    const diff = Math.abs(new Date() - followDate);
+                    // Convert the difference to days
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    // Convert the difference to hours
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    // Convert the difference to minutes
+                    const minutes = Math.floor(diff / (1000 * 60));
+                    // Convert the difference to seconds
+                    const seconds = Math.floor(diff / (1000));
+
+                    let string = '';
+                    if (days > 0) {
+                        string += `${days}d `;
+                    }
+                    // Subtract the days from the hours to get the remainder
+                    const hoursRemainder = hours - (days * 24);
+                    if (hoursRemainder > 0) {
+                        string += `${hoursRemainder}h `;
+                    }
+                    // Subtract the hours from the minutes to get the remainder
+                    const minutesRemainder = minutes - (hours * 60);
+                    if (minutesRemainder > 0) {
+                        string += `${minutesRemainder}m `;
+                    }
+                    // Subtract the minutes from the seconds to get the remainder
+                    const secondsRemainder = seconds - (minutes * 60);
+                    if (secondsRemainder > 0) {
+                        string += `${secondsRemainder}s`;
+                    }
+
+                    // Convert the follow date to a string with a format of December 25, 2020 at 12:00 AM
+                    const followDateString = followDate.toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
+                    return `@${userData.displayName} has been following DTG for ${string} (${followDateString})`;
+                }
             case 'user':
                 const user = await usersDB.getUserByUserId(userId);
                 if (user === null) {
@@ -102,15 +140,15 @@ export async function updateVariable(variable, context, userId, property = null)
                     if (secondsRemainder > 0) {
                         upTimeString += `${secondsRemainder}s`;
                     }
-                    return upTimeString;
+                    return `Stream has been live for ${upTimeString}`;
                 }
             case 'watchTime':
-                const userData = await usersDB.getUserByUserId(userId);
-                const watchTime = userData.view_time;
+                const watchTime = userData.viewTime.allTime;
                 if (watchTime === 0) {
                     return 'You have not watched the stream long enough to get a watch time';
                 } else {
-                    return formatTimeFromMinutes(watchTime);
+                    const formatTime = formatTimeFromMinutes(watchTime);
+                    return `@${userData.displayName} has watched the stream for ${formatTime}`;
                 }
             case 'allArgs':
                 return context.slice(context.indexOf(variable) + variable.length + 1);

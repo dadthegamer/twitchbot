@@ -2,16 +2,17 @@ import { chatMessageHandler } from "./actionHandlers/chatHandler.js";
 import logger from "../utilities/logger.js";
 import { replyHandler } from "./actionHandlers/replyHandler.js";
 import { variableHandler } from "./variablesHandler.js";
-// import { displayHandler } from "./actionHandlers/displayHandler.js";
-// import { spinHandler } from "./actionHandlers/spinHandler.js";
-// import { addToQueue, removeFromQueue, getQueue } from "./actionHandlers/queue.js";
-// import { getQuoteById, getRandomQuote, createQuote } from "./actionHandlers/quote.js";
+import { displayHandler } from "./actionHandlers/displayHandler.js";
+import { spinHandler } from "./actionHandlers/spinHandler.js";
+import { addToQueue, removeFromQueue, getQueue } from "./actionHandlers/queue.js";
+import { getQuoteById, getRandomQuote, createQuote } from "./actionHandlers/quote.js";
 import { createClip } from "./actionHandlers/clips.js";
 
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context) {
     try {
+        console.log('Evaluating action');
         const { displayName, userId, messageID, input } = context;
         const { type, response, action } = handler;
 

@@ -34,6 +34,7 @@ class CommandService {
         try {
             this.createCommand('spin', [{ type: 'spin' }], 'Run the spin', 'everyone', true, 0, 0, false);
             this.createCommand('followage', [{ type: 'chat', response: '$followage' }], 'Flex your follow age to the chat', 'everyone', true, 0, 0, false);
+            this.createCommand('watchtime', [{ type: 'chat', response: '$watchTime' }], 'Flex your watch time in chat', 'everyone', true, 0, 0, false);
             this.createCommand('viewtime', [{ type: 'chat', response: '$viewTime' }], 'Flex your view time to the chat', 'everyone', true, 0, 0, false);
             this.createCommand('uptime', [{ type: 'chat', response: '$uptime' }], 'Shows how long the stream has been live', 'everyone', true, 0, 0, false);
             this.createCommand('quote', [{ type: 'chat', response: '$quote' }], 'Get a quote from the database. Example !quote gets a random quote and !quote69 gets the 69th quote.', 'everyone', true, 0, 0, false);
@@ -239,7 +240,7 @@ class CommandService {
     // Handler
     async commandHandler(command, user, message, msg) {
         try {
-            console.log(command);
+            console.log('commandHandler');
             const prefix = '!';
             const { isFirst, isHighlighted, userInfo, id, isReply, isCheer } = msg;
             const { userId, displayName, color, isVip, isSubscriber, isMod } = userInfo;

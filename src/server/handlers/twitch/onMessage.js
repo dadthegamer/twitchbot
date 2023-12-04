@@ -1,6 +1,6 @@
 import { cache } from "../../config/initializers.js";
 import { environment } from "../../config/environmentVars.js";
-import { webSocket } from "../../config/initializers.js";
+import { webSocket, commandHandler } from "../../config/initializers.js";
 import logger from "../../utilities/logger.js";
 
 
