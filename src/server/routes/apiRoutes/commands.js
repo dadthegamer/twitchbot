@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import logger from '../../utilities/logger.js';
 import { commandHandler } from '../../config/initializers.js';
-import isLoggedIn from '../../middleware/loggedin.js';
+import isStreamer from '../../middleware/loggedin.js';
 
 const router = Router();
 
@@ -33,7 +33,7 @@ router.get('/:command', async (req, res) => {
 });
 
 // Endpoint to create a command
-router.post('/', isLoggedIn, async (req, res) => {
+router.post('/', isStreamer, async (req, res) => {
     try {
         const command = await commandHandler.createCommand(req.body.name, req.body.handlers, req.body.description, req.body.permissions, req.body.enabled, req.body.userCooldown, req.body.globalCooldown, req.body.liveOnly);
         res.json(command);
@@ -45,7 +45,7 @@ router.post('/', isLoggedIn, async (req, res) => {
 });
 
 // Endpoint to update a command
-router.put('/:command', isLoggedIn, async (req, res) => {
+router.put('/:command', isStreamer, async (req, res) => {
     try {
         const command = await commandHandler.updateCommand(req.body.name, req.body.handlers, req.body.description, req.body.permissions, req.body.enabled, req.body.userCooldown, req.body.globalCooldown, req.body.liveOnly);
         res.json(command);
@@ -56,7 +56,7 @@ router.put('/:command', isLoggedIn, async (req, res) => {
 });
 
 // Endpoint to delete a command
-router.delete('/:commandName', isLoggedIn, async (req, res) => {
+router.delete('/:commandName', isStreamer, async (req, res) => {
     console.log('Deleting command: ', req.params.commandName)
     try {
         const result = await commandHandler.deleteCommand(req.params.commandName);
@@ -69,7 +69,7 @@ router.delete('/:commandName', isLoggedIn, async (req, res) => {
 });
 
 // Endpoint to toggle a command
-router.post('/:command', isLoggedIn, async (req, res) => {
+router.post('/:command', isStreamer, async (req, res) => {
     try {
         const { enabled } = req.body;
         const result = await toggleCommand(req.params.command, enabled);

@@ -69,6 +69,9 @@ app.use(
     })
 );
 
+// Auth routes
+import authRouter from './routes/loggedIn.js';
+
 // Twitch authentication
 import twitchAuthRouter from './routes/authRoutes/twitchAuth.js';
 import twitchCallbackRouter from './routes/authRoutes/twitchCallback.js';
@@ -81,6 +84,9 @@ import discordCallbackRouter from './routes/authRoutes/discordCallback.js';
 //API routes
 import statusRouter from './routes/apiRoutes/status.js';
 import commandsRouter from './routes/apiRoutes/commands.js';
+
+// Auth routes
+app.use('/api/check-auth', authRouter);
 
 // Twitch authentication
 app.use('/auth/twitch', twitchAuthRouter);
