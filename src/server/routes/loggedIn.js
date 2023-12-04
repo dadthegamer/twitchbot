@@ -6,9 +6,15 @@ const router = Router();
 
 // Define a route to check if the user is logged in. If they are not logged in, redirect them to the login page.
 router.get('/', isLoggedIn, (req, res) => {
-    // Get the user data from the session
-    const userData = req.session.userData;
-    res.status(200).json({ isLoggedIn: true, userData: userData });
+    try {
+        // Get the user data from the session
+        const userData = req.session.userData;
+        res.status(200).json({ isLoggedIn: true, userData: userData });
+    }
+    catch (err) {
+        logger.error(err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 
 
