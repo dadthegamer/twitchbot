@@ -22,7 +22,7 @@ export async function setWelcomeMessage(userId, displayName) {
                 })
             }
         }
-        await addWelcomeAlert(userId, displayName);
+        addWelcomeAlert(userId, displayName);
         logger.info(`Welcome message set for ${displayName}`);
     }
     catch (err) {

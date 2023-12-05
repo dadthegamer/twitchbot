@@ -12,7 +12,7 @@ export async function onBits(e) {
         await goalDB.increaseBitsGoals(bits);
         // Format the bits to be displayed with commas
         const formattedBits = bits.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        await addAlert(userId, userDisplayName, 'cheer', `${userDisplayName} cheered ${formattedBits} bits!`, profileImage);
+        addAlert(userId, userDisplayName, 'cheer', `${userDisplayName} cheered ${formattedBits} bits!`, profileImage);
         usersDB.increaseBits(userId, bits);
         logger.info(`Cheer event: ${userDisplayName} cheered ${bits} bits!`);
         console.log(`Cheer event: ${userDisplayName} cheered ${bits} bits!`);

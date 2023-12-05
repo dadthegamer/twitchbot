@@ -8,7 +8,7 @@ export async function onRaid(e) {
         const { raidingBroadcasterDisplayName, raidingBroadcasterId, viewers } = await e;
         const userData = await e.getRaidedBroadcaster();
         const { profilePictureUrl } = await userData;
-        await addAlert(raidingBroadcasterId, raidingBroadcasterDisplayName, 'raid', `${raidingBroadcasterDisplayName} raided with ${viewers} viewers!`, profilePictureUrl);
+        addAlert(raidingBroadcasterId, raidingBroadcasterDisplayName, 'raid', `${raidingBroadcasterDisplayName} raided with ${viewers} viewers!`, profilePictureUrl);
         logger.info(`${raidingBroadcasterDisplayName} Raided with ${viewers} viewers!`);
     }
     catch (error) {

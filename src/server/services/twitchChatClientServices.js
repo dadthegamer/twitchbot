@@ -40,7 +40,7 @@ class TwitchChatClient {
                 logger.error('Disconnected from Twitch chat');
             });
             this.chatClient.onMessage(async (channel, user, message, msg) => {
-                await onMessageHandler(channel, user, message, msg)
+                onMessageHandler(channel, user, message, msg)
             });
             this.chatClient.onMessageRatelimit((channel, message, msg) => {
                 logger.error(`Ratelimited: ${message} - ${msg}`);
@@ -115,7 +115,7 @@ class TwitchChatClient {
     // Method to reply to a message in chat
     async replyToMessage(text, msg) {
         try {
-            await this.bot.reply(this.channel, text, msg)
+            this.bot.reply(this.channel, text, msg)
         }
         catch (error) {
             logger.error(`Error in replyToMessage method within chat client: ${error}`);

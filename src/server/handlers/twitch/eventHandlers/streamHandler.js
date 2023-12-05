@@ -33,7 +33,7 @@ export async function onStreamOnline(e) {
         };
         cache.set('streamInfo', streamInfoData);
         goalDB.setGoalCurrent('dailySubGoal', 0);
-        await usersDB.resetStreamProperties();
+        usersDB.resetStreamProperties();
         logger.info('Stream online');
     }
     catch (error) {

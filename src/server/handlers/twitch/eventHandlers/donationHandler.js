@@ -14,8 +14,8 @@ export async function onDonation(data) {
             display_name: userDisplayName,
             profile_image_url: profileImage,
         };
-        await setLatestEvent('latest_donation', userData);
-        await addDonation(id, amount);
+        setLatestEvent('latest_donation', userData);
+        addDonation(id, amount);
     }
     catch (error) {
         logger.error(`Error in onDonation: ${error}`);

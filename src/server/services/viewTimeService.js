@@ -66,7 +66,7 @@ class ViewTimeService {
                                 }
                                 // Check if the viewer has more than 5 minutes of view time. If they do increase the view time in the database by the amount of view time they have in the cache.
                                 if (viewTime >= this.viewTimeThreshold) {
-                                    await usersDB.increaseViewTime(userId, viewTime);
+                                    usersDB.increaseViewTime(userId, viewTime);
                                     this.viewTimeCache.del(userId);
                                 }
                             }

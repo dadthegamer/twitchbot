@@ -10,10 +10,10 @@ export async function onSubscription(e) {
         const tier = e.tier / 1000;
         const userData = await e.getUser();
         const profileImage = userData.profilePictureUrl;
-        await usersDB.setUserValue(e.userId, 'cumulativeMonths', cumulativeMonths);
-        await usersDB.setUserValue(e.userId, 'durationMonths', durationMonths);
-        await usersDB.setUserValue(e.userId, 'streakMonths', streakMonths);
-        await addAlert(userId, userDisplayName, 'resub', `${userDisplayName} re-subscribed at tier ${tier}!`, profileImage);
+        usersDB.setUserValue(e.userId, 'cumulativeMonths', cumulativeMonths);
+        usersDB.setUserValue(e.userId, 'durationMonths', durationMonths);
+        usersDB.setUserValue(e.userId, 'streakMonths', streakMonths);
+        addAlert(userId, userDisplayName, 'resub', `${userDisplayName} re-subscribed at tier ${tier}!`, profileImage);
         logger.info(`Subscription event: ${userDisplayName} re-subscribed at tier ${tier}!`);
     }
     catch (error) {

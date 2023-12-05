@@ -308,7 +308,7 @@ class CurrencyService {
             const subscribersList = await usersDB.getSubscribers();
             const vipsList = await usersDB.getVips();
             const moderatorsList = await usersDB.getModerators();
-            const activeUsersList = await activeUsersCache.getAllActiveUsers();
+            const activeUsersList = await activeUsersCache.getAllUsers();
             // Get the currency
             const currency = this.cache.get('currencies').find((currency) => currency.name === currencyName);
 
@@ -425,12 +425,12 @@ class CurrencyService {
                                     const currentAmount = await usersDB.getCurrency(viewer.userId, name);
                                     if (currentAmount + totalPayout > limit) {
                                         // Set the amount to the limit
-                                        await usersDB.setCurrency(viewer.userId, name, limit);
+                                        usersDB.setCurrency(viewer.userId, name, limit);
                                         continue;
                                     }
                                 } else {
                                     // If the currency is not limited then add the total payout to the viewer
-                                    await usersDB.increaseCurrency(viewer.userId, name, totalPayout);
+                                    usersDB.increaseCurrency(viewer.userId, name, totalPayout);
                                 }
                             }
                         }
