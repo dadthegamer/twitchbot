@@ -7,13 +7,13 @@ import logger from "../../../utilities/logger.js";
 export async function onBits(e) {
     try {
         const { userDisplayName, userId, bits } = await e;
-        const userData = await e.getUser();
+        const userData = e.getUser();
         const profileImage = userData.profilePictureUrl;
         await goalDB.increaseBitsGoals(bits);
         // Format the bits to be displayed with commas
         const formattedBits = bits.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         addAlert(userId, userDisplayName, 'cheer', `${userDisplayName} cheered ${formattedBits} bits!`, profileImage);
-        usersDB.increaseBits(userId, bits);
+        await usersDB.increaseBits(userId, bits);
         logger.info(`Cheer event: ${userDisplayName} cheered ${bits} bits!`);
         console.log(`Cheer event: ${userDisplayName} cheered ${bits} bits!`);
     }

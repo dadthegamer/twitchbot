@@ -10,14 +10,14 @@ import { schedulerService, usersDB } from './config/initializers.js';
 import logger from './utilities/logger.js';
 
 
-setInterval(() => {
-    const usedMemory = process.memoryUsage();
-    console.log('Memory Usage (in MB):');
-    console.log('  rss: ' + (usedMemory.rss / (1024 * 1024)).toFixed(2) + ' MB');
-    console.log('  heapTotal: ' + (usedMemory.heapTotal / (1024 * 1024)).toFixed(2) + ' MB');
-    console.log('  heapUsed: ' + (usedMemory.heapUsed / (1024 * 1024)).toFixed(2) + ' MB');
-    console.log('  external: ' + (usedMemory.external / (1024 * 1024)).toFixed(2) + ' MB');
-}, 60 * 1000);
+// setInterval(() => {
+//     const usedMemory = process.memoryUsage();
+//     console.log('Memory Usage (in MB):');
+//     console.log('  rss: ' + (usedMemory.rss / (1024 * 1024)).toFixed(2) + ' MB');
+//     console.log('  heapTotal: ' + (usedMemory.heapTotal / (1024 * 1024)).toFixed(2) + ' MB');
+//     console.log('  heapUsed: ' + (usedMemory.heapUsed / (1024 * 1024)).toFixed(2) + ' MB');
+//     console.log('  external: ' + (usedMemory.external / (1024 * 1024)).toFixed(2) + ' MB');
+// }, 60 * 1000);
 
 config();
 

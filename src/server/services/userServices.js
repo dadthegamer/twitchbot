@@ -1161,6 +1161,53 @@ class UsersDB {
         }
     }
 
+    // Increase view time for a list of users using the updateMany method
+    async increaseViewTimeForUsers(userIds, minutes) {
+        try {
+            if (minutes === undefined || minutes === null) {
+                logger.error(`Error in increaseViewTimeForUsers: Minutes is undefined`);
+                return;
+            }
+            // Check if minutes is a number
+            if (typeof minutes !== 'number') {
+                try {
+                    minutes = parseInt(minutes);
+                    if (isNaN(minutes)) {
+                        logger.error(`Error in increaseViewTimeForUsers: Minutes is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseViewTimeForUsers: ${error}`);
+                }
+            }
+            const date = new Date();
+            const lastSeen = date;
+            const result = await this.dbConnection.collection(this.collectionName).updateMany(
+                { id: { $in: userIds } },
+                {
+                    $inc: {
+                        'viewTime.allTime': minutes,
+                        'viewTime.yearly': minutes,
+                        'viewTime.monthly': minutes,
+                        'viewTime.weekly': minutes,
+                        'viewTime.stream': minutes
+                    },
+                    $set: {
+                        lastSeen: lastSeen
+                    },
+                },
+                { upsert: true }
+            );
+            const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
+            this.cache.set('users', users);
+            logger.info(`Increased view time for ${userIds} by ${minutes} minutes`);
+            return result;
+        } catch (error) {
+            logger.error(`Error in increaseViewTimeForUsers: ${error}`);
+        }
+    }
+
     // Method to increase the bits for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of bits as a number.
     async increaseBits(userId, bits) {
         try {

@@ -54,62 +54,127 @@ export async function initializerEventListener(apiClient) {
 
         // Event listeners for predictions
         listener.onChannelPredictionBegin(userId, async (event) => {
-            console.log(event);
-            await onPredictionStart(event);
+            try {
+                console.log(event);
+                await onPredictionStart(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelPredictionBegin: ${error}`);
+            }
         });
 
         listener.onChannelPredictionProgress(userId, async (event) => {
-            await onPredictionProgress(event);
+            try {
+                await onPredictionProgress(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelPredictionProgress: ${error}`);
+            }
         });
 
         listener.onChannelPredictionLock(userId, async (event) => {
-            await onPredictionLock(event);
+            try {
+                await onPredictionLock(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelPredictionLock: ${error}`);
+            }
         });
 
         listener.onChannelPredictionEnd(userId, async (event) => {
-            await onPredictionEnd(event);
+            try {
+                await onPredictionEnd(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelPredictionEnd: ${error}`);
+            }
         });
 
         // Event listeners for channel points
         listener.onChannelRedemptionAdd(userId, async (event) => {
-            await onRedemptionAdd(event);
+            try {
+                await onRedemptionAdd(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelRedemptionAdd: ${error}`);
+            }
         });
 
         // Event listeners for raids
         listener.onChannelRaidTo(userId, async (event) => {
-            await onRaid(event);
+            try {
+                await onRaid(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelRaidTo: ${error}`);
+            }
         });
 
         // Event listener for stream events
         listener.onStreamOnline(userId, async (event) => {
-            await onStreamOnline(event);
+            try {
+                await onStreamOnline(event);
+            }
+            catch (error) {
+                logger.error(`Error in onStreamOnline: ${error}`);
+            }
         });
 
         listener.onStreamOffline(userId, async (event) => {
-            await onStreamOffline(event);
+            try {
+                await onStreamOffline(event);
+            }
+            catch (error) {
+                logger.error(`Error in onStreamOffline: ${error}`);
+            }
         });
 
         listener.onChannelUpdate(userId, async (event) => {
-            await onStreamUpdate(event);
+            try {
+                await onStreamUpdate(event);
+            }
+            catch (error) {
+                logger.error(`Error in onStreamUpdate: ${error}`);
+            }
         });
 
         // Event listener for subscriptions
         listener.onChannelSubscriptionGift(userId, async (event) => {
-            await onGiftSubscription(event);
+            try {
+                await onGiftSubscription(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelSubscriptionGift: ${error}`);
+            }
         });
 
         listener.onChannelSubscriptionMessage(userId, async (event) => {
-            await onSubscription(event);
+            try {
+                await onSubscription(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelSubscriptionMessage: ${error}`);
+            }
         });
 
         // Event listerner for bits
         listener.onChannelCheer(userId, async (event) => {
-            await onBits(event);
+            try {
+                await onBits(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelCheer: ${error}`);
+            }
         });
 
         // Event listener for follows
         listener.onChannelFollow(userId, userId, async (event) => {
-            await onFollow(event);
+            try {
+                await onFollow(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelFollow: ${error}`);
+            }
         });
 
         console.log('Event listener initialized');

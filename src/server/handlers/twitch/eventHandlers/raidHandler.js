@@ -6,7 +6,7 @@ import logger from "../../../utilities/logger.js";
 export async function onRaid(e) {
     try {
         const { raidingBroadcasterDisplayName, raidingBroadcasterId, viewers } = await e;
-        const userData = await e.getRaidedBroadcaster();
+        const userData = e.getRaidedBroadcaster();
         const { profilePictureUrl } = await userData;
         addAlert(raidingBroadcasterId, raidingBroadcasterDisplayName, 'raid', `${raidingBroadcasterDisplayName} raided with ${viewers} viewers!`, profilePictureUrl);
         logger.info(`${raidingBroadcasterDisplayName} Raided with ${viewers} viewers!`);

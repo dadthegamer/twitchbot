@@ -2,6 +2,7 @@ import NodeCache from 'node-cache';
 import logger from '../utilities/logger.js';
 import { chatClient } from '../config/initializers.js';
 import { actionEvalulate } from '../handlers/evaluator.js';
+import { formatTimeFromMilliseconds } from '../utilities/utils.js';
 
 
 // Command Class
@@ -260,7 +261,7 @@ class CommandService {
                 if (permissions.includes('everyone' || permissions === 'everyone')) {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
                         for (const handler of handlers) {
-                            actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
+                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds

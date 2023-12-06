@@ -29,24 +29,25 @@ export class SchedulerService {
 
     // Method to get all the viewers in the channel
     async getChattersInterval() {
-        try {
-            setInterval(async () => {
+        const fetchChatters = async () => {
+            try {
                 const chatters = await twitchApi.getChatters();
                 if (process.env.NODE_ENV !== 'development') {
-                    const bots = this.knownBots.keys();
-                    const chattersWithoutBots = chatters.filter((chatter) => !bots.includes(chatter.userId));
+                    const bots = new Set(this.knownBots.keys());
+                    const chattersWithoutBots = chatters.filter(chatter => !bots.has(chatter.userId));
                     cache.set('currentViewers', chattersWithoutBots);
-                    return chattersWithoutBots;
                 } else {
                     cache.set('currentViewers', chatters);
-                    return chatters;
                 }
-            }, 60 * 1000);
-        }
-        catch (err) {
-            logger.error(`Error in getChattersWithoutBots: ${err}`);
-        }
+            } catch (err) {
+                logger.error(`Error in getChattersInterval: ${err}`);
+            } finally {
+                setTimeout(fetchChatters, 60 * 1000);
+            }
+        };
+        fetchChatters();
     }
+    
 
     // Method to get the bits leaderboard
     async getBitsLeaderboard() {

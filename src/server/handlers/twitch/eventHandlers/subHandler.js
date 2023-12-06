@@ -8,7 +8,7 @@ export async function onSubscription(e) {
     try {
         const { userName, userDisplayName, userId, cumulativeMonths, durationMonths, streakMonths } = await e;
         const tier = e.tier / 1000;
-        const userData = await e.getUser();
+        const userData = e.getUser();
         const profileImage = userData.profilePictureUrl;
         usersDB.setUserValue(e.userId, 'cumulativeMonths', cumulativeMonths);
         usersDB.setUserValue(e.userId, 'durationMonths', durationMonths);

@@ -7,9 +7,9 @@ let alertShowing = false;
 let alertTime = 8000;
 
 
-function alertHandler() {
+async function alertHandler() {
     try {
-        if (alertQueue.length > 0  && !alertShowing) {
+        if (alertQueue.length > 0 && !alertShowing) {
             let alert = alertQueue.shift();
             alertShowing = true;
             webSocket.alert(alert);
@@ -19,12 +19,12 @@ function alertHandler() {
         }
     }
     catch (err) {
-        logger.error('error', `Error in alertHandler: ${err}`);
+        logger.error(`Error in alertHandler: ${err}`);
     }
 }
 
 // Function to return the sound to play based on alert type
-async function getSound(type) {
+function getSound(type) {
     try {
         switch (type) {
             case 'sub':
@@ -46,24 +46,24 @@ async function getSound(type) {
         }
     }
     catch (err) {
-        logger.error('error', `Error in getSound for alerts: ${err}`);
+        logger.error(`Error in getSound for alerts: ${err}`);
     }
 }
 
 export async function addAlert(userId, displayName, alertType, alertMessage, profileImg) {
     try {
-        const sound = await getSound(alertType);
-        alertQueue.push({ 
-                        displayName,
-                        alertType,
-                        alertMessage,
-                        profileImg,
-                        alertTime,
-                        sound
-                    });
+        const sound = getSound(alertType);
+        alertQueue.push({
+            displayName,
+            alertType,
+            alertMessage,
+            profileImg,
+            alertTime,
+            sound
+        });
     }
     catch (err) {
-        logger.error('error', `Error in addAlert: ${err}`);
+        logger.error(`Error in addAlert: ${err}`);
     }
 }
 
@@ -71,9 +71,9 @@ export function clearAlerts() {
     alertQueue = [];
 }
 
-export async function startAlertsHandler() {
-    alertHandler();
-    setTimeout(() => {
-        startAlertsHandler();
-    }, 500);
+export function startAlertsHandler() {
+    if (!alertShowing) {
+        alertHandler();
+    }
+    setTimeout(startAlertsHandler, 500);
 }

@@ -105,7 +105,7 @@ class GoalService {
     async getAllGoals() {
         try {
             // Check if the goals are in the cache. If they are return them. If not, get them from the database and store them in the cache
-            const goals = await this.cache.get('goals');
+            const goals = this.cache.get('goals');
             if (goals) {
                 return goals;
             } else {
@@ -130,7 +130,7 @@ class GoalService {
 
     // Method to get a goal by name
     async getGoalByName(goalName) {
-        const goals = await this.cache.get('goals');
+        const goals = this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
             return;
@@ -146,7 +146,7 @@ class GoalService {
 
     // Method to set a goal's goal
     async setGoal(goalName, goalGoal) {
-        const goals = await this.cache.get('goals');
+        const goals = this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
             return;
@@ -187,7 +187,7 @@ class GoalService {
     // Method to set a goal's description
     async setGoalDescription(goalName, goalDescription) {
         console.log(goalDescription);
-        const goals = await this.cache.get('goals');
+        const goals = this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
             return;
@@ -238,7 +238,7 @@ class GoalService {
 
     // Method to enable/disable a goal
     async setGoalEnabled(goalName, enabled) {
-        const goals = await this.cache.get('goals');
+        const goals = this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
             return;
@@ -255,7 +255,7 @@ class GoalService {
 
     // Method to update a goal
     async updateGoal(goalName, goal, current, description, handlers) {
-        const goals = await this.cache.get('goals');
+        const goals = this.cache.get('goals');
         if (!goals.some(goal => goal.name === goalName)) {
             logger.error(`Goal ${goalName} does not exist`);
             return;
@@ -281,8 +281,8 @@ class GoalService {
             }
         }
         try {
-            this.increaseGoalCurrent('dailySubGoal', goalIncrease);
-            this.increaseGoalCurrent('monthlySubGoal', goalIncrease);
+            await this.increaseGoalCurrent('dailySubGoal', goalIncrease);
+            await this.increaseGoalCurrent('monthlySubGoal', goalIncrease);
             await this.getAllGoalsDB();
         } catch (error) {
             logger.error(`Error increasing subgoals: ${error}`);
@@ -301,8 +301,8 @@ class GoalService {
             }
         }
         try {
-            this.increaseGoalCurrent('dailyDonationGoal', goalIncrease);
-            this.increaseGoalCurrent('monthlyDonationGoal', goalIncrease);
+            await this.increaseGoalCurrent('dailyDonationGoal', goalIncrease);
+            await this.increaseGoalCurrent('monthlyDonationGoal', goalIncrease);
             await this.getAllGoals();
         } catch (error) {
             logger.error(`Error increasing donation goals: ${error}`);
@@ -321,8 +321,8 @@ class GoalService {
             }
         }
         try {
-            this.increaseGoalCurrent('dailyBitsGoal', goalIncrease);
-            this.increaseGoalCurrent('monthlyBitsGoal', goalIncrease);
+            await this.increaseGoalCurrent('dailyBitsGoal', goalIncrease);
+            await this.increaseGoalCurrent('monthlyBitsGoal', goalIncrease);
             await this.getAllGoals();
         } catch (error) {
             logger.error(`Error increasing bits goals: ${error}`);
@@ -341,7 +341,7 @@ class GoalService {
             }
         }
         try {
-            this.increaseGoalCurrent('dailyFollowersGoal', goalIncrease);
+            await this.increaseGoalCurrent('dailyFollowersGoal', goalIncrease);
             await this.getAllGoalsDB();
         } catch (error) {
             logger.error(`Error increasing followers goal: ${error}`);
