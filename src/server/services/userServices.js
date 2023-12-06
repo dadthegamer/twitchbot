@@ -334,7 +334,7 @@ class UsersDB {
             if (user) {
                 // If the user is in the database then check if they have an email. If they do not then update the email
                 if (user.email === null || user.email === undefined) {
-                    await this.setUserValue(userId, 'email', email);
+                    this.setUserValue(userId, 'email', email);
                     return;
                 } else {
                     return;

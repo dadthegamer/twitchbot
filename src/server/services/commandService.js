@@ -40,6 +40,7 @@ class CommandService {
             this.createCommand('quote', [{ type: 'chat', response: '$quote' }], 'Get a quote from the database. Example !quote gets a random quote and !quote69 gets the 69th quote.', 'everyone', true, 0, 0, false);
             this.createCommand('clip', [{ type: 'clip' }], 'Create a clip', 'everyone', true, 0, 0, false);
             this.createCommand('queue', [{ type: 'queue', action: 'get' }], 'Get the current queue', true, 0, 0, false);
+            this.createCommand('words', [{ type: 'chat', response: 'Dad knows all the best words and always says everyone’s name correctly' }], 'Get the current queue', true, 0, 0, false);
         }
         catch (err) {
             logger.error(`Error in createInitialCommands: ${err}`);
@@ -240,7 +241,6 @@ class CommandService {
     // Handler
     async commandHandler(command, user, message, msg) {
         try {
-            console.log('commandHandler');
             const prefix = '!';
             const { isFirst, isHighlighted, userInfo, id, isReply, isCheer } = msg;
             const { userId, displayName, color, isVip, isSubscriber, isMod } = userInfo;

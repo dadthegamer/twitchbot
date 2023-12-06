@@ -9,13 +9,15 @@ export async function createClip() {
             chatClient.say('Stream is not live, cannot create clip.');
         } else {
             const clip = await twitchApi.createClip();
-            if (clip) {
-                const clipData = await twitchApi.getClipById(clip);
-                const clipUrl = clipData.url;
-                if (clipUrl) {
-                    chatClient.say(`Clip created: ${clipUrl}`);
+            setTimeout(async () => {
+                if (clip) {
+                    const clipData = await twitchApi.getClipById(clip);
+                    const clipUrl = clipData.url;
+                    if (clipUrl) {
+                        chatClient.say(`Clip created: ${clipUrl}`);
+                    }
                 }
-            }
+            }, 1000);
         }
     }
     catch (err) {

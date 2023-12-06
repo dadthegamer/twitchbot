@@ -383,9 +383,10 @@ class CurrencyService {
                 if (interval === 0) {
                     continue;
                 }
+                console.log(`Setting interval for ${name} to ${interval} minutes`);
                 // Set an interval to payout the currency
                 const intervalId = setInterval(async () => {
-                    if (environment === 'development1') {
+                    if (environment === 'development') {
                         console.log(`Paying out ${amount} ${name} to all viewers`);
                         return;
                     } else {
@@ -420,6 +421,7 @@ class CurrencyService {
                                     bonus += activeChatUser;
                                 }
                                 const totalPayout = amount + bonus;
+                                console.log(`Paying out ${totalPayout} ${name} to ${viewer.userDisplayName}`);
                                 // If the currency is limited then check if the viewer has reached the limit
                                 if (limit) {
                                     const currentAmount = await usersDB.getCurrency(viewer.userId, name);
@@ -432,6 +434,8 @@ class CurrencyService {
                                     // If the currency is not limited then add the total payout to the viewer
                                     usersDB.increaseCurrency(viewer.userId, name, totalPayout);
                                 }
+                            } else {
+                                usersDB.increaseCurrency(viewer.userId, name, amount);
                             }
                         }
                     }

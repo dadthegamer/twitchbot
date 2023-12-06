@@ -10,9 +10,8 @@ import { createClip } from "./actionHandlers/clips.js";
 
 
 // Method to evaluate the handler
-export async function actionEvalulate(handler, context) {
+export async function actionEvalulate(handler, context = null) {
     try {
-        console.log('Evaluating action');
         const { displayName, userId, messageID, input } = context;
         const { type, response, action } = handler;
 
@@ -71,6 +70,9 @@ export async function actionEvalulate(handler, context) {
                 break;
             case 'clip':
                 createClip();
+                break;
+            case 'consoleLog':
+                console.log(handler.response);
                 break;
             default:
                 logger.error(`Handler not found: ${handler}`);

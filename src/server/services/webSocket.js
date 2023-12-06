@@ -18,7 +18,7 @@ export class WebSocket {
             this.alert({
                 displayName: 'Connected',
                 alertType: 'sub',
-                alertMessage: 'Connected to websocket',
+                alertMessage: 'Connected',
                 alertTime: 5000,
                 profileImg: 'https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png',
                 sound: '/audio/newSubscriber.mp3',

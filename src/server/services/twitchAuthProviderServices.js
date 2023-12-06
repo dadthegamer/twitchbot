@@ -74,7 +74,7 @@ class AuthProviderManager {
             if (tokenData.userId === this.userId) {
                 this.authProvider.addUser(tokenData.userId, tokenData, ['chat']);
             } else {
-                this.authProvider.addUser(tokenData.userId, tokenData);
+                this.authProvider.addUser(tokenData.userId, tokenData, ['chat']);
                 this.ApiClient = new ApiClient({ authProvider: this.authProvider });
             }
         }

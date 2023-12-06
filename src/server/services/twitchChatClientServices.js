@@ -9,14 +9,18 @@ import { cache } from '../config/initializers.js';
 class TwitchChatClient {
     constructor(authProvider) {
         this.authProvider = authProvider;
-        this.chatClient = new ChatClient({ authProvider: this.authProvider, channels: [streamerUserName] });
+        this.chatClient = new ChatClient({ 
+            authProvider: this.authProvider, 
+            channels: [streamerUserName],
+            rejoinChannelsOnReconnect: true,
+            isAlwaysMod: true,
+            requestMembershipEvents: true,
+            botLevel: 'verified'
+        });
         this.channel = streamerUserName;
         this.bot = new Bot({
             channels: [streamerUserName],
             authProvider: this.authProvider,
-            rejoinChannelsOnReconnect: true,
-            isAlwaysMod: true,
-            requestMembershipEvents: true,
         });
         cache.set('twitchChatConnected', false)
         this.connectToBotChat();
@@ -39,7 +43,7 @@ class TwitchChatClient {
             this.chatClient.onDisconnect(() => {
                 logger.error('Disconnected from Twitch chat');
             });
-            this.chatClient.onMessage(async (channel, user, message, msg) => {
+            this.chatClient.onMessage((channel, user, message, msg) => {
                 onMessageHandler(channel, user, message, msg)
             });
             this.chatClient.onMessageRatelimit((channel, message, msg) => {

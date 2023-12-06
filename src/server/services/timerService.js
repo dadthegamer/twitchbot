@@ -1,42 +1,102 @@
-import cron from 'node-cron';
+import logger from '../utilities/logger.js';
+import { actionEvalulate } from '../handlers/evaluator.js';
 
 // This class manages the timers
 class TimerManager {
-    constructor(cacheService) {
-        this.timers = []; // Store timers in-memory
-        this.cacheService = cacheService;
+    constructor(cache, dbConnection) {
+        this.cache = cache;
+        this.dbConnection = dbConnection;
+        this.collectionName = 'timers';
+        this.timers = [];
+        this.initializeTimers();
     }
 
-    // Initialize timers from database when the app starts
-    initializeTimersFromDatabase(timerDataFromDatabase) {
-        this.timers = timerDataFromDatabase.map(timer => {
-            return cron.schedule(timer.schedule, () => {
-                this.executeTimerAction(timer);
-            });
-        });
+    // Get all the timers from the database and add them to the cache
+    async initializeTimers() {
+        try {
+            const timers = await this.dbConnection.getAllDocuments(this.collectionName);
+            if (timers === null || timers === undefined) {
+                logger.error(`No timers found.`);
+                return;
+            }
+            try {
+                for (const timer of timers) {
+                    const { name, interval, handlers, enabled, liveOnly } = timer;
+                    const timerInterval = setInterval(async () => {
+                        if (enabled) {
+                            actionEvalulate(handlers);
+                        }
+                    }, interval);
+                    const timer = {
+                        name: name,
+                        interval: interval,
+                        handlers: handlers,
+                        intervalId: timerInterval,
+                        liveOnly: liveOnly
+                    };
+                    const timers = this.cache.get('timers');
+                    this.cache.set('timers', [...timers, timer]);
+                    this.timers.push(timer);
+                    logger.info(`Timer ${name} started.`);
+                }
+            } catch (error) {
+                logger.error(`Error adding timer: ${error}`);
+            }
+        }
+        catch (error) {
+            logger.error(`Error getting all timers from database: ${error}`);
+        }
     }
 
-    // Add a new timer dynamically
-    addTimerToSchedule(timer) {
-        const newTimer = cron.schedule(timer.schedule, () => {
-            this.executeTimerAction(timer);
-        });
-
-        this.timers.push(newTimer);
+    // Add a timer to the cache and database
+    async createTimer(timerName, interval, handlers) {
+        try {
+            // Check if the timer already exists
+            const timerExists = this.cache.get(timerName);
+            if (timerExists) {
+                logger.error(`Timer ${timerName} already exists.`);
+                return;
+            }
+            // Check if the interval is a number and is greater than 0
+            if (isNaN(interval) || interval <= 0) {
+                logger.error(`Interval must be a number greater than 0.`);
+                return;
+            }
+            const timer = {
+                name: timerName,
+                interval: interval,
+                handlers: handlers,
+                created: Date.now(),
+                enabled: true,
+                liveOnly: false
+            };
+            await this.dbConnection.collection(this.collectionName).insertOne(timer);
+            // Add the timer to the timers cache
+            const timers = this.cache.get('timers');
+            this.cache.set('timers', [...timers, timer])
+            logger.info(`Timer ${timerName} created.`);
+        } catch (error) {
+            logger.error(`Error adding timer: ${error}`);
+        }
     }
 
-    // Execute the action associated with a timer
-    executeTimerAction(timer) {
-        // Perform the action, such as sending a chat message, etc.
-        console.log(`Executing timer action for: ${timer.message}`);
-    }
-
-    // Remove a timer
-    removeTimerFromSchedule(timerId) {
-        const timerIndex = this.timers.findIndex(timer => timer.id === timerId);
-        if (timerIndex !== -1) {
-            this.timers[timerIndex].destroy();
-            this.timers.splice(timerIndex, 1);
+    // Start a timer using interval and handlers
+    async startTimer(timerName, interval, handlers) {
+        try {
+            const timerInterval = setInterval(async () => {
+                actionEvalulate(handlers);
+            }, interval);
+            const timer = {
+                name: timerName,
+                interval: interval,
+                handlers: handlers,
+                intervalId: timerInterval
+            };
+            this.timers.push(timer);
+            logger.info(`Timer ${timerName} started.`);
+        }
+        catch (error) {
+            logger.error(`Error starting timer: ${error}`);
         }
     }
 }

@@ -8,7 +8,6 @@ export class SchedulerService {
         this.dbConnection = dbConnection;
         this.knownBots = this.knownBots = new NodeCache();
         this.initialize();
-        this.intervalSeconds = 60;
     }
 
     initialize() {

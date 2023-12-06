@@ -1,5 +1,5 @@
 import logger from "../../utilities/logger.js";
-import { usersDB, streamDB, currencyDB, webSocket } from "../../config/initializers.js";
+import { usersDB, streamDB, currencyDB, webSocket, cache } from "../../config/initializers.js";
 
 
 export let alertQueue = [];
@@ -21,11 +21,11 @@ export async function arrivalHandler(context) {
             if (arrived) {
                 return;
             } else {
-                await streamDB.addViewer(userId);
-                await usersDB.setUserValue(userId, 'arrived', true);
-                const points = await userData.currency.leaderboard;
+                streamDB.addViewer(userId);
+                usersDB.setUserValue(userId, 'arrived', true);
+                // const points = await userData.currency.leaderboard;
                 // await currencyDB.addCurrencyForArriving(userId);
-                addWelcomeAlert(userId, displayName, points);
+                // addWelcomeAlert(userId, displayName, points);
                 // Check if viewers length is less than 3
                 // if (streamData.viewers.length < 3) {
                 //     firstMessageHandler(context);

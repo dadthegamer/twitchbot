@@ -197,7 +197,7 @@ class TwitchChannelPointService {
                 } else {
                     // For each handler evaluate the handler
                     for (const handler of handlers) {
-                        await actionEvalulate(handler, { userId, displayName, input: userInput });
+                        actionEvalulate(handler, { userId, displayName, input: userInput });
                     }
                 }
             }
