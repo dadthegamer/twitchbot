@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { discordClientID, discordRedirectURI, discordClientSecret } from '../../config/environmentVars.js';
+import { discordClientID, discordRedirectURI, discordClientSecret, hostName } from '../../config/environmentVars.js';
 import logger from '../../utilities/logger.js';
 import axios from 'axios';
 import { usersDB } from '../../config/initializers.js';
@@ -28,8 +28,7 @@ async function exchangeCode(code) {
         );
         return response.data;
     } catch (error) {
-        console.error(error);
-        throw error;
+        logger.error(`Error exchanging discord code for access token: ${error}`);
     }
 }
 
@@ -45,8 +44,7 @@ async function getUserInfo(accessToken) {
         );
         return response.data;
     } catch (error) {
-        console.error(error);
-        throw error;
+        logger.error(`Error getting user info for discord user: ${error}`);
     }
 }
 
@@ -64,10 +62,14 @@ router.get('/', async (req, res) => {
             const { id, username } = userInfo;
             usersDB.setDiscordUsername(twitchUserId, username);
             usersDB.setDiscordId(twitchUserId, id);
+            // Set the user's discord id in the session
+            req.session.userData.discordId = id;
+            // Set the user's discord username in the session
+            req.session.userData.discordUsername = username;
         }
-        res.send('Success');
+        res.redirect(`https://${hostName}`);
     } catch (error) {
-        console.error(error);
+        logger.error(`Error getting discord user info: ${error}`);
         res.send(error);
     }
 
