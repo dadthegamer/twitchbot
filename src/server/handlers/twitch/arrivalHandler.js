@@ -1,5 +1,5 @@
 import logger from "../../utilities/logger.js";
-import { usersDB, streamDB, currencyDB, webSocket, cache } from "../../config/initializers.js";
+import { usersDB, streamDB, webSocket, cache } from "../../config/initializers.js";
 
 
 export let alertQueue = [];
