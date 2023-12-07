@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 
 // Function to format time from minutes to a string
-export function formatTimeFromMinutes(minToFormat) {
+export async function formatTimeFromMinutes(minToFormat) {
     const seconds = Math.floor(minToFormat * 60);
     const hours = Math.floor(minToFormat / 60);
     const days = Math.floor(hours / 24);
@@ -20,7 +20,7 @@ export function formatTimeFromMinutes(minToFormat) {
 }
 
 // Function to format time from milliseconds to a string
-export function formatTimeFromMilliseconds(milliseconds) {
+export async function formatTimeFromMilliseconds(milliseconds) {
     const seconds = Math.floor(milliseconds / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -42,7 +42,7 @@ export function formatTimeFromMilliseconds(milliseconds) {
 }
 
 // Function to format the last digit of a number to a rank
-export function formatRank(number) {
+export async function formatRank(number) {
     const lastDigit = number % 10;
     if (lastDigit === 1) {
         return `${number}st`;
@@ -56,28 +56,28 @@ export function formatRank(number) {
 }
 
 // Function to format a number with commas
-export function numberWithCommas(x) {
+export async function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 // Function that returns a whole number between two numbers
-export function getRandomInt(min, max) {
+export async function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 // Function to calculate the uptime of a stream
-export function calculateUptime(startDate) {
+export async function calculateUptime(startDate) {
     const currentDate = new Date();
     const uptime = currentDate - startDate;
     return uptime;
 }
 
 // Function to convert ms to minutes
-export function msToMinutes(ms) {
+export async function msToMinutes(ms) {
     return ms / 1000 / 60;
 }
 
 // Function to generate a random API key
-export function generateApiKey(length = 32) {
+export async function generateApiKey(length = 32) {
     return crypto.randomBytes(length).toString('hex');
 }
