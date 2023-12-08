@@ -6,11 +6,17 @@ import isLoggedIn from '../middleware/loggedin.js';
 const router = Router();
 
 // Define a route to check if the user is logged in. If they are not logged in, redirect them to the login page.
-router.get('/', isLoggedIn, (req, res) => {
+router.get('/', (req, res) => {
     try {
         // Get the user data from the session
         const userData = req.session.userData;
-        res.status(200).json({ isLoggedIn: true, userData: userData });
+        if (userData) {
+            // If the user is logged in, render the page
+            res.status(200).json({ isLoggedIn: true, userData: userData });
+        } else {
+            // If the user is not logged in, redirect them to the login page
+            res.status(200).json({ isLoggedIn: false });
+        }
     }
     catch (err) {
         logger.error(err);
