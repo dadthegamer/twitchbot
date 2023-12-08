@@ -54,3 +54,12 @@ export async function stopStreaming() {
         logger.error(`Error in stopStreaming: ${err}`);
     }
 }
+
+// Function to save the replay buffer
+export async function saveReplayBuffer() {
+    try {
+        await obsService.saveReplayBuffer();
+    } catch (err) {
+        logger.error(`Error in saveReplayBuffer: ${err}`);
+    }
+}

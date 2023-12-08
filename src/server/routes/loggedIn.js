@@ -1,6 +1,5 @@
 import { Router } from 'express';
 import logger from '../utilities/logger.js';
-import isLoggedIn from '../middleware/loggedin.js';
 
 
 const router = Router();

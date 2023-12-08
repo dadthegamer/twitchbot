@@ -7,7 +7,7 @@ import { spinHandler } from "./actionHandlers/spinHandler.js";
 import { addToQueue, removeFromQueue, getQueue, clearQueue } from "./actionHandlers/queue.js";
 import { getQuoteById, getRandomQuote, createQuote } from "./actionHandlers/quote.js";
 import { createClip } from "./actionHandlers/clips.js";
-import { startRecording, stopRecording, startStreaming, stopStreaming, setCurrentScene, getCurrentScene } from "./actionHandlers/obsHandler.js";
+import { startRecording, stopRecording, startStreaming, stopStreaming, setCurrentScene, getCurrentScene, saveReplayBuffer } from "./actionHandlers/obsHandler.js";
 
 
 // Method to evaluate the handler
@@ -98,6 +98,9 @@ export async function actionEvalulate(handler, context = null) {
                         break;
                     case 'getCurrentScene':
                         getCurrentScene();
+                        break;
+                    case 'saveReplayBuffer':
+                        saveReplayBuffer();
                         break;
                     default:
                         logger.error(`OBS action not found: ${action}`);
