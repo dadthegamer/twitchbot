@@ -265,11 +265,11 @@ class CommandService {
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
-                        const timeLeft = formatTimeFromMilliseconds(userCooldownStatus - Date.now());
+                        const timeLeft = await formatTimeFromMilliseconds(userCooldownStatus - Date.now());
                         chatClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
                         return;
                     } else if (globalCooldownStatus !== true) {
-                        const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
+                        const timeLeft = await formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
                         chatClient.replyToMessage(`This command is on global cooldown. ${timeLeft} seconds left`, id);
                         return;
                     }
@@ -280,11 +280,11 @@ class CommandService {
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
-                        const timeLeft = formatTimeFromMilliseconds(userCooldownStatus - Date.now());
+                        const timeLeft = await formatTimeFromMilliseconds(userCooldownStatus - Date.now());
                         chatClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
                         return;
                     } else if (globalCooldownStatus !== true) {
-                        const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
+                        const timeLeft = await formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
                         chatClient.replyToMessage(`This command is on global cooldown. ${timeLeft} seconds left`, id);
                         return;
                     }
@@ -295,11 +295,11 @@ class CommandService {
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
-                        const timeLeft = formatTimeFromMilliseconds(userCooldownStatus - Date.now());
+                        const timeLeft = await formatTimeFromMilliseconds(userCooldownStatus - Date.now());
                         chatClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
                         return;
                     } else if (globalCooldownStatus !== true) {
-                        const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
+                        const timeLeft = await formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
                         chatClient.replyToMessage(`This command is on global cooldown. ${timeLeft} seconds left`, id);
                         return;
                     }
@@ -310,11 +310,11 @@ class CommandService {
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
-                        const timeLeft = formatTimeFromMilliseconds(userCooldownStatus - Date.now());
+                        const timeLeft = await formatTimeFromMilliseconds(userCooldownStatus - Date.now());
                         chatClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
                         return;
                     } else if (globalCooldownStatus !== true) {
-                        const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
+                        const timeLeft = await formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
                         chatClient.replyToMessage(`This command is on global cooldown. ${timeLeft} seconds left`, id);
                         return;
                     }

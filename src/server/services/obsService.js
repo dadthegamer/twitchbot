@@ -56,14 +56,14 @@ class OBSService {
             this.startReplayBuffer();
         }
         catch (err) {
-        if (err.message && err.message.includes('ECONNREFUSED')) {
-            return;
-        } else if (err.code && err.code === 4009) {
-            logger.error('OBS Authentication failed. Please check your password.');
-            return;
-        } else {
-            logger.error(`Error in connectToObs: ${err}`);
-        }
+            if (err.message === 'WebSocket was closed before the connection was established') {
+                return;
+            } else if (err.code && err.code === 4009) {
+                logger.error('OBS Authentication failed. Please check your password.');
+                return;
+            } else {
+                logger.error(`Error in connectToObs: ${err}`);
+            }
         }
     }
 
