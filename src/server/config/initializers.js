@@ -19,6 +19,8 @@ import StreamDB from '../services/streamService.js';
 // import CurrencyService from '../services/currencyService.js';
 import ChatLogService from '../services/chatLogService.js';
 import ActiveUsersCache from '../services/activeUsersService.js';
+import SettingsService from '../services/settingService.js';
+import OBSService from '../services/obsService.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -82,6 +84,12 @@ const activeUsersCache = new ActiveUsersCache();
 // Event Listener initialization
 initializerEventListener(twitchApi. getApiClient());
 
+// SettingsService initialization
+const settingsDB = new SettingsService(db.dbConnection, cache);
+
+// OBS Service initialization
+const obsService = new OBSService(db.dbConnection, cache);
+
 // Start the alerts handler
 startAlertsHandler();
 
@@ -104,5 +112,7 @@ export {
     streamDB,
     // currencyDB,
     chatLogService,
-    activeUsersCache
+    activeUsersCache,
+    settingsDB,
+    obsService
 };

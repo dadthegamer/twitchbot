@@ -10,7 +10,8 @@ export async function getQuoteById(id) {
         if (!quote) {
             chatClient.say(`Quote with id ${id} not found`);
         } else {
-            chatClient.say(quote.text);
+            const creator = quote.creator;
+            chatClient.say(`@${creator} quoted DTG: "${quote.text}"`);
         }
     }
     catch (err) {
@@ -22,7 +23,8 @@ export async function getQuoteById(id) {
 export async function getRandomQuote() {
     try {
         const quote = await interactionsDB.getRandomQuote();
-        chatClient.say(quote.text);
+        const creator = quote.creator;
+        chatClient.say(`@${creator} quoted DTG: "${quote.text}"`);
     }
     catch (err) {
         logger.error(`Error in getRandomQuote: ${err}`);
@@ -33,7 +35,7 @@ export async function getRandomQuote() {
 export async function createQuote(quote, creator) {
     try {
         const newQuote = await interactionsDB.createQuote(quote, creator);
-        chatClient.say(`Quote ${newQuote.id} created`);
+        chatClient.say(`@${creator} created a quote with an id of ${newQuote.id}`);
     }
     catch (err) {
         logger.error(`Error in createQuote: ${err}`);

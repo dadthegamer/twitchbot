@@ -47,3 +47,16 @@ export async function getQueue(){
         logger.error(`Error in getQueue: ${err}`);
     }
 }
+
+// Function to clear the queue
+export async function clearQueue(){
+    try {
+        const res = await interactionsDB.clearQueue();
+        if (res) {
+            chatClient.say('The queue has been cleared!');
+        }
+    }
+    catch (err) {
+        logger.error(`Error in clearQueue: ${err}`);
+    }
+}

@@ -4,9 +4,10 @@ import { replyHandler } from "./actionHandlers/replyHandler.js";
 import { variableHandler } from "./variablesHandler.js";
 import { displayHandler } from "./actionHandlers/displayHandler.js";
 import { spinHandler } from "./actionHandlers/spinHandler.js";
-import { addToQueue, removeFromQueue, getQueue } from "./actionHandlers/queue.js";
+import { addToQueue, removeFromQueue, getQueue, clearQueue } from "./actionHandlers/queue.js";
 import { getQuoteById, getRandomQuote, createQuote } from "./actionHandlers/quote.js";
 import { createClip } from "./actionHandlers/clips.js";
+import { startRecording, stopRecording, startStreaming, stopStreaming, setCurrentScene, getCurrentScene } from "./actionHandlers/obsHandler.js";
 
 
 // Method to evaluate the handler
@@ -41,10 +42,17 @@ export async function actionEvalulate(handler, context = null) {
                         addToQueue(displayName);
                         break;
                     case 'remove':
-                        removeFromQueue(displayName);
+                        // Get the user to remove by finding the username. It will be the the word after the @ symbol after the command. Example: !remove @username
+                        const userToRemove = input.split('!remove')[1].trim();
+                        // remove the @ symbol from the username
+                        const user = userToRemove.replace('@', '');
+                        removeFromQueue(user);
                         break;
                     case 'get':
                         getQueue();
+                        break;
+                    case 'clear':
+                        clearQueue();
                         break;
                     default:
                         logger.error(`Queue action not found: ${action}`);
@@ -70,6 +78,30 @@ export async function actionEvalulate(handler, context = null) {
                 break;
             case 'clip':
                 createClip();
+                break;
+            case 'obs':
+                switch (action) {
+                    case 'startRecording':
+                        startRecording();
+                        break;
+                    case 'stopRecording':
+                        stopRecording();
+                        break;
+                    case 'startStreaming':
+                        startStreaming();
+                        break;
+                    case 'stopStreaming':
+                        stopStreaming();
+                        break;
+                    case 'setCurrentScene':
+                        setCurrentScene(handler.response);
+                        break;
+                    case 'getCurrentScene':
+                        getCurrentScene();
+                        break;
+                    default:
+                        logger.error(`OBS action not found: ${action}`);
+                }
                 break;
             case 'consoleLog':
                 console.log(handler.response);

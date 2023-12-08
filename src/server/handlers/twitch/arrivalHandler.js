@@ -9,31 +9,37 @@ let alertTime = 8000;
 
 export async function arrivalHandler(context) {
     try {
-        const streamData = cache.get('stream');
-        // Check if the userId is in the streamData viewers array
-        if (!streamData.viewers.includes(context.userId)) {
-            return;
-        } else {
-            const { displayName, userId } = context;
-            logger.info(`Arrival Handler: ${displayName} has arrived!`);
+        const { userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster } = context;
+        let viewers = cache.get('viewers');
+        if (!viewers || viewers === undefined) {
+            viewers = [];
+            cache.set('viewers', []);
+        };
+        // Check if the user is already in the viewers list
+        const user = viewers.find((viewer) => viewer.userId === userId);
+        // If the user is not in the viewers list, add them
+        if (!user) {
+            viewers.push({
+                userId,
+                displayName,
+                color,
+                isVip,
+                isSubscriber,
+                isMod,
+                isBroadcaster,
+            });
+            cache.set('viewers', viewers);
             const userData = await usersDB.getUserByUserId(userId);
-            const arrived = userData.arrived;
-            if (arrived) {
-                return;
-            } else {
-                streamDB.addViewer(userId);
-                usersDB.setUserValue(userId, 'arrived', true);
-                // const points = await userData.currency.leaderboard;
-                // await currencyDB.addCurrencyForArriving(userId);
-                // addWelcomeAlert(userId, displayName, points);
-                // Check if viewers length is less than 3
-                // if (streamData.viewers.length < 3) {
-                //     firstMessageHandler(context);
-                // }
+            // Check if the user has already arrived in the database
+            if (!userData.arrived) {
+                usersDB.setArrived(userId, true);
             }
+        } else {
+            return;
         }
     }
     catch (err) {
+        console.log(err);
         logger.error(`Error in arrivalHandler: ${err}`);
     }
 }

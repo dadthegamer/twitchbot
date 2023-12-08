@@ -31,9 +31,10 @@ export async function onStreamOnline(e) {
             gameId,
             boxArtURL,
         };
+        cache.set('viewers', [])
         cache.set('streamInfo', streamInfoData);
-        goalDB.setGoalCurrent('dailySubGoal', 0);
-        usersDB.resetStreamProperties();
+        await goalDB.setGoalCurrent('dailySubGoal', 0);
+        await usersDB.resetStreamProperties();
         logger.info('Stream online');
     }
     catch (error) {

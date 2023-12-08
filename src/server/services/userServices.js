@@ -748,24 +748,19 @@ class UsersDB {
                     logger.error(`Error in setArrived: ${error}`);
                 }
             }
-            if (environment === 'development') {
-                console.log(`setArrived: ${userId} ${arrived}`);
-                return;
-            } else {
-                // Set the arrived property for the user in the cache
-                let user = this.cache.get(userId);
-                if (!user) {
-                    user = await this.getUserByUserId(userId);
-                }
-                user.arrived = arrived;
-                this.cache.set(userId, user);
-                // Set the arrived property for the user in the database
-                await this.dbConnection.collection(this.collectionName).updateOne(
-                    { id: userId },
-                    { $set: { arrived: arrived } },
-                    { upsert: true }
-                );
+            // Set the arrived property for the user in the cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
             }
+            user.arrived = arrived;
+            this.cache.set(userId, user);
+            // Set the arrived property for the user in the database
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $set: { arrived: arrived } },
+                { upsert: true }
+            );
         } catch (error) {
             logger.error(`Error in setArrived: ${error}`);
         }

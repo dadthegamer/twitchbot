@@ -37,6 +37,7 @@ class ViewTimeService {
     // Method to handle the view time
     async viewTimeHandler() {
         try {
+            const threshold = 5;
             let userIdsToUpdate  = [];
             if (process.env.NODE_ENV === 'development') {
                 const viewers = cache.get('currentViewers');
@@ -63,7 +64,7 @@ class ViewTimeService {
                                 const viewTime = this.viewTimeCache.get(userId) || 0;
                                 this.viewTimeCache.set(userId, viewTime + 1, 300);
                     
-                                if (viewTime >= 5) {
+                                if (viewTime >= threshold) {
                                     userIdsToUpdate.push(userId);
                                     // Set the view time back to 0
                                     this.viewTimeCache.set(userId, 0, 300);
@@ -74,7 +75,8 @@ class ViewTimeService {
                             }
                         }
                         if (userIdsToUpdate.length > 0) {
-                            await usersDB.increaseViewTimeForUsers(userIdsToUpdate, 5);
+                            await usersDB.increaseViewTimeForUsers(userIdsToUpdate, threshold);
+                            userIdsToUpdate = [];
                         }
                     }
                 }

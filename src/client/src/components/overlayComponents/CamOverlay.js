@@ -190,32 +190,6 @@ function CamOverlay() {
                 borderColor: alertColor,
                 backgroundColor: 'transparent',
             }}>
-                {/* <div className="top-accent">
-                    <div className="rectangle" style={{
-                        backgroundColor: alertColor,
-                    }}></div>
-                    <div className="triangle triangle-1" style={{
-                        borderColor: alertColor,
-                    }}></div>
-                    <div className="triangle triangle-2" style={{
-                        borderColor: alertColor,
-                    }}></div>
-                </div>
-                <div className="bottom-accent">
-                    <div className="rectangle" style={{
-                        backgroundColor: alertColor,
-                    }}></div>
-                    <div className="triangle triangle-1" style={{
-                        borderColor: alertColor,
-                    }}></div>
-                    <div className="triangle triangle-2" style={{
-                        borderColor: alertColor,
-                    }}></div>
-                </div> */}
-                {/* <div className="monthly-subs-container">
-                    <span>MONTHLY SUBS</span>
-                    <span id='subs'>{subsCount}</span>
-                </div> */}
             </div>
             {showAlert && (
                 <div className={`alert-container`}>
@@ -233,9 +207,9 @@ function CamOverlay() {
                             }}>
                                 <span id='alert-message'>{alertMessage}</span>
                             </div>
-                            <div className="img-container">
+                            {/* <div className="img-container">
                                 <img src={alertData.profileImg} alt="" />
-                            </div>
+                            </div> */}
                         </div>
                     )}
                 </div>

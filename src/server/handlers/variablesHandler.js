@@ -117,6 +117,7 @@ export async function updateVariable(variable, context, userId, property = null)
                     return 'Stream is not live';
                 } else {
                     const streamInfo = cache.get('streamInfo');
+                    console.log(streamInfo);
                     const upTime = streamInfo.startedAt;
                     const now = new Date();
                     const diff = now - upTime;
@@ -147,7 +148,7 @@ export async function updateVariable(variable, context, userId, property = null)
                 if (watchTime === 0) {
                     return 'You have not watched the stream long enough to get a watch time';
                 } else {
-                    const formatTime = formatTimeFromMinutes(watchTime);
+                    const formatTime = await formatTimeFromMinutes(watchTime);
                     return `@${userData.displayName} has watched the stream for ${formatTime}`;
                 }
             case 'allArgs':

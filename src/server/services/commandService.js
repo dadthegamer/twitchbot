@@ -244,7 +244,7 @@ class CommandService {
         try {
             const prefix = '!';
             const { isFirst, isHighlighted, userInfo, id, isReply, isCheer } = msg;
-            const { userId, displayName, color, isVip, isSubscriber, isMod } = userInfo;
+            const { userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster } = userInfo;
             const commandName = command.slice(prefix.length);
             const commandNameTrimmed = commandName.replace(/[0-9]/g, '');
             const commandData = await this.getCommand(commandNameTrimmed);
@@ -259,6 +259,51 @@ class CommandService {
                 const userCooldownStatus = await this.userCooldownHandler(userId, commandName, userCooldown);
                 const globalCooldownStatus = await this.globalCooldownHandler(commandName, globalCooldown);
                 if (permissions.includes('everyone' || permissions === 'everyone')) {
+                    if (userCooldownStatus === true && globalCooldownStatus === true) {
+                        for (const handler of handlers) {
+                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
+                        }
+                    } else if (userCooldownStatus !== true) {
+                        // Calculate time left in seconds
+                        const timeLeft = formatTimeFromMilliseconds(userCooldownStatus - Date.now());
+                        chatClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
+                        return;
+                    } else if (globalCooldownStatus !== true) {
+                        const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
+                        chatClient.replyToMessage(`This command is on global cooldown. ${timeLeft} seconds left`, id);
+                        return;
+                    }
+                } else if (permissions.includes('vip' || permissions === 'vip') && isVip) {
+                    if (userCooldownStatus === true && globalCooldownStatus === true) {
+                        for (const handler of handlers) {
+                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
+                        }
+                    } else if (userCooldownStatus !== true) {
+                        // Calculate time left in seconds
+                        const timeLeft = formatTimeFromMilliseconds(userCooldownStatus - Date.now());
+                        chatClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
+                        return;
+                    } else if (globalCooldownStatus !== true) {
+                        const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
+                        chatClient.replyToMessage(`This command is on global cooldown. ${timeLeft} seconds left`, id);
+                        return;
+                    }
+                } else if (permissions.includes('subscriber' || permissions === 'subscriber') && isSubscriber) {
+                    if (userCooldownStatus === true && globalCooldownStatus === true) {
+                        for (const handler of handlers) {
+                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
+                        }
+                    } else if (userCooldownStatus !== true) {
+                        // Calculate time left in seconds
+                        const timeLeft = formatTimeFromMilliseconds(userCooldownStatus - Date.now());
+                        chatClient.replyToMessage(`You are on cooldown for this command. ${timeLeft} seconds left`, id);
+                        return;
+                    } else if (globalCooldownStatus !== true) {
+                        const timeLeft = formatTimeFromMilliseconds(globalCooldownStatus - Date.now());
+                        chatClient.replyToMessage(`This command is on global cooldown. ${timeLeft} seconds left`, id);
+                        return;
+                    }
+                } else if (permissions.includes('mod' || permissions === 'mod') && isMod || isBroadcaster) {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
                         for (const handler of handlers) {
                             await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });

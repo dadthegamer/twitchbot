@@ -2,19 +2,30 @@ import crypto from 'crypto';
 
 // Function to format time from minutes to a string
 export async function formatTimeFromMinutes(minToFormat) {
-    const seconds = Math.floor(minToFormat * 60);
-    const hours = Math.floor(minToFormat / 60);
-    const days = Math.floor(hours / 24);
-    const minutes = Math.floor(minToFormat % 60);
+    const years = Math.floor(minToFormat / 525600);
+    // Calculate the months by subtracting the years from the minutes and dividing by 43800
+    const months = Math.floor((minToFormat - (years * 525600)) / 43800);
+    // Calculate the days by subtracting the years and months from the minutes and dividing by 1440
+    const days = Math.floor((minToFormat - (years * 525600) - (months * 43800)) / 1440);
+    // Calculate the hours by subtracting the years, months, and days from the minutes and dividing by 60
+    const hours = Math.floor((minToFormat - (years * 525600) - (months * 43800) - (days * 1440)) / 60);
+    // Calculate the minutes by subtracting the years, months, days, and hours from the minutes
+    const minutes = Math.floor(minToFormat - (years * 525600) - (months * 43800) - (days * 1440) - (hours * 60));
     const time = [];
+    if (years > 0) {
+        time.push(`${years} years`);
+    }
+    if (months > 0) {
+        time.push(`${months} months`);
+    }
     if (days > 0) {
         time.push(`${days} days`);
     }
     if (hours > 0) {
-        time.push(`${hours % 24} hours`);
+        time.push(`${hours} hours`);
     }
     if (minutes > 0) {
-        time.push(`${minutes % 60} minutes`);
+        time.push(`${minutes} minutes`);
     }
     return time.join(', ');
 }

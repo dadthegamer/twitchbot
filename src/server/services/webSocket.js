@@ -15,14 +15,6 @@ export class WebSocket {
         this.wss.on('connection', (ws) => {
             this.subsUpdate();
             this.displayMessage();
-            this.alert({
-                displayName: 'Connected',
-                alertType: 'sub',
-                alertMessage: 'Connected',
-                alertTime: 5000,
-                profileImg: 'https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png',
-                sound: '/audio/newSubscriber.mp3',
-            });
             connectedDevices++;
             this.notification({ 
                 notification: 'Connected to websocket',

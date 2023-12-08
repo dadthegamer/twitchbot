@@ -10,14 +10,16 @@ export async function createClip() {
         } else {
             const clip = await twitchApi.createClip();
             setTimeout(async () => {
-                if (clip) {
+                if (clip !== null) {
                     const clipData = await twitchApi.getClipById(clip);
                     const clipUrl = clipData.url;
                     if (clipUrl) {
                         chatClient.say(`Clip created: ${clipUrl}`);
                     }
+                } else {
+                    logger.error(`Error creating clip: ${clip}`);
                 }
-            }, 1000);
+            }, 1500);
         }
     }
     catch (err) {
