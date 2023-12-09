@@ -1,6 +1,8 @@
 import { Router } from 'express';
-import { cache, usersDB, interactionsDB } from '../../config/initializers.js';
+import { interactionsDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
+import isStreamer from '../../middleware/loggedin.js';
+
 
 const router = Router();
 
@@ -11,7 +13,6 @@ router.get('/', async (req, res) => {
         res.json(quotes);
     }
     catch (err) {
-        console.error('Error in GET /quotes:', err);
         logger.error(`Error in GET /quotes: ${err}`);
         res.status(500).json({ message: 'Internal server error' });
     }
@@ -25,28 +26,26 @@ router.get('/:id', async (req, res) => {
         res.json(quote);
     }
     catch (err) {
-        console.error('Error in GET /quotes/:id:', err);
         logger.error(`Error in GET /quotes/:id: ${err}`);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
 
 // Create a quote
-router.post('/', async (req, res) => {
+router.post('/', isStreamer, async (req, res) => {
     try {
         const { text, creator } = req.body;
         const quote = await interactionsDB.createQuote(text, creator);
         res.json(quote);
     }
     catch (err) {
-        console.error('Error in POST /quotes:', err);
         logger.error(`Error in POST /quotes: ${err}`);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
 
 // Update a quote
-router.put('/:id', async (req, res) => {
+router.put('/:id', isStreamer, async (req, res) => {
     try {
         const { id } = req.params;
         const { text, creator } = req.body;
@@ -60,7 +59,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Delete a quote
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isStreamer, async (req, res) => {
     try {
         const { id } = req.params;
         const quote = await interactionsDB.deleteQuote(id);
@@ -71,7 +70,6 @@ router.delete('/:id', async (req, res) => {
         }
     }
     catch (err) {
-        console.error('Error in DELETE /quotes/:id:', err);
         logger.error(`Error in DELETE /quotes/:id: ${err}`);
         res.status(500).json({ message: 'Internal server error' });
     }

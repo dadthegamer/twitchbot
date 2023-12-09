@@ -53,7 +53,6 @@ class OBSService {
             this.inteverals.forEach(interval => clearInterval(interval));
             this.startEventListeners();
             this.getScenes();
-            this.startReplayBuffer();
         }
         catch (err) {
             if (err.message === 'WebSocket was closed before the connection was established') {
@@ -144,9 +143,12 @@ class OBSService {
     // Method to start recording
     async startRecording() {
         try {
-            await this.obs.call('StartRecord');
+            if (!this.connected) {
+                return;
+            } else {
+                await this.obs.call('StartRecord');
+            }
         } catch (error) {
-            console.log(error);
             logger.error(`Error starting recording: ${error}`);
         }
     }
@@ -154,7 +156,11 @@ class OBSService {
     // Method to stop recording
     async stopRecording() {
         try {
-            await this.obs.call('StopRecord');
+            if (!this.connected) {
+                return;
+            } else {
+                await this.obs.call('StopRecord');
+            }
         } catch (error) {
             logger.error(`Error stopping recording: ${error}`);
         }
@@ -163,7 +169,11 @@ class OBSService {
     // Method to start the replay buffer
     async startReplayBuffer() {
         try {
-            await this.obs.call('StartReplayBuffer');
+            if (!this.connected) {
+                return;
+            } else {
+                await this.obs.call('StartReplayBuffer');
+            }
         } catch (error) {
             logger.error(`Error starting replay buffer: ${error}`);
         }
@@ -172,7 +182,11 @@ class OBSService {
     // Method to stop the replay buffer
     async stopReplayBuffer() {
         try {
-            await this.obs.call('StopReplayBuffer');
+            if (!this.connected) {
+                return;
+            } else {
+                await this.obs.call('StopReplayBuffer');
+            }
         } catch (error) {
             logger.error(`Error stopping replay buffer: ${error}`);
         }
@@ -181,7 +195,11 @@ class OBSService {
     // Method to save the replay buffer
     async saveReplayBuffer() {
         try {
-            await this.obs.call('SaveReplayBuffer');
+            if (!this.connected) {
+                return;
+            } else {
+                await this.obs.call('SaveReplayBuffer');
+            }
         } catch (error) {
             logger.error(`Error saving replay buffer: ${error}`);
         }
@@ -190,7 +208,11 @@ class OBSService {
     // Method to start streaming
     async startStreaming() {
         try {
-            await this.obs.call('StartStreaming');
+            if (!this.connected) {
+                return;
+            } else {
+                await this.obs.call('StartStreaming');
+            }
         } catch (error) {
             logger.error(`Error starting streaming: ${error}`);
         }
@@ -199,7 +221,11 @@ class OBSService {
     // Method to stop streaming
     async stopStreaming() {
         try {
-            await this.obs.call('StopStreaming');
+            if (!this.connected) {
+                return;
+            } else {
+                await this.obs.call('StopStreaming');
+            }
         } catch (error) {
             logger.error(`Error stopping streaming: ${error}`);
         }
@@ -208,9 +234,13 @@ class OBSService {
     // Method to set the current scene
     async setCurrentScene(sceneName) {
         try {
-            await this.obs.call('SetCurrentProgramScene', {
-                'sceneName': sceneName
-            });
+            if (!this.connected) {
+                return;
+            } else {
+                await this.obs.call('SetCurrentProgramScene', {
+                    'sceneName': sceneName
+                });
+            }
         } catch (error) {
             logger.error(`Error setting current scene: ${error}`);
         }
@@ -219,8 +249,12 @@ class OBSService {
     // Method to get the current scene
     async getCurrentScene() {
         try {
-            const currentScene = await this.obs.call('GetCurrentProgramScene');
-            return currentScene.name;
+            if (!this.connected) {
+                return;
+            } else {
+                const currentScene = await this.obs.call('GetCurrentProgramScene');
+                return currentScene.name;
+            }
         } catch (error) {
             logger.error(`Error getting current scene: ${error}`);
         }
