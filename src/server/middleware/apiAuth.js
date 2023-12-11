@@ -8,10 +8,8 @@ function apiAuth(req, res, next) {
     if (apiKey !== process.env.API_KEY) {
         const ip = req.ip;
         logger.error(`Unauthorized request to ${req.originalUrl} from ${ip}`);
-        console.log(`Unauthorized request to ${req.originalUrl} from ${ip}`);
         return res.status(401).json({ error: 'Unauthorized' });
     } else {
-        console.log('Authorized');
         next();
     }
 };

@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import logger from '../../utilities/logger.js';
 import { usersDB, currencyDB } from '../../config/initializers.js';
+import { apiAuth } from '../../middleware/apiAuth.js';
+
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', apiAuth, async (req, res) => {
     try {
         let leaderboards = [];
 

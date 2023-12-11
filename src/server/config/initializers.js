@@ -16,7 +16,7 @@ import InteractionsDbService from '../services/interactiveService.js';
 import GameService from '../services/gameService.js';
 import TwitchChannelPointService from '../services/channelPointService.js';
 import StreamDB from '../services/streamService.js';
-// import CurrencyService from '../services/currencyService.js';
+import CurrencyService from '../services/currencyService.js';
 import ChatLogService from '../services/chatLogService.js';
 import ActiveUsersCache from '../services/activeUsersService.js';
 import SettingsService from '../services/settingService.js';
@@ -76,7 +76,7 @@ const channelPointService = new TwitchChannelPointService(cache, db.dbConnection
 const streamDB = new StreamDB(db.dbConnection, cache);
 
 // CurrencyService initialization
-// const currencyDB = new CurrencyService(db.dbConnection, cache);
+const currencyDB = new CurrencyService(db.dbConnection, cache);
 
 // ChatLogService initialization
 const chatLogService = new ChatLogService(db.dbConnection);
@@ -119,7 +119,7 @@ export {
     gameService,
     channelPointService,
     streamDB,
-    // currencyDB,
+    currencyDB,
     chatLogService,
     activeUsersCache,
     settingsDB,

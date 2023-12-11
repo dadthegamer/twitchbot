@@ -219,7 +219,6 @@ class TwitchChannelPointService {
                     return;
                 } else {
                     for (const handler of handlers) {
-                        console.log(handler);
                         actionEvalulate(handler, { userId, displayName, input: userInput });
                     }
                 }

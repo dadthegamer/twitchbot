@@ -87,7 +87,11 @@ class InteractionsDbService {
         try {
             const quotes = await this.cache.get('quotes');
             const quote = quotes.find(quote => quote.id === id);
-            return quote;
+            if (!quote) {
+                return null;
+            } else {
+                return quote;
+            }
         }
         catch (err) {
             logger.error(`Error in getQuoteById: ${err}`);
@@ -98,19 +102,25 @@ class InteractionsDbService {
     async createQuote(quote, creator) {
         try {
             const quotes = await this.cache.get('quotes');
-            const lastQuote = quotes[quotes.length - 1];
-            const newQuote = {
-                id: lastQuote.id + 1,
-                text: quote,
-                originator: 'dadthegam3r',
-                creator: creator,
-                createdAt: new Date(),
+            // Starting at 1 see if there is a quote with that id. If there is not then assign that id to the new quote
+            for (let i = 1; i < quotes.length + 1; i++) {
+                const quoteExists = await this.getQuoteById(i);
+                if (!quoteExists) {
+                    const newQuote = {
+                        id: i,
+                        text: quote,
+                        originator: 'dadthegam3r',
+                        creator: creator,
+                        createdAt: new Date(),
+                    }
+                    await this.dbConnection.collection('quotes').insertOne(newQuote);
+                    await this.getAllQuotes();
+                    return newQuote;
+                }
             }
-            await this.dbConnection.collection('quotes').insertOne(newQuote);
-            await this.getAllQuotes();
-            return newQuote;
         }
         catch (err) {
+            console.log(err);
             logger.error(`Error in createQuote: ${err}`);
         }
     }
