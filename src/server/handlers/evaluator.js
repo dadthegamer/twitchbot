@@ -13,13 +13,13 @@ import { startRecording, stopRecording, startStreaming, stopStreaming, setCurren
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context = null) {
     try {
-        const { displayName, userId, messageID, input } = context;
+        const { displayName, userId, messageID, input } = context || {};
         const { type, response, action } = handler;
 
         // Check if the response contains a variable
         if (response) {
             if (response.includes('$')) {
-                const newResponse = await variableHandler(response, userId);
+                const newResponse = await variableHandler(response, input, userId);
                 handler.response = newResponse;
             };
         };
@@ -114,6 +114,7 @@ export async function actionEvalulate(handler, context = null) {
         }
     }
     catch (err) {
+        console.log(err);
         logger.error(`Error in evaluate: ${err}`);
     }
 }

@@ -8,11 +8,12 @@ class TwitchChannelPointService {
         this.cache = cache;
         this.dbConnection = dbConnection;
         this.collectionName = 'channelRewards';
-        this.getAllChannelRewards();
+        this.getChannelRewards();
+        this.getAllChannelRewardsFromTwitch();
     }
 
     // Method to get all the channel rewards for a channel, store them in the cache, and update the database
-    async getAllChannelRewards() {
+    async getAllChannelRewardsFromTwitch() {
         try {
             const channelRewards = await twitchApi.getChannelRewards();
             // Get all the channel rewards that are managed by the bot
@@ -26,11 +27,7 @@ class TwitchChannelPointService {
             }
             // For each channel reward insert it into the database if it does not exist
             for (const channelReward of channelRewards) {
-                channelReward.handlers = [];
-                const channelRewardExists = await this.dbConnection.collection(this.collectionName).findOne({ id: channelReward.id });
-                if (!channelRewardExists) {
-                    await this.dbConnection.collection(this.collectionName).insertOne(channelReward);
-                }
+                this.insertChannelReward(channelReward);
             }
 
             // Now get all the channel rewards from the database and remove any channel rewards that are not in the Twitch api
@@ -41,12 +38,37 @@ class TwitchChannelPointService {
                     await this.dbConnection.collection(this.collectionName).deleteOne({ id: channelRewardFromDatabase.id });
                 }
             }
+
             // Cache the channel rewards
-            this.cache.set('channelRewards', channelRewards);
+            this.cache.set('unmanagedChannelRewards', channelRewards);
             this.cache.set('managedChannelRewards', managedChannelRewards);
         }
         catch (error) {
             logger.error(`Error getting channel rewards in TwitchChannelPointsService: ${error}`);
+        }
+    }
+
+    // Method to insert a channel reward into the database. Uperset everything except the handlers property
+    async insertChannelReward(channelReward) {
+        try {
+            const channelRewardExists = await this.dbConnection.collection(this.collectionName).findOne({ id: channelReward.id });
+            if (!channelRewardExists) {
+                channelReward.handlers = [];
+                await this.dbConnection.collection(this.collectionName).insertOne(channelReward);
+                this.cache.set(channelReward.id, channelReward)
+            } else {
+                // Get the handlers from the database
+                const handlers = channelRewardExists.handlers;
+                // Set the handlers property on the channel reward to the handlers from the database
+                channelReward.handlers = handlers;
+                // Update the channel reward in the database
+                await this.dbConnection.collection(this.collectionName).updateOne({ id: channelReward.id }, { $set: { ...channelReward, handlers: handlers } });
+                // Set the channel reward in the cache
+                this.cache.set(channelReward.id, channelReward);
+            }
+        }
+        catch (error) {
+            logger.error(`Error inserting channel reward in TwitchChannelPointsService: ${error}`);
         }
     }
 
@@ -68,9 +90,12 @@ class TwitchChannelPointService {
     // Method to get a channel reward by the id
     async getChannelRewardById(id) {
         try {
-            const channelRewards = this.cache.get('channelRewards');
-            const channelReward = channelRewards.find(channelReward => channelReward.id === id);
-            return channelReward;
+            const reward = this.cache.get(id);
+            if (reward) {
+                return reward;
+            } else {
+                return null;
+            }
         }
         catch (error) {
             logger.error(`Error getting channel reward in TwitchChannelPointsService: ${error}`);
@@ -183,10 +208,8 @@ class TwitchChannelPointService {
     // Method to handle a channel reward redemption
     async rewardRedemptionHandler(rewardId, userId, displayName, userInput) {
         try {
-            // Get all the channel rewards from the cache
-            const channelRewards = this.cache.get('channelRewards');
             // Find the channel reward by the rewardId passed in
-            const channelReward = channelRewards.find(channelReward => channelReward.id === rewardId);
+            const channelReward = this.cache.get(rewardId);
             // If the channel reward does not exist return
             if (!channelReward) {
                 return;
@@ -195,14 +218,15 @@ class TwitchChannelPointService {
                 if (!handlers) {
                     return;
                 } else {
-                    // For each handler evaluate the handler
                     for (const handler of handlers) {
+                        console.log(handler);
                         actionEvalulate(handler, { userId, displayName, input: userInput });
                     }
                 }
             }
         }
         catch (error) {
+            console.log(error);
             logger.error(`Error handling reward redemption in TwitchChannelPointsService: ${error}`);
         }
     }

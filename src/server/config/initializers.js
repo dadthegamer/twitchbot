@@ -22,6 +22,8 @@ import ActiveUsersCache from '../services/activeUsersService.js';
 import SettingsService from '../services/settingService.js';
 import OBSService from '../services/obsService.js';
 import { startHighlightedMessageAlertsHandler } from '../handlers/highlightedMessageHandler.js';
+import TimerManager from '../services/timerService.js';
+
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -91,6 +93,9 @@ const settingsDB = new SettingsService(db.dbConnection, cache);
 // OBS Service initialization
 const obsService = new OBSService(db.dbConnection, cache);
 
+// Timer Manager initialization
+const timerManager = new TimerManager(db.dbConnection, cache);
+
 // Start the alerts handler
 startAlertsHandler();
 
@@ -118,5 +123,6 @@ export {
     chatLogService,
     activeUsersCache,
     settingsDB,
-    obsService
+    obsService,
+    timerManager
 };

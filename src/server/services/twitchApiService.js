@@ -561,7 +561,6 @@ class TwitchApiClient {
                 title: data.title,
                 url: data.url,
                 thumbnailUrl: data.thumbnailUrl,
-                views: data.views,
                 creationDate: data.creationDate,
                 broadcasterDisplayName: data.broadcasterDisplayName,
                 embedUrl: data.embedUrl,
@@ -586,6 +585,7 @@ class TwitchApiClient {
                 views: clip.views,
                 duration: clip.duration,
                 creationDate: clip.creationDate,
+                embedUrl: clip.embedUrl,
             }));
             clips = [...clips, ...data];
             const clip = clips[Math.floor(Math.random() * clips.length)];

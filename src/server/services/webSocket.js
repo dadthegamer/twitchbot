@@ -14,7 +14,11 @@ export class WebSocket {
         });
         this.wss.on('connection', (ws) => {
             this.subsUpdate();
-            this.displayMessage();
+            const tvMessage = cache.get('displayMessage');
+            console.log(tvMessage);
+            if (tvMessage) {
+                this.displayMessage(tvMessage);
+            };
             connectedDevices++;
             this.notification({ 
                 notification: 'Connected to websocket',
@@ -156,11 +160,18 @@ export class WebSocket {
     }
 
     // Method to send a message to the display
-    displayMessage() {
-        const message = cache.get('tvMessage');
+    displayMessage(message) {
         const payload = {
             message,
         };
         this.broadcastMessage('displayMessage', payload);
+    }
+
+    // Method to send a video to the display
+    displayVideo(videoUrl) {
+        const payload = {
+            videoUrl,
+        };
+        this.broadcastMessage('displayVideo', payload);
     }
 }

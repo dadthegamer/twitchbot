@@ -19,14 +19,14 @@ variables.push('currency')
 variables.push('rewardInput')
 variables.push('args')
 
-export async function variableHandler(context, userId = null) {
+export async function variableHandler(context, input = null, userId = null) {
     try {
         const varsWithProps = context.match(/\$[a-zA-Z]+(\.[a-zA-Z]+)?/g);
         const varsNoProps = context.match(/\$[a-zA-Z]+(\[\d+\])?/g);
         if (varsWithProps) {
             for (const variable of varsWithProps) {
                 const [varName, varProperty] = variable.slice(1).split('.');
-                const variableValue = await updateVariable(varName, context, userId, varProperty);
+                const variableValue = await updateVariable(varName, context, userId, varProperty, input);
                 let propValue = variableValue;
                 context = context.replace(variable, propValue);
             }
@@ -43,7 +43,7 @@ export async function variableHandler(context, userId = null) {
                         context = context.replace(variable, propValue);
                     } else {
                         if (variables.includes(varName)) {
-                            const variableResponse = await updateVariable(varName, context, userId, index);
+                            const variableResponse = await updateVariable(varName, context, userId, index, input);
                             if (variableResponse) {
                                 context = context.replace(variable, variableResponse);
                             }
@@ -59,7 +59,7 @@ export async function variableHandler(context, userId = null) {
     }
 }
 
-export async function updateVariable(variable, context, userId, property = null) {
+export async function updateVariable(variable, context, userId, property = null, input = null) {
     try {
         const userData = await usersDB.getUserByUserId(userId);
         switch (variable) {
@@ -193,8 +193,8 @@ export async function updateVariable(variable, context, userId, property = null)
                 const quoteId = parseInt(property);
                 const quote = await interactionsDB.getQuoteById(quoteId);
                 return quote.text;
-            case 'rewardInput':
-                return context;
+            case 'rewardUserInput':
+                return input;
             default:
                 return null;
         }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactTwitchEmbedVideo from "react-twitch-embed-video"
 import '../../styles/overlay/display.css';
 
 
@@ -8,6 +9,7 @@ function Display() {
     const [message, setMessage] = useState(null);
     const [showMessage, setShowMessage] = useState(true);
     const [showVideo, setShowVideo] = useState(false);
+    const [videoUrl, setVideoUrl] = useState(null);
 
 
     const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
@@ -30,8 +32,9 @@ function Display() {
                     console.log(data.payload);
                     setMessage(data.payload.message);
                     setShowMessage(true);
-                } else if (data.type === 'subsUpdate') {
+                } else if (data.type === 'displayVideo') {
                     console.log(data.payload);
+                    playVideo(data.payload.videoUrl);
                 };
             };
 
@@ -66,12 +69,16 @@ function Display() {
         };
     }, []);
 
-    
+    const playVideo = (videoUrl) => {
+        setVideoUrl(videoUrl);
+        setShowVideo(true);
+    };
+
     return (
         <div>
             {showMessage && <div className="display">{message}</div>}
             {showVideo && <div className="video">
-                <video src="https://clips.twitch.tv/AgreeableTriumphantCrabsGrammarKing-Afe5GDRuQBzbyudq"></video>
+                <ReactTwitchEmbedVideo url={videoUrl} />
             </div>}
         </div>
     )

@@ -1,4 +1,6 @@
 import logger from "../utilities/logger.js";
+import { webSocket } from "../config/initializers.js";
+import { openAiRequestIsAppropriate } from "./openAi.js";
 
 // Class to to handle interactions with the database
 class InteractionsDbService {
@@ -138,12 +140,13 @@ class InteractionsDbService {
             id = parseInt(id);
         }
         try {
-            const res = await this.dbConnection.collection('quotes').updateOne({ id: id }, 
-                { $set: 
-                    { 
-                    text: quote,
-                    creator: creator 
-                    } 
+            const res = await this.dbConnection.collection('quotes').updateOne({ id: id },
+                {
+                    $set:
+                    {
+                        text: quote,
+                        creator: creator
+                    }
                 }
             );
             console.log(res)
@@ -173,14 +176,19 @@ class InteractionsDbService {
     // Method to set the message that is displayed on the tv
     async setTvMessage(message) {
         try {
-            await this.dbConnection.collection('gameSettings').updateOne({ id: 'display' }, 
-                { $set: 
-                    { 
-                    message: message
-                    } 
-                }
-            );
-            this.cache.set('tvMessage', message);
+            const appropriate = await openAiRequestIsAppropriate(message);
+            if (appropriate) {
+                await this.dbConnection.collection('gameSettings').updateOne({ id: 'display' },
+                    {
+                        $set:
+                        {
+                            message: message
+                        }
+                    }
+                );
+                this.cache.set('displayMessage', message);
+                webSocket.displayMessage(message);
+            }
         }
         catch (err) {
             logger.error(`Error in setTvMessage: ${err}`);
@@ -191,7 +199,7 @@ class InteractionsDbService {
     async getTvMessage() {
         try {
             const tvMessage = await this.dbConnection.collection('gameSettings').findOne({ id: 'display' });
-            this.cache.set('tvMessage', tvMessage.message);
+            this.cache.set('displayMessage', tvMessage.message);
             return tvMessage.message;
         }
         catch (err) {
@@ -221,11 +229,12 @@ class InteractionsDbService {
             };
             if (!queue.includes(displayName)) {
                 queue.push(displayName);
-                await this.dbConnection.collection('gameSettings').updateOne({ id: 'queue' }, 
-                    { $set: 
-                        { 
-                        queue: queue
-                        } 
+                await this.dbConnection.collection('gameSettings').updateOne({ id: 'queue' },
+                    {
+                        $set:
+                        {
+                            queue: queue
+                        }
                     }
                 );
                 this.cache.set('queue', queue);
@@ -246,11 +255,12 @@ class InteractionsDbService {
             const queue = await this.cache.get('queue');
             if (queue.includes(displayName)) {
                 queue.splice(queue.indexOf(displayName), 1);
-                await this.dbConnection.collection('gameSettings').updateOne({ id: 'queue' }, 
-                    { $set: 
-                        { 
-                        queue: queue
-                        } 
+                await this.dbConnection.collection('gameSettings').updateOne({ id: 'queue' },
+                    {
+                        $set:
+                        {
+                            queue: queue
+                        }
                     }
                 );
                 this.cache.set('queue', queue);
@@ -267,11 +277,12 @@ class InteractionsDbService {
     // Method to clear the queue
     async clearQueue() {
         try {
-            await this.dbConnection.collection('gameSettings').updateOne({ id: 'queue' }, 
-                { $set: 
-                    { 
-                    queue: []
-                    } 
+            await this.dbConnection.collection('gameSettings').updateOne({ id: 'queue' },
+                {
+                    $set:
+                    {
+                        queue: []
+                    }
                 }
             );
             this.cache.set('queue', []);
