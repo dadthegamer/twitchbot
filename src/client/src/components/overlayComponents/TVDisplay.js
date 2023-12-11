@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import ReactTwitchEmbedVideo from "react-twitch-embed-video"
 import '../../styles/overlay/display.css';
 
 
@@ -78,7 +77,7 @@ function Display() {
         <div>
             {showMessage && <div className="display">{message}</div>}
             {showVideo && <div className="video">
-                <ReactTwitchEmbedVideo url={videoUrl} />
+                <video src=""></video>
             </div>}
         </div>
     )
