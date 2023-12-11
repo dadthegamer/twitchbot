@@ -21,6 +21,7 @@ import ChatLogService from '../services/chatLogService.js';
 import ActiveUsersCache from '../services/activeUsersService.js';
 import SettingsService from '../services/settingService.js';
 import OBSService from '../services/obsService.js';
+import { startHighlightedMessageAlertsHandler } from '../handlers/highlightedMessageHandler.js';
 
 // Cache initialization
 const cache = new CacheService('mainCache');
@@ -92,6 +93,9 @@ const obsService = new OBSService(db.dbConnection, cache);
 
 // Start the alerts handler
 startAlertsHandler();
+
+// Start the highlighted message alerts handler
+startHighlightedMessageAlertsHandler();
 
 export {
     db,

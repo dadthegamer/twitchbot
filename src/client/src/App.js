@@ -24,6 +24,7 @@ import Dashboard from './components/Dashboard';
 import Games from './components/Games';
 import CamOverlay from './components/overlayComponents/CamOverlay';
 import ProgressBar from './components/overlayComponents/goalBar';
+import HighlightedMessage from './components/overlayComponents/HighlightedMessage';
 
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
         <Route path="intermission" element={<Intermission />} />
         <Route path="display" element={<Display />} />
         <Route path="tts" element={<TextToSpeech />} />
+        <Route path="highlightedmessage" element={<HighlightedMessage />} />
       </Route>
 
       {/* Main Routes */}

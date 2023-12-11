@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background-color: rgba(17, 17, 17, 0.5);
+    --primary-color: #1b1b1b;
+    --terrestrial-color: #1F1F1F;
+    --secondary-color: #005AFF;
+    --font-color: #FFFFFF;
+}
+
+
+.highlighted-message-container {
+    width: 50%;
+    max-width: 500px;
+    height: 50%;
+    align-items: center;
+    padding: 20px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Montserrat', sans-serif;
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 5px;
+}
+
+
+.highlighted-message {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+    position: relative;
+    border-radius: 5px;
+    z-index: 99;
+    transition: all 0.25s ease-in-out;
+    background-color: transparent;
+    color: #111111;
+    background-color: var(--background-color);
+    padding: 20px;
+    border: 1px solid var(--primary-color);
+}
+
+.user-profile-image {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+    position: absolute;
+    left: 50%;
+    top: -30%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+}
+
+.message-details {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    border-radius: 5px;
+    z-index: 99;
+    transition: all 0.25s ease-in-out;
+    background-color: transparent;
+    color: #111111;
+}
+
+.message-details span {
+    font-size: 1.5rem;
+    color: #FFFFFF;
+    width: 100%;
+    text-align: left;
+}
+
+.message-details span:first-child {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #FFFFFF;
+    text-align: left;
+    width: 100%;
+    text-align: left;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    margin-top: -10px;
+}
+
+.message-details span:last-child {
+    font-size: 1rem;
+    color: #FFFFFF;
+    text-align: left;
+    width: 100%;
+    text-align: left;
+}
+
+@keyframes popIn {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }    
+}

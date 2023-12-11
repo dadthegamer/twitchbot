@@ -21,7 +21,6 @@ variables.push('args')
 
 export async function variableHandler(context, userId = null) {
     try {
-        console.log(`context: ${context}`);
         const varsWithProps = context.match(/\$[a-zA-Z]+(\.[a-zA-Z]+)?/g);
         const varsNoProps = context.match(/\$[a-zA-Z]+(\[\d+\])?/g);
         if (varsWithProps) {

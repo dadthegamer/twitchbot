@@ -2,6 +2,7 @@ import { cache } from "../../config/initializers.js";
 import { webSocket, commandHandler } from "../../config/initializers.js";
 import logger from "../../utilities/logger.js";
 import { arrivalHandler } from "./arrivalHandler.js";
+import { addHighlightedAlert } from "../highlightedMessageHandler.js";
 
 
 // Message Handler
@@ -17,6 +18,9 @@ export async function onMessageHandler(channel, user, message, msg) {
         arrivalHandler({ userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster });
         if (command.startsWith(prefix)) {
             commandHandler.commandHandler(command, user, message, msg);
+        }
+        if (isHighlight) {
+            addHighlightedAlert(userId, displayName, message);
         }
     }
     catch (err) {

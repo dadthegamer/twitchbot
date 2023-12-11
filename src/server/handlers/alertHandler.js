@@ -1,6 +1,6 @@
 import { webSocket } from '../config/initializers.js';
 import logger from '../utilities/logger.js';
-import { usersDB } from '../config/initializers.js';
+
 
 let alertQueue = [];
 let alertShowing = false;

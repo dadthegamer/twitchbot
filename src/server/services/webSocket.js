@@ -87,6 +87,10 @@ export class WebSocket {
         this.broadcastMessage('alert', payload);
     }
 
+    highlightedMessage(payload) {
+        this.broadcastMessage('highlightedMessage', payload);
+    }
+
     // Method to send a new TTS message
     TTS(data) {
         try {

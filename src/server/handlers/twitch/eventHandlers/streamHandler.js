@@ -21,7 +21,7 @@ export async function onStreamOnline(e) {
         const streamInfo = e.getStream();
         cache.set('live', true);
         const { title, gameName, startedAt, isMature, tags, gameId, thumbnailUrl } = streamInfo;
-        const boxArtURL = thumbnailUrl.replace('{width}', '1920').replace('{height}', '1080');
+        // const boxArtURL = thumbnailUrl.replace('{width}', '1920').replace('{height}', '1080');
         const streamInfoData = {
             title,
             gameName,
