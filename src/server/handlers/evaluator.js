@@ -8,6 +8,7 @@ import { addToQueue, removeFromQueue, getQueue, clearQueue } from "./actionHandl
 import { getQuoteById, getRandomQuote, createQuote } from "./actionHandlers/quote.js";
 import { createClip } from "./actionHandlers/clips.js";
 import { startRecording, stopRecording, startStreaming, stopStreaming, setCurrentScene, getCurrentScene, saveReplayBuffer } from "./actionHandlers/obsHandler.js";
+import { ttsHandler } from "./actionHandlers/ttsHandler.js";
 
 
 // Method to evaluate the handler
@@ -105,6 +106,10 @@ export async function actionEvalulate(handler, context = null) {
                     default:
                         logger.error(`OBS action not found: ${action}`);
                 }
+                break;
+            case 'tts':
+                console.log('TTS Handler');
+                ttsHandler(handler.response, userId);
                 break;
             case 'consoleLog':
                 console.log(handler.response);

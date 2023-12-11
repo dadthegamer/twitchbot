@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import logger from '../../utilities/logger.js';
 import {textToSpeech} from '../../services/awsService.js';
-
+import { apiAuth } from '../../middleware/apiAuth.js';
 
 const router = Router();
 
 
-router.post('/', async (req, res) => {
+router.post('/', apiAuth, async (req, res) => {
     try {
         const { message } = req.body;
         const speech = await textToSpeech(message);

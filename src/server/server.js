@@ -84,6 +84,7 @@ import discordCallbackRouter from './routes/authRoutes/discordCallback.js';
 import statusRouter from './routes/apiRoutes/status.js';
 import commandsRouter from './routes/apiRoutes/commands.js';
 import quotesRouter from './routes/apiRoutes/quotes.js';
+import ttsRouter from './routes/apiRoutes/tts.js';
 
 // Auth routes
 app.use('/api/check-auth', authRouter);
@@ -101,6 +102,7 @@ app.use('/auth/discord/callback', discordCallbackRouter);
 app.use('/api/status', statusRouter);
 app.use('/api/commands', commandsRouter);
 app.use('/api/quotes', quotesRouter);
+app.use('/api/tts', ttsRouter);
 
 
 app.listen(port, () => {
