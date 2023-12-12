@@ -556,9 +556,8 @@ class TwitchApiClient {
     // Method to get a clip by ID
     async getTwitchClipById(clipId) {
         try {
-            console.log(`Getting clip by ID: ${clipId}`)
+            clipId = clipId.toString();
             const data = await this.apiClient.clips.getClipById(clipId);
-            console.log(data);
             const clip = {
                 id: data.id,
                 title: data.title,
@@ -568,10 +567,10 @@ class TwitchApiClient {
                 broadcasterDisplayName: data.broadcasterDisplayName,
                 embedUrl: data.embedUrl,
             };
-            console.log(clip);
             return clip;
         }
         catch (error) {
+            console.log(error);
             logger.error(`Error getting clip by ID: ${error}`);
         }
     }
