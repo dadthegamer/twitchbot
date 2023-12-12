@@ -545,6 +545,7 @@ class TwitchApiClient {
     async createClip() {
         try {
             const data = await this.apiClient.clips.createClip({ channel: this.userId });
+            console.log(data);
             return data;
         }
         catch (error) {
@@ -556,6 +557,7 @@ class TwitchApiClient {
     async getClipById(clipId) {
         try {
             const data = await this.apiClient.clips.getClipById(clipId);
+            console.log(data);
             const clip = {
                 id: data.id,
                 title: data.title,

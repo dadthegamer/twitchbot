@@ -6,9 +6,10 @@ import { twitchApi, chatClient, cache } from '../../config/initializers.js';
 export async function createClip() {
     try {
         const live = await cache.get('live');
-        if (live) {
+        if (!live) {
             chatClient.say('Stream is not live, cannot create clip.');
         } else {
+            console.log('Creating clip...');
             const clip = await twitchApi.createClip();
             if (clip !== null) {
                 const clipData = await twitchApi.getClipById(clip);

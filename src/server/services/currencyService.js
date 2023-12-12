@@ -24,7 +24,7 @@ class CurrencyService {
         await this.getAllCurrencies();
         await this.createFirstCurrency();
         await this.createRaffleCurrency();
-        await this.currencyPayoutHandler();
+        // await this.currencyPayoutHandler();
     }
 
     // Method to restart the currency payout handler and reset the intervals

@@ -50,14 +50,13 @@ function getSound(type) {
     }
 }
 
-export async function addAlert(userId, displayName, alertType, alertMessage, profileImg) {
+export async function addAlert(userId, displayName, alertType, alertMessage) {
     try {
         const sound = getSound(alertType);
         alertQueue.push({
             displayName,
             alertType,
             alertMessage,
-            profileImg,
             alertTime,
             sound
         });

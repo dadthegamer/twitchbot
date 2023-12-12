@@ -7,10 +7,8 @@ import logger from "../../../utilities/logger.js";
 export async function onFollow(e) {
     try {
         const { userId, userDisplayName } = await e;
-        const userData = e.getUser();
-        const { profilePictureUrl } = userData;
-        await usersDB.newUser(userId);
-        addAlert(userId, userDisplayName, 'follow', `${userDisplayName} just followed!`, profilePictureUrl);
+        usersDB.newUser(userId);
+        addAlert(userId, userDisplayName, 'follow', `${userDisplayName} just followed!`);
         logger.info(`${userDisplayName} followed!`);
     }
     catch (error) {
