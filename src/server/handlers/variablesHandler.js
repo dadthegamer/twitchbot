@@ -116,8 +116,7 @@ export async function updateVariable(variable, context, userId, property = null,
                     return 'Stream is not live';
                 } else {
                     const streamInfo = cache.get('streamInfo');
-                    console.log(streamInfo);
-                    const upTime = streamInfo.startedAt;
+                    const upTime = streamInfo.startDate;
                     const now = new Date();
                     const diff = now - upTime;
                     const seconds = Math.floor(diff / 1000);
