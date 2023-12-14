@@ -1,4 +1,4 @@
-import { cache, chatClient, interactionsDB } from '../../config/initializers.js';
+import { chatClient, interactionsDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
 
 // Function to add a user to the queue

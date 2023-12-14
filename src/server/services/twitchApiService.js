@@ -7,17 +7,23 @@ import { environment, streamerUserId } from '../config/environmentVars.js';
 // Class for the Twitch API client
 class TwitchApiClient {
     constructor(authProvider, cache) {
-        this.apiClient = new ApiClient({ authProvider: authProvider, logger: { custom: { log: (level, message) => {
-            if (level === 'error') {
-                logger.error(message);
-            } else if (level === 'warn') {
-                logger.warn(message);
-            } else if (level === 'debug') {
-                logger.info(message);
-            } else if (level === 'crit') {
-                logger.crit(message);
+        this.apiClient = new ApiClient({
+            authProvider: authProvider, logger: {
+                custom: {
+                    log: (level, message) => {
+                        if (level === 'error') {
+                            logger.error(message);
+                        } else if (level === 'warn') {
+                            logger.warn(message);
+                        } else if (level === 'debug') {
+                            logger.info(message);
+                        } else if (level === 'crit') {
+                            logger.crit(message);
+                        }
+                    }
+                }
             }
-        }}}});
+        });
         this.userId = streamerUserId;
         this.cache = cache;
         this.getStreamInfo();
@@ -609,8 +615,8 @@ class TwitchApiClient {
         try {
             if (environment === 'development') {
                 await this.apiClient.eventSub.deleteAllSubscriptions();
-                }
             }
+        }
         catch (error) {
             logger.error(`Error deleting all event sub subscriptions: ${error}`);
         }
@@ -625,6 +631,29 @@ class TwitchApiClient {
         catch (error) {
             console.log(error);
             logger.error(`Error getting all event sub subscriptions: ${error}`);
+        }
+    }
+
+    // Method to get the stream schedule
+    async getStreamSchedule() {
+        try {
+            const data = await this.apiClient.schedule.getSchedule(this.userId);
+        }
+        catch (error) {
+            console.log(error);
+            logger.error(`Error getting stream schedule: ${error}`);
+        }
+    }
+
+    // Method to get the scheulde in iCal format
+    async getScheduleICal() {
+        try {
+            const data = await this.apiClient.schedule.getScheduleAsIcal(this.userId);
+            console.log(data);
+        }
+        catch (error) {
+            console.log(error);
+            logger.error(`Error getting stream schedule: ${error}`);
         }
     }
 }

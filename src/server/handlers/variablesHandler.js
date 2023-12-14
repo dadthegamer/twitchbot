@@ -118,30 +118,38 @@ export async function updateVariable(variable, context, userId, property = null,
                     return 'Stream is not live';
                 } else {
                     const streamInfo = cache.get('streamInfo');
-                    const upTime = streamInfo.startDate;
-                    const now = new Date();
-                    const diff = now - upTime;
-                    const seconds = Math.floor(diff / 1000);
-                    const minutes = Math.floor(seconds / 60);
-                    const hours = Math.floor(minutes / 60);
-                    const days = Math.floor(hours / 24);
-                    const hoursRemainder = hours % 24;
-                    const minutesRemainder = minutes % 60;
-                    const secondsRemainder = seconds % 60;
-                    let upTimeString = '';
+                    const startTime = streamInfo.startDate;
+                    // Calculate the difference between the start time and now down  to the second
+                    const diff = Math.abs(new Date() - startTime);
+                    // Convert the difference to days
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    // Convert the difference to hours
+                    const hours = Math.floor(diff / (1000 * 60 * 60));
+                    // Convert the difference to minutes
+                    const minutes = Math.floor(diff / (1000 * 60));
+                    // Convert the difference to seconds
+                    const seconds = Math.floor(diff / (1000));
+
+                    let string = '';
                     if (days > 0) {
-                        upTimeString += `${days}d `;
+                        string += `${days}d `;
                     }
+                    // Subtract the days from the hours to get the remainder
+                    const hoursRemainder = hours - (days * 24);
                     if (hoursRemainder > 0) {
-                        upTimeString += `${hoursRemainder}h `;
+                        string += `${hoursRemainder}h `;
                     }
+                    // Subtract the hours from the minutes to get the remainder
+                    const minutesRemainder = minutes - (hours * 60);
                     if (minutesRemainder > 0) {
-                        upTimeString += `${minutesRemainder}m `;
+                        string += `${minutesRemainder}m `;
                     }
+                    // Subtract the minutes from the seconds to get the remainder
+                    const secondsRemainder = seconds - (minutes * 60);
                     if (secondsRemainder > 0) {
-                        upTimeString += `${secondsRemainder}s`;
+                        string += `${secondsRemainder}s`;
                     }
-                    return `Stream has been live for ${upTimeString}`;
+                    return `Stream has been live for ${string}`;
                 }
             case 'watchTime':
                 const watchTime = userData.viewTime.allTime;

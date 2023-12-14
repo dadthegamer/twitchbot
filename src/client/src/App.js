@@ -25,6 +25,7 @@ import Games from './components/Games';
 import CamOverlay from './components/overlayComponents/CamOverlay';
 import ProgressBar from './components/overlayComponents/goalBar';
 import HighlightedMessage from './components/overlayComponents/HighlightedMessage';
+import SocialMediaRotator from './components/overlayComponents/SocialMediaRotator';
 
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
         <Route path="display" element={<Display />} />
         <Route path="tts" element={<TextToSpeech />} />
         <Route path="highlightedmessage" element={<HighlightedMessage />} />
+        <Route path="socialmediarotator" element={<SocialMediaRotator />} />
       </Route>
 
       {/* Main Routes */}
