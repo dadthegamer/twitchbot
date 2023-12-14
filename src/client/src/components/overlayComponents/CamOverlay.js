@@ -15,6 +15,7 @@ function CamOverlay() {
     const [displayAlertType, setDisplayAlertType] = useState(null);
     const [socket, setSocket] = useState(null);
     const [alertMessage, setAlertMessage] = useState('');
+    const [alertType, setAlertType] = useState('');
 
     // Get the websocket connection url from the environment variables if there is one if not use the default one
     const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
@@ -33,11 +34,14 @@ function CamOverlay() {
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 if (data.type === 'alert') {
-                    console.log(data.payload);
                     setAlertData(data.payload);
-                    playAlert(data.payload.alertTime);
+                    setAlertType(data.payload.alertType);
                     playAlertSound(data.payload.sound);
                     setAlertMessage(data.payload.alertMessage);
+                    setDisplayAlertType(data.payload.displayAlertType);
+                    setAlertColor(data.payload.alertColor);
+                    setFontColor(data.payload.fontColor);
+                    playAlert(data.payload.alertTime);
                 } else if (data.type === 'subsUpdate') {
                     setSubsCount(data.payload.monthlySubs);
                 };
@@ -92,7 +96,6 @@ function CamOverlay() {
             if (!alertData) {
                 return;
             }
-            setAlertColorBasedOnAlertType(alertData.alertType);
             setShowAlert(true);
             setAnimationDirection('normal');
             setAnimationDirection2('normal');
@@ -124,7 +127,8 @@ function CamOverlay() {
     }
 
     // Function to set the alert color based on the alert type
-    const setAlertColorBasedOnAlertType = (alertType) => {
+    const setAlertColorBasedOnAlertType = () => {
+        console.log(alertType);
         switch (alertType) {
             case 'sub':
                 setDisplayAlertType('Subscriber');
@@ -162,6 +166,7 @@ function CamOverlay() {
                 setFontColor('white');
                 break;
             default:
+                console.log('Unknown alert type');
                 setDisplayAlertType('Alert');
                 setAlertColor('#9146FF');
                 setFontColor('white');

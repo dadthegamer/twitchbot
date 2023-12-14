@@ -556,6 +556,9 @@ class TwitchApiClient {
     // Method to get a clip by ID
     async getTwitchClipById(clipId) {
         try {
+            if (clipId === null) {
+                return null;
+            }
             clipId = clipId.toString();
             const data = await this.apiClient.clips.getClipById(clipId);
             const clip = {

@@ -187,7 +187,7 @@ class InteractionsDbService {
     async setTvMessage(message) {
         try {
             const appropriate = await openAiRequestIsAppropriate(message);
-            if (appropriate) {
+            if (appropriate === true) {
                 await this.dbConnection.collection('gameSettings').updateOne({ id: 'display' },
                     {
                         $set:

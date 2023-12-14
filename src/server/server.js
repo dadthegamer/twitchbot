@@ -87,6 +87,7 @@ import quotesRouter from './routes/apiRoutes/quotes.js';
 import ttsRouter from './routes/apiRoutes/tts.js';
 import leaderboardRouter from './routes/apiRoutes/leaderboard.js';
 import streamInfoRouter from './routes/apiRoutes/stream.js';
+import testAlertsRouter from './routes/apiRoutes/testAlerts.js';
 
 
 // Auth routes
@@ -108,6 +109,7 @@ app.use('/api/quotes', quotesRouter);
 app.use('/api/tts', ttsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/stream', streamInfoRouter);
+app.use('/api/alerts', testAlertsRouter);
 
 
 app.listen(port, () => {

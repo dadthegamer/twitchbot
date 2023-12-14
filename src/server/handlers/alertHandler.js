@@ -50,15 +50,72 @@ function getSound(type) {
     }
 }
 
+// Function to set the alert color based on the alert type. Need to also set the font color
+async function getAlertColorBasedOnAlertType(type) {
+    let data = {};
+    try {
+        switch (type) {
+            case 'sub':
+                data.alertColor = 'blue';
+                data.fontColor = 'white';
+                data.displayAlertType = 'Subscriber';
+                break;
+            case 'resub':
+                data.alertColor = 'blue';
+                data.fontColor = 'white';
+                data.displayAlertType = 're-Subscriber';
+                break;
+            case 'giftedSub':
+                data.alertColor = '#44a6c6';
+                data.fontColor = 'black';
+                data.displayAlertType = 'Gifted Sub';
+                break;
+            case 'raid':
+                data.alertColor = '#FFC000';
+                data.fontColor = 'black';
+                data.displayAlertType = 'Raid';
+                break;
+            case 'follow':
+                data.alertColor = '#FFEA00';
+                data.fontColor = 'black';
+                data.displayAlertType = 'Follower';
+                break;
+            case 'cheer':
+                data.alertColor = '#9146FF';
+                data.fontColor = 'white';
+                data.displayAlertType = 'Cheer';
+                break;
+            case 'donation':
+                data.alertColor = '#118c4f';
+                data.fontColor = 'white';
+                data.displayAlertType = 'Donation';
+                break;
+            default:
+                data.alertColor = '#9146FF';
+                data.fontColor = 'white';
+                data.displayAlertType = 'Alert';
+                break;
+        }
+        return data;
+    }
+    catch (err) {
+        logger.error(`Error in getAlertColorBasedOnAlertType for alerts: ${err}`);
+    }
+}
+
 export async function addAlert(userId, displayName, alertType, alertMessage) {
     try {
         const sound = getSound(alertType);
+        const { alertColor, fontColor, displayAlertType } = await getAlertColorBasedOnAlertType(alertType);
         alertQueue.push({
             displayName,
             alertType,
             alertMessage,
             alertTime,
-            sound
+            sound,
+            alertColor,
+            fontColor,
+            displayAlertType,
         });
     }
     catch (err) {
