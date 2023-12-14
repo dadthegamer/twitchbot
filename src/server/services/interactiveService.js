@@ -201,6 +201,7 @@ class InteractionsDbService {
             }
         }
         catch (err) {
+            console.log(err);
             logger.error(`Error in setTvMessage: ${err}`);
         }
     }

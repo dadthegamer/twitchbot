@@ -20,7 +20,7 @@ export async function actionEvalulate(handler, context = null) {
         // Check if the response contains a variable
         if (response) {
             if (response.includes('$')) {
-                const newResponse = await variableHandler(response, input, userId);
+                const newResponse = await variableHandler(response, { input, userId, displayName });
                 handler.response = newResponse;
             };
         };
@@ -32,6 +32,7 @@ export async function actionEvalulate(handler, context = null) {
                 replyHandler(handler.response, messageID);
                 break;
             case 'display':
+                console.log('Display Handler');
                 displayHandler(handler.response);
                 break;
             case 'spin':

@@ -30,7 +30,7 @@ export async function openAiRequestIsAppropriate(message) {
     const response = chatCompletion.choices[0].message.content;
     // Parse the response into a json object
     const responseJson = JSON.parse(response);
-    return responseJson;
+    return responseJson.response;
 }
 
 // Function to roast the user

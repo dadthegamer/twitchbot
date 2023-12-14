@@ -460,10 +460,10 @@ class CurrencyService {
         try {
             // Loop through all currencies and add the amount to the user
             const currencies = this.cache.get('currencies');
-            for (const currency of currencies) {
+            currencies.forEach(async currency => {
                 const { name, payoutSettings, enabled } = currency;
                 if (!enabled) {
-                    continue;
+                    return;
                 } else {
                     const { subs } = payoutSettings;
                     const { amount, minimum } = subs;
@@ -471,7 +471,7 @@ class CurrencyService {
                         await usersDB.increaseCurrency(userId, name, (amount * subsAmount * tier));
                     }
                 }
-            }
+            });
         }
         catch (err) {
             logger.error(`Error in addCurrencyForSub: ${err}`);
@@ -483,10 +483,10 @@ class CurrencyService {
         try {
             // Loop through all currencies and add the amount to the user
             const currencies = this.cache.get('currencies');
-            for (const currency of currencies) {
+            currencies.forEach(async currency => {
                 const { name, payoutSettings, enabled } = currency;
                 if (!enabled) {
-                    continue;
+                    return;
                 } else {
                     const { bits, hypeTrain } = payoutSettings;
                     const { amount, minimum } = bits;
@@ -494,7 +494,7 @@ class CurrencyService {
                         await usersDB.increaseCurrency(userId, name, (amount * bitsAmount));
                     }
                 }
-            }
+            });
         }
         catch (err) {
             logger.error(`Error in addCurrencyForBits: ${err}`);
@@ -506,10 +506,10 @@ class CurrencyService {
         try {
             // Loop through all currencies and add the amount to the user
             const currencies = this.cache.get('currencies');
-            for (const currency of currencies) {
+            currencies.forEach(async currency => {
                 const { name, payoutSettings, enabled } = currency;
                 if (!enabled) {
-                    continue;
+                    return;
                 } else {
                     const { donations } = payoutSettings;
                     const { amount, minimum } = donations;
@@ -517,7 +517,7 @@ class CurrencyService {
                         await usersDB.increaseCurrency(userId, name, (amount * donationsAmount));
                     }
                 }
-            }
+            });
         }
         catch (err) {
             logger.error(`Error in addCurrencyForDonations: ${err}`);
@@ -529,15 +529,15 @@ class CurrencyService {
         try {
             // Loop through all currencies and add the amount to the user
             const currencies = this.cache.get('currencies');
-            for (const currency of currencies) {
+            currencies.forEach(async currency => {
                 const { name, payoutSettings, enabled } = currency;
                 if (!enabled) {
-                    continue;
+                    return;
                 } else {
                     const { raids } = payoutSettings;
                     await usersDB.increaseCurrency(userId, name, raids);
                 }
-            }
+            });
         }
         catch (err) {
             logger.error(`Error in addCurrencyForRaids: ${err}`);
@@ -549,15 +549,15 @@ class CurrencyService {
         try {
             // Loop through all currencies and add the amount to the user
             const currencies = this.cache.get('currencies');
-            for (const currency of currencies) {
+            currencies.forEach(async currency => {
                 const { name, payoutSettings, enabled } = currency;
                 if (!enabled) {
-                    continue;
+                    return;
                 } else {
                     const { arrived } = payoutSettings;
                     await usersDB.increaseCurrency(userId, name, arrived);
                 }
-            }
+            });
         }
         catch (err) {
             logger.error(`Error in addCurrencyForArriving: ${err}`);
@@ -569,15 +569,15 @@ class CurrencyService {
         try {
             // Loop through all currencies and add the amount to the user
             const currencies = this.cache.get('currencies');
-            for (const currency of currencies) {
+            currencies.forEach(async currency => {
                 const { name, payoutSettings, enabled } = currency;
                 if (!enabled) {
-                    continue;
+                    return;
                 } else {
                     const { follower } = payoutSettings;
                     await usersDB.increaseCurrency(userId, name, follower);
                 }
-            }
+            });
             return;
         }
         catch (err) {

@@ -26,9 +26,9 @@ class TwitchChannelPointService {
                 }
             }
             // For each channel reward insert it into the database if it does not exist
-            for (const channelReward of channelRewards) {
-                this.insertChannelReward(channelReward);
-            }
+            channelRewards.forEach(async channelReward => {
+                await this.insertChannelReward(channelReward);
+            });
 
             // Now get all the channel rewards from the database and remove any channel rewards that are not in the Twitch api
             const channelRewardsFromDatabase = await this.dbConnection.collection(this.collectionName).find().toArray();
@@ -218,9 +218,9 @@ class TwitchChannelPointService {
                 if (!handlers) {
                     return;
                 } else {
-                    for (const handler of handlers) {
+                    handlers.forEach(async handler => {
                         actionEvalulate(handler, { userId, displayName, input: userInput });
-                    }
+                    });
                 }
             }
         }

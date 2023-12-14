@@ -260,9 +260,9 @@ class CommandService {
                 const globalCooldownStatus = await this.globalCooldownHandler(commandName, globalCooldown);
                 if (permissions.includes('everyone' || permissions === 'everyone')) {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
-                        for (const handler of handlers) {
+                        handlers.forEach(async handler => {
                             await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
-                        }
+                        });
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
                         const timeLeft = await formatTimeFromMilliseconds(userCooldownStatus - Date.now());

@@ -98,8 +98,8 @@ function TextToSpeech() {
             audio.src = URL.createObjectURL(blob);
             audio.onended = () => {
                 setTimeout(() => {
-                    const container = document.querySelector('.tts-container');
-                    container.style.animation = 'slideDown 0.25s ease-in-out forwards';
+                    // const container = document.querySelector('.tts-container');
+                    // container.style.animation = 'slideDown 0.25s ease-in-out forwards';
                     setTimeout(() => {
                         playNextMessage();
                     }, 500);

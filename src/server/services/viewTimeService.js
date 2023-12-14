@@ -38,16 +38,16 @@ class ViewTimeService {
     async viewTimeHandler() {
         try {
             const threshold = 5;
-            let userIdsToUpdate  = [];
+            let userIdsToUpdate = [];
             if (process.env.NODE_ENV === 'development') {
                 const viewers = cache.get('currentViewers');
                 if (!viewers || viewers.length === 0 || viewers === undefined) {
                     return;
                 } else {
-                    for (const viewer of viewers) {
-                        const { userId, userName, userDisplayName } = viewer;
-                        console.log(`Viewer: ${userDisplayName}`);
-                    }
+                    viewers.forEach(async viewer => {
+                        const { userId, userDisplayName } = viewer;
+                        console.log(`User: ${userDisplayName} - ${userId}`);
+                    });
                 }
             } else {
                 const live = cache.get('live');
@@ -58,12 +58,12 @@ class ViewTimeService {
                     if (viewers === undefined || viewers.length === 0) {
                         return;
                     } else {
-                        for (const viewer of viewers) {
+                        viewers.forEach(async viewer => {
                             try {
                                 const { userId } = viewer;
                                 const viewTime = this.viewTimeCache.get(userId) || 0;
                                 this.viewTimeCache.set(userId, viewTime + 1, 300);
-                    
+
                                 if (viewTime >= threshold) {
                                     userIdsToUpdate.push(userId);
                                     // Set the view time back to 0
@@ -73,7 +73,7 @@ class ViewTimeService {
                             catch (err) {
                                 logger.error(`Error in increasing view time in viewTimeHandler: ${err}`);
                             }
-                        }
+                        });
                         if (userIdsToUpdate.length > 0) {
                             await usersDB.increaseViewTimeForUsers(userIdsToUpdate, threshold);
                             userIdsToUpdate = [];

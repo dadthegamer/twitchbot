@@ -19,14 +19,14 @@ variables.push('currency')
 variables.push('rewardUserInput')
 variables.push('args')
 
-export async function variableHandler(context, input = null, userId = null) {
+export async function variableHandler(context, { input, userId, displayName }) {
     try {
         const varsWithProps = context.match(/\$[a-zA-Z]+(\.[a-zA-Z]+)?/g);
         const varsNoProps = context.match(/\$[a-zA-Z]+(\[\d+\])?/g);
         if (varsWithProps) {
             for (const variable of varsWithProps) {
                 const [varName, varProperty] = variable.slice(1).split('.');
-                const variableValue = await updateVariable(varName, context, userId, varProperty, input);
+                const variableValue = await updateVariable(varName, context, userId, varProperty, input, displayName);
                 let propValue = variableValue;
                 context = context.replace(variable, propValue);
             }
@@ -38,12 +38,12 @@ export async function variableHandler(context, input = null, userId = null) {
                     const varName = matches[1];
                     const index = parseInt(matches[2], 10);
                     if (index) {
-                        const variableValue = await updateVariable(varName, context, userId, index);
+                        const variableValue = await updateVariable(varName, context, userId, index, input, displayName);
                         let propValue = variableValue;
                         context = context.replace(variable, propValue);
                     } else {
                         if (variables.includes(varName)) {
-                            const variableResponse = await updateVariable(varName, context, userId, index, input);
+                            const variableResponse = await updateVariable(varName, context, userId, index, input, displayName);
                             if (variableResponse) {
                                 context = context.replace(variable, variableResponse);
                             }
@@ -59,7 +59,7 @@ export async function variableHandler(context, input = null, userId = null) {
     }
 }
 
-export async function updateVariable(variable, context, userId, property = null, input = null) {
+export async function updateVariable(variable, context, userId, property = null, input = null, displayName = null) {
     try {
         const userData = await usersDB.getUserByUserId(userId);
         switch (variable) {
@@ -110,6 +110,8 @@ export async function updateVariable(variable, context, userId, property = null,
                 } else {
                     return user.displayName;
                 }
+            case 'displayName':
+                return displayName;
             case 'upTime':
                 const live = cache.get('live');
                 if (!live) {

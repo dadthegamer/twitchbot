@@ -28,15 +28,15 @@
     height: 250px;
     border-radius: 10px;
     position: absolute;
-    top: 99%;
+    top: 50%;
     left: 50%;
+    transform: translate(-50%, -50%);
     color: var(--font-color);
     padding: 10px;
     font-size: 24px;
     font-family: 'Montserrat', sans-serif;
     text-transform: uppercase;
     text-align: center;
-    animation: slideUp .25s ease-in-out forwards;
     opacity: 1;
 }
 
