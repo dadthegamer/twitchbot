@@ -61,27 +61,23 @@ class ViewTimeService {
                         viewers.forEach(async viewer => {
                             try {
                                 const { userId } = viewer;
-                                const viewTime = this.viewTimeCache.get(userId) || 0;
-                                this.viewTimeCache.set(userId, viewTime + 1, 300);
-
-                                if (viewTime >= threshold) {
-                                    userIdsToUpdate.push(userId);
-                                    // Set the view time back to 0
-                                    this.viewTimeCache.set(userId, 0, 300);
-                                }
+                                // const viewTime = this.viewTimeCache.get(userId) || 0;
+                                // this.viewTimeCache.set(userId, viewTime + 1, 300);
+                                userIdsToUpdate.push(userId);
                             }
                             catch (err) {
                                 logger.error(`Error in increasing view time in viewTimeHandler: ${err}`);
                             }
                         });
                         if (userIdsToUpdate.length > 0) {
-                            await usersDB.increaseViewTimeForUsers(userIdsToUpdate, threshold);
+                            await usersDB.increaseViewTimeForUsers(userIdsToUpdate, 1);
                             userIdsToUpdate = [];
                         }
                     }
                 }
             }
         } catch (err) {
+            console.log(err);
             logger.error(`Error in viewTimeHandler: ${err}`);
         }
     }
