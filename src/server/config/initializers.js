@@ -24,6 +24,7 @@ import OBSService from '../services/obsService.js';
 import { startHighlightedMessageAlertsHandler } from '../handlers/highlightedMessageHandler.js';
 import TimerManager from '../services/timerService.js';
 import EventServices from '../services/eventServices.js';
+import { getChatCommands, sendCommand } from '../handlers/actionHandlers/lumiaStream.js';
 
 
 // Cache initialization
@@ -106,7 +107,8 @@ startAlertsHandler();
 // Start the highlighted message alerts handler
 startHighlightedMessageAlertsHandler();
 
-
+// Get the chat commands from the lumia stream
+getChatCommands();
 
 export {
     db,

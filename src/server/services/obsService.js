@@ -1,7 +1,6 @@
 import OBSWebSocket from 'obs-websocket-js';
 import logger from '../utilities/logger.js';
-import { settingsDB } from '../config/initializers.js';
-import { streamingPCIP } from '../config/environmentVars.js';
+import { streamingPCIP, obsPort, obsPassword } from '../config/environmentVars.js';
 
 // OBS Class
 class OBSService {
@@ -9,26 +8,12 @@ class OBSService {
         this.dbConnection = dbConnection;
         this.cache = cache;
         this.obs = new OBSWebSocket();
-        this.ip = null;
-        this.port = null;
-        this.password = null;
-        this.getObsSettings();
+        this.ip = streamingPCIP;
+        this.port = obsPort;
+        this.password = obsPassword;
         this.connected = false;
         this.inteverals = [];
         this.reconnectToObs();
-    }
-
-    // Method to get the OBS settings from the database
-    async getObsSettings() {
-        try {
-            const obsSettings = await settingsDB.getSetting('obsSettings');
-            this.ip = obsSettings.ip;
-            this.port = obsSettings.port;
-            this.password = obsSettings.password;
-            return obsSettings;
-        } catch (err) {
-            logger.error(`Error in getObsSettings: ${err}`);
-        }
     }
 
     // Method to connect to OBS
@@ -273,6 +258,106 @@ class OBSService {
             });
         } catch (error) {
             logger.error(`Error getting OBS scenes: ${error}`);
+        }
+    }
+
+    // Method to set source visibility
+    async setSourceVisibility(sceneName, visibility, sourceName) {
+        try {
+            if (!this.connected) {
+                return;
+            } else {
+                // Get the source ID
+                const sourceId = await this.getSourceId(sceneName, sourceName);
+                await this.obs.call('SetSceneItemEnabled', {
+                    sceneName,
+                    sceneItemId: sourceId,
+                    sceneItemEnabled: visibility
+                });
+            }
+        } catch (error) {
+            logger.error(`Error setting source visibility: ${error}`);
+        }
+    }
+
+    // Method to get all the sources in a scene
+    async getSources(sceneName) {
+        try {
+            if (!this.connected) {
+                return;
+            } else {
+                const sources = await this.obs.call('GetSceneItemList', {
+                    sceneName
+                });
+                console.log(sources);
+                return sources.sceneItems.map(source => {
+                    return {
+                        sourceName: source.sourceName,
+                        sourceId: source.itemId,
+                        sourceType: source.sourceType,
+                        sourceEnabled: source.visible
+                    };
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            logger.error(`Error getting sources: ${error}`);
+        }
+    }
+
+    // Method to get the source visibility
+    async getSourceVisibility(sceneName, sourceName) {
+        try {
+            if (!this.connected) {
+                return;
+            } else {
+                // Get the source ID
+                const sourceId = await this.getSourceId(sceneName, sourceName);
+                const source = await this.obs.call('GetSceneItemEnabled', {
+                    sceneName,
+                    sceneItemId: sourceId
+                });
+                return source.sceneItemEnabled;
+            }
+        } catch (error) {
+            logger.error(`Error getting source visibility: ${error}`);
+        }
+    }
+
+    // Method to toggle the source visibility
+    async toggleSourceVisibility(sceneName, sourceName) {
+        try {
+            if (!this.connected) {
+                return;
+            } else {
+                // Get the source ID
+                const sourceId = await this.getSourceId(sceneName, sourceName);
+                const source = await this.getSourceVisibility(sceneName, sourceName);
+                await this.obs.call('SetSceneItemEnabled', {
+                    sceneName,
+                    sceneItemId: sourceId,
+                    sceneItemEnabled: !source.sceneItemEnabled
+                });
+            }
+        } catch (error) {
+            logger.error(`Error toggling source visibility: ${error}`);
+        }
+    }
+
+    // Method to get the ID of a source within a scene
+    async getSourceId(sceneName, sourceName) {
+        try {
+            if (!this.connected) {
+                return;
+            } else {
+                const sources = await this.obs.call('GetSceneItemId', {
+                    sceneName,
+                    sourceName
+                });
+                return sources.sceneItemId;
+            }
+        } catch (error) {
+            logger.error(`Error getting source ID: ${error}`);
         }
     }
 }

@@ -7,9 +7,10 @@ import { spinHandler } from "./actionHandlers/spinHandler.js";
 import { addToQueue, removeFromQueue, getQueue, clearQueue } from "./actionHandlers/queue.js";
 import { getQuoteById, getRandomQuote, createQuote } from "./actionHandlers/quote.js";
 import { createClip } from "./actionHandlers/clips.js";
-import { startRecording, stopRecording, startStreaming, stopStreaming, setCurrentScene, getCurrentScene, saveReplayBuffer } from "./actionHandlers/obsHandler.js";
+import { startRecording, stopRecording, startStreaming, toggleSource, stopStreaming, setCurrentScene, getCurrentScene, saveReplayBuffer } from "./actionHandlers/obsHandler.js";
 import { ttsHandler } from "./actionHandlers/ttsHandler.js";
-
+import { sendCommand } from "./actionHandlers/lumiaStream.js";
+import { delay } from "./actionHandlers/delayHandler.js";
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context = null) {
@@ -104,6 +105,11 @@ export async function actionEvalulate(handler, context = null) {
                     case 'saveReplayBuffer':
                         saveReplayBuffer();
                         break;
+                    case 'toggleSource':
+                        const sceneName = handler.response.split(',')[0];
+                        const sourceName = handler.response.split(',')[1];
+                        toggleSource(sceneName, sourceName);
+                        break;
                     default:
                         logger.error(`OBS action not found: ${action}`);
                 }
@@ -112,8 +118,15 @@ export async function actionEvalulate(handler, context = null) {
                 console.log('TTS Handler');
                 ttsHandler(handler.response, userId);
                 break;
+            case 'lumiaStream':
+                sendCommand(handler.response);
+                break;
             case 'consoleLog':
                 console.log(handler.response);
+                break;
+            case 'delay':
+                const delayTime = parseInt(handler.response);
+                await delay(delayTime);
                 break;
             default:
                 logger.error(`Handler not found: ${handler}`);

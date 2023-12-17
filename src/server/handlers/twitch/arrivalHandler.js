@@ -1,6 +1,6 @@
 import logger from "../../utilities/logger.js";
 import { usersDB, streamDB, webSocket, cache } from "../../config/initializers.js";
-
+import { sendColorCommand } from "../actionHandlers/lumiaStream.js";
 
 export let alertQueue = [];
 let alertShowing = false;
@@ -32,7 +32,9 @@ export async function arrivalHandler(context) {
             const userData = await usersDB.getUserByUserId(userId);
             // Check if the user has already arrived in the database
             if (!userData.arrived) {
+                sendColorCommand(color);
                 usersDB.setArrived(userId, true);
+                webSocket.userArrived(userId, displayName);
             }
         } else {
             return;

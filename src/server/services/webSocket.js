@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 import { getRandomInt } from '../utilities/utils.js';
 import logger from '../utilities/logger.js';
-import { cache, chatClient } from '../config/initializers.js';
+import { cache, chatClient, twitchApi } from '../config/initializers.js';
 
 
 let connectedDevices = 0;
@@ -87,16 +87,16 @@ export class WebSocket {
     }
 
     // Method to send an alert
-    alert(payload) {
+    async alert(payload) {
         this.broadcastMessage('alert', payload);
     }
 
-    highlightedMessage(payload) {
+    async highlightedMessage(payload) {
         this.broadcastMessage('highlightedMessage', payload);
     }
 
     // Method to send a new TTS message
-    TTS(data) {
+    async TTS(data) {
         try {
             const payload = {
                 id: getRandomInt(100000, 999999),
@@ -110,7 +110,7 @@ export class WebSocket {
     }
 
     // Method to send sub update
-    subsUpdate() {
+    async subsUpdate() {
         try {
             const data = cache.get('goals');
             const monthlySubsData = data.find(goal => goal.name === 'monthlySubGoal');
@@ -160,7 +160,7 @@ export class WebSocket {
     }
 
     // Method to send a message to the display
-    displayMessage(message) {
+    async displayMessage(message) {
         const payload = {
             message,
         };
@@ -173,5 +173,26 @@ export class WebSocket {
             videoUrl,
         };
         this.broadcastMessage('displayVideo', payload);
+    }
+
+    // Method to send when a user has arrived
+    async userArrived(userId, displayName) {
+        const userData = await twitchApi.getUserDataById(userId);
+        const profilePic = userData.profilePictureUrl;
+        const payload = {
+            userId,
+            displayName,
+            profilePic,
+        };
+        this.broadcastMessage('userArrived', payload);
+    }
+
+    // Method to send when the stream goes live
+    async streamLive(streamInfo) {
+        const payload = {
+            live: true,
+            streamInfo,
+        };
+        this.broadcastMessage('streamLive', payload);
     }
 }

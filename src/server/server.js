@@ -6,9 +6,11 @@ import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
-import { schedulerService, usersDB } from './config/initializers.js';
+import { schedulerService, usersDB, twitchApi } from './config/initializers.js';
 import logger from './utilities/logger.js';
 
+
+twitchApi.getGameById('509658');
 
 // setInterval(() => {
 //     const usedMemory = process.memoryUsage();

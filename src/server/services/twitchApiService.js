@@ -567,16 +567,20 @@ class TwitchApiClient {
             }
             clipId = clipId.toString();
             const data = await this.apiClient.clips.getClipById(clipId);
-            const clip = {
-                id: data.id,
-                title: data.title,
-                url: data.url,
-                thumbnailUrl: data.thumbnailUrl,
-                creationDate: data.creationDate,
-                broadcasterDisplayName: data.broadcasterDisplayName,
-                embedUrl: data.embedUrl,
-            };
-            return clip;
+            if (data === null) {
+                return null;
+            } else {
+                const clip = {
+                    id: data.id,
+                    title: data.title,
+                    url: data.url,
+                    thumbnailUrl: data.thumbnailUrl,
+                    creationDate: data.creationDate,
+                    broadcasterDisplayName: data.broadcasterDisplayName,
+                    embedUrl: data.embedUrl,
+                };
+                return clip;
+            }
         }
         catch (error) {
             console.log(error);
@@ -654,6 +658,25 @@ class TwitchApiClient {
         catch (error) {
             console.log(error);
             logger.error(`Error getting stream schedule: ${error}`);
+        }
+    }
+
+    // Method to get a game by id
+    async getGameById(gameId) {
+        try {
+            const data = await this.apiClient.games.getGameById(gameId);
+            const boxArt = data.getBoxArtUrl(440*4, 640*4);
+            const game = {
+                id: data.id,
+                name: data.name,
+                boxArtUrl: boxArt,
+                name: data.name,
+            };
+            return game;
+        }
+        catch (error) {
+            console.log(error);
+            logger.error(`Error getting game by ID: ${error}`);
         }
     }
 }

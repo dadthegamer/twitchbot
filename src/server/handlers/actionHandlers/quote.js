@@ -35,10 +35,11 @@ export async function getRandomQuote() {
 export async function createQuote(quote, creator) {
     try {
         const newQuote = await interactionsDB.createQuote(quote, creator);
-        chatClient.say(`@${creator} created a quote with an id of ${newQuote.id}`);
+        if (newQuote.id) {
+            chatClient.say(`@${creator} created a quote with an id of ${newQuote.id}`);
+        };
     }
     catch (err) {
-        console.log(err);
         logger.error(`Error in createQuote: ${err}`);
     }
 }

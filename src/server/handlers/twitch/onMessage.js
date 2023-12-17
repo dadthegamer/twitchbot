@@ -4,7 +4,6 @@ import logger from "../../utilities/logger.js";
 import { arrivalHandler } from "./arrivalHandler.js";
 import { addHighlightedAlert } from "../highlightedMessageHandler.js";
 
-
 // Message Handler
 export async function onMessageHandler(channel, user, message, msg) {
     try {

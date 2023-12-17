@@ -63,3 +63,12 @@ export async function saveReplayBuffer() {
         logger.error(`Error in saveReplayBuffer: ${err}`);
     }
 }
+
+// Method to toggle a source
+export async function toggleSource(sceneName, sourceName) {
+    try {
+        await obsService.toggleSourceVisibility(sceneName, sourceName);
+    } catch (err) {
+        logger.error(`Error in toggleSource: ${err}`);
+    }
+}

@@ -24,6 +24,8 @@ const botId = process.env.BOTID;
 const discordClientID = process.env.DISCORD_CLIENT_ID;
 const discordClientSecret = process.env.DISCORD_CLIENT_SECRET;
 const discordRedirectURI = encodeURIComponent(process.env.DISCORD_REDIRECT_URI);
+const obsPort = process.env.OBS_PORT;
+const obsPassword = process.env.OBS_PASSWORD;
 
 
 export {
@@ -48,5 +50,7 @@ export {
     botId,
     discordClientID,
     discordClientSecret,
-    discordRedirectURI
+    discordRedirectURI,
+    obsPort,
+    obsPassword
 }
