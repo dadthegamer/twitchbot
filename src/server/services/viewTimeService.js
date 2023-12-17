@@ -58,7 +58,7 @@ class ViewTimeService {
                     if (viewers === undefined || viewers.length === 0) {
                         return;
                     } else {
-                        viewers.forEach(async viewer => {
+                        await viewers.forEach(async viewer => {
                             try {
                                 const { userId } = viewer;
                                 // const viewTime = this.viewTimeCache.get(userId) || 0;

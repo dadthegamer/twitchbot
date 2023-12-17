@@ -85,16 +85,6 @@ function Display() {
         };
     }, []);
 
-    useEffect(() => {
-        // Start the timer when the component mounts
-        startUptimeTimer();
-
-        // Clear the interval when the component unmounts
-        return () => {
-            if (intervalRef.current) clearInterval(intervalRef.current);
-        };
-    }, []); // Empty dependency array ensures this runs once on mount and cleanup on unmount
-
     // Function that flashes the message background orange
     const flashMessageBackground = () => {
         const color = '#FF5F15';
