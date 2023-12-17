@@ -1,4 +1,4 @@
-import { usersDB, cache, goalDB, webSocket } from "../../../config/initializers.js";
+import { usersDB, cache, goalDB, webSocket, twitchApi } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";
 
 export async function onStreamOffline(e) {
@@ -21,32 +21,17 @@ export async function onStreamOnline(e) {
         const streamInfo = e.getStream();
         cache.set('live', true);
         cache.set('viewers', [])
-        const { title, gameName, startedAt, isMature, tags, gameId, thumbnailUrl } = streamInfo;
-        // Replace the width and height in the thumbnail url to get a higher resolution
-        let streamInfoData;
-        try {
-            const thumbnailUrlHighRes = thumbnailUrl.replace('{width}', '880').replace('{height}', '1280');
-            streamInfoData = {
-                title,
-                gameName,
-                startedAt,
-                isMature,
-                tags,
-                gameId,
-                thumbnailUrlHighRes,
-            };
-        } catch (error) {
-            console.log(error);
-            streamInfoData = {
-                title,
-                gameName,
-                startedAt,
-                isMature,
-                tags,
-                gameId,
-                thumbnailUrl,
-            };
-        }
+        const { title, gameName, startedAt, isMature, tags, gameId } = streamInfo;
+        const thumbnailUrl = await twitchApi.getGameById(gameId);
+        const streamInfoData = {
+            title,
+            gameName,
+            startedAt,
+            isMature,
+            tags,
+            gameId,
+            thumbnailUrl,
+        };
         cache.set('streamInfo', streamInfoData);
         await goalDB.setGoalCurrent('dailySubGoal', 0);
         await usersDB.resetStreamProperties();

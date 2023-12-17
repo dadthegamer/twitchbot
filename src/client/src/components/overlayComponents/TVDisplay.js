@@ -42,11 +42,7 @@ function Display() {
                     if (data.payload.live) {
                         startUptimeTimer();
                         if (data.payload.streamInfo) {
-                            if (data.payload.streamInfo.thumbnailUrlHighRes) {
-                                setGameImg(data.payload.streamInfo.thumbnailUrlHighRes);
-                            } else {
-                                setGameImg(data.payload.streamInfo.thumbnailUrl);
-                            }
+                            setGameImg(data.payload.streamInfo.thumbnailUrl);
                         }
                     } else if (!data.payload.live) {
                         stopUptimeTimer();
