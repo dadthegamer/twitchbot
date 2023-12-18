@@ -3,11 +3,11 @@ import { twitchApi, chatClient, cache, commandHandler } from '../../config/initi
 
 
 // Function for a mod to create a command
-export async function createCommand(command) {
+export async function createCommand(commandName, response) {
     try {
-        const response = await commandHandler.createCommand(command, [{ type: 'chat' }], 'Mod Created Command', ['everyone']);
+        await commandHandler.createCommand(commandName, [ { type: 'chat', response } ], 'Mod created command', ['everyone']);
         if (response) {
-            chatClient.say(twitchApi.channels[0], `Command ${command} created successfully!`);
+            chatClient.say(`Command !${commandName} created successfully!`);
         }
     }
     catch (err) {

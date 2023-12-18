@@ -147,6 +147,9 @@ class CommandService {
             if (typeof globalCooldown === 'string') {
                 globalCooldown = parseInt(globalCooldown);
             }
+            if (commandName.startsWith('!')) {
+                commandName = commandName.slice(1);
+            }
             if (typeof userCooldown === 'string') {
                 userCooldown = parseInt(userCooldown);
             }

@@ -11,6 +11,8 @@ import { startRecording, stopRecording, startStreaming, toggleSource, stopStream
 import { ttsHandler } from "./actionHandlers/ttsHandler.js";
 import { sendCommand } from "./actionHandlers/lumiaStream.js";
 import { delay } from "./actionHandlers/delayHandler.js";
+import { createCommand } from "./actionHandlers/createCommand.js";
+
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context = null) {
@@ -127,6 +129,16 @@ export async function actionEvalulate(handler, context = null) {
             case 'delay':
                 const delayTime = parseInt(handler.response);
                 await delay(delayTime);
+                break;
+            case 'createCommand':
+                // Split the input to get the command to create. It will be the text after the command. Example: !create !testCommand This is a test command. Only get the !testCommand
+                const createdCommand = input.split('!create')[1].split(' ')[1];
+                console.log(`Command to create: ${createdCommand}`);
+
+                // Split the input to get the command response. It will be the text after the command. Example: !create !testCommand This is a test command. Only get the This is a test command
+                const commandResponse = input.split('!create')[1].split(' ').slice(2).join(' ');
+                console.log(`Command response: ${commandResponse}`);
+                createCommand(createdCommand, commandResponse);
                 break;
             default:
                 logger.error(`Handler not found: ${handler}`);
