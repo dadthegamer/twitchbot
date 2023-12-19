@@ -12,7 +12,7 @@ import { ttsHandler } from "./actionHandlers/ttsHandler.js";
 import { sendCommand } from "./actionHandlers/lumiaStream.js";
 import { delay } from "./actionHandlers/delayHandler.js";
 import { createCommand } from "./actionHandlers/createCommand.js";
-
+import { sarcasticResponseHandler } from "./actionHandlers/sarcasticResponse.js";
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context = null) {
@@ -139,6 +139,11 @@ export async function actionEvalulate(handler, context = null) {
                 const commandResponse = input.split('!create')[1].split(' ').slice(2).join(' ');
                 console.log(`Command response: ${commandResponse}`);
                 createCommand(createdCommand, commandResponse);
+                break;
+            case 'sarcasticResponse':
+                // Get the message from the chat after the !q command
+                const messageFromChat = input.split('!q')[1].trim();
+                sarcasticResponseHandler(messageFromChat);
                 break;
             default:
                 logger.error(`Handler not found: ${handler}`);

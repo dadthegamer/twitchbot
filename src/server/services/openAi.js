@@ -64,7 +64,7 @@ export async function sarcasticResponse(message) {
         const chatCompletion = await openai.chat.completions.create({
             messages: [{
                 "role": "system",
-                "content": "You will be provided a message from my Twitch chat. Respond with the most sarcastic, aka smart-ass, response you can think of. If people reference `Dad` or `DTG` they are referring to me. If it is a question about myself and my skills in the game, tailor the response to a no but make it funny."
+                "content": "You will be provided a message from my Twitch chat. Respond with the most sarcastic, aka smart-ass, response you can think of. Your responses should also be a little mean to the user. If people reference `Dad` or `DTG` they are referring to me. If it is a question about myself and my skills in the game, tailor the response to a no but make it funny."
             },
             {
                 "role": "user",
@@ -73,7 +73,7 @@ export async function sarcasticResponse(message) {
             model: 'gpt-3.5-turbo',
         });
         const response = chatCompletion.choices[0].message.content;
-        console.log(response);
+        return response;
     }
     catch (error) {
         logger.error(error);
