@@ -56,7 +56,7 @@ export async function spinHandler(userDisplayName, userId, messageID = null) {
         if (spin <= jackpotPCT) {
             const amount = jackpotData.jackpot;
             await usersDB.increaseCurrency(userId, jackpotData.currency, amount);
-            const formatJackpot = numberWithCommas(amount);
+            const formatJackpot = await numberWithCommas(amount);
             await gameService.resetJackpot();
             if (currency === 'raffle') {
                 replyHandler(`@${userDisplayName} you won the jackpot of ${formatJackpot} raffle tickets!`, messageID);
@@ -68,7 +68,7 @@ export async function spinHandler(userDisplayName, userId, messageID = null) {
             const increaseBy = getRandomInt(jackpotData.increaseBy.min, jackpotData.increaseBy.max);
             await gameService.increaseJackpot(increaseBy);
             jackPotWin += increaseBy;
-            const formatJackpot = numberWithCommas(jackPotWin);
+            const formatJackpot = await numberWithCommas(jackPotWin);
             if (currency === 'raffle') {
                 // If the jackpot is in raffle tickets, we need to convert it to points
                 replyHandler(`@${userDisplayName} you did not win! The jackpot is now at ${formatJackpot} raffle tickets!`, messageID);

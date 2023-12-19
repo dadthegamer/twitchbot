@@ -23,77 +23,75 @@
     height: 100%;
     min-height: calc(1080px - 200px);
     color: rgb(255, 255, 255);
-    background-color: rgb(0, 0, 0, 0.5);
     border-radius: 5px;
 }
 
-.leaderboard-header {
+.leaderboard-users {
     display: flex;
     flex-direction: column;
-    font-size: 2rem;
-    text-align: center;
-    width: 100%;
-    height: 100%;
-    background-color: red;
-    border-radius: 5px;
-    padding: 5px;
-}
-
-.title {
-    font-size: 2rem;
-    font-weight: 900;
-    text-align: center;
-    width: 100%;
-    height: 100%;
-    text-transform: capitalize;
-}
-
-.description {
-    font-size: 1rem;
-    font-weight: 400;
-    text-align: center;
-    width: 100%;
-    height: 100%;
-    text-transform: capitalize;
-}
-
-.leaderboard {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 100%;
     height: 100%;
+    gap: 10px;
 }
 
-.leaderboard-entry {
+.leaderboard-user {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 1rem;
-    font-size: 1.5rem;
-    font-weight: 400;
+    height: 50px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
 }
 
-.leaderboard-entry div {
+.leaderboard-user img {
+    width: 50px;
+    height: 50px;
+    border-radius: 25%;
+    margin-right: 10px;
+}
+
+.leaderboard-user-name {
+    font-size: 16px;
+    font-weight: 600;
+    text-align: left;
+}
+
+.leaderboard-user div {
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: center;
+    align-items: center;
+}
+
+.leaderboard-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
     width: 100%;
-    gap: 1rem;
+    height: 50px;
+    margin-bottom: 20px;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: red;
 }
 
-.leaderboard-entry img {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
+.leaderboard-title {
+    font-weight: 900;
+    text-align: center;
 }
 
-.amount {
-    text-align: right;
-    width: 100%;
-    height: 100%;
+.leaderboard-description {
+    font-weight: 400;
+    text-align: center;
+    opacity: 0.8;
+    font-style: italic;
 }

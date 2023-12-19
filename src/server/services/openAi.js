@@ -57,3 +57,25 @@ export async function roastUser() {
         logger.error(error);
     }
 }
+
+// Function to respond with a sarcastic response
+export async function sarcasticResponse(message) {
+    try {
+        const chatCompletion = await openai.chat.completions.create({
+            messages: [{
+                "role": "system",
+                "content": "You will be provided a message from my Twitch chat. Respond with the most sarcastic, aka smart-ass, response you can think of. If people reference `Dad` or `DTG` they are referring to me. If it is a question about myself and my skills in the game, tailor the response to a no but make it funny."
+            },
+            {
+                "role": "user",
+                "content": message
+            }],
+            model: 'gpt-3.5-turbo',
+        });
+        const response = chatCompletion.choices[0].message.content;
+        console.log(response);
+    }
+    catch (error) {
+        logger.error(error);
+    }
+}

@@ -4,25 +4,27 @@ import '../../styles/overlay/leaderboard.css';
 
 function Leaderboard() {
     const [leaderboards, setLeaderboards] = useState([]);
-    const [showLeaderboard, setShowLeaderboard] = useState(false);
-    const [leaderboardTitle, setLeaderboardTitle] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [fetchedAllLeaderboards, setFetchedAllLeaderboards] = useState(false);
-    const [currentLeaderboardData, setCurrentLeaderboardData] = useState([]);
-    const [leaderboardDescription, setLeaderboardDescription] = useState('');
+    const [currentLeaderboard, setCurrentLeaderboard] = useState({});
+    const [duration, setDuration] = useState(15); // In seconds
+    const [currentLeaderboardIndex, setCurrentLeaderboardIndex] = useState(0);
+    const [leaderboardTitle, setLeaderboardTitle] = useState("");
+    const [leaderboardDescription, setLeaderboardDescription] = useState("");
+    const [leaderboardUsers, setLeaderboardUsers] = useState([]);
 
     useEffect(() => {
         fetchLeaderboards();
     }, []);
 
-    useEffect(() => {
-        if (fetchedAllLeaderboards) {
-            displayLeaderboard();
-        }
-    }, [fetchedAllLeaderboards]);
-
     const fetchLeaderboards = () => {
-        fetch('/api/leaderboard')
+        fetch('/api/leaderboard', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': process.env.REACT_APP_API_KEY
+            },
+        })
             .then(res => res.json())
             .then(data => {
                 console.log(data);
@@ -36,34 +38,44 @@ function Leaderboard() {
             });
     };
 
-    let currentLeaderboardIndex = 0;
+    useEffect(() => {
+        if (fetchedAllLeaderboards) {
+            const interval = setInterval(() => {
+                const leaderboardLength = leaderboards[currentLeaderboardIndex].data.length;
+                if (leaderboardLength === 0) {
+                    // Do a while loop to find the next leaderboard that has data
+                    let i = 1;
+                    while (leaderboardLength === 0) {
+                        const nextIndex = (currentLeaderboardIndex + i) % leaderboards.length;
+                        if (leaderboards[nextIndex].data.length > 0) {
+                            setCurrentLeaderboard(leaderboards[nextIndex]);
+                            setLeaderboardTitle(leaderboards[nextIndex].name);
+                            setLeaderboardDescription(leaderboards[nextIndex].description);
+                            setLeaderboardUsers(leaderboards[nextIndex].data);
+                            setCurrentLeaderboardIndex(nextIndex);
+                            break;
+                        }
+                        i++;
+                    }
+                } else {
+                    // Set the current leaderboard
+                    setCurrentLeaderboard(leaderboards[currentLeaderboardIndex]);
+                    // Set the leaderboard title and description
+                    setLeaderboardTitle(leaderboards[currentLeaderboardIndex].name);
+                    setLeaderboardDescription(leaderboards[currentLeaderboardIndex].description);
+                    // Set the leaderboard users
+                    setLeaderboardUsers(leaderboards[currentLeaderboardIndex].data);
+                    // Increment the current leaderboard index
+                    setCurrentLeaderboardIndex((prevIndex) => {
+                        fetchLeaderboards(); // Fetch the leaderboards again
+                        return (prevIndex + 1) % leaderboards.length; // Wrap around to 0 when it reaches the end
+                    });
+                }
+            }, duration * 1000);
+            return () => clearInterval(interval);
+        }
+    }, [fetchedAllLeaderboards, leaderboards, duration, currentLeaderboardIndex]); // Include currentLeaderboardIndex as a dependency
 
-    const displayLeaderboard = () => {
-        setShowLeaderboard(false);
-        if (leaderboards.length === 0) {
-            fetchLeaderboards();
-            return;
-        }
-        if (currentLeaderboardIndex >= leaderboards.length) {
-            console.log('Reached end of leaderboards, fetching again');
-            currentLeaderboardIndex = 0;
-            fetchLeaderboards();
-        }
-        if (leaderboards[currentLeaderboardIndex].data.length > 0) {
-            setLeaderboardTitle(leaderboards[currentLeaderboardIndex].name);
-            setLeaderboardDescription(leaderboards[currentLeaderboardIndex].description);
-            setCurrentLeaderboardData([...leaderboards[currentLeaderboardIndex].data]);
-            setShowLeaderboard(true);
-            setTimeout(() => {
-                currentLeaderboardIndex++;
-                setShowLeaderboard(false);
-                displayLeaderboard();
-            }, 10000); // Wait for 10 seconds before hiding
-        } else {
-            currentLeaderboardIndex++;
-            displayLeaderboard(); // Call the function recursively to move to the next leaderboard
-        }
-    };
 
     function formatMinutes(minutes) {
         const days = Math.floor(minutes / 1440); // 1440 mins per day
@@ -99,39 +111,33 @@ function Leaderboard() {
 
 
     return (
-        <div>
+        <>
             {isLoading ? (
-                <p>Loading...</p>
+                <div className="leaderboard-container">
+                    <div className="leaderboard-title">Loading...</div>
+                </div>
             ) : (
-                <>
-                    {showLeaderboard && (
-                        <div className="leaderboard-container">
-                            <div className="leaderboard-header">
-                                <span className='title'>{leaderboardTitle}</span>
-                                <span className='description'>{leaderboardDescription}</span>
-                            </div>
-                            <div className="leaderboard">
-                                {currentLeaderboardData.map(leaderboard => {
-                                    try {
-                                        return (
-                                            <div className="leaderboard-entry" key={leaderboard.displayName}>
-                                                <div>
-                                                    <img src={leaderboard.profilePic} alt="" />
-                                                    <span>{leaderboard.displayName}</span>
-                                                </div>
-                                                <span className='amount'>{formatAmount(leaderboard.amount, leaderboardTitle)}</span>
-                                            </div>
-                                        );
-                                    } catch (err) {
-                                        console.log('Error rendering leaderboard:', err);
-                                    }
-                                })}
-                            </div>
-                        </div>
-                    )}
-                </>
+                <div className="leaderboard-container">
+                    <div className='leaderboard-header'>
+                        <span className="leaderboard-title">{leaderboardTitle}</span>
+                        <span className="leaderboard-description">{leaderboardDescription}</span>
+                    </div>
+                    <div className="leaderboard-users">
+                        {leaderboardUsers.map((user, index) => {
+                            return (
+                                <div className="leaderboard-user" key={index}>
+                                    <div>
+                                        <img src={user.profilePic} alt="" />
+                                        <span className="leaderboard-user-name">{user.displayName}</span>
+                                    </div>
+                                    <span className="leaderboard-user-amount">{formatAmount(user.amount, leaderboardTitle)}</span>
+                                </div>
+                            )
+                        })}
+                    </div>
+                </div>
             )}
-        </div>
+        </>
     )
 }
 

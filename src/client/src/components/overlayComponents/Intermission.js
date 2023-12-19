@@ -144,7 +144,7 @@ function Intermission() {
                 <span>{subsCount}</span>
             </div>
             <div className='intermission-left-container'>
-                <div>Leaderboard</div>
+                <Leaderboard />
             </div>
             <div className='bottom-line-container'>
                 <BottomLeft />
