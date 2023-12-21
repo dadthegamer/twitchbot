@@ -538,10 +538,16 @@ class UsersDB {
                 if (!user) {
                     user = await this.getUserByUserId(userId);
                 }
-                if (currency in user.currency) {
-                    user.currency[currency] += amount;
-                } else {
+                // Check if the currency property exists. If it does then increase the amount. If it does not then set the amount
+                if (user.currency === null || user.currency === undefined) {
+                    user.currency = {};
                     user.currency[currency] = amount;
+                } else {
+                    if (currency in user.currency) {
+                        user.currency[currency] += amount;
+                    } else {
+                        user.currency[currency] = amount;
+                    }
                 }
                 this.cache.set(userId, user);
                 // Increase the currency property for the user in the database
@@ -553,6 +559,7 @@ class UsersDB {
                 );
             }
         } catch (error) {
+            console.log(error);
             logger.error(`Error in increaseCurrency: ${error}`);
         }
     }
@@ -726,6 +733,21 @@ class UsersDB {
             return userIds;
         } catch (error) {
             logger.error(`Error in getUsersWithCurrency: ${error}`);
+        }
+    }
+
+    // Method to delete all currency for all users
+    async deleteAllCurrencies() {
+        try {
+            const result = await this.dbConnection.collection(this.collectionName).updateMany(
+                {},
+                { $unset: { currency: "" } }
+            );
+            const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
+            this.cache.set('users', users);
+            return result;
+        } catch (error) {
+            logger.error(`Error in deleteAllCurrency: ${error}`);
         }
     }
 

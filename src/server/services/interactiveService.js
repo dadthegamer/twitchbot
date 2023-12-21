@@ -120,7 +120,6 @@ class InteractionsDbService {
             }
         }
         catch (err) {
-            console.log(err);
             logger.error(`Error in createQuote: ${err}`);
         }
     }
@@ -159,7 +158,6 @@ class InteractionsDbService {
                     }
                 }
             );
-            console.log(res)
             await this.getAllQuotes();
             return res;
         }
@@ -201,7 +199,6 @@ class InteractionsDbService {
             }
         }
         catch (err) {
-            console.log(err);
             logger.error(`Error in setTvMessage: ${err}`);
         }
     }

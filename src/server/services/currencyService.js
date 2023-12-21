@@ -24,7 +24,7 @@ class CurrencyService {
         await this.getAllCurrencies();
         await this.createFirstCurrency();
         await this.createRaffleCurrency();
-        // await this.currencyPayoutHandler();
+        await this.currencyPayoutHandler();
     }
 
     // Method to restart the currency payout handler and reset the intervals
@@ -39,7 +39,7 @@ class CurrencyService {
             const res = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             if (res.length === 0) {
                 const currency = {
-                    name: 'points',
+                    name: 'leaderboard',
                     enabled: true,
                     payoutSettings: {
                         interval: 1,
@@ -361,9 +361,9 @@ class CurrencyService {
     // Method to handle the currency payout
     async currencyPayoutHandler() {
         try {
-            for (const id of this.payoutIntervals) {
+            this.payoutIntervals.forEach(async (id) => {
                 clearInterval(id);
-            }
+            });
             // Reset the intervals list
             this.payoutIntervals = [];
             const currencies = this.cache.get('currencies');
@@ -373,17 +373,16 @@ class CurrencyService {
             if (currencies.length === 0) {
                 return;
             }
-            for (const currency of currencies) {
+            currencies.forEach(async (currency) => {
                 const { name, payoutSettings, enabled, roleBonuses, restrictions, limit } = currency;
                 // If the currency is not enabled then continue to the next currency
                 if (!enabled) {
-                    continue;
+                    return;
                 }
                 const { interval, amount, subs, bits, donations, raids, arrived } = payoutSettings;
                 if (interval === 0) {
-                    continue;
+                    return;
                 }
-                console.log(`Setting interval for ${name} to ${interval} minutes`);
                 // Set an interval to payout the currency
                 const intervalId = setInterval(async () => {
                     if (environment === 'development') {
@@ -400,7 +399,7 @@ class CurrencyService {
                         if (viewers === undefined || viewers.length === 0) {
                             return;
                         }
-                        for (const viewer of viewers) {
+                        viewers.forEach(async (viewer) => {
                             // Check if the viewer is a follower, subscriber, vip, or moderator
                             const roles = await this.userRolesHandler(viewer.userId, name);
                             if (roles.length > 0) {
@@ -421,33 +420,35 @@ class CurrencyService {
                                     bonus += activeChatUser;
                                 }
                                 const totalPayout = amount + bonus;
-                                console.log(`Paying out ${totalPayout} ${name} to ${viewer.userDisplayName}`);
                                 // If the currency is limited then check if the viewer has reached the limit
                                 if (limit) {
                                     const currentAmount = await usersDB.getCurrency(viewer.userId, name);
                                     if (currentAmount + totalPayout > limit) {
                                         // Set the amount to the limit
                                         usersDB.setCurrency(viewer.userId, name, limit);
-                                        continue;
+                                        return; // Use return to continue to the next viewer
                                     }
                                 } else {
                                     // If the currency is not limited then add the total payout to the viewer
                                     usersDB.increaseCurrency(viewer.userId, name, totalPayout);
+                                    return;
                                 }
                             } else {
                                 usersDB.increaseCurrency(viewer.userId, name, amount);
+                                return;
                             }
-                        }
+                        });
                     }
                 }, interval * 60000);
                 this.payoutIntervals.push(intervalId);
-            }
+            });
         }
         catch (err) {
             console.log(`Error in currencyPayoutHandler: ${err}`);
             logger.error(`Error in currencyPayoutHandler: ${err}`);
         }
     }
+
 
     // Method to clear all payout intervals
     clearAllPayoutIntervals() {
@@ -659,6 +660,19 @@ class CurrencyService {
                     await usersDB.increaseCurrency(viewer.userId, name, hypeTrain);
                 }
             }
+        }
+    }
+
+    // Method to delete all currencies
+    async deleteAllCurrencies() {
+        try {
+            const res = await this.dbConnection.collection(this.collectionName).deleteMany({});
+            await this.getAllCurrencies();
+            await usersDB.deleteAllCurrencies();
+            this.restartCurrencyPayoutHandler();
+            return res;
+        } catch (err) {
+            logger.error(`Error in deleteAllCurrencies: ${err}`);
         }
     }
 }

@@ -15,7 +15,6 @@ export class WebSocket {
         this.wss.on('connection', (ws) => {
             this.subsUpdate();
             const tvMessage = cache.get('displayMessage');
-            console.log(tvMessage);
             if (tvMessage) {
                 this.displayMessage(tvMessage);
             };

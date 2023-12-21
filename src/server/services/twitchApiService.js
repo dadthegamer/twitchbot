@@ -378,6 +378,30 @@ class TwitchApiClient {
         }
     }
 
+    // Method to get the bits leaderboard for a month
+    async getBitsLeaderboardMonth() {
+        try {
+            // Get the current date for the month and year
+            const data = await this.apiClient.bits.getLeaderboard(this.userId, {
+                period: 'month',
+                count: 100,
+                startDate: new Date(),
+            });
+            const leaderboard = data.entries.map((entry) => ({
+                rank: entry.rank,
+                displayName: entry.userDisplayName,
+                userId: entry.userId,
+                amount: entry.amount,
+            }));
+            console.log(leaderboard);
+            return leaderboard;
+        }
+        catch (error) {
+            console.log(error);
+            logger.error(`Error getting bits leaderboard for month: ${error}`);
+        }
+    }
+
     // Method to get all the channel rewards
     async getChannelRewards() {
         try {

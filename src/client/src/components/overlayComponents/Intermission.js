@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import '../../styles/overlay/intermission.css';
 import Leaderboard from './Leaderboard';
 import BottomLeft from './SubComponents/BottomLeft';
-import IntermissionAlert from './SubComponents/IntermissionAlert';
+
 
 function Intermission() {
     const [showAlert, setShowAlert] = useState(false);
