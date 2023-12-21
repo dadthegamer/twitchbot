@@ -177,6 +177,15 @@ export async function initializerEventListener(apiClient) {
             }
         });
 
+        listener.onChannelRewardUpdate(userId, async (event) => {
+            try {
+                console.log(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelRewardUpdate: ${error}`);
+            }
+        });
+
         console.log('Event listener initialized');
     }
     catch (error) {

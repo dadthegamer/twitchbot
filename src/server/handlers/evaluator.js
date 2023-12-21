@@ -117,10 +117,10 @@ export async function actionEvalulate(handler, context = null) {
                 }
                 break;
             case 'tts':
-                console.log('TTS Handler');
                 ttsHandler(handler.response, userId);
                 break;
             case 'lumiaStream':
+                console.log('Lumia Stream Handler');
                 sendCommand(handler.response);
                 break;
             case 'consoleLog':
