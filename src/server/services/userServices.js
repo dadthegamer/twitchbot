@@ -1258,6 +1258,26 @@ class UsersDB {
             if (!user) {
                 user = await this.getUserByUserId(userId);
             }
+            if (user.bits.allTime === undefined || isNaN(user.bits.allTime)) {
+                user.bits.allTime = 0;
+            };
+
+            if (user.bits.yearly === undefined || isNaN(user.bits.yearly)) {
+                user.bits.yearly = 0;
+            };
+
+            if (user.bits.monthly === undefined || isNaN(user.bits.monthly)) {
+                user.bits.monthly = 0;
+            };
+
+            if (user.bits.weekly === undefined || isNaN(user.bits.weekly)) {
+                user.bits.weekly = 0;
+            };
+
+            if (user.bits.stream === undefined || isNaN(user.bits.stream)) {
+                user.bits.stream = 0;
+            };
+
             user.bits.allTime += bits;
             user.bits.yearly += bits;
             user.bits.monthly += bits;
@@ -1368,6 +1388,27 @@ class UsersDB {
             if (!user) {
                 user = await this.getUserByUserId(userId);
             }
+
+            if (user.subs.allTime === undefined || isNaN(user.subs.allTime)) {
+                user.subs.allTime = 0;
+            };
+
+            if (user.subs.yearly === undefined || isNaN(user.subs.yearly)) {
+                user.subs.yearly = 0;
+            };
+
+            if (user.subs.monthly === undefined || isNaN(user.subs.monthly)) {
+                user.subs.monthly = 0;
+            };
+
+            if (user.subs.weekly === undefined || isNaN(user.subs.weekly)) {
+                user.subs.weekly = 0;
+            };
+
+            if (user.subs.stream === undefined || isNaN(user.subs.stream)) {
+                user.subs.stream = 0;
+            };
+            
             user.subs.allTime += subs;
             user.subs.yearly += subs;
             user.subs.monthly += subs;
