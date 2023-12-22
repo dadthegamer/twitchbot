@@ -7,6 +7,7 @@ import { apiAuth } from '../../middleware/apiAuth.js';
 const router = Router();
 
 router.get('/', apiAuth, async (req, res) => {
+    console.log('Getting leaderboard');
     try {
         let leaderboards = [];
 
@@ -384,6 +385,7 @@ router.get('/', apiAuth, async (req, res) => {
         res.status(200).json(leaderboards);
     }
     catch (err) {
+        console.log(err);
         logger.error(`Error getting leaderboard: ${err}`);
         return res.status(500).json({ error: 'Internal Server Error' });
     }
