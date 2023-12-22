@@ -53,12 +53,13 @@ export class SchedulerService {
     async getBitsLeaderboard() {
         try {
             const leaderboard = await twitchApi.getBitsLeaderboard();
-            for (const user of leaderboard) {
+            leaderboard.forEach(async user => {
                 await usersDB.setBitsManually(user.userId, user.amount);
-            }
+            });
             return leaderboard;
         }
         catch (error) {
+            console.log(error);
             logger.error(`Error getting bits leaderboard: ${error}`);
         }
     }

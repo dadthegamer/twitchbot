@@ -14,7 +14,7 @@ export async function onMessageHandler(channel, user, message, msg) {
         const parts = message.split(' ');
         const prefix = '!';
         const command = parts[0];
-        arrivalHandler({ userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster });
+        arrivalHandler({ userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster, id });
         if (command.startsWith(prefix)) {
             commandHandler.commandHandler(command, user, message, msg);
         }

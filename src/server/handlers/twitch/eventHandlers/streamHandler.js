@@ -21,6 +21,7 @@ export async function onStreamOnline(e) {
         const streamInfo = e.getStream();
         cache.set('live', true);
         cache.set('viewers', [])
+        cache.set('first', []);
         const { title, gameName, startedAt, isMature, tags, gameId } = streamInfo;
         const thumbnailUrl = await twitchApi.getGameById(gameId);
         const streamInfoData = {

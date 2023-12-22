@@ -1,28 +1,31 @@
 
-import { cache, currencyDB } from "../../../config/initializers.js";
-import { chatClient } from "../../../config/initializers.js";
+import { cache, currencyDB, chatClient } from "../../config/initializers.js";
 import logger from "../../utilities/logger.js";
 
 
 // First message handler
 export async function firstMessageHandler(context) {
     try {
-        const { bot, userId, message, msg, userDisplayName, id } = context;
-        if (!cache.get('first').includes(userDisplayName)) {
-            cache.set('first', [...cache.get('first'), userDisplayName]);
+        const { userId, displayName, id } = context;
+        if (cache.get('first') === undefined) {
+            cache.set('first', []);
+        };
+        if (!cache.get('first').includes(displayName)) {
+            cache.set('first', [...cache.get('first'), displayName]);
             if (cache.get('first').length === 1) {
-                chatClient.replyToMessage(`@${userDisplayName} First message! You were rewarded currency!`, id);
+                chatClient.replyToMessage(`@${displayName} First message!`, id);
                 await currencyDB.addCurrencyForFirst(userId, 1)
             } else if (cache.get('first').length === 2) {
-                chatClient.replyToMessage(`@${userDisplayName} Second message! You were rewarded currency!`, id);
+                chatClient.replyToMessage(`@${displayName} Second message!`, id);
                 await currencyDB.addCurrencyForFirst(userId, 2)
             } else if (cache.get('first').length === 3) {
-                chatClient.replyToMessage(`@${userDisplayName} Third message! You were rewarded currency!`, id);
+                chatClient.replyToMessage(`@${displayName} Third message!`, id);
                 await currencyDB.addCurrencyForFirst(userId, 3)
             }
         }
     }
     catch (err) {
+        console.log(err);
         logger.error(`Error in firstMessageHandler: ${err}`);
     }
 }
