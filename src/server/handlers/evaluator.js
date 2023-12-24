@@ -13,6 +13,8 @@ import { sendCommand } from "./actionHandlers/lumiaStream.js";
 import { delay } from "./actionHandlers/delayHandler.js";
 import { createCommand } from "./actionHandlers/createCommand.js";
 import { sarcasticResponseHandler } from "./actionHandlers/sarcasticResponse.js";
+import { createPredictionAI } from "../services/openAi.js";
+import { startPrediction } from "./actionHandlers/predictionHandler.js";
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context = null) {
@@ -143,8 +145,22 @@ export async function actionEvalulate(handler, context = null) {
             case 'sarcasticResponse':
                 // Get the message from the chat after the !q command
                 const messageFromChat = input.split('!q')[1].trim();
+                if (!messageFromChat || messageFromChat === '') {
+                    console.log('No message to respond to');
+                    break;
+                }
                 sarcasticResponseHandler(messageFromChat);
                 break;
+            case 'prediction':
+                const predictionInput = input.split('!prediction')[1].trim();
+                if (!predictionInput || predictionInput === '') {
+                    console.log('No message to respond to');
+                    break;
+                } else {
+                    const response = await createPredictionAI(predictionInput);
+                    startPrediction(response.title, response.outcomes);
+                    break;
+                };
             default:
                 logger.error(`Handler not found: ${handler}`);
         }
