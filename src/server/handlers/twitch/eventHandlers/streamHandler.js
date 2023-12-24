@@ -1,6 +1,7 @@
 import { usersDB, cache, goalDB, webSocket, twitchApi } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";
 
+
 export async function onStreamOffline(e) {
     try {
         cache.set('live', false);
@@ -13,7 +14,29 @@ export async function onStreamOffline(e) {
 }
 
 export async function onStreamUpdate(e) {
-    console.log('Stream updated');
+    try {
+        const { streamTitle, categoryName, categoryId } = e;
+        const { boxArtUrl, name } = await e.getGame();
+        const thumbnailUrl = boxArtUrl.replace('{width}', '1440').replace('{height}', '1920');
+        const streamInfoData = {
+            title: streamTitle,
+            gameName: name,
+            thumbnailUrl
+        };
+        // Update title, game name, and thumbnail url in cache
+        const streamInfo = cache.get('streamInfo');
+        if (streamInfo) {
+            streamInfo.title = streamTitle;
+            streamInfo.gameName = name;
+            streamInfo.thumbnailUrl = thumbnailUrl;
+            cache.set('streamInfo', streamInfo);
+        } else {
+            cache.set('streamInfo', streamInfoData);
+        }
+    }
+    catch (error) {
+        logger.error(`Error in onStreamUpdate: ${error}`);
+    }
 }
 
 export async function onStreamOnline(e) {
@@ -22,8 +45,11 @@ export async function onStreamOnline(e) {
         cache.set('live', true);
         cache.set('viewers', [])
         cache.set('first', []);
+        await goalDB.setGoalCurrent('dailySubGoal', 0);
+        await usersDB.resetStreamProperties();
         const { title, gameName, startedAt, isMature, tags, gameId } = streamInfo;
-        const thumbnailUrl = await twitchApi.getGameById(gameId);
+        const { boxArtUrl } = await streamInfo.getGame();
+        boxArtUrl.replace('{width}', '1440').replace('{height}', '1920')
         const streamInfoData = {
             title,
             gameName,
@@ -31,15 +57,14 @@ export async function onStreamOnline(e) {
             isMature,
             tags,
             gameId,
-            thumbnailUrl,
+            thumbnailUrl: boxArtUrl
         };
         cache.set('streamInfo', streamInfoData);
-        await goalDB.setGoalCurrent('dailySubGoal', 0);
-        await usersDB.resetStreamProperties();
         webSocket.streamLive(streamInfoData);
         logger.info('Stream online');
     }
     catch (error) {
+        console.log(error);
         logger.error(`Error in onStreamOnline: ${error}`);
     }
 }

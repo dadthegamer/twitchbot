@@ -230,6 +230,7 @@ class GoalService {
             if (goal.current >= goal.goal) {
                 await this.dbConnection.collection(this.collectionName).updateOne({ name: goalName }, { $set: { completed: true } });
             };
+            webSocket.subsUpdate();
             return result;
         } catch (error) {
             logger.error(`Error increasing goal current: ${error}`);

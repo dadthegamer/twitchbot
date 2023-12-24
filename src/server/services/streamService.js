@@ -389,6 +389,24 @@ class StreamDB {
             return null;
         }
     }
+
+    // Method to set the channel metadata
+    async setChannelMetadata(categoryId, categoryName, streamTitle) {
+        try {
+            const query = { status: 'online' };
+            const update = {
+                $set: {
+                    channelMetadata: metadata,
+                }
+            };
+            const options = { upsert: true };
+            await this.dbConnection.collection('streamData').updateOne(query, update, options);
+            return;
+        }
+        catch (error) {
+            logger.error(`Error in setChannelMetadata: ${error}`);
+        }
+    }
 }
 
 export default StreamDB;

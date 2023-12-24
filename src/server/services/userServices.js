@@ -1,5 +1,5 @@
 import logger from "../utilities/logger.js";
-import { twitchApi } from '../config/initializers.js';
+import { twitchApi, currencyDB } from '../config/initializers.js';
 import { environment } from '../config/environmentVars.js';
 
 
@@ -523,6 +523,14 @@ class UsersDB {
                 catch (error) {
                     logger.error(`Error in increaseCurrency: ${error}`);
                 }
+            }
+            // Get all the currency's that exist
+            const currencies = await currencyDB.getAllCurrencies();
+            // Make sure the currency exists in the currency database. It will have a property of name
+            const currencyExists = currencies.find((currencyObj) => currencyObj.name === currency);
+            if (!currencyExists) {
+                logger.error(`Error in increaseCurrency: Currency does not exist`);
+                return null;
             }
             // Check if the user exists. If they do not then return
             const user = await this.getUserByUserId(userId);

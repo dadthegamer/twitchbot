@@ -40,8 +40,9 @@ function Intermission() {
                 } else if (data.type === 'subsUpdate') {
                     setSubsCount(data.payload.monthlySubs);
                 } else if (data.type === 'streamLive') {
-                    setGameImg(data.payload.streamInfo.thumbnailUrl);
-                    setGameTitle(data.payload.streamInfo.gameName);
+                    // setGameImg(data.payload.streamInfo.thumbnailUrl);
+                    // setGameTitle(data.payload.streamInfo.gameName);
+                    console.log('Stream is live');
                 }
             };
 

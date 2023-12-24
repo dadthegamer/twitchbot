@@ -41,9 +41,9 @@ function Display() {
                 } else if (data.type === 'streamLive') {
                     if (data.payload.live) {
                         startUptimeTimer();
-                        if (data.payload.streamInfo) {
-                            setGameImg(data.payload.streamInfo.thumbnailUrl);
-                        }
+                        // if (data.payload.streamInfo) {
+                        //     setGameImg(data.payload.streamInfo.thumbnailUrl);
+                        // }
                     } else if (!data.payload.live) {
                         stopUptimeTimer();
                     }
