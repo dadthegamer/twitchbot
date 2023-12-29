@@ -225,7 +225,9 @@ class TwitchApiClient {
                 title: title,
             };
             const response = await this.apiClient.predictions.createPrediction(this.userId, data);
-            this.cache.set('prediction', predictionData);
+            if (response) {
+                this.cache.set('prediction', data);
+            }
             return response;
         }
         catch (error) {
