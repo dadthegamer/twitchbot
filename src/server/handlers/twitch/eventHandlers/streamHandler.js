@@ -47,6 +47,7 @@ export async function onStreamOnline(e) {
         cache.set('first', []);
         await goalDB.setGoalCurrent('dailySubGoal', 0);
         await usersDB.resetStreamProperties();
+        await usersDB.resetArrived();
         const { title, gameName, startedAt, isMature, tags, gameId } = streamInfo;
         const { boxArtUrl } = await streamInfo.getGame();
         boxArtUrl.replace('{width}', '1440').replace('{height}', '1920')
