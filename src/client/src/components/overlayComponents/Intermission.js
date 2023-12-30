@@ -145,8 +145,7 @@ function Intermission() {
                 <span>{subsCount}</span>
             </div>
             <div className='intermission-left-container'>
-                {/* <Leaderboard /> */}
-                Leaderboard Coming Soon!
+                { <Leaderboard /> }
             </div>
             <div className='bottom-line-container'>
                 <BottomLeft />

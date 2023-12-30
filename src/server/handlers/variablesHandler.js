@@ -70,6 +70,8 @@ export async function updateVariable(variable, context, userId, property = null,
                 } else {
                     // Calculate the difference between the follow date and now down  to the second
                     const diff = Math.abs(new Date() - followDate);
+                    // Convert the difference to years
+                    const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
                     // Convert the difference to days
                     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
                     // Convert the difference to hours
@@ -80,8 +82,17 @@ export async function updateVariable(variable, context, userId, property = null,
                     const seconds = Math.floor(diff / (1000));
 
                     let string = '';
-                    if (days > 0) {
-                        string += `${days}d `;
+                    if (years > 0) {
+                        if (years === 1) {
+                            string += `${years} year `;
+                        } else {
+                            string += `${years} years `;
+                        }
+                    }
+                    // Subtract the years from the days to get the remainder
+                    const daysRemainder = days - (years * 365);
+                    if (daysRemainder > 0) {
+                        string += `${daysRemainder}d `;
                     }
                     // Subtract the days from the hours to get the remainder
                     const hoursRemainder = hours - (days * 24);
