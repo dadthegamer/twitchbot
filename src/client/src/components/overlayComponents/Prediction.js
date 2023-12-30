@@ -4,78 +4,107 @@ import '../../styles/overlay/predictions.css';
 
 function Prediction() {
     const [showPrediction, setShowPrediction] = useState(false);
-    const [totalVotes, setTotalVotes] = useState(0);
+    const [totalUsers, setTotalVotes] = useState(0);
     const [totalPointsValue, setTotalPointsValue] = useState(0);
-    const [predictionTitle, setPredictionTitle] = useState(null);
+    const [predictionTitle, setPredictionTitle] = useState('Test Title');
     const [outcomes, setOutcomes] = useState([]);
     const [color, setColor] = useState('white');
     const [outcomePCTs, setOutcomePCTs] = useState([]);
-
+    const [connected, setConnected] = useState(false);
+    const [socket, setSocket] = useState(null);
+    const [timer, setTimer] = useState('0:00');
 
     // Get the prediction data from the API and set it to state
+    const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
     useEffect(() => {
-        const interval = setInterval(() => {
-            fetch('/api/prediction')
-                .then(res => res.json())
-                .then(data => {
-                    if (data.prediction !== null) {
-                        if (data.prediction.locked === false) {
-                            if (showPrediction === false) {
-                                setShowPrediction(true);
-                                console.log('showing prediction');
-                                setPredictionTitle(data.prediction.title);
-                                setOutcomes(data.prediction.outcomes);
-                            } else {
-                                console.log('updating prediction');
-                                // const uniqueVotes = data.prediction.outcomes.reduce((acc, outcome) => {
-                                //     return acc + outcome.users;
-                                // }, 0);
-                                // const totalPoints = data.prediction.outcomes.reduce((acc, outcome) => {
-                                //     return acc + outcome.channelPoints;
-                                // }, 0);
-                                // setTotalVotes(uniqueVotes);
-                                // setTotalPointsValue(totalPoints);
-                                // // const pctArray = [];
-                                // // for (let i = 0; i < data.prediction.outcomes.length; i++) {
-                                // //     const outcome = data.prediction.outcomes[i];
-                                // //     pctArray.push(Math.round((outcome.users / uniqueVotes) * 100));
-                                // // }
-                                // // setOutcomePCTs(pctArray);
-                            }
-                        } else if (data.locked === true) {
-                            if (showPrediction) {
-                                setPredictionTitle(null);
-                                setTotalVotes(0);
-                                setTotalPointsValue(0);
-                                setShowPrediction(false);
-                            }
+        const establishConnection = () => {
+            const ws = new WebSocket(wsurl);
+
+            ws.onopen = () => {
+                console.log('Connected to websocket server');
+                setConnected(true);
+                setSocket(ws);
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                console.log(data);
+                if (data.type === 'prediction') {
+                    if (data.payload.data.active === true) {
+                        console.log(`Show prediction: ${showPrediction}`)
+                        if (showPrediction === false) {
+                            console.log('New prediction');
+                            setShowPrediction(true);
+                            const { title, outcomes, predictionWindow } = data.payload.data;
+                            setPredictionTitle(title);
+                            setOutcomes(outcomes);
+                            startTimer(predictionWindow);
+                        } else {
+                            console.log('Updating prediction');
+                            const { outcomes } = data.payload.data;
+                            setOutcomes(outcomes);
+                            // Map over the outcomes and set the total points
+                            let totalPoints = totalPointsValue;
+                            let totalVotes = totalUsers;
+                            outcomes.forEach(outcome => {
+                                totalPoints += outcome.channelPoints;
+                                totalVotes += outcome.users;
+                            });
+                            console.log(totalPoints);
+                            setTotalVotes(totalVotes);
+                            setTotalPointsValue(totalPoints);
                         }
+                    } else if (data.payload.data.active === false) {
+                        setShowPrediction(false);
                     }
-                });
-        }, 1000);
-        return () => clearInterval(interval);
+                }
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket Error:', error);
+            };
+
+            ws.onclose = () => {
+                console.log('Disconnected');
+                setConnected(false);
+            };
+
+            return ws;
+        };
+
+        let ws = establishConnection();
+
+        // Reconnection logic
+        const intervalId = setInterval(() => {
+            if (!connected && (!ws || ws.readyState === WebSocket.CLOSED)) {
+                console.log('Reconnecting...');
+                ws = establishConnection();
+            }
+        }, 5000);
+
+        // Cleanup function to clear the resources when component unmounts
+        return () => {
+            clearInterval(intervalId); // Clear the interval for reconnection attempts
+            if (ws) {
+                ws.close(); // Close the WebSocket connection if it's open
+            }
+        };
     }, []);
 
     function startTimer(ms) {
-        const timer = document.getElementById('timer');
-        let seconds = Math.floor(ms / 1000);
-        let minutes = Math.floor(seconds / 60);
-        seconds = seconds % 60;
-        timer.innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-        let intervalId = setInterval(() => {
-            seconds--;
-            if (seconds < 0) {
-                seconds = 59;
-                minutes--;
+        const startTime = Date.now();
+        const endTime = startTime + ms;
+        const intervalId = setInterval(() => {
+            const currentTime = Date.now();
+            if (currentTime >= endTime) {
+                clearInterval(intervalId);
+                setTimer('0:00');
+                return;
             }
-
-            timer.innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-
-            if (minutes === 0 && seconds === 0) {
-                clearInterval(intervalId); // Stop the timer when it reaches 0
-                // Optionally, you can call another function or perform some action here
-            }
+            const timeLeft = endTime - currentTime;
+            const minutes = Math.floor(timeLeft / 60000);
+            const seconds = Math.floor((timeLeft % 60000) / 1000);
+            setTimer(`${minutes}:${seconds < 10 ? '0' + seconds : seconds}`);
         }, 1000);
     }
 
@@ -93,10 +122,10 @@ function Prediction() {
                     <div className="outcomes-container">
                         {outcomes.map(outcome => (
                             <div className="outcome" data-outcome-id={outcome.id} key={outcome.id}>
-                                <div className="inner-outcome" style={{ color }}>
+                                <div className="inner-outcome" style={{ color: outcome.color }}>
                                     <span className="outcome-title">{outcome.title}</span>
                                     <div className="pct-container">
-                                        <span className="pct" style={{ color }}>0</span>
+                                        <span className="pct" style={{ color: outcome.color }}>0</span>
                                         <span>%</span>
                                     </div>
                                 </div>
@@ -111,15 +140,15 @@ function Prediction() {
                     <div className="bottom-container">
                         <div>
                             <span className="label">Unique Votes:</span>
-                            <span id="total-votes">{totalVotes}</span>
+                            <span id="total-votes">{totalUsers}</span>
                         </div>
                         <div>
                             <span className="label">Total Points:</span>
                             <span id="total-points">{totalPointsValue}</span>
                         </div>
-                        <div>
+                        <div className='prediction-timer-container'>
                             <span className="label">Time Left:</span>
-                            <span id="timer"></span>
+                            <span id="prediction-timer">{timer}</span>
                         </div>
                     </div>
                 </div>

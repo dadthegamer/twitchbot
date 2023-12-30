@@ -194,4 +194,12 @@ export class WebSocket {
         };
         this.broadcastMessage('streamLive', payload);
     }
+
+    // Method to send the prediction data
+    async prediction(data) {
+        const payload = {
+            data,
+        };
+        this.broadcastMessage('prediction', payload);
+    }
 }

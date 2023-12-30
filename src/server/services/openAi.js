@@ -86,7 +86,7 @@ export async function createPredictionAI(message) {
         const chatCompletion = await openai.chat.completions.create({
             messages: [{
                 "role": "system",
-                "content": "You will be provided a message from my Twitch chat to create a prediction. Figure out the title and the outcomes from the message. If there are no outcomes given then give your best guess on what the outcomes should be. You need to format the message in json with a key of title and a key of outcomes as an array. Keep the outcomes as short as possible. The title is the title of the prediction. The outcomes are the outcomes of the prediction. You can have up to 4 outcomes. Respond with the json formatted message. "
+                "content": "You will be provided a message from my Twitch chat to create a prediction. Figure out the title and the outcomes from the message. An example message would be: Will the team get at least 15 kills? Yes No. The title is the will the team and the outcomes are yes and no. If there are no outcomes given than give your best guess on what the outcomes should be. You need to format the message in json with a key of title and a key of outcomes as an array. Keep the outcomes as short as possible. The title is the title of the prediction. The outcomes are the outcomes of the prediction. You can have up to 4 outcomes. Respond with the json formatted message. "
             },
             {
                 "role": "user",
