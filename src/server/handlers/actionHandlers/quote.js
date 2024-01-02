@@ -40,6 +40,6 @@ export async function createQuote(quote, creator) {
         };
     }
     catch (err) {
-        logger.error(`Error in createQuote: ${err}`);
+        logger.error(`Error in createQuote action handler: ${err}`);
     }
 }

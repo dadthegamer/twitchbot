@@ -1,5 +1,5 @@
 import logger from "../../utilities/logger.js";
-import { usersDB, streamDB, webSocket, cache } from "../../config/initializers.js";
+import { usersDB, webSocket, cache, currencyDB } from "../../config/initializers.js";
 import { sendColorCommand } from "../actionHandlers/lumiaStream.js";
 import { firstMessageHandler } from "./firstMessageHandler.js";
 
@@ -38,6 +38,7 @@ export async function arrivalHandler(context) {
                 firstMessageHandler(context);
                 usersDB.setArrived(userId, true);
                 webSocket.userArrived(userId, displayName);
+                currencyDB.addCurrencyForArriving(userId);
             }
         } else {
             return;

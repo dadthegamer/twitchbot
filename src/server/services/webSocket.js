@@ -202,4 +202,12 @@ export class WebSocket {
         };
         this.broadcastMessage('prediction', payload);
     }
+
+    // Method to send a sound to play
+    async sound(sound) {
+        const payload = {
+            sound,
+        };
+        this.broadcastMessage('sound', payload);
+    }
 }

@@ -14,7 +14,24 @@ export async function onPredictionStart(e) {
                 color: outcome.color,
                 channelPoints: outcome.channelPoints,
                 users: outcome.users,
+                topPredictors: [],
             });
+        });
+        // Calculate the total number of users and channel points used in the prediction
+        let totalUsers = 0;
+        let totalChannelPoints = 0;
+        outcomeArray.forEach((outcome) => {
+            // If the channel points or users is NaN, set it to 0
+            if (isNaN(outcome.channelPoints)) outcome.channelPoints = 0;
+            if (isNaN(outcome.users)) outcome.users = 0;
+            totalUsers += outcome.users;
+            totalChannelPoints += outcome.channelPoints;
+        });
+        // Calculate the percentage of users that voted for each outcome
+        outcomeArray.forEach((outcome) => {
+            outcome.percentage = Math.round((outcome.users / totalUsers) * 100);
+            // If the percentage is NaN, set it to 0
+            if (isNaN(outcome.percentage)) outcome.percentage = 0;
         });
         cache.set('prediction', {
             active: true,
@@ -24,27 +41,55 @@ export async function onPredictionStart(e) {
             lockDate: lockDate,
             locked: false,
             predictionWindow: lockDate - startDate,
+            totalUsers: totalUsers,
+            totalChannelPoints: totalChannelPoints,
         });
+        console.log(cache.get('prediction'));
         webSocket.prediction(cache.get('prediction'));
         return;
     }
     catch (error) {
+        console.log(error);
         logger('error', `Error in onPredictionStart: ${error}`);
     }
 }
 
 export async function onPredictionProgress(e) {
     try {
-        const { title, lockDate, startDate } = await e
+        const { title, lockDate, startDate} = await e
         const outcomeArray = [];
         e.outcomes.forEach((outcome) => {
+            // For each top predictor, add the percentage of users that voted for that outcome
+            let topPredictors = [];
+            outcome.topPredictors.forEach((predictor) => {
+                topPredictors.push({
+                    userId: predictor.userId,
+                    userDisplayName: predictor.userDisplayName,
+                    channelPointsUsed: predictor.channelPointsUsed,
+                });
+            });
             outcomeArray.push({
                 id: outcome.id,
                 title: outcome.title,
                 color: outcome.color,
                 channelPoints: outcome.channelPoints,
                 users: outcome.users,
+                topPredictors: topPredictors,
             });
+        });
+        // Calculate the total number of users and channel points used in the prediction
+        let totalUsers = 0;
+        let totalChannelPoints = 0;
+        outcomeArray.forEach((outcome) => {
+            // If the channel points or users is NaN, set it to 0
+            if (isNaN(outcome.channelPoints)) outcome.channelPoints = 0;
+            if (isNaN(outcome.users)) outcome.users = 0;
+            totalUsers += outcome.users;
+            totalChannelPoints += outcome.channelPoints;
+        });
+        // Calculate the percentage of users that voted for each outcome
+        outcomeArray.forEach((outcome) => {
+            outcome.percentage = Math.round((outcome.users / totalUsers) * 100);
         });
         cache.set('prediction', {
             active: true,
@@ -54,6 +99,8 @@ export async function onPredictionProgress(e) {
             lockDate: lockDate,
             locked: false,
             predictionWindow: lockDate - startDate,
+            totalUsers: totalUsers,
+            totalChannelPoints: totalChannelPoints,
         });
         webSocket.prediction(cache.get('prediction'));
         return;
@@ -72,9 +119,23 @@ export async function onPredictionLock(e) {
                 id: outcome.id,
                 title: outcome.title,
                 color: outcome.color,
-                channelPoints: 0,
-                users: 0,
+                channelPoints: outcome.channelPoints,
+                users: outcome.users,
             });
+        });
+        // Calculate the total number of users and channel points used in the prediction
+        let totalUsers = 0;
+        let totalChannelPoints = 0;
+        outcomeArray.forEach((outcome) => {
+            // If the channel points or users is NaN, set it to 0
+            if (isNaN(outcome.channelPoints)) outcome.channelPoints = 0;
+            if (isNaN(outcome.users)) outcome.users = 0;
+            totalUsers += outcome.users;
+            totalChannelPoints += outcome.channelPoints;
+        });
+        // Calculate the percentage of users that voted for each outcome
+        outcomeArray.forEach((outcome) => {
+            outcome.percentage = Math.round((outcome.users / totalUsers) * 100);
         });
         cache.set('prediction', {
             active: false,
@@ -84,8 +145,10 @@ export async function onPredictionLock(e) {
             lockDate: lockDate,
             locked: false,
             predictionWindow: lockDate - startDate,
+            totalUsers: totalUsers,
+            totalChannelPoints: totalChannelPoints,
         });
-        webSocket.prediction('start', cache.get('prediction'));
+        webSocket.prediction(cache.get('prediction'));
         return;
     }
     catch (error) {
@@ -96,27 +159,8 @@ export async function onPredictionLock(e) {
 export async function onPredictionEnd(e) {
     try {
         cache.set('prediction', null);
-        // for (const outcome of e.outcomes) {
-        //     console.log(`Outcome ${outcome.title} has ${outcome.channelPoints} points`);
-        // }
     }
     catch (error) {
         logger('error', `Error in onPredictionEnd: ${error}`);
-    }
-}
-
-
-// Helper functions
-// Function to update the prediction
-async function updatePrediction(outcomeId, channelPoints, users) {
-    try {
-        const prediction = cache.get('prediction');
-        const outcomeIndex = prediction.outcomes.findIndex((outcome) => outcome.id === outcomeId);
-        prediction.outcomes[outcomeIndex].channelPoints = channelPoints;
-        prediction.outcomes[outcomeIndex].users = users;
-        cache.set('prediction', prediction);
-    }
-    catch (error) {
-        logger('error', `Error in updatePrediction: ${error}`);
     }
 }

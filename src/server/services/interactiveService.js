@@ -11,6 +11,7 @@ class InteractionsDbService {
         this.getAllQuotes();
         this.getTvMessage();
         this.getQueue();
+        this.getAllSounds();
     }
 
     // Method to get all the roasts from the database
@@ -120,7 +121,7 @@ class InteractionsDbService {
             }
         }
         catch (err) {
-            logger.error(`Error in createQuote: ${err}`);
+            logger.error(`Error in createQuote method: ${err}`);
         }
     }
 
@@ -298,6 +299,59 @@ class InteractionsDbService {
         }
         catch (err) {
             logger.error(`Error in clearQueue: ${err}`);
+        }
+    }
+
+    // Method to store a new sound into the database
+    async createSound(sound) {
+        try {
+            const newSound = {
+                sound: sound,
+                location: `/audio/${sound}.mp3`,
+                createdAt: new Date(),
+            }
+            await this.dbConnection.collection('sounds').insertOne(newSound);
+            await this.getAllSounds();
+            return newSound;
+        }
+        catch (err) {
+            logger.error(`Error in createSound: ${err}`);
+        }
+    }
+
+    // Method to get all the sounds from the database and store them in the cache
+    async getAllSounds() {
+        try {
+            const sounds = await this.dbConnection.collection('sounds').find({}).toArray();
+            this.cache.set('sounds', sounds);
+            return sounds;
+        }
+        catch (err) {
+            logger.error(`Error in getAllSounds: ${err}`);
+        }
+    }
+
+    // Method to delete a sound from the database and the cache
+    async deleteSound(sound) {
+        try {
+            const res = await this.dbConnection.collection('sounds').deleteOne({ sound: sound });
+            await this.getAllSounds();
+            return res;
+        }
+        catch (err) {
+            logger.error(`Error in deleteSound: ${err}`);
+        }
+    }
+
+    // Method to get a sound from the cache
+    async getSound(sound) {
+        try {
+            const sounds = await this.cache.get('sounds');
+            const soundData = sounds.find(soundData => soundData.sound === sound);
+            return soundData;
+        }
+        catch (err) {
+            logger.error(`Error in getSound: ${err}`);
         }
     }
 }

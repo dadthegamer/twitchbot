@@ -368,7 +368,7 @@ class CurrencyService {
             this.payoutIntervals = [];
             const currencies = this.cache.get('currencies');
             if (currencies === undefined) {
-                return;
+                await this.getAllCurrencies();
             }
             if (currencies.length === 0) {
                 return;
@@ -379,7 +379,7 @@ class CurrencyService {
                 if (!enabled) {
                     return;
                 }
-                const { interval, amount, subs, bits, donations, raids, arrived } = payoutSettings;
+                const { interval, amount } = payoutSettings;
                 if (interval === 0) {
                     return;
                 }
@@ -400,43 +400,7 @@ class CurrencyService {
                             return;
                         }
                         viewers.forEach(async (viewer) => {
-                            // Check if the viewer is a follower, subscriber, vip, or moderator
-                            const roles = await this.userRolesHandler(viewer.userId, name);
-                            if (roles.length > 0) {
-                                // Check restrictions first. If the viewer doesn't meet the restrictions then continue to the next viewer
-                                let bonus = 0
-                                const { moderator, subscriber, vip, activeChatUser, tier1, tier2, tier3 } = roleBonuses;
-                                // For each of the roles, check if the viewer has the role and add the bonus to the bonus variable
-                                if (roles.includes('moderator')) {
-                                    bonus += moderator;
-                                }
-                                if (roles.includes('subscriber')) {
-                                    bonus += subscriber;
-                                }
-                                if (roles.includes('vip')) {
-                                    bonus += vip;
-                                }
-                                if (roles.includes('activeChatUser')) {
-                                    bonus += activeChatUser;
-                                }
-                                const totalPayout = amount + bonus;
-                                // If the currency is limited then check if the viewer has reached the limit
-                                if (limit) {
-                                    const currentAmount = await usersDB.getCurrency(viewer.userId, name);
-                                    if (currentAmount + totalPayout > limit) {
-                                        // Set the amount to the limit
-                                        usersDB.setCurrency(viewer.userId, name, limit);
-                                        return; // Use return to continue to the next viewer
-                                    }
-                                } else {
-                                    // If the currency is not limited then add the total payout to the viewer
-                                    usersDB.increaseCurrency(viewer.userId, name, totalPayout);
-                                    return;
-                                }
-                            } else {
-                                usersDB.increaseCurrency(viewer.userId, name, amount);
-                                return;
-                            }
+                            usersDB.increaseCurrency(viewer.userId, name, amount);
                         });
                     }
                 }, interval * 60000);
