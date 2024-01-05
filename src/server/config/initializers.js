@@ -25,6 +25,7 @@ import { startHighlightedMessageAlertsHandler } from '../handlers/highlightedMes
 import TimerManager from '../services/timerService.js';
 import EventServices from '../services/eventServices.js';
 import { getChatCommands, sendCommand } from '../handlers/actionHandlers/lumiaStream.js';
+import GoXLRClient from '../services/goXLRService.js';
 
 
 // Cache initialization
@@ -101,6 +102,9 @@ const timerManager = new TimerManager(db.dbConnection, cache);
 // Event Services initialization
 const eventServices = new EventServices(db.dbConnection);
 
+// GoXLR Client initialization
+const goXLRClient = new GoXLRClient();
+
 // Start the alerts handler
 startAlertsHandler();
 
@@ -133,5 +137,6 @@ export {
     settingsDB,
     obsService,
     timerManager,
-    eventServices
+    eventServices,
+    goXLRClient,
 };

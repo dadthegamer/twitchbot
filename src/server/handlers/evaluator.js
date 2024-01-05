@@ -15,6 +15,8 @@ import { createCommand } from "./actionHandlers/createCommand.js";
 import { sarcasticResponseHandler } from "./actionHandlers/sarcasticResponse.js";
 import { createPredictionAI } from "../services/openAi.js";
 import { startPrediction } from "./actionHandlers/predictionHandler.js";
+import { disableGoXLRInput, enableGoXLRInput } from "./actionHandlers/goXLRHandler.js";
+
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context = null) {
@@ -129,7 +131,7 @@ export async function actionEvalulate(handler, context = null) {
                 console.log(handler.response);
                 break;
             case 'delay':
-                const delayTime = parseInt(handler.response);
+                const delayTime = parseInt(handler.time);
                 await delay(delayTime);
                 break;
             case 'createCommand':
@@ -161,6 +163,18 @@ export async function actionEvalulate(handler, context = null) {
                     startPrediction(response.title, response.outcomes);
                     break;
                 };
+            case 'goXLR':
+                switch (action) {
+                    case 'disableInput':
+                        disableGoXLRInput(handler.input);
+                        break;
+                    case 'enableInput':
+                        enableGoXLRInput(handler.input);
+                        break;
+                    default:
+                        logger.error(`GoXLR action not found: ${action}`);
+                }
+                break;
             default:
                 logger.error(`Handler not found: ${handler}`);
         }
