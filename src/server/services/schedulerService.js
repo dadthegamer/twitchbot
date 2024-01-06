@@ -56,10 +56,10 @@ export class SchedulerService {
             leaderboard.forEach(async user => {
                 await usersDB.setBitsManually(user.userId, user.amount);
             });
-            return leaderboard;
         }
         catch (error) {
-            logger.error(`Error getting bits leaderboard: ${error}`);
+            console.log(error);
+            logger.error(`Error getting bits leaderboard in schedulerService: ${error}`);
         }
     }
 
