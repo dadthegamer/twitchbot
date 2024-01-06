@@ -27,6 +27,7 @@ import EventServices from '../services/eventServices.js';
 import { getChatCommands, sendCommand } from '../handlers/actionHandlers/lumiaStream.js';
 import GoXLRClient from '../services/goXLRService.js';
 import { subscribeToDonationEvents } from '../services/streamElementsService.js';
+import TikTokService from '../services/tikTokService.js';
 
 
 // Cache initialization
@@ -106,6 +107,9 @@ const eventServices = new EventServices(db.dbConnection);
 // GoXLR Client initialization
 const goXLRClient = new GoXLRClient();
 
+// TikTok Service initialization
+const tikTokService = new TikTokService(db.dbConnection);
+
 // Start the alerts handler
 startAlertsHandler();
 
@@ -143,4 +147,5 @@ export {
     timerManager,
     eventServices,
     goXLRClient,
+    tikTokService,
 };
