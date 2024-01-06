@@ -16,12 +16,14 @@ import { sarcasticResponseHandler } from "./actionHandlers/sarcasticResponse.js"
 import { createPredictionAI } from "../services/openAi.js";
 import { startPrediction } from "./actionHandlers/predictionHandler.js";
 import { disableGoXLRInput, enableGoXLRInput } from "./actionHandlers/goXLRHandler.js";
+import { dropHandler } from "./actionHandlers/dropHandler.js";
+import { startRaffle, joinRaffle } from "./actionHandlers/raffleHandler.js";
 
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context = null) {
     try {
-        const { displayName, userId, messageID, input } = context || {};
+        const { displayName, userId, messageID, input, isMod, isVip, isSubscriber, isBroadcaster } = context || {};
         const { type, response, action } = handler;
 
         // Check if the response contains a variable
@@ -173,6 +175,23 @@ export async function actionEvalulate(handler, context = null) {
                         break;
                     default:
                         logger.error(`GoXLR action not found: ${action}`);
+                }
+                break;
+            case 'drop':
+                dropHandler(userId, displayName, isMod, isBroadcaster, messageID);
+                break;
+            case 'raffle':
+                switch (action) {
+                    case 'start':
+                        // Get the amount to raffle. It will be the text after the command. Example: !raffle 1000. Only get the 1000
+                        const amount = parseInt(input.split('!raffle')[1].trim());
+                        startRaffle(amount);
+                        break;
+                    case 'join':
+                        joinRaffle(userId, displayName, messageID);
+                        break;
+                    default:
+                        logger.error(`Raffle action not found: ${action}`);
                 }
                 break;
             default:

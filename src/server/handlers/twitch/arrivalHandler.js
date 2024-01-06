@@ -1,5 +1,5 @@
 import logger from "../../utilities/logger.js";
-import { usersDB, webSocket, cache, currencyDB } from "../../config/initializers.js";
+import { usersDB, webSocket, cache, currencyDB, schedulerService } from "../../config/initializers.js";
 import { sendColorCommand } from "../actionHandlers/lumiaStream.js";
 import { firstMessageHandler } from "./firstMessageHandler.js";
 
@@ -7,11 +7,15 @@ import { firstMessageHandler } from "./firstMessageHandler.js";
 export let alertQueue = [];
 let alertShowing = false;
 let alertTime = 8000;
+const botId = process.env.BOTID;
 
 
 export async function arrivalHandler(context) {
     try {
         const { userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster, id } = context;
+        if (isBroadcaster || userId === botId) {
+            return;
+        }
         let viewers = cache.get('viewers');
         if (!viewers || viewers === undefined) {
             viewers = [];

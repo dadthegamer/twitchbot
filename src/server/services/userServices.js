@@ -865,6 +865,22 @@ class UsersDB {
         }
     }
 
+    // Method to get the leaderboard for the top users in cumulativeMonths
+    async getLeaderboardByCumulativeMonths(count = 10) {
+        try {
+            const collection = await this.dbConnection.collection(this.collectionName);
+            const result = await collection
+                .find({})
+                .sort({ cumulativeMonths: -1 })
+                .limit(count)
+                .toArray();
+            return result;
+        } catch (error) {
+            logger.error(`Error in getLeaderboardByCumulativeMonths: ${error}`);
+            return null; // Handle the error gracefully
+        }
+    }
+
 
 
     // Method to get the leaderboard for subs

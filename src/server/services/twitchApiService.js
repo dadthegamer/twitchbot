@@ -376,6 +376,7 @@ class TwitchApiClient {
             return leaderboard;
         }
         catch (error) {
+            console.log(error);
             logger.error(`Error getting bits leaderboard: ${error}`);
         }
     }

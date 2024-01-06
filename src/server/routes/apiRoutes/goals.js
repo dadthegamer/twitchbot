@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import { goalDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
+import isStreamer from '../../middleware/loggedin.js';
+
+
 
 const router = Router();
 
@@ -13,7 +16,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.put('/', async (req, res) => {
+router.put('/', isStreamer, async (req, res) => {
     try {
         let { goal, update } = req.body;
         switch (goal) {

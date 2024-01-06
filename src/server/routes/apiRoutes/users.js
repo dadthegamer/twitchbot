@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import { usersDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
+import isStreamer from '../../middleware/loggedin.js';
+
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', isStreamer, async (req, res) => {
     try {
         const users = await usersDB.getAllUsers();
         res.json(users);
@@ -15,7 +17,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', isStreamer, async (req, res) => {
     try {
         const user = await usersDB.getUserByUserId(req.params.id);
         res.json(user);
@@ -26,7 +28,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', isStreamer, async (req, res) => {
     try {
         const id = req.params.id;
         let { update, value } = req.body;

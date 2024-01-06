@@ -100,10 +100,21 @@ function Leaderboard() {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
+    // Function to format the amount based on months. Example 22 should be 22 months, 1 should be 1 month, 0 should be 0 months
+    function formatMonths(months) {
+        if (months === 1) {
+            return `${months} month`;
+        } else {
+            return `${months} months`;
+        }
+    }
+
     function formatAmount(amount, title) {
         // Check if the title contains "view time" and format accordingly
         if (title.toLowerCase().includes("view time")) {
             return formatMinutes(amount);
+        } else if (title.toLowerCase().includes("months")) {
+            return formatMonths(amount);
         } else {
             return numberWithCommas(amount);
         }

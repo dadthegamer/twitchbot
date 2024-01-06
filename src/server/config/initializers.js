@@ -26,6 +26,7 @@ import TimerManager from '../services/timerService.js';
 import EventServices from '../services/eventServices.js';
 import { getChatCommands, sendCommand } from '../handlers/actionHandlers/lumiaStream.js';
 import GoXLRClient from '../services/goXLRService.js';
+import { subscribeToDonationEvents } from '../services/streamElementsService.js';
 
 
 // Cache initialization
@@ -113,6 +114,9 @@ startHighlightedMessageAlertsHandler();
 
 // Get the chat commands from the lumia stream
 getChatCommands();
+
+// Subscribe to donation events
+subscribeToDonationEvents();
 
 export {
     db,

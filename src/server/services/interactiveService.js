@@ -12,6 +12,7 @@ class InteractionsDbService {
         this.getTvMessage();
         this.getQueue();
         this.getAllSounds();
+        this.getDropSettings();
     }
 
     // Method to get all the roasts from the database
@@ -104,9 +105,10 @@ class InteractionsDbService {
         try {
             const quotes = await this.cache.get('quotes');
             // Starting at 1 see if there is a quote with that id. If there is not then assign that id to the new quote
-            for (let i = 1; i < quotes.length + 1; i++) {
+            for (let i = 1; i < quotes.length + 5; i++) {
                 const quoteExists = await this.getQuoteById(i);
-                if (!quoteExists) {
+                if (quoteExists === null || quoteExists === undefined) {
+                    console.log(`Quote with id ${i} does not exist`);
                     const newQuote = {
                         id: i,
                         text: quote,
@@ -121,6 +123,7 @@ class InteractionsDbService {
             }
         }
         catch (err) {
+            console.log(err);
             logger.error(`Error in createQuote method: ${err}`);
         }
     }
@@ -352,6 +355,36 @@ class InteractionsDbService {
         }
         catch (err) {
             logger.error(`Error in getSound: ${err}`);
+        }
+    }
+
+    // Method to get the drop settings from the cache. If they don't exist in the cache then get them from the database and store them in the cache
+    async getDropSettings() {
+        try {
+            let dropSettings = await this.cache.get('dropSettings');
+            if (!dropSettings) {
+                dropSettings = await this.dbConnection.collection('gameSettings').findOne({ id: 'drop' });
+                this.cache.set('dropSettings', dropSettings);
+            }
+            return dropSettings;
+        }
+        catch (err) {
+            logger.error(`Error in getDropSettings: ${err}`);
+        }
+    }
+
+    // Method to get the raffle settings from the cache. If they don't exist in the cache then get them from the database and store them in the cache
+    async getRaffleSettings() {
+        try {
+            let raffleSettings = await this.cache.get('raffleSettings');
+            if (!raffleSettings) {
+                raffleSettings = await this.dbConnection.collection('gameSettings').findOne({ id: 'raffle' });
+                this.cache.set('raffleSettings', raffleSettings);
+            }
+            return raffleSettings;
+        }
+        catch (err) {
+            logger.error(`Error in getRaffleSettings: ${err}`);
         }
     }
 }

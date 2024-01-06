@@ -147,7 +147,7 @@ class GameService {
         try {
             const data = await this.dbConnection.collection(this.collectionName).findOne({ id: 'jackpot' });
             if (data) {
-                const jackpot = data.jackPotStart;
+                const jackpot = data.jackpotStart;
                 await this.dbConnection.collection(this.collectionName).updateOne({ id: 'jackpot' }, { $set: { jackpot: jackpot } });
                 // Update the cache with the new jackpot amount
                 this.cache.set('jackpot', { jackpot: jackpot });

@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import logger from '../../utilities/logger.js';
 import { channelPointsService } from '../../config/initializers.js';
+import isStreamer from '../../middleware/loggedin.js';
+
 
 const router = Router();
 
@@ -29,7 +31,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // Endpoint to create a channel point
-router.post('/', async (req, res) => {
+router.post('/', isStreamer, async (req, res) => {
     try {
         const { title, prompt, cost, userInputRequired, backgroundColor, globalCooldown, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, handlers } = req.body;
         const response = await channelPointsService.createCustomReward(title, prompt, cost, userInputRequired, backgroundColor, globalCooldown, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, handlers);
@@ -42,7 +44,7 @@ router.post('/', async (req, res) => {
 });
 
 // Endpoint to update a channel point
-router.put('/:id', async (req, res) => {
+router.put('/:id', isStreamer, async (req, res) => {
     try {
         const response = await channelPointsService.updateChannelReward(req.params.id, req.body);
         res.json(response);
@@ -54,7 +56,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // Endpoint to delete a channel point
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', isStreamer, async (req, res) => {
     try {
         const response = await channelPointsService.deleteChannelReward(req.params.id);
         res.json( { success: true });
@@ -66,7 +68,7 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Endpoint to toggle a channel point
-router.put('/toggle/:id', async (req, res) => {
+router.put('/toggle/:id', isStreamer, async (req, res) => {
     try {
         await channelPointsService.toggleChannelReward(req.params.id, req.body.isEnabled);
         res.json({ success: true });

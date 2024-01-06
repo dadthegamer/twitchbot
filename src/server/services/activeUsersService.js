@@ -13,10 +13,8 @@ export class ActiveUsersCache {
 
     // Method to add a user to the cache with a ttl. 
     // If the user already exists, the ttl is updated
-    async addUser(user, ttl = 15) {
-        const key = user.id;
-        const value = user;
-        this.cache.set(key, value, ttl);
+    async addUser(userId, ttl = 15) {
+        this.cache.set(userId, userId, ttl);
     }
 
     // Method to get a user from the cache

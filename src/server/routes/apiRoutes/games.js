@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import { gameService } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
+import isStreamer from '../../middleware/loggedin.js';
+
 
 const router = Router();
 
-router.get('/jackpot', async (req, res) => {
+router.get('/jackpot', isStreamer, async (req, res) => {
     try {
         const jackpot = await gameService.getJackpot();
         res.json(jackpot);
@@ -13,7 +15,7 @@ router.get('/jackpot', async (req, res) => {
     }
 });
 
-router.put('/jackpot', async (req, res) => {
+router.put('/jackpot', isStreamer, async (req, res) => {
     try {
         const { update } = req.body;
         if (update === 'jackpot') {

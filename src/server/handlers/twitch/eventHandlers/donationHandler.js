@@ -1,4 +1,4 @@
-import { streamDB, currencyDB, usersDB } from "../../../config/initializers.js";
+import { streamDB, currencyDB, twitchApi } from "../../../config/initializers.js";
 import { addAlert } from "../../../handlers/alertHandler.js";
 import logger from "../../../utilities/logger.js";
 
@@ -6,16 +6,35 @@ import logger from "../../../utilities/logger.js";
 
 export async function onDonation(data) {
     try {
-        const { username, amount } = data.data;
-        const userData = await usersDB.get;
-        const { id, displayName, profilePictureUrl } = userData;
-        const newCheerData = {
-            id: userId,
-            display_name: userDisplayName,
-            profile_image_url: profileImage,
-        };
-        setLatestEvent('latest_donation', userData);
-        addDonation(id, amount);
+        if (data.isMock) {
+            console.log(data);
+            return;
+        }
+        const { username, amount, providerId } = data.data;
+        const userData = await twitchApi.getUserDataById(providerId);
+        if (userData) {
+            const { displayName, profilePictureUrl } = userData;
+            await addAlert(providerId, displayName, 'donation', `${displayName} donated $${amount}`);
+            const newDonationData = {
+                id: userId,
+                displayName: displayName,
+                profilePictureUrl: profilePictureUrl,
+                amount: amount,
+            };
+            await streamDB.setLatestEvent('latestDonation', newDonationData);
+        } else {
+            // Make the username all caps
+            const userDisplayName = username.toUpperCase();
+            await addAlert(providerId, username, 'donation', `${userDisplayName} donated $${amount}`);
+            const newDonationData = {
+                id: userId,
+                displayName: userDisplayName,
+                profilePictureUrl: null,
+                amount: amount,
+            };
+            await streamDB.setLatestEvent('latestDonation', newDonationData);
+        }
+        currencyDB.addCurrencyForDonations(providerId, amount);
     }
     catch (error) {
         logger.error(`Error in onDonation: ${error}`);

@@ -1,5 +1,5 @@
 import logger from '../../utilities/logger.js';
-import { twitchApi, chatClient, cache, commandHandler } from '../../config/initializers.js';
+import { chatClient, commandHandler } from '../../config/initializers.js';
 
 
 // Function for a mod to create a command

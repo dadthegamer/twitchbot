@@ -264,7 +264,7 @@ class CommandService {
                 if (permissions.includes('everyone' || permissions === 'everyone')) {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
                         for (const handler of handlers) {
-                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
+                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message, isMod, isVip, isSubscriber, isBroadcaster });
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
@@ -279,7 +279,7 @@ class CommandService {
                 } else if (permissions.includes('vip' || permissions === 'vip') && isVip) {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
                         for (const handler of handlers) {
-                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
+                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message, isMod, isVip, isSubscriber, isBroadcaster });
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
@@ -294,7 +294,7 @@ class CommandService {
                 } else if (permissions.includes('subscriber' || permissions === 'subscriber') && isSubscriber) {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
                         for (const handler of handlers) {
-                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
+                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message, isMod, isVip, isSubscriber, isBroadcaster });
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds
@@ -309,7 +309,7 @@ class CommandService {
                 } else if (permissions.includes('mod' || permissions === 'mod') && isMod || isBroadcaster) {
                     if (userCooldownStatus === true && globalCooldownStatus === true) {
                         for (const handler of handlers) {
-                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message });
+                            await actionEvalulate(handler, { displayName, userId, messageID: id, input: message, isMod, isVip, isSubscriber, isBroadcaster });
                         }
                     } else if (userCooldownStatus !== true) {
                         // Calculate time left in seconds

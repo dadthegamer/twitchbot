@@ -1,6 +1,8 @@
 import { Router } from 'express';
 import { usersDB, currencyDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
+import { apiAuth } from '../../middleware/apiAuth.js';
+
 
 const router = Router();
 
@@ -27,7 +29,7 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', apiAuth, async (req, res) => {
     try {
         console.log(req.body);
         const { currencyId, update, value } = req.body;
@@ -144,7 +146,7 @@ router.post('/', async (req, res) => {
 });
 
 
-router.post('/reset', async (req, res) => {
+router.post('/reset', apiAuth, async (req, res) => {
     try {
         const { currencyId } = req.body;
         const currendyData = await currencyDB.getCurrencyById(currencyId);
@@ -159,7 +161,7 @@ router.post('/reset', async (req, res) => {
 });
 
 
-router.post('/create', async (req, res) => {
+router.post('/create', apiAuth, async (req, res) => {
     try {
         const { currencyName,
             currencyEnabled,
@@ -269,7 +271,7 @@ router.post('/create', async (req, res) => {
 });
 
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', apiAuth, async (req, res) => {
     try {
         const currency = await currencyDB.deleteCurrencyById(req.params.id);
         res.status(200).json(currency);

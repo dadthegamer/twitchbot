@@ -7,7 +7,6 @@ import { apiAuth } from '../../middleware/apiAuth.js';
 const router = Router();
 
 router.get('/', apiAuth, async (req, res) => {
-    console.log('Getting leaderboard');
     try {
         let leaderboards = [];
 
@@ -355,6 +354,27 @@ router.get('/', apiAuth, async (req, res) => {
                 data: [],
             });
         }
+
+        leaderboard = [];
+        data = {};
+
+        const cumulativeMonths = await usersDB.getLeaderboardByCumulativeMonths();
+        for (let i = 0; i < cumulativeMonths.length; i++) {
+            if (cumulativeMonths[i].cumulativeMonths === 0) {
+                break;
+            };
+            data = {
+                displayName: cumulativeMonths[i].displayName,
+                profilePic: cumulativeMonths[i].profilePictureUrl,
+                amount: cumulativeMonths[i].cumulativeMonths,
+            };
+            leaderboard.push(data);
+        };
+        leaderboards.push({
+            name: 'Cumulative Months',
+            description: 'Longest total months subscribed',
+            data: leaderboard,
+        });
     
         leaderboard = [];
         data = {};
