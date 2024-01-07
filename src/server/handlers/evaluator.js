@@ -18,6 +18,7 @@ import { startPrediction } from "./actionHandlers/predictionHandler.js";
 import { disableGoXLRInput, enableGoXLRInput } from "./actionHandlers/goXLRHandler.js";
 import { dropHandler } from "./actionHandlers/dropHandler.js";
 import { startRaffle, joinRaffle } from "./actionHandlers/raffleHandler.js";
+import { getRequest } from "./actionHandlers/requestsHandler.js";
 
 
 // Method to evaluate the handler
@@ -180,6 +181,14 @@ export async function actionEvalulate(handler, context = null) {
             case 'drop':
                 dropHandler(userId, displayName, isMod, isBroadcaster, messageID);
                 break;
+            case 'request':
+                switch (action) {
+                    case 'get':
+                        getRequest(handler.response);
+                        break;
+                    default:
+                        logger.error(`Request action not found: ${action}`);
+                }
             case 'raffle':
                 switch (action) {
                     case 'start':
