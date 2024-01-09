@@ -13,8 +13,7 @@ let dropUsers = [];
 
 export async function dropHandler(userId, displayName, isMod, isBroadcaster, messageID = null) {
     try {
-        if (isMod || isBroadcaster && !dropStarted) {
-            console.log('Drop started by mod');
+        if (isMod  && !dropStarted || isBroadcaster && !dropStarted) {
             startDrop();
         } else {
             userDropHandler(displayName, userId, messageID);
