@@ -8,6 +8,8 @@ class SettingsService {
         this.cache = cache;
         this.setIntialSettings();
         this.getAllSettings();
+        this.getDayOfWeek();
+        this.getDateOfMonth();
     }
 
     // Method to set the initial database values for OBS settings
@@ -76,7 +78,15 @@ class SettingsService {
                 {
                     name: 'apikey',
                     key: null,
-                }
+                },
+                {
+                    name: 'weeklyReset',
+                    dateReset: null,
+                },
+                {
+                    name: 'monthlyReset',
+                    dateReset: null,
+                },
             ]
             // Check if there are as many settings in the database as there are in the initial settings array as well as checking to make sure each key exists under each setting
             const settings = await this.dbConnection.collection('settings').find().toArray();
@@ -148,6 +158,36 @@ class SettingsService {
         catch (error) {
             logger.error(`Error updating TikTok username: ${error}`);
         }
+    }
+
+    // Method to get the current day of the week
+    getDayOfWeek() {
+        const date = new Date();
+        const day = date.getDay();
+        console.log(day);
+        return day;
+    }
+
+    // Method to reset the weekly stats
+    async resetWeeklyStats() {
+        try {
+            // Get the current reset status from the database
+            const resetStatus = await this.dbConnection.collection('settings').findOne({ name: 'weeklyReset' });
+            const resetDate = resetStatus.dateReset;
+            // Get the calendar day that the stats were last reset. ie 0 = Sunday, 1 = Monday, etc.
+            const resetDay = new Date(resetDate).getDay();
+        }
+        catch (error) {
+            logger.error(`Error resetting weekly stats: ${error}`);
+        }
+    }
+
+    // Method to get the day of the month
+    getDateOfMonth() {
+        const date = new Date();
+        const day = date.getDate();
+        console.log(day);
+        return day;
     }
 }
 

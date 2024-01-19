@@ -14,7 +14,7 @@ function Intermission() {
     const [alertData, setAlertData] = useState({});
     const [fontColor, setFontColor] = useState('white');
     const [subsCount, setSubsCount] = useState(0);
-    const [gameImg, setGameImg] = useState('https://static-cdn.jtvnw.net/ttv-boxart/512710-1548x2252.jpg');
+    const [gameImg, setGameImg] = useState('');
     const [gameTitle, setGameTitle] = useState('Call Of Duty Warzone');
 
     const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
@@ -40,9 +40,12 @@ function Intermission() {
                 } else if (data.type === 'subsUpdate') {
                     setSubsCount(data.payload.monthlySubs);
                 } else if (data.type === 'streamLive') {
-                    // setGameImg(data.payload.streamInfo.thumbnailUrl);
-                    // setGameTitle(data.payload.streamInfo.gameName);
+                    setGameImg(data.payload.streamInfo.thumbnailUrl);
+                    setGameTitle(data.payload.streamInfo.gameName);
                     console.log('Stream is live');
+                } else if (data.type === 'streamUpdate') {
+                    setGameImg(data.payload.streamInfo.thumbnailUrl);
+                    setGameTitle(data.payload.streamInfo.gameName);
                 }
             };
 

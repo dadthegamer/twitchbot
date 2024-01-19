@@ -5,14 +5,14 @@ import '../../styles/overlay/display.css';
 function Display() {
     const [connected, setConnected] = useState(false);
     const [socket, setSocket] = useState(null);
-    const [message, setMessage] = useState('This is a test message');
+    const [message, setMessage] = useState('');
     const [messageBackground, setMessageBackground] = useState('rgba(255, 255, 255, 0.10)');
     const [uptime, setUptime] = useState('0s');
     const [uptimeTimer, setUptimeTimer] = useState(0);
     const intervalRef = useRef(null);
     const [latestArrivalDisplayName, setLatestArrivalDisplayName] = useState('');
     const [latestArrivalProfilePic, setLatestArrivalProfilePic] = useState('');
-    const [gameImg, setGameImg] = useState('https://static-cdn.jtvnw.net/ttv-boxart/512710-880x1280.jpg');
+    const [gameImg, setGameImg] = useState('');
 
 
     const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
@@ -46,6 +46,10 @@ function Display() {
                         }
                     } else if (!data.payload.live) {
                         stopUptimeTimer();
+                    }
+                } else if (data.type === 'streamUpdate') {
+                    if (data.payload.streamInfo) {
+                        setGameImg(data.payload.streamInfo.thumbnailUrl);
                     }
                 }
             };

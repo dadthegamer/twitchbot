@@ -17,11 +17,11 @@ export async function onStreamUpdate(e) {
     try {
         const { streamTitle, categoryName, categoryId } = e;
         const { boxArtUrl, name } = await e.getGame();
-        const thumbnailUrl = boxArtUrl.replace('{width}', '1440').replace('{height}', '1920');
+        const modifiedThumbnailUrl = boxArtUrl.replace('{width}', '1440').replace('{height}', '1920');
         const streamInfoData = {
             title: streamTitle,
             gameName: name,
-            thumbnailUrl
+            thumbnailUrl: modifiedThumbnailUrl
         };
         // Update title, game name, and thumbnail url in cache
         const streamInfo = cache.get('streamInfo');
@@ -33,6 +33,7 @@ export async function onStreamUpdate(e) {
         } else {
             cache.set('streamInfo', streamInfoData);
         }
+        webSocket.streamUpdate(streamInfoData);
     }
     catch (error) {
         logger.error(`Error in onStreamUpdate: ${error}`);
@@ -41,7 +42,7 @@ export async function onStreamUpdate(e) {
 
 export async function onStreamOnline(e) {
     try {
-        const streamInfo = e.getStream();
+        const streamInfo = await e.getStream();
         cache.set('live', true);
         cache.set('viewers', [])
         cache.set('first', []);
@@ -49,7 +50,7 @@ export async function onStreamOnline(e) {
         await usersDB.resetStreamProperties();
         await usersDB.resetArrived();
         const { title, gameName, startDate, isMature, tags, gameId, thumbnailUrl } = streamInfo;
-        thumbnailUrl.replace('{width}', '1440').replace('{height}', '1920')
+        const modifiedThumbnailUrl = thumbnailUrl.replace('{width}', '1440').replace('{height}', '1920');
         const streamInfoData = {
             title,
             gameName,
@@ -57,7 +58,7 @@ export async function onStreamOnline(e) {
             isMature,
             tags,
             gameId,
-            thumbnailUrl
+            thumbnailUrl: modifiedThumbnailUrl
         };
         cache.set('streamInfo', streamInfoData);
         webSocket.streamLive(streamInfoData);

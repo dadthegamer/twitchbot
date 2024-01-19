@@ -18,6 +18,7 @@ export class WebSocket {
             if (tvMessage) {
                 this.displayMessage(tvMessage);
             };
+            this.streamUpdate(cache.get('streamInfo'));
             connectedDevices++;
             this.notification({ 
                 notification: 'Connected to websocket',
@@ -193,6 +194,15 @@ export class WebSocket {
             streamInfo,
         };
         this.broadcastMessage('streamLive', payload);
+    }
+
+    // Method to send a stream update
+    async streamUpdate(streamInfo) {
+        const payload = {
+            live: true,
+            streamInfo,
+        };
+        this.broadcastMessage('streamUpdate', payload);
     }
 
     // Method to send the prediction data
