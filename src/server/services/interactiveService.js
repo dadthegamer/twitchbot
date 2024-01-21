@@ -306,11 +306,11 @@ class InteractionsDbService {
     }
 
     // Method to store a new sound into the database
-    async createSound(sound) {
+    async createSound(soundName, file) {
         try {
             const newSound = {
-                sound: sound,
-                location: `/audio/${sound}.mp3`,
+                soundName: soundName,
+                location: `/audio/${file}.mp3`,
                 createdAt: new Date(),
             }
             await this.dbConnection.collection('sounds').insertOne(newSound);
@@ -335,9 +335,9 @@ class InteractionsDbService {
     }
 
     // Method to delete a sound from the database and the cache
-    async deleteSound(sound) {
+    async deleteSound(soundName) {
         try {
-            const res = await this.dbConnection.collection('sounds').deleteOne({ sound: sound });
+            const res = await this.dbConnection.collection('sounds').deleteOne({ soundName: soundName });
             await this.getAllSounds();
             return res;
         }
@@ -347,11 +347,15 @@ class InteractionsDbService {
     }
 
     // Method to get a sound from the cache
-    async getSound(sound) {
+    async getSound(soundName) {
         try {
             const sounds = await this.cache.get('sounds');
-            const soundData = sounds.find(soundData => soundData.sound === sound);
-            return soundData;
+            const sound = sounds.find(sound => sound.soundName === soundName);
+            if (!sound) {
+                return null;
+            } else {
+                return sound;
+            }
         }
         catch (err) {
             logger.error(`Error in getSound: ${err}`);

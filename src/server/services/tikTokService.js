@@ -10,7 +10,7 @@ export default class TikTokService {
         this.tiktokLiveConnection = null;
         this.collection = 'tiktok';
         this.tikTokLikesThreshold = 100;
-        this.setIntialSettings();
+        // this.setIntialSettings();
     }
 
     // Method to set the initial database values

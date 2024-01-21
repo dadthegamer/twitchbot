@@ -13,8 +13,8 @@ export async function onSubscription(e) {
         usersDB.setUserValue(e.userId, 'cumulativeMonths', cumulativeMonths);
         usersDB.setUserValue(e.userId, 'durationMonths', durationMonths);
         usersDB.setUserValue(e.userId, 'streakMonths', streakMonths);
-        addAlert(userId, userDisplayName, 'resub', `${userDisplayName} re-subscribed at tier ${tier}!`, profileImage);
-        if (cumulativeMonths === 0) {
+        addAlert(userId, userDisplayName, 'resub', `${userDisplayName} re-subscribed for ${cumulativeMonths} months!`, profileImage);
+        if (cumulativeMonths === 1) {
             goalDB.increaseSubGoals(1);
         }
         if (messageText) {

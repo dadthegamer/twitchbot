@@ -10,13 +10,15 @@ const polly = new AWS.Polly({
 });
 
 export async function textToSpeech(text) {
-    const params = {
-        OutputFormat: 'mp3',
-        Text: text,
-        VoiceId: 'Matthew'
-    };
-
     try {
+        if (!text) {
+            return null;
+        }
+        const params = {
+            OutputFormat: 'mp3',
+            Text: text,
+            VoiceId: 'Matthew'
+        };
         const speech = await polly.synthesizeSpeech(params).promise();
         return speech;
     } catch (error) {

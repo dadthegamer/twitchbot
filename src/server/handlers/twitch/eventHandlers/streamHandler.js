@@ -1,4 +1,4 @@
-import { usersDB, cache, goalDB, webSocket, twitchApi } from "../../../config/initializers.js";
+import { usersDB, cache, goalDB, webSocket, settingsDB } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";
 
 
@@ -28,7 +28,7 @@ export async function onStreamUpdate(e) {
         if (streamInfo) {
             streamInfo.title = streamTitle;
             streamInfo.gameName = name;
-            streamInfo.thumbnailUrl = thumbnailUrl;
+            streamInfo.thumbnailUrl = modifiedThumbnailUrl;
             cache.set('streamInfo', streamInfo);
         } else {
             cache.set('streamInfo', streamInfoData);
@@ -42,15 +42,18 @@ export async function onStreamUpdate(e) {
 
 export async function onStreamOnline(e) {
     try {
-        const streamInfo = await e.getStream();
         cache.set('live', true);
         cache.set('viewers', [])
         cache.set('first', []);
         await goalDB.setGoalCurrent('dailySubGoal', 0);
         await usersDB.resetStreamProperties();
         await usersDB.resetArrived();
-        const { title, gameName, startDate, isMature, tags, gameId, thumbnailUrl } = streamInfo;
-        const modifiedThumbnailUrl = thumbnailUrl.replace('{width}', '1440').replace('{height}', '1920');
+        await settingsDB.resetWeeklyStats();
+        const streamInfo = await e.getStream();
+        const game = await streamInfo?.getGame();
+        const boxArtUrl = await game?.getBoxArtUrl(1440, 1920);
+        const { id, type } = e;
+        const { title, gameName, startDate, isMature, tags, gameId } = streamInfo;
         const streamInfoData = {
             title,
             gameName,
@@ -58,7 +61,7 @@ export async function onStreamOnline(e) {
             isMature,
             tags,
             gameId,
-            thumbnailUrl: modifiedThumbnailUrl
+            thumbnailUrl: boxArtUrl
         };
         cache.set('streamInfo', streamInfoData);
         webSocket.streamLive(streamInfoData);

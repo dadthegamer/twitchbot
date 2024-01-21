@@ -640,6 +640,22 @@ class CurrencyService {
             logger.error(`Error in deleteAllCurrencies: ${err}`);
         }
     }
+
+    // Method to reset currency if autoReset is true
+    async resetCurrencyIfAutoReset() {
+        try {
+            const currencies = this.cache.get('currencies');
+            currencies.forEach(async (currency) => {
+                const { name, autoReset } = currency;
+                if (autoReset) {
+                    await usersDB.resetCurrency(name);
+                }
+            });
+        }
+        catch (err) {
+            logger.error(`Error in resetCurrencyIfAutoReset: ${err}`);
+        }
+    }
 }
 
 export default CurrencyService;

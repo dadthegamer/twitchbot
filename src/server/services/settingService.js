@@ -1,4 +1,5 @@
 import logger from "../utilities/logger.js";
+import { usersDB, currencyDB } from "../config/initializers.js";
 
 
 // Command Class
@@ -8,8 +9,6 @@ class SettingsService {
         this.cache = cache;
         this.setIntialSettings();
         this.getAllSettings();
-        this.getDayOfWeek();
-        this.getDateOfMonth();
     }
 
     // Method to set the initial database values for OBS settings
@@ -82,10 +81,12 @@ class SettingsService {
                 {
                     name: 'weeklyReset',
                     dateReset: null,
+                    nextReset: null,
                 },
                 {
                     name: 'monthlyReset',
                     dateReset: null,
+                    nextReset: null,
                 },
             ]
             // Check if there are as many settings in the database as there are in the initial settings array as well as checking to make sure each key exists under each setting
@@ -160,12 +161,48 @@ class SettingsService {
         }
     }
 
-    // Method to get the current day of the week
-    getDayOfWeek() {
-        const date = new Date();
-        const day = date.getDay();
-        console.log(day);
-        return day;
+    // Method to set the date of the next weeekly reset. The date should be set to the next Sunday at 12:00 AM
+    async setWeeklyResetDate() {
+        try {
+            // Get the current day
+            const currentDay = new Date().getDate();
+            // Get the current calendar day
+            const currentCalendarDay = new Date().getDay();
+            // Get the next reset date. It should always be the next Sunday at 12:00 AM in the format of a Date object
+            let nextReset = new Date();
+            // Set the next reset date to the next Sunday at 12:00 AM
+            if (currentCalendarDay === 0) {
+                nextReset.setDate(currentDay + 7);
+            } else {
+                nextReset.setDate(currentDay + (7 - currentCalendarDay));
+            }
+            nextReset.setHours(0, 0, 0, 0);
+            // Update the reset date in the database
+            await this.dbConnection.collection('settings').findOneAndUpdate({ name: 'weeklyReset' }, { $set: { dateReset: new Date(), nextReset: nextReset } });
+            return nextReset;
+        }
+        catch (error) {
+            logger.error(`Error setting weekly reset date: ${error}`);
+        }
+    }
+
+    // Method to set the date of the next monthly reset. The date should be set to the next first of the month at 12:00 AM
+    async setMonthlyResetDate() {
+        try {
+            // Get the next reset date. It should always be the next first of the month at 12:00 AM in the format of a Date object
+            let nextReset = new Date();
+            // Set the next reset date to the next first of the month at 12:00 AM
+            nextReset.setDate(1);
+            nextReset.setHours(0, 0, 0, 0);
+            // Get the current month
+            nextReset.getMonth() === 11 ? nextReset.setFullYear(nextReset.getFullYear() + 1, 0, 1) : nextReset.setMonth(nextReset.getMonth() + 1);
+            // Update the reset date in the database
+            await this.dbConnection.collection('settings').findOneAndUpdate({ name: 'monthlyReset' }, { $set: { dateReset: new Date(), nextReset: nextReset } });
+            return nextReset;
+        }
+        catch (error) {
+            logger.error(`Error setting monthly reset date: ${error}`);
+        }
     }
 
     // Method to reset the weekly stats
@@ -173,21 +210,40 @@ class SettingsService {
         try {
             // Get the current reset status from the database
             const resetStatus = await this.dbConnection.collection('settings').findOne({ name: 'weeklyReset' });
-            const resetDate = resetStatus.dateReset;
-            // Get the calendar day that the stats were last reset. ie 0 = Sunday, 1 = Monday, etc.
-            const resetDay = new Date(resetDate).getDay();
+            const nextReset = resetStatus.nextReset;
+            // Get the current date
+            const currentDate = new Date();
+            if (currentDate >= nextReset) {
+                logger.info('Weekly stats have been reset');
+                this.setWeeklyResetDate();
+                usersDB.resetWeeklyStats();
+                return;
+            }
         }
         catch (error) {
             logger.error(`Error resetting weekly stats: ${error}`);
         }
     }
-
-    // Method to get the day of the month
-    getDateOfMonth() {
-        const date = new Date();
-        const day = date.getDate();
-        console.log(day);
-        return day;
+    
+    // Method to reset the monthly stats
+    async resetMonthlyStats() {
+        try {
+            // Get the current reset status from the database
+            const resetStatus = await this.dbConnection.collection('settings').findOne({ name: 'monthlyReset' });
+            const nextReset = resetStatus.nextReset;
+            // Get the current date
+            const currentDate = new Date();
+            if (currentDate >= nextReset) {
+                logger.info('Monthly stats have been reset');
+                usersDB.resetMonthlyProperties();
+                currencyDB.resetCurrencyIfAutoReset();
+                this.setMonthlyResetDate();
+                return;
+            }
+        }
+        catch (error) {
+            logger.error(`Error resetting monthly stats: ${error}`);
+        }
     }
 }
 

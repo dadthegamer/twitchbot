@@ -940,11 +940,11 @@ class UsersDB {
     }
 
     // Method to reset a currency property for all users to 0
-    async resetCurrency(property) {
+    async resetCurrency(currencyName) {
         try {
             const result = await this.dbConnection.collection(this.collectionName).updateMany(
                 {},
-                { $set: { [`currency.${property}`]: 0 } }
+                { $set: { [`currency.${currencyName}`]: 0 } }
             );
             const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             this.cache.set('users', users);
