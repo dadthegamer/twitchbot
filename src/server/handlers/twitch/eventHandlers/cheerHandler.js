@@ -1,4 +1,4 @@
-import { goalDB, usersDB } from "../../../config/initializers.js";
+import { goalDB, usersDB, interactionsDB } from "../../../config/initializers.js";
 import { addAlert } from "../../../handlers/alertHandler.js";
 import logger from "../../../utilities/logger.js";
 
@@ -14,6 +14,7 @@ export async function onBits(e) {
         const formattedBits = bits.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         addAlert(userId, userDisplayName, 'cheer', `${userDisplayName} cheered ${formattedBits} bits!`, profileImage);
         await usersDB.increaseBits(userId, bits);
+        await interactionsDB.handleBits(bits);
         logger.info(`Cheer event: ${userDisplayName} cheered ${bits} bits!`);
         console.log(`Cheer event: ${userDisplayName} cheered ${bits} bits!`);
     }

@@ -1,6 +1,8 @@
 import logger from "../utilities/logger.js";
 import { webSocket } from "../config/initializers.js";
 import { openAiRequestIsAppropriate } from "./openAi.js";
+import { actionEvalulate } from '../handlers/evaluator.js';
+
 
 // Class to to handle interactions with the database
 class InteractionsDbService {
@@ -310,7 +312,7 @@ class InteractionsDbService {
         try {
             const newSound = {
                 soundName: soundName,
-                location: `/audio/${file}.mp3`,
+                location: `/audio/${file}`,
                 createdAt: new Date(),
             }
             await this.dbConnection.collection('sounds').insertOne(newSound);
@@ -389,6 +391,76 @@ class InteractionsDbService {
         }
         catch (err) {
             logger.error(`Error in getRaffleSettings: ${err}`);
+        }
+    }
+
+    // Method to create a bits board item
+    async createBitsBoardItem(itemName, cost, description, handlers, image = null) {
+        try {
+            if (typeof cost !== 'number') {
+                cost = parseInt(cost);
+            }
+            const newBitsBoardItem = {
+                itemName: itemName,
+                cost: cost,
+                description: description,
+                handlers: handlers,
+                image: image,
+                createdAt: new Date(),
+            }
+            await this.dbConnection.collection('bitsBoard').insertOne(newBitsBoardItem);
+            await this.getBitsBoard();
+            return newBitsBoardItem;
+        }
+        catch (err) {
+            logger.error(`Error in createBitsBoardItem: ${err}`);
+        }
+    }
+
+    // Method to get all the bits board items from the database and store them in the cache
+    async getBitsBoard() {
+        try {
+            const bitsBoard = await this.dbConnection.collection('bitsBoard').find({}).toArray();
+            this.cache.set('bitsBoard', bitsBoard);
+            return bitsBoard;
+        }
+        catch (err) {
+            logger.error(`Error in getBitsBoard: ${err}`);
+        }
+    }
+
+    // Method to delete a bits board item from the database and the cache
+    async deleteBitsBoardItem(itemName) {
+        try {
+            const res = await this.dbConnection.collection('bitsBoard').deleteOne({ itemName: itemName });
+            await this.getBitsBoard();
+            return res;
+        }
+        catch (err) {
+            logger.error(`Error in deleteBitsBoardItem: ${err}`);
+        }
+    }
+
+    // Method to handle bits redemptions
+    async handleBits(amount) {
+        try {
+            const bitsBoard = await this.cache.get('bitsBoard');
+            // Find the item that matches the amount of bits redeemed
+            const item = bitsBoard.find(item => item.cost === amount);
+            if (item) {
+                // If there are handlers for the item then execute them
+                if (item.handlers.length > 0) {
+                    for (const handler of item.handlers) {
+                        await actionEvalulate(handler);
+                    }
+                }
+                return item;
+            } else {
+                return null;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in handleBits: ${err}`);
         }
     }
 }

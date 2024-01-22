@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import logger from '../../utilities/logger.js';
 import { commandHandler } from '../../config/initializers.js';
-import isStreamer from '../../middleware/loggedin.js';
+import { isStreamer } from '../../middleware/loggedin.js';
 
 const router = Router();
 

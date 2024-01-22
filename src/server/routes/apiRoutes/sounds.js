@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { interactionsDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
-import isStreamer from '../../middleware/loggedin.js';
+import { isStreamer } from '../../middleware/loggedin.js';
+import upload from '../../middleware/storage.js';
+
 
 const router = Router();
 
@@ -32,11 +34,26 @@ router.get('/:name', async (req, res) => {
 });
 
 // Create a sound
-router.post('/', isStreamer, async (req, res) => {
+router.post('/', isStreamer, upload.single('file'), async (req, res) => {
     try {
-        const { name, fileName } = req.body;
+        const { name } = req.body;
+        if (!name) {
+            res.status(400).json({ message: 'Missing name' });
+            return;
+        }
+
+        const file = req.file; // Multer adds the file information here
+
+        if (!file) {
+            res.status(400).json({ message: 'No file uploaded' });
+            return;
+        }
+
+        //Get the file name and extension
+        const fileName = file.originalname;
+
         const sound = await interactionsDB.createSound(name, fileName);
-        res.json(sound);
+        res.json({ message: 'Sound created', sound });
     }
     catch (err) {
         logger.error(`Error in POST /sounds: ${err}`);

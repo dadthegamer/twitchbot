@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Cabin&family=Montserrat:ital,wght@1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background-color: #111111;
+    --primary-color: #1b1b1b;
+    --terrestrial-color: #1F1F1F;
+    --secondary-color: #005AFF;
+    --font-color: #FFFFFF;
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--font-color);
+}
+
+.new-sound-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+    color: #FFFFFF;
+    z-index: 99;
+    background-color: var(--primary-color);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    padding: 20px;
+}
+
+.new-sound-form form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+}
+
+.new-sound-form form .new-sound-form-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.new-sound-form form .new-sound-form-buttons #cancel {
+    background-color: red;
+}
+
+.sounds-container {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-gap: 20px;
+    padding: 20px;
+    width: 100%;
+}
+
+.sound-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-evenly;
+    color: #FFFFFF;
+    z-index: 99;
+    background-color: var(--primary-color);
+    padding: 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
+    height: 200px;
+    width: 200px;
+}
+
+.sound-container .play-icon {
+    font-size: 50px;
+}
+
+.sound-container .sound-name {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+}

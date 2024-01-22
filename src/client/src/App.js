@@ -26,6 +26,7 @@ import CamOverlay from './components/overlayComponents/CamOverlay';
 import ProgressBar from './components/overlayComponents/goalBar';
 import HighlightedMessage from './components/overlayComponents/HighlightedMessage';
 import SocialMediaRotator from './components/overlayComponents/SocialMediaRotator';
+import Sounds from './components/Sounds';
 
 
 function App() {
@@ -70,6 +71,7 @@ function App() {
         <Route path="streamathon" element={<Streamathon />} />
         <Route path="channelpoints" element={<ChannelPoints />} />
         <Route path="tiktok" element={<TikTok />} />
+        <Route path="sounds" element={<Sounds />} />
       </Route>
     </Routes>
   );

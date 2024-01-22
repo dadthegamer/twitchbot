@@ -9,7 +9,6 @@ import { config } from 'dotenv';
 import { schedulerService, usersDB, twitchApi } from './config/initializers.js';
 import logger from './utilities/logger.js';
 
-
 // setInterval(() => {
 //     const usedMemory = process.memoryUsage();
 //     console.log('Memory Usage (in MB):');
@@ -88,6 +87,7 @@ import ttsRouter from './routes/apiRoutes/tts.js';
 import leaderboardRouter from './routes/apiRoutes/leaderboard.js';
 import streamInfoRouter from './routes/apiRoutes/stream.js';
 import testAlertsRouter from './routes/apiRoutes/testAlerts.js';
+import soundsRouter from './routes/apiRoutes/sounds.js';
 
 
 // Auth routes
@@ -110,6 +110,7 @@ app.use('/api/tts', ttsRouter);
 app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/stream', streamInfoRouter);
 app.use('/api/alerts', testAlertsRouter);
+app.use('/api/sounds', soundsRouter);
 
 
 app.listen(port, () => {

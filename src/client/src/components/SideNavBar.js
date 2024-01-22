@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/GUI/main.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faGauge, faHourglassHalf, faChartBar, faTerminal, faListCheck, faBullseye, faExclamation, faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faGauge, faHourglassHalf, faChartBar, faTerminal, faListCheck, faBullseye, faExclamation, faCoins, faStopwatch, faGem, faCalendar, faQuoteLeft, faHammer, faGamepad, faUserTag, faUsers, faDownload, faGear, faChevronRight, faVolumeHigh } from '@fortawesome/free-solid-svg-icons';
 import { faTiktok, faDiscord } from '@fortawesome/free-brands-svg-icons';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -101,6 +101,12 @@ function SideNavbar() {
                     <FontAwesomeIcon icon={faGem} className="fa-icon"/>
                     <Link to="/channelpoints" className="sidebar-link">
                         Channel Points
+                    </Link>
+                </li>
+                <li className={`sidebar-item ${isActive("/sounds")}`}>
+                    <FontAwesomeIcon icon={faVolumeHigh} className="fa-icon"/>
+                    <Link to="/sounds" className="sidebar-link">
+                        Sounds
                     </Link>
                 </li>
                 <li className={`sidebar-item ${isActive("/calendar")}`}>

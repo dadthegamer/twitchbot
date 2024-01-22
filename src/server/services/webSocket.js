@@ -216,7 +216,7 @@ export class WebSocket {
     // Method to send a sound to play
     async sound(sound) {
         const payload = {
-            sound,
+            soundUrl: sound,
         };
         this.broadcastMessage('sound', payload);
     }
