@@ -1,4 +1,4 @@
-import { webSocket, commandHandler, activeUsersCache } from "../../config/initializers.js";
+import { webSocket, commandHandler, activeUsersCache, interactionsDB } from "../../config/initializers.js";
 import logger from "../../utilities/logger.js";
 import { arrivalHandler } from "./arrivalHandler.js";
 import { addHighlightedAlert } from "../highlightedMessageHandler.js";
@@ -7,7 +7,6 @@ import { addHighlightedAlert } from "../highlightedMessageHandler.js";
 // Message Handler
 export async function onMessageHandler(channel, user, message, msg) {
     try {
-        console.log(message);
         const { isFirst, isHighlight, userInfo, id, isReply, isCheer, isReturningChatter } = msg;
         const { userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster } = userInfo;
         webSocket.twitchChatMessage({ service: 'twitch', message, displayName, color });
@@ -24,7 +23,9 @@ export async function onMessageHandler(channel, user, message, msg) {
         }
         if (isSubscriber || isVip || isMod || isBroadcaster) {
             if (parts[0].toLowerCase() === '@thedadb0t') {
-                console.log('Message starts with @TheDadB0t');
+                // Get the content of the message after the first word
+                const messageContent = parts.slice(1).join(' ');
+                interactionsDB.sarcasticResponseHandler(messageContent, userId, displayName);
             }
         }
     }

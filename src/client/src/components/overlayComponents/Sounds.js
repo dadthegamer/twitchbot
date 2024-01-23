@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 
-function Sounds() {
+function SoundsOverlay() {
     const [connected, setConnected] = useState(false);
     const [socket, setSocket] = useState(null);
     const [isPlaying, setIsPlaying] = useState(false);
@@ -36,6 +36,7 @@ function Sounds() {
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
+                console.log('Received data from websocket server:', data);
                 if (data.type === 'sound') {
                     if (!isPlaying) {
                         setIsPlaying(true);
@@ -114,9 +115,11 @@ function Sounds() {
     return (
         <>
             {isPlaying && (
-                <div className="sound-container">
+                <div className="overlay-sound-container">
                 </div>
             )}
         </>
     );
 }
+
+export default SoundsOverlay;

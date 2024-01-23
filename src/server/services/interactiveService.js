@@ -1,7 +1,9 @@
 import logger from "../utilities/logger.js";
-import { webSocket } from "../config/initializers.js";
+import { webSocket, chatClient } from "../config/initializers.js";
 import { openAiRequestIsAppropriate } from "./openAi.js";
 import { actionEvalulate } from '../handlers/evaluator.js';
+import { sarcasticResponse } from '../services/openAi.js';
+import NodeCache from 'node-cache';
 
 
 // Class to to handle interactions with the database
@@ -9,6 +11,7 @@ class InteractionsDbService {
     constructor(dbConnection, cache) {
         this.dbConnection = dbConnection;
         this.cache = cache;
+        this.cooldownCache = new NodeCache({ stdTTL: 0, checkperiod: 300 });
         this.getRoasts();
         this.getAllQuotes();
         this.getTvMessage();
@@ -461,6 +464,40 @@ class InteractionsDbService {
         }
         catch (err) {
             logger.error(`Error in handleBits: ${err}`);
+        }
+    }
+
+    // Method to handle cooldown for users
+    async cooldownHandler(userId, displayName) {
+        try {
+            const key = `${userId}-${displayName}`;
+            const isOnCooldown = this.cooldownCache.has(key);
+            if (!isOnCooldown) {
+                this.cooldownCache.set(key, true, 300);
+                return true;
+            } else {
+                return this.cooldownCache.getTtl(key);
+            }
+        }
+        catch (err) {
+            logger.error(`Error in cooldownHandler: ${err}`);
+        }
+    }
+
+    // Method to handle sarcastic response
+    async sarcasticResponseHandler(messageFromChat, userId, displayName) {
+        try {
+            const isOnCooldown = await this.cooldownHandler(userId, displayName);
+            if (isOnCooldown !== true) {
+                chatClient.say(`@${displayName}, you are on cooldown for ${isOnCooldown} seconds.`);
+            } else {
+                const response = await sarcasticResponse(messageFromChat);
+                chatClient.say(response);
+                webSocket.TTS({ message: response, img: null });
+            }
+        }
+        catch (err) {
+            logger.error(`Error in sarcasticResponseHandler: ${err}`);
         }
     }
 }

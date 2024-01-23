@@ -27,6 +27,7 @@ import ProgressBar from './components/overlayComponents/goalBar';
 import HighlightedMessage from './components/overlayComponents/HighlightedMessage';
 import SocialMediaRotator from './components/overlayComponents/SocialMediaRotator';
 import Sounds from './components/Sounds';
+import SoundsOverlay from './components/overlayComponents/Sounds';
 
 
 function App() {
@@ -56,6 +57,7 @@ function App() {
         <Route path="tts" element={<TextToSpeech />} />
         <Route path="highlightedmessage" element={<HighlightedMessage />} />
         <Route path="socialmediarotator" element={<SocialMediaRotator />} />
+        <Route path="sounds" element={<SoundsOverlay />} />
       </Route>
 
       {/* Main Routes */}

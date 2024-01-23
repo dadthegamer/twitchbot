@@ -19,6 +19,7 @@ import { disableGoXLRInput, enableGoXLRInput } from "./actionHandlers/goXLRHandl
 import { dropHandler } from "./actionHandlers/dropHandler.js";
 import { startRaffle, joinRaffle } from "./actionHandlers/raffleHandler.js";
 import { getRequest } from "./actionHandlers/requestsHandler.js";
+import { playSoundFromCommand } from "./actionHandlers/soundHandler.js";
 
 
 // Method to evaluate the handler
@@ -202,6 +203,11 @@ export async function actionEvalulate(handler, context = null) {
                     default:
                         logger.error(`Raffle action not found: ${action}`);
                 }
+                break;
+            case 'soundCommand':
+                // Get the sound to play. It will be the text after the command. Example: !sound testsound. Only get the testsound
+                const sound = input.split('!sound')[1].trim();
+                playSoundFromCommand(sound);
                 break;
             default:
                 logger.error(`Handler not found: ${handler}`);

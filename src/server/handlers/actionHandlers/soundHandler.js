@@ -3,7 +3,7 @@ import { interactionsDB, webSocket } from '../../config/initializers.js';
 
 
 // Function to play a sound
-export const playSound = async (sound) => {
+export async function playSoundFromCommand(sound) {
     try {
         const soundData = await interactionsDB.getSound(sound);
         if (soundData.location) {

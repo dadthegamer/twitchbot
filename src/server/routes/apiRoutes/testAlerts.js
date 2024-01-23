@@ -6,7 +6,6 @@ import { addAlert } from '../../handlers/alertHandler.js';
 const router = Router();
 
 router.get('/:type', apiAuth, async (req, res) => {
-    console.log('testAlerts');
     try {
         const type = req.params.type;
         switch (type) {
