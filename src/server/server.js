@@ -88,6 +88,7 @@ import leaderboardRouter from './routes/apiRoutes/leaderboard.js';
 import streamInfoRouter from './routes/apiRoutes/stream.js';
 import testAlertsRouter from './routes/apiRoutes/testAlerts.js';
 import soundsRouter from './routes/apiRoutes/sounds.js';
+import userRouter from './routes/apiRoutes/users.js';
 
 
 // Auth routes
@@ -111,6 +112,7 @@ app.use('/api/leaderboard', leaderboardRouter);
 app.use('/api/stream', streamInfoRouter);
 app.use('/api/alerts', testAlertsRouter);
 app.use('/api/sounds', soundsRouter);
+app.use('/api/users', userRouter);
 
 
 app.listen(port, () => {

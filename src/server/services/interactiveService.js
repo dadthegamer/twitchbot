@@ -18,6 +18,7 @@ class InteractionsDbService {
         this.getQueue();
         this.getAllSounds();
         this.getDropSettings();
+        this.getBitsBoard();
     }
 
     // Method to get all the roasts from the database
@@ -448,6 +449,9 @@ class InteractionsDbService {
     async handleBits(amount) {
         try {
             const bitsBoard = await this.cache.get('bitsBoard');
+            if (!bitsBoard) {
+                await this.getBitsBoard();
+            }
             // Find the item that matches the amount of bits redeemed
             const item = bitsBoard.find(item => item.cost === amount);
             if (item) {

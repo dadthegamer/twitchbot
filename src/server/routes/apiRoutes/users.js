@@ -1,8 +1,7 @@
 import { Router } from 'express';
 import { usersDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
-import isStreamer from '../../middleware/loggedin.js';
-
+import { isStreamer, isUser, isUserOrStreamer } from '../../middleware/loggedin.js';
 
 const router = Router();
 
@@ -17,7 +16,7 @@ router.get('/', isStreamer, async (req, res) => {
     }
 });
 
-router.get('/:id', isStreamer, async (req, res) => {
+router.get('/:id', isUserOrStreamer, async (req, res) => {
     try {
         const user = await usersDB.getUserByUserId(req.params.id);
         res.json(user);
