@@ -1242,8 +1242,6 @@ class UsersDB {
             );
             const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             this.cache.set('users', users);
-            logger.info(`Increased view time for ${userIds} by ${minutes} minutes`);
-            console.log(`Increased view time for ${userIds} by ${minutes} minutes`);
             return result;
         } catch (error) {
             logger.error(`Error in increaseViewTimeForUsers: ${error}`);
