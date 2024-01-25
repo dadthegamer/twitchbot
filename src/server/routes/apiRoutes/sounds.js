@@ -36,6 +36,7 @@ router.get('/:name', async (req, res) => {
 // Create a sound
 router.post('/', isStreamer, upload.single('file'), async (req, res) => {
     try {
+        console.log(req.body);
         const { name } = req.body;
         if (!name) {
             res.status(400).json({ message: 'Missing name' });
