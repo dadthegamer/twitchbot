@@ -1,6 +1,5 @@
 import logger from "../utilities/logger.js";
 import { webSocket, chatClient } from "../config/initializers.js";
-import { openAiRequestIsAppropriate } from "./openAi.js";
 import { actionEvalulate } from '../handlers/evaluator.js';
 import { sarcasticResponse } from '../services/openAi.js';
 import NodeCache from 'node-cache';
@@ -194,19 +193,16 @@ class InteractionsDbService {
     // Method to set the message that is displayed on the tv
     async setTvMessage(message) {
         try {
-            const appropriate = await openAiRequestIsAppropriate(message);
-            if (appropriate === true) {
-                await this.dbConnection.collection('gameSettings').updateOne({ id: 'display' },
-                    {
-                        $set:
-                        {
-                            message: message
-                        }
-                    }
-                );
-                this.cache.set('displayMessage', message);
-                webSocket.displayMessage(message);
+            await this.dbConnection.collection('gameSettings').updateOne({ id: 'display' },
+            {
+                $set:
+                {
+                    message: message
+                }
             }
+        );
+        this.cache.set('displayMessage', message);
+        webSocket.displayMessage(message);
         }
         catch (err) {
             logger.error(`Error in setTvMessage: ${err}`);

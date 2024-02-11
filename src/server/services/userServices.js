@@ -361,6 +361,13 @@ class UsersDB {
                         weekly: 0,
                         stream: 0
                     },
+                    activeViewTime: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
                     roles: {
                         vip: false,
                         subscriber: false,
@@ -390,6 +397,103 @@ class UsersDB {
                     },
                     currency: {
                         reffle: 0,
+                    },
+                    channelPointsSpent: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    channelPointRedemptions: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    emotesUsed: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    clips: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    hypeTrainsParticipated: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                    },
+                    topHypeTrainTopContributor: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                    },
+                    hypeTrainContributions: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    bans: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    raids: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                    },
+                    miniGameWins: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    chatMessages: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                        weekly: 0,
+                        stream: 0
+                    },
+                    streamsWatched: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                    },
+                    first: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                    },
+                    second: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                    },
+                    third: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
+                    },
+                    firstFive: {
+                        allTime: 0,
+                        yearly: 0,
+                        monthly: 0,
                     },
                     lastSeen: date,
                     metaData: []
@@ -1202,6 +1306,58 @@ class UsersDB {
         }
     }
 
+    // Method to increase active view time for a user
+    async increaseActiveViewTime(userId, minutes) {
+        try {
+            if (minutes === undefined || minutes === null) {
+                logger.error(`Error in increaseActiveViewTime: Minutes is undefined`);
+                return;
+            }
+            // Check if userId is a string
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            // Check if minutes is a number
+            if (typeof minutes !== 'number') {
+                try {
+                    minutes = parseInt(minutes);
+                    if (isNaN(minutes)) {
+                        logger.error(`Error in increaseActiveViewTime: Minutes is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in increaseActiveViewTime: ${error}`);
+                }
+            }
+            let user = this.cache.get(userId);
+            if (!user) {
+                return;
+            }
+            const date = new Date();
+            const lastSeen = date;
+            if (user.activeViewTime === undefined) {
+                user.activeViewTime = 0;
+            };
+            user.activeViewTime += minutes;
+            // Increase the activeViewTime property for the user in the database
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $set: {
+                        activeViewTime: user.activeViewTime,
+                        lastSeen: lastSeen
+                    }
+                },
+                { upsert: true }
+            );
+            this.cache.set(userId, user);
+            logger.info(`Increased active view time for ${userId} by ${minutes} minutes`);
+        } catch (error) {
+            logger.error(`Error in increaseActiveViewTime: ${error}`);
+        }
+    }
+
     // Increase view time for a list of users using the updateMany method
     async increaseViewTimeForUsers(userIds, minutes) {
         try {
@@ -1812,6 +1968,569 @@ class UsersDB {
             );
         } catch (error) {
             logger.error(`Error in setDiscordId: ${error}`);
+        }
+    }
+
+    // Method to increase the chat messages for a user
+    async increaseChatMessages(userId) {
+        try {
+            // Increase the chat messages for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.chatMessages === undefined) {
+                user.chatMessages = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                    weekly: 0,
+                    stream: 0
+                }
+            }
+            user.chatMessages.allTime++;
+            user.chatMessages.yearly++;
+            user.chatMessages.monthly++;
+            user.chatMessages.weekly++;
+            user.chatMessages.stream++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'chatMessages.allTime': 1,
+                        'chatMessages.yearly': 1,
+                        'chatMessages.monthly': 1,
+                        'chatMessages.weekly': 1,
+                        'chatMessages.stream': 1
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseChatMessages: ${error}`);
+        }
+    }
+
+    // Method to increase the emotes used for a user
+    async increaseEmotesUsed(userId, emotesUsed) {
+        try {
+            // Increase the emotes used for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.emotesUsed === undefined) {
+                user.emotesUsed = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                    weekly: 0,
+                    stream: 0
+                }
+            }
+            user.emotesUsed.allTime += emotesUsed;
+            user.emotesUsed.yearly += emotesUsed;
+            user.emotesUsed.monthly += emotesUsed;
+            user.emotesUsed.weekly += emotesUsed;
+            user.emotesUsed.stream += emotesUsed;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'emotesUsed.allTime': emotesUsed,
+                        'emotesUsed.yearly': emotesUsed,
+                        'emotesUsed.monthly': emotesUsed,
+                        'emotesUsed.weekly': emotesUsed,
+                        'emotesUsed.stream': emotesUsed
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseEmotesUsed: ${error}`);
+        }
+    }
+
+    // Method to increase the commands used for a user
+    async increaseCommandsUsed(userId) {
+        try {
+            // Increase the commands used for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.commandsUsed === undefined) {
+                user.commandsUsed = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                    weekly: 0,
+                    stream: 0
+                }
+            }
+            user.commandsUsed.allTime++;
+            user.commandsUsed.yearly++;
+            user.commandsUsed.monthly++;
+            user.commandsUsed.weekly++;
+            user.commandsUsed.stream++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'commandsUsed.allTime': 1,
+                        'commandsUsed.yearly': 1,
+                        'commandsUsed.monthly': 1,
+                        'commandsUsed.weekly': 1,
+                        'commandsUsed.stream': 1
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseCommandsUsed: ${error}`);
+        }
+    }
+
+    // Method to increase the streams a user has watched
+    async increaseStreamsWatched(userId) {
+        try {
+            // Increase the streams watched for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.streamsWatched === undefined) {
+                user.streamsWatched = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                    weekly: 0,
+                    stream: 0
+                }
+            }
+            user.streamsWatched.allTime++;
+            user.streamsWatched.yearly++;
+            user.streamsWatched.monthly++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'streamsWatched.allTime': 1,
+                        'streamsWatched.yearly': 1,
+                        'streamsWatched.monthly': 1,
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseStreamsWatched: ${error}`);
+        }
+    }
+
+    // Method to increase the amount of channel points redeemed for a user
+    async increaseChannelPointsSpent(userId, amount) {
+        try {
+            // Increase the channel points redeemed for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.channelPointsSpent === undefined) {
+                user.channelPointsSpent = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                    weekly: 0,
+                    stream: 0
+                }
+            }
+            user.channelPointsSpent.allTime += amount;
+            user.channelPointsSpent.yearly += amount;
+            user.channelPointsSpent.monthly += amount;
+            user.channelPointsSpent.weekly += amount;
+            user.channelPointsSpent.stream += amount;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'channelPointsSpent.allTime': amount,
+                        'channelPointsSpent.yearly': amount,
+                        'channelPointsSpent.monthly': amount,
+                        'channelPointsSpent.weekly': amount,
+                        'channelPointsSpent.stream': amount
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in channelPointsSpent: ${error}`);
+        }
+    }
+
+    // Method to increase the amount of channel point redemtions for a user
+    async increaseChannelPointRedemptions(userId) {
+        try {
+            // Increase the channel points redeemed for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.channelPointRedemptions === undefined) {
+                user.channelPointRedemptions = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                    weekly: 0,
+                    stream: 0
+                }
+            }
+            user.channelPointRedemptions.allTime++;
+            user.channelPointRedemptions.yearly++;
+            user.channelPointRedemptions.monthly++;
+            user.channelPointRedemptions.weekly++;
+            user.channelPointRedemptions.stream++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'channelPointRedemptions.allTime': 1,
+                        'channelPointRedemptions.yearly': 1,
+                        'channelPointRedemptions.monthly': 1,
+                        'channelPointRedemptions.weekly': 1,
+                        'channelPointRedemptions.stream': 1
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in channelPointRedemptions: ${error}`);
+        }
+    }
+
+    // Method to increase the raids for a user
+    async increaseRaids(userId) {
+        try {
+            // Increase the raids for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.raids === undefined) {
+                user.raids = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                    weekly: 0,
+                    stream: 0
+                }
+            }
+            user.raids.allTime++;
+            user.raids.yearly++;
+            user.raids.monthly++;
+            user.raids.weekly++;
+            user.raids.stream++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'raids.allTime': 1,
+                        'raids.yearly': 1,
+                        'raids.monthly': 1,
+                        'raids.weekly': 1,
+                        'raids.stream': 1
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseRaids: ${error}`);
+        }
+    }
+
+    // Method to increase the amount of times a user was first
+    async increaseFirstPlace(userId) {
+        try {
+            // Increase the first place for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.first === undefined) {
+                user.first = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                }
+            }
+            user.first.allTime++;
+            user.first.yearly++;
+            user.first.monthly++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'first.allTime': 1,
+                        'first.yearly': 1,
+                        'first.monthly': 1,
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseFirstPlace: ${error}`);
+        }
+    }
+
+    // Method to increase the amount of times a user was second
+    async increaseSecondPlace(userId) {
+        try {
+            // Increase the second place for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.second === undefined) {
+                user.second = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                }
+            }
+            user.second.allTime++;
+            user.second.yearly++;
+            user.second.monthly++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'second.allTime': 1,
+                        'second.yearly': 1,
+                        'second.monthly': 1,
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseSecondPlace: ${error}`);
+        }
+    }
+
+    // Method to increase the amount of times a user was third
+    async increaseThirdPlace(userId) {
+        try {
+            // Increase the third place for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.third === undefined) {
+                user.third = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                }
+            }
+            user.third.allTime++;
+            user.third.yearly++;
+            user.third.monthly++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'third.allTime': 1,
+                        'third.yearly': 1,
+                        'third.monthly': 1,
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseThirdPlace: ${error}`);
+        }
+    }
+
+    // Method to increase the amount of time a user entered the stream within the first 5 minutes
+    async increaseFirstFiveMinutes(userId) {
+        try {
+            // Increase the first five minutes for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.firstFive === undefined) {
+                user.firstFive = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                }
+            }
+            user.firstFive.allTime++;
+            user.firstFive.yearly++;
+            user.firstFive.monthly++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'firstFive.allTime': 1,
+                        'firstFive.yearly': 1,
+                        'firstFive.monthly': 1,
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseFirstFiveMinutes: ${error}`);
+        }
+    }
+
+    // Method to increase the hype train participation for a user
+    async increaseHypeTrainParticipation(userId) {
+        try {
+            // Increase the hype train participation for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.hypeTrainsParticipated === undefined) {
+                user.hypeTrainsParticipated = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                }
+            }
+            user.hypeTrainsParticipated.allTime++;
+            user.hypeTrainsParticipated.yearly++;
+            user.hypeTrainsParticipated.monthly++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'hypeTrainsParticipated.allTime': 1,
+                        'hypeTrainsParticipated.yearly': 1,
+                        'hypeTrainsParticipated.monthly': 1,
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseHypeTrainParticipation: ${error}`);
+        }
+    }
+
+    // Method to increase the times a user was the top contributor to a hype train
+    async increaseTopHypeTrainContributor(userId) {
+        try {
+            // Increase the top hype train contributor for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.topHypeTrainTopContributor === undefined) {
+                user.topHypeTrainTopContributor = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                }
+            }
+            user.topHypeTrainTopContributor.allTime++;
+            user.topHypeTrainTopContributor.yearly++;
+            user.topHypeTrainTopContributor.monthly++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'topHypeTrainTopContributor.allTime': 1,
+                        'topHypeTrainTopContributor.yearly': 1,
+                        'topHypeTrainTopContributor.monthly': 1,
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseTopHypeTrainContributor: ${error}`);
+        }
+    }
+
+    // Method to increase hype train contributions
+    async increaseHypeTrainContributions(userId, amount) {
+        try {
+            // Increase the hype train contributions for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.hypeTrainContributions === undefined) {
+                user.hypeTrainContributions = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                }
+            }
+            user.hypeTrainContributions.allTime += amount;
+            user.hypeTrainContributions.yearly += amount;
+            user.hypeTrainContributions.monthly += amount;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'hypeTrainContributions.allTime': amount,
+                        'hypeTrainContributions.yearly': amount,
+                        'hypeTrainContributions.monthly': amount,
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseHypeTrainContributions: ${error}`);
+        }
+    }
+
+    // Method to increase the raids for a user
+    async increaseRaidParticipation(userId) {
+        try {
+            // Increase the raid participation for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.raids === undefined) {
+                user.raids = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                }
+            }
+            user.raids.allTime++;
+            user.raids.yearly++;
+            user.raids.monthly++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'raids.allTime': 1,
+                        'raids.yearly': 1,
+                        'raids.monthly': 1,
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseRaids: ${error}`);
         }
     }
 }

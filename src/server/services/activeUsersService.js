@@ -1,4 +1,5 @@
 import NodeCache from 'node-cache';
+import { usersDB } from '../config/initializers.js';
 
 // Class for active users cache
 export class ActiveUsersCache {
@@ -11,10 +12,11 @@ export class ActiveUsersCache {
         return this;
     }
 
-    // Method to add a user to the cache with a ttl. 
-    // If the user already exists, the ttl is updated
-    async addUser(userId, ttl = 15) {
-        this.cache.set(userId, userId, ttl);
+    // Method to check if a user is in the cache. If they are not add a user to the cache with a ttl of 5 minutes
+    async addUser(userId, user) {
+        if (!this.cache.get(userId)) {
+            this.cache.set(userId, user, 300);
+        }
     }
 
     // Method to get a user from the cache
@@ -37,6 +39,14 @@ export class ActiveUsersCache {
         const keys = this.cache.keys();
         const randomKey = keys[Math.floor(Math.random() * keys.length)];
         return this.cache.get(randomKey);
+    }
+
+    // Method to listen for expired keys. When a key expires add the view time to the database and remove the key from the cache.
+    listenForExpiredKeys() {
+        this.cache.on('expired', (key, value) => {
+            usersDB.increaseActiveViewTime(key, value);
+            this.cache.del(key);
+        });
     }
 }
 

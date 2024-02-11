@@ -1,5 +1,5 @@
 import logger from "../../utilities/logger.js";
-import { usersDB, webSocket, cache, currencyDB, schedulerService } from "../../config/initializers.js";
+import { usersDB, webSocket, cache, currencyDB, obsService } from "../../config/initializers.js";
 import { sendColorCommand } from "../actionHandlers/lumiaStream.js";
 import { firstMessageHandler } from "./firstMessageHandler.js";
 
@@ -38,18 +38,22 @@ export async function arrivalHandler(context) {
             const userData = await usersDB.getUserByUserId(userId);
             // Check if the user has already arrived in the database
             if (!userData.arrived) {
+                usersDB.increaseStreamsWatched(userId);
                 sendColorCommand(color);
                 firstMessageHandler(context);
                 usersDB.setArrived(userId, true);
                 webSocket.userArrived(userId, displayName);
                 currencyDB.addCurrencyForArriving(userId);
+                const currentScene = await obsService.getCurrentScene();
+                if (currentScene.name === 'Starting Soon') {
+                    usersDB.increaseFirstFiveMinutes(userId);
+                }
             }
         } else {
             return;
         }
     }
     catch (err) {
-        console.log(err);
         logger.error(`Error in arrivalHandler: ${err}`);
     }
 }

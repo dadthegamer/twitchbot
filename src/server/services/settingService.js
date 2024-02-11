@@ -216,7 +216,7 @@ class SettingsService {
             if (currentDate >= nextReset) {
                 logger.info('Weekly stats have been reset');
                 this.setWeeklyResetDate();
-                usersDB.resetWeeklyStats();
+                usersDB.resetWeeklyProperties();
                 return;
             }
         }

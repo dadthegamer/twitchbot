@@ -12,11 +12,19 @@ router.post('/', apiAuth, async (req, res) => {
         const speech = await textToSpeech(message);
         // Get the AudioStream
         const audioStream = speech.AudioStream;
-        res.setHeader('Content-Type', 'audio/mpeg');
-        res.end(audioStream);
+        if (!audioStream) {
+            res.status(500).send('Internal Server Error');
+        } else {
+            res.setHeader('Content-Type', 'audio/mpeg');
+            res.end(audioStream);
+        }
     } catch (err) {
-        logger.error(`Error generating speech: ${err}`);
-        res.status(500).send('Internal Server Error');
+        if (err.message === 'TypeError: Cannot read properties of null') {
+            return res.status(400).send('Bad Request');
+        } else {
+            logger.error(`Error in tts: ${err}`);
+            res.status(500).send('Internal Server Error');
+        }
     }
 
 });

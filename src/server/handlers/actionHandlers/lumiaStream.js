@@ -86,6 +86,10 @@ export async function sendColorCommand(color) {
         return data;
     }
     catch (err) {
-        logger.error(`Error in sendColorCommand: ${err}`);
+        if (err.message === 'TypeError: fetch failed') {
+            return;
+        } else {
+            logger.error(`Error in sendColorCommand: ${err}`);
+        }
     }
 }

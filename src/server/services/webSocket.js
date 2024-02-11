@@ -220,4 +220,15 @@ export class WebSocket {
         };
         this.broadcastMessage('sound', payload);
     }
+
+    // Method to send a user that plays in a mini game
+    async miniGameUser(userId, displayName, color, profilePic) {
+        const payload = {
+            userId,
+            displayName,
+            profilePic,
+            color,
+        };
+        this.broadcastMessage('miniGameUser', payload);
+    }   
 }

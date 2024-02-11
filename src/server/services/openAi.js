@@ -103,3 +103,27 @@ export async function createPredictionAI(message) {
         logger.error(error);
     }
 }
+
+// Function to rate the joke about my forehead
+export async function rateForeheadJoke(message) {
+    try {
+        const chatCompletion = await openai.chat.completions.create({
+            messages: [{
+                "role": "system",
+                "content": "You will be provided a message from my Twitch chat that is a joke about my forehead. Rate the joke from 1.0 to 10.0. 1.0 being the worst and 10.0 being the best to the closes 10th of a decimal point. Consider originality, humor impact, with/cleverness and deliver. Format the message in json with with a key of rating and the value of the rating."
+            },
+            {
+                "role": "user",
+                "content": message
+            }],
+            model: 'gpt-3.5-turbo',
+        });
+        const response = chatCompletion.choices[0].message.content;
+        const responseJson = JSON.parse(response);
+        return responseJson;
+    }
+    catch (error) {
+        console.log(error);
+        logger.error(error);
+    }
+}

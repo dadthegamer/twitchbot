@@ -28,6 +28,7 @@ import HighlightedMessage from './components/overlayComponents/HighlightedMessag
 import SocialMediaRotator from './components/overlayComponents/SocialMediaRotator';
 import Sounds from './components/Sounds';
 import SoundsOverlay from './components/overlayComponents/Sounds';
+import QuarterMile from './components/MiniGames/DadsQuarterMile';
 
 
 function App() {
@@ -58,6 +59,11 @@ function App() {
         <Route path="highlightedmessage" element={<HighlightedMessage />} />
         <Route path="socialmediarotator" element={<SocialMediaRotator />} />
         <Route path="sounds" element={<SoundsOverlay />} />
+      </Route>
+
+      {/* Mini Games Routes */}
+      <Route path="/minigames" element={<MiniGamesLayout />}>
+        <Route path="quarter-mile" element={<QuarterMile />} />
       </Route>
 
       {/* Main Routes */}
@@ -106,6 +112,20 @@ function OverlayLayout() {
 
   return createPortal(
     <div className="overlay">
+      <Outlet />
+    </div>,
+    document.body
+  );
+}
+
+function MiniGamesLayout() {
+
+  useEffect(() => {
+    document.body.style = ''; // reset styles
+  }, []);
+
+  return createPortal(
+    <div className="mini-games">
       <Outlet />
     </div>,
     document.body

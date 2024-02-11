@@ -1,4 +1,4 @@
-import { webSocket, commandHandler, activeUsersCache, interactionsDB } from "../../config/initializers.js";
+import { webSocket, commandHandler, activeUsersCache, interactionsDB, usersDB, cache } from "../../config/initializers.js";
 import logger from "../../utilities/logger.js";
 import { arrivalHandler } from "./arrivalHandler.js";
 import { addHighlightedAlert } from "../highlightedMessageHandler.js";
@@ -27,6 +27,14 @@ export async function onMessageHandler(channel, user, message, msg) {
                 const messageContent = parts.slice(1).join(' ');
                 interactionsDB.sarcasticResponseHandler(messageContent, userId, displayName);
             }
+        }
+        usersDB.increaseChatMessages(userId);
+        // Find out if the user is using an emote by checking if the message contains the channel emotes name. The channel emotes are stored in the cache as 'channelEmotes' as an array of obects with the properties 'id' and 'emoteName'. 
+        const emote = cache.get('channelEmotes').find(emote => message.includes(emote.emoteName));
+        if (emote) {
+            // Need to find out how many emotes are being used in the message
+            const emoteCount = message.split(emote.emoteName).length - 1;
+            usersDB.increaseEmotesUsed(userId, emoteCount);
         }
     }
     catch (err) {

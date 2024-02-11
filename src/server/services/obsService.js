@@ -91,6 +91,7 @@ class OBSService {
             // Scene change event listener
             this.obs.on('CurrentProgramSceneChanged', async (event) => {
                 console.log('Current scene changed to', event.sceneName)
+                this.cache.set('currentScene', event.sceneName);
             });
 
             // Scene list changed event listener
@@ -239,8 +240,12 @@ class OBSService {
             if (!this.connected) {
                 return;
             } else {
-                const currentScene = await this.obs.call('GetCurrentProgramScene');
-                return currentScene.name;
+                if (this.cache.get('currentScene')) {
+                    return this.cache.get('currentScene');
+                } else {
+                    const currentScene = await this.obs.call('GetCurrentProgramScene');
+                    return currentScene.name;
+                }
             }
         } catch (error) {
             logger.error(`Error getting current scene: ${error}`);

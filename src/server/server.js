@@ -8,6 +8,8 @@ import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
 import { schedulerService, usersDB, twitchApi } from './config/initializers.js';
 import logger from './utilities/logger.js';
+import { rateForeheadJoke } from './services/openAi.js';
+
 
 // setInterval(() => {
 //     const usedMemory = process.memoryUsage();

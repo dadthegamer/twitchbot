@@ -13,19 +13,20 @@ import { sendCommand } from "./actionHandlers/lumiaStream.js";
 import { delay } from "./actionHandlers/delayHandler.js";
 import { createCommand } from "./actionHandlers/createCommand.js";
 import { sarcasticResponseHandler } from "./actionHandlers/sarcasticResponse.js";
-import { createPredictionAI } from "../services/openAi.js";
+import { createPredictionAI, rateForeheadJoke } from "../services/openAi.js";
 import { startPrediction } from "./actionHandlers/predictionHandler.js";
 import { disableGoXLRInput, enableGoXLRInput } from "./actionHandlers/goXLRHandler.js";
 import { dropHandler } from "./actionHandlers/dropHandler.js";
 import { startRaffle, joinRaffle } from "./actionHandlers/raffleHandler.js";
 import { getRequest } from "./actionHandlers/requestsHandler.js";
 import { playSoundFromCommand } from "./actionHandlers/soundHandler.js";
+import { joinMiniGameHandler } from "./actionHandlers/joinMiniGame.js";
 
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context = null) {
     try {
-        const { displayName, userId, messageID, input, isMod, isVip, isSubscriber, isBroadcaster } = context || {};
+        const { displayName, userId, messageID, input, isMod, isVip, color, isSubscriber, isBroadcaster } = context || {};
         const { type, response, action } = handler;
 
         // Check if the response contains a variable
@@ -157,6 +158,17 @@ export async function actionEvalulate(handler, context = null) {
                 }
                 sarcasticResponseHandler(messageFromChat);
                 break;
+            case 'rateForeheadJoke':
+                const ratingData = await rateForeheadJoke(input);
+                if (!ratingData || !ratingData.rating) {
+                    logger.error('No rating data found for the forehead joke.');
+                    break;
+                } else {
+                    const rating = ratingData.rating;
+                    ttsHandler(`I rate that joke a ${rating} out of 10.`, userId);
+                    chatMessageHandler(`I rate that joke a ${rating} out of 10.`);
+                    break;
+                }
             case 'prediction':
                 const predictionInput = input.split('!prediction')[1].trim();
                 if (!predictionInput || predictionInput === '') {
@@ -209,12 +221,14 @@ export async function actionEvalulate(handler, context = null) {
                 const sound = input.split('!sound')[1].trim();
                 playSoundFromCommand(sound);
                 break;
+            case 'joinMiniGame':
+                joinMiniGameHandler(userId, displayName, color);
+                break;
             default:
                 logger.error(`Handler not found: ${handler}`);
         }
     }
     catch (err) {
-        console.log(err);
         logger.error(`Error in evaluate: ${err}`);
     }
 }

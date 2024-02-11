@@ -29,6 +29,7 @@ class TwitchApiClient {
         this.getStreamInfo();
         this.getAllEventSubSubscriptions();
         this.deleteAllSubscriptions();
+        this.getChannelEmotes();
     }
 
     // Method to return the api client
@@ -610,7 +611,6 @@ class TwitchApiClient {
             }
         }
         catch (error) {
-            console.log(error);
             logger.error(`Error getting clip by ID: ${error}`);
         }
     }
@@ -636,7 +636,6 @@ class TwitchApiClient {
             return clip;
         }
         catch (error) {
-            console.log(error);
             logger.error(`Error getting random clip: ${error}`);
         }
     }
@@ -660,7 +659,6 @@ class TwitchApiClient {
             return data;
         }
         catch (error) {
-            console.log(error);
             logger.error(`Error getting all event sub subscriptions: ${error}`);
         }
     }
@@ -671,7 +669,6 @@ class TwitchApiClient {
             const data = await this.apiClient.schedule.getSchedule(this.userId);
         }
         catch (error) {
-            console.log(error);
             logger.error(`Error getting stream schedule: ${error}`);
         }
     }
@@ -683,7 +680,6 @@ class TwitchApiClient {
             console.log(data);
         }
         catch (error) {
-            console.log(error);
             logger.error(`Error getting stream schedule: ${error}`);
         }
     }
@@ -702,8 +698,23 @@ class TwitchApiClient {
             return game;
         }
         catch (error) {
-            console.log(error);
             logger.error(`Error getting game by ID: ${error}`);
+        }
+    }
+
+    // Method to get the channel emotes
+    async getChannelEmotes() {
+        try {
+            const response = await this.apiClient.chat.getChannelEmotes(this.userId);
+            const emotes = response.map((emote) => ({
+                id: emote.id,
+                emoteName: emote.name,
+                tier: emote.tier,
+            }));
+            this.cache.set('channelEmotes', emotes);
+        }
+        catch (error) {
+            logger.error(`Error getting channel emotes: ${error}`);
         }
     }
 }

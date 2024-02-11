@@ -1,5 +1,5 @@
 
-import { cache, currencyDB, chatClient } from "../../config/initializers.js";
+import { cache, currencyDB, chatClient, usersDB } from "../../config/initializers.js";
 import logger from "../../utilities/logger.js";
 
 
@@ -14,18 +14,20 @@ export async function firstMessageHandler(context) {
             cache.set('first', [...cache.get('first'), displayName]);
             if (cache.get('first').length === 1) {
                 chatClient.replyToMessage(`@${displayName} First message!`, id);
-                await currencyDB.addCurrencyForFirst(userId, 1)
+                currencyDB.addCurrencyForFirst(userId, 1)
+                usersDB.increaseFirstPlace(userId);
             } else if (cache.get('first').length === 2) {
                 chatClient.replyToMessage(`@${displayName} Second message!`, id);
-                await currencyDB.addCurrencyForFirst(userId, 2)
+                currencyDB.addCurrencyForFirst(userId, 2)
+                usersDB.increaseSecondPlace(userId);
             } else if (cache.get('first').length === 3) {
                 chatClient.replyToMessage(`@${displayName} Third message!`, id);
-                await currencyDB.addCurrencyForFirst(userId, 3)
+                currencyDB.addCurrencyForFirst(userId, 3)
+                usersDB.increaseThirdPlace(userId);
             }
         }
     }
     catch (err) {
-        console.log(err);
         logger.error(`Error in firstMessageHandler: ${err}`);
     }
 }
