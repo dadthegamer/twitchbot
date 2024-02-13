@@ -22,18 +22,25 @@ function QuarterMile() {
                 console.log('Connected to websocket server');
                 setConnected(true);
                 setSocket(ws);
-                addUser();
-                startTimer();
+                // startTimer();
             };
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 if (data.type === 'miniGameUser') {
+                    console.log('Adding user to game:', data.payload);
                     // Add a position property to the user
                     data.payload.position = 0;
-                    setUsers(...users, data.payload);
+                    setUsers(prevUsers => [...prevUsers, { ...data.payload }]);
+                    startTimer();
                 } else if (data.type === 'startGame') {
                     setStartGame(true);
+                } else if (data.type === 'resetGame') {
+                    setStartGame(false);
+                    setGameOver(false);
+                    setWinner('');
+                    setUsers([]);
+                    setTimer(3);
                 }
             };
 
@@ -84,6 +91,7 @@ function QuarterMile() {
 
     const startTimer = () => {
         const intervalId = setInterval(() => {
+            playSound(process.env.PUBLIC_URL + '/beep.mp3');
             setTimer((prevTimer) => {
                 if (prevTimer === 1) {
                     startRace();
@@ -95,54 +103,44 @@ function QuarterMile() {
                 return prevTimer - 1;
             });
         }, 1000);
-    }
+    };
 
-    // Function to generate a random user to add to the game. Add a user to the game
-    const addUser = () => {
-        const user = {
-            userId: Math.random().toString(36).substr(2, 9),
-            displayName: 'Some Random user',
-            color: randomColor(),
-            position: 0,
-            speed: 1,
-        };
-        setUsers([...users, user]);
+    // Method to send the winner to the server
+    const sendWinner = (winner) => {
+        if (socket) {
+            socket.send(JSON.stringify({ type: 'miniGameWinner', game: 'Dads Quarter Mile', payload: winner }));
+        }
     };
 
     // Function to start the race. Move all the cars. Check every .1 seconds to see if a car has stopped. If a car has stopped then move the car again
     const startRace = () => {
         setStartGame(true);
-
-        const moveCars = () => {
-            setUsers(currentUsers =>
-                currentUsers.map(user => {
-                    // Assuming a finish line position, adjust as needed
-                    const finishLine = 1845;
-                    let newPosition = user.position + Math.floor(Math.random() * 10);
-                    // Calculate the new speed for the car. Between .1 and 1.0
-                    let newSpeed = Math.random() * 1;
-                    newPosition = newPosition > finishLine ? finishLine : newPosition;
-                    return { ...user, position: newPosition, speed: newSpeed };
-                })
-            );
-        };
-
         const raceInterval = setInterval(() => {
             if (!gameOver) {
-                moveCars();
-
-                // Check for winner
-                const winningUser = users.find(user => user.position >= 1845);
-                console.log('Winning user:', winningUser);
-                if (winningUser) {
-                    setGameOver(true);
-                    setWinner(winningUser.displayName);
-                    console.log('Winner:', winningUser.displayName);
-                    clearInterval(raceInterval);
-                }
+                setUsers(currentUsers =>
+                    currentUsers.map(user => {
+                        const finishLine = 1845;
+                        let newPosition = user.position + Math.floor(Math.random() * 10);
+                        let newSpeed = Math.random() * 1;
+                        newPosition = newPosition > finishLine ? finishLine : newPosition;
+                        return { ...user, position: newPosition, speed: newSpeed };
+                    })
+                );
+            } else {
+                clearInterval(raceInterval);
             }
-        }, 100); // Adjust time as needed for game speed
+        }, 100);
     };
+
+    // useEffect hook to check for a winner after users state is updated
+    useEffect(() => {
+        const winningUser = users.find(user => user.position >= 1845);
+        if (winningUser && !gameOver) {
+            setGameOver(true);
+            setWinner(winningUser);
+            sendWinner(winningUser);
+        }
+    }, [users, gameOver]);
 
     // Function to generate a random color
     const randomColor = () => {
@@ -154,7 +152,11 @@ function QuarterMile() {
         <div>
             <h1>Dads Quarter Mile</h1>
             <div className='quarter-mile-winner-container'>
-                {gameOver && <h2>{winner} wins!</h2>}
+                {gameOver && <div className='quarter-mile-winner'>
+                <img src={winner.profilePic} alt="" />
+                    <h2>{winner.displayName}</h2>
+                    <h2>WINS!</h2>
+                </div>}
             </div>
             <img src={process.env.PUBLIC_URL + '/mini-games-logo.png'} alt="" className='mini-games-logo' />
             <h1 className='quarter-mile-timer'>{timer}</h1>

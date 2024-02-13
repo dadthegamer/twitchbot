@@ -21,7 +21,7 @@ import { startRaffle, joinRaffle } from "./actionHandlers/raffleHandler.js";
 import { getRequest } from "./actionHandlers/requestsHandler.js";
 import { playSoundFromCommand } from "./actionHandlers/soundHandler.js";
 import { joinMiniGameHandler } from "./actionHandlers/joinMiniGame.js";
-
+import { handlBlackJackGame, handleBlackJackHit, handleBlackJackStay } from "./actionHandlers/blackJackHandler.js";
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context = null) {
@@ -220,6 +220,27 @@ export async function actionEvalulate(handler, context = null) {
                 // Get the sound to play. It will be the text after the command. Example: !sound testsound. Only get the testsound
                 const sound = input.split('!sound')[1].trim();
                 playSoundFromCommand(sound);
+                break;
+            case 'blackjack':
+                switch (action) {
+                    case 'start':
+                        // Get the bet amount. It will be the text after the command. Example: !blackjack 100. Only get the 100
+                        const bet = parseInt(input.split('!blackjack')[1].trim());
+                        if (!bet || bet === '') {
+                            chatMessageHandler(`@${displayName} please enter a valid bet amount. Example !blackjack 100`);
+                            break;
+                        }
+                        handlBlackJackGame(userId, displayName, bet);
+                        break;
+                    case 'hit':
+                        handleBlackJackHit(userId, displayName);
+                        break;
+                    case 'stay':
+                        handleBlackJackStay(userId, displayName);
+                        break;
+                    default:
+                        logger.error(`Blackjack action not found: ${action}`);
+                }
                 break;
             case 'joinMiniGame':
                 joinMiniGameHandler(userId, displayName, color);

@@ -722,6 +722,95 @@ class UsersDB {
         }
     }
 
+    // Method to decrease currency for a list of users
+    async decreaseCurrencyForUsers(userIds, currency, amount) {
+        try {
+            if (typeof amount !== 'number') {
+                try {
+                    amount = parseInt(amount);
+                    if (isNaN(amount)) {
+                        logger.error(`Error in decreaseCurrencyForUsers: Amount is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in decreaseCurrencyForUsers: ${error}`);
+                }
+            }
+            if (environment === 'development') {
+                console.log(`decreaseCurrencyForUsers: ${userIds} ${currency} ${amount}`);
+                return;
+            } else {
+                // Decrease the currency property for the user in the cache
+                let users = this.cache.get('users');
+                if (!users) {
+                    users = await this.getAllUsers();
+                }
+                for (const userId of userIds) {
+                    const user = users.find((user) => user.id === userId);
+                    if (currency in user.currency) {
+                        user.currency[currency] -= amount;
+                    } else {
+                        user.currency[currency] = amount;
+                    }
+                    this.cache.set(userId, user);
+                }
+                // Decrease the currency property for the user in the database
+                await this.dbConnection.collection(this.collectionName).updateMany(
+                    { id: { $in: userIds } },
+                    // Decrease the currency name within the currency object to the amount
+                    { $inc: { [`currency.${currency}`]: -amount } },
+                    { upsert: true }
+                );
+            }
+        } catch (error) {
+            logger.error(`Error in decreaseCurrencyForUsers: ${error}`);
+        }
+    }
+
+    // Method to set a currency property for a list of users
+    async setCurrencyForUsers(userIds, currency, amount) {
+        try {
+            if (typeof amount !== 'number') {
+                try {
+                    amount = parseInt(amount);
+                    if (isNaN(amount)) {
+                        logger.error(`Error in setCurrencyForUsers: Amount is not a number`);
+                        return null;
+                    }
+                }
+                catch (error) {
+                    logger.error(`Error in setCurrencyForUsers: ${error}`);
+                }
+            }
+            if (environment === 'development') {
+                console.log(`setCurrencyForUsers: ${userIds} ${currency} ${amount}`);
+                return;
+            }
+            else {
+                // Set the currency property for the user in the cache
+                let users = this.cache.get('users');
+                if (!users) {
+                    users = await this.getAllUsers();
+                }
+                for (const userId of userIds) {
+                    const user = users.find((user) => user.id === userId);
+                    user.currency[currency] = amount;
+                    this.cache.set(userId, user);
+                }
+                // Set the currency property for the user in the database
+                await this.dbConnection.collection(this.collectionName).updateMany(
+                    { id: { $in: userIds } },
+                    // Set the currency name within the currency object to the amount
+                    { $set: { [`currency.${currency}`]: amount } },
+                    { upsert: true }
+                );
+            }
+        } catch (error) {
+            logger.error(`Error in setCurrencyForUsers: ${error}`);
+        }
+    }
+
     // Method to decrease a currency property for a user
     async decreaseCurrency(userId, currency, amount) {
         try {
@@ -895,6 +984,7 @@ class UsersDB {
                 { $set: { arrived: arrived } },
                 { upsert: true }
             );
+            await this.increaseStreamsWatched(userId)
         } catch (error) {
             logger.error(`Error in setArrived: ${error}`);
         }
@@ -2107,8 +2197,6 @@ class UsersDB {
                     allTime: 0,
                     yearly: 0,
                     monthly: 0,
-                    weekly: 0,
-                    stream: 0
                 }
             }
             user.streamsWatched.allTime++;
@@ -2531,6 +2619,47 @@ class UsersDB {
             );
         } catch (error) {
             logger.error(`Error in increaseRaids: ${error}`);
+        }
+    }
+
+    // Increase the amount of mini games won
+    async increaseMiniGamesWon(userId) {
+        try {
+            // Increase the mini games won for the user in the database and cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
+            }
+            if (user.miniGameWins === undefined) {
+                user.miniGameWins = {
+                    allTime: 0,
+                    yearly: 0,
+                    monthly: 0,
+                    weekly: 0,
+                    stream: 0
+                }
+            }
+            user.miniGameWins.allTime++;
+            user.miniGameWins.yearly++;
+            user.miniGameWins.monthly++;
+            user.miniGameWins.weekly++;
+            user.miniGameWins.stream++;
+            this.cache.set(userId, user);
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                {
+                    $inc: {
+                        'miniGameWins.allTime': 1,
+                        'miniGameWins.yearly': 1,
+                        'miniGameWins.monthly': 1,
+                        'miniGameWins.weekly': 1,
+                        'miniGameWins.stream': 1
+                    }
+                },
+                { upsert: true }
+            );
+        } catch (error) {
+            logger.error(`Error in increaseMiniGamesWon: ${error}`);
         }
     }
 }

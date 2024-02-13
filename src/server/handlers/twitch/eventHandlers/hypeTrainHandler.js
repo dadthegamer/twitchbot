@@ -1,4 +1,4 @@
-import { cache, currencyDB, streamathonService, usersDB } from "../../../config/initializers.js";
+import { cache, currencyDB, usersDB } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";
 
 

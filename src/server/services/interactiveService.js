@@ -1,8 +1,9 @@
 import logger from "../utilities/logger.js";
-import { webSocket, chatClient } from "../config/initializers.js";
+import { webSocket, chatClient, usersDB } from "../config/initializers.js";
 import { actionEvalulate } from '../handlers/evaluator.js';
 import { sarcasticResponse } from '../services/openAi.js';
 import NodeCache from 'node-cache';
+import { numberWithCommas } from '../utilities/utils.js';
 
 
 // Class to to handle interactions with the database
@@ -18,6 +19,7 @@ class InteractionsDbService {
         this.getAllSounds();
         this.getDropSettings();
         this.getBitsBoard();
+        this.getAllGames();
     }
 
     // Method to get all the roasts from the database
@@ -41,6 +43,105 @@ class InteractionsDbService {
         }
         catch (err) {
             logger.error(`Error in getRandomRoast: ${err}`);
+        }
+    }
+
+    // Method to get all the games settings from the database and store them in the cache. They are in the gameSettings collection with a type of game
+    async getAllGames() {
+        try {
+            let games = await this.cache.get('gameSettings');
+            if (!games) {
+                games = await this.dbConnection.collection('gameSettings').find({ type: 'game' }).toArray();
+                this.cache.set('gameSettings', games);
+                return games;
+            } else {
+                return games;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in getGameSettings: ${err}`);
+        }
+    }
+
+    // Method to handle when a user wins a game
+    async handleGameWin(gameName, userId, displayName) {
+        try {
+            const gameSettings = await this.getAllGames();
+            const game = gameSettings.find(game => game.game === gameName);
+            if (game) {
+                if (game) {
+                    const payout = game.payout;
+                    const currency = game.currency;
+                    usersDB.increaseCurrency(userId, currency, payout);
+                    usersDB.increaseMiniGamesWon(userId);
+                    // Format the payout with commas
+                    const formattedPayout = await numberWithCommas(payout);
+                    if (currency === 'raffle') {
+                        chatClient.say(`@${displayName}, you have won ${formattedPayout} ${currency} raffle tickets!`);
+                    } else {
+                        chatClient.say(`@${displayName}, you have won ${formattedPayout} ${currency} points!`);
+                    }
+                }
+                return game;
+            } else {
+                return null;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in handleGameWin: ${err}`);
+        }
+    }
+
+    // Method to handle a community game win
+    async handleCommunityGameWin(gameName, userId, displayName) {
+        try {
+            const gameSettings = await this.getAllGames();
+            const game = gameSettings.find(game => game.game === gameName);
+            if (game) {
+                const payout = game.payout;
+                const currency = game.currency;
+                usersDB.increaseCurrencyForUsers(userId, currency, payout);
+                // Format the payout with commas
+                const formattedPayout = await numberWithCommas(payout);
+                if (currency === 'raffle') {
+                    chatClient.say(`@${displayName}, the community has won ${formattedPayout} ${currency} raffle tickets!`);
+                } else {
+                    chatClient.say(`@${displayName}, the community has won ${formattedPayout} ${currency} points!`);
+                }
+                return game;
+            } else {
+                return null;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in handleCommunityGameWin: ${err}`);
+        }
+    }
+
+    // Method to handle a community game win with a payout
+    async handleCommunityGameWinWithPayout(gameName, userIds, payout) {
+        try {
+            const gameSettings = await this.getAllGames();
+            const game = gameSettings.find(game => game.game === gameName);
+            if (game) {
+                const currency = game.currency;
+                for (const userId of userIds) {
+                    usersDB.increaseCurrencyForUsers(userId, currency, payout);
+                }
+                // Format the payout with commas
+                const formattedPayout = await numberWithCommas(payout);
+                if (currency === 'raffle') {
+                    chatClient.say(`Everyone has won ${formattedPayout} ${currency} raffle tickets!`);
+                } else {
+                    chatClient.say(`Everyone has won ${formattedPayout} ${currency} points!`);
+                }
+                return game;
+            } else {
+                return null;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in handleCommunityGameWinWithPayout: ${err}`);
         }
     }
 

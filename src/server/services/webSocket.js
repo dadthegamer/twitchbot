@@ -1,7 +1,7 @@
 import { WebSocketServer } from 'ws';
 import { getRandomInt } from '../utilities/utils.js';
 import logger from '../utilities/logger.js';
-import { cache, chatClient, twitchApi } from '../config/initializers.js';
+import { cache, chatClient, twitchApi, interactionsDB } from '../config/initializers.js';
 
 
 let connectedDevices = 0;
@@ -26,7 +26,6 @@ export class WebSocket {
                 read: false,
                 createdAt: new Date()
                 });
-            console.log(`Client Connected | Connected devices: ${connectedDevices}`);
             ws.on('message', (message) => {
                 try {
                     const data = JSON.parse(message);
@@ -39,6 +38,10 @@ export class WebSocket {
                     } else if (data.type === 'displayMessage') {
                         cache.set('tvMessage', data.payload.message);
                         this.displayMessage();
+                    } else if (data.type === 'miniGameWinner') {
+                        interactionsDB.handleGameWin(data.game, data.payload.userId, data.payload.displayName);
+                    } else if (data.type === 'addCurrencyForUsers') {
+                        interactionsDB.handleCommunityGameWinWithPayout(data.game, data.payload.userIds, data.payload.payout);
                     }
                 } catch (error) {
                     logger.error(`Error parsing message in websocket: ${error}`);
@@ -46,8 +49,6 @@ export class WebSocket {
             });
             ws.on('close', () => {
                 connectedDevices--;
-                console.log(`Client disconnected | Connected devices: ${connectedDevices}`);
-
             });
         });
     }
@@ -230,5 +231,15 @@ export class WebSocket {
             color,
         };
         this.broadcastMessage('miniGameUser', payload);
-    }   
+    }
+
+    // Method to start a mini game
+    async startMiniGame() {
+        this.broadcastMessage('startGame', {});
+    }
+    
+    // Method to reset a mini game
+    async resetMiniGame() {
+        this.broadcastMessage('resetGame', {});
+    }
 }

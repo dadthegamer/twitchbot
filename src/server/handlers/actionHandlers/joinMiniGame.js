@@ -21,7 +21,7 @@ export async function joinMiniGameHandler(userId, displayName, color) {
             cache.set('miniGameUsers', miniGameUsers);
             const userData = await twitchApi.getUserDataById(userId);
             const profilePic = userData.profilePictureUrl;
-            webSocket.miniGameUser(userId, displayName, profilePic, color);
+            webSocket.miniGameUser(userId, displayName, color, profilePic);
             chatMessageHandler(`@${displayName} has joined the mini game!`);
         } else {
             return;

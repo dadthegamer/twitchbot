@@ -1,4 +1,6 @@
 import logger from "../utilities/logger.js";
+import { webSocket, chatClient, usersDB, cache } from "../config/initializers.js";
+
 
 // Class to handle all stream related services
 class GameService {
@@ -155,6 +157,263 @@ class GameService {
         }
         catch (error) {
             logger.error(`Error in resetJackpot: ${error}`);
+        }
+    }
+
+    // Method to handle a community game win with a payout
+    async handleCommunityGameWinWithPayout(gameName, userIds, payout) {
+        try {
+            const gameSettings = await this.getAllGames();
+            const game = gameSettings.find(game => game.game === gameName);
+            if (game) {
+                const currency = game.currency;
+                for (const userId of userIds) {
+                    usersDB.increaseCurrencyForUsers(userId, currency, payout);
+                }
+                // Format the payout with commas
+                const formattedPayout = await numberWithCommas(payout);
+                if (currency === 'raffle') {
+                    chatClient.say(`Everyone has won ${formattedPayout} ${currency} raffle tickets!`);
+                } else {
+                    chatClient.say(`Everyone has won ${formattedPayout} ${currency} points!`);
+                }
+                return game;
+            } else {
+                return null;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in handleCommunityGameWinWithPayout: ${err}`);
+        }
+    }
+
+    // Method to handle a community game win
+    async handleCommunityGameWin(gameName, userId, displayName) {
+        try {
+            const gameSettings = await this.getAllGames();
+            const game = gameSettings.find(game => game.game === gameName);
+            if (game) {
+                const payout = game.payout;
+                const currency = game.currency;
+                usersDB.increaseCurrencyForUsers(userId, currency, payout);
+                // Format the payout with commas
+                const formattedPayout = await numberWithCommas(payout);
+                if (currency === 'raffle') {
+                    chatClient.say(`@${displayName}, the community has won ${formattedPayout} ${currency} raffle tickets!`);
+                } else {
+                    chatClient.say(`@${displayName}, the community has won ${formattedPayout} ${currency} points!`);
+                }
+                return game;
+            } else {
+                return null;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in handleCommunityGameWin: ${err}`);
+        }
+    }
+
+    // Method to get all the games settings from the database and store them in the cache. They are in the gameSettings collection with a type of game
+    async getAllGames() {
+        try {
+            let games = await this.cache.get('gameSettings');
+            if (!games) {
+                games = await this.dbConnection.collection('gameSettings').find({ type: 'game' }).toArray();
+                this.cache.set('gameSettings', games);
+                return games;
+            } else {
+                return games;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in getGameSettings: ${err}`);
+        }
+    }
+
+    // Method to get a game setting from the cache
+    async getGameSetting(gameName) {
+        try {
+            const games = await this.getAllGames();
+            const game = games.find(game => game.game === gameName);
+            return game;
+        }
+        catch (err) {
+            logger.error(`Error in getGameSetting: ${err}`);
+        }
+    }
+
+    // Method to handle when a user wins a game
+    async handleGameWin(gameName, userId, displayName) {
+        try {
+            const gameSettings = await this.getAllGames();
+            const game = gameSettings.find(game => game.game === gameName);
+            if (game) {
+                if (game) {
+                    const payout = game.payout;
+                    const currency = game.currency;
+                    usersDB.increaseCurrency(userId, currency, payout);
+                    usersDB.increaseMiniGamesWon(userId);
+                    // Format the payout with commas
+                    const formattedPayout = await numberWithCommas(payout);
+                    if (currency === 'raffle') {
+                        chatClient.say(`@${displayName}, you have won ${formattedPayout} ${currency} raffle tickets!`);
+                    } else {
+                        chatClient.say(`@${displayName}, you have won ${formattedPayout} ${currency} points!`);
+                    }
+                }
+                return game;
+            } else {
+                return null;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in handleGameWin: ${err}`);
+        }
+    }
+
+    // Method to handle a game win with no message
+    async handleGameWinNoMessage(gameName, userId, payout) {
+        try {
+            const gameSettings = await this.getAllGames();
+            const game = gameSettings.find(game => game.game === gameName);
+            if (game) {
+                const currency = game.currency;
+                usersDB.increaseCurrency(userId, currency, payout);
+                return game;
+            } else {
+                return null;
+            }
+        }
+        catch (err) {
+            logger.error(`Error in handleGameWin: ${err}`);
+        }
+    }
+
+    // Method to generate a deck of cards
+    async generateDeck() {
+        const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
+        const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
+        const deck = [];
+        for (let suit in suits) {
+            for (let value in values) {
+                deck.push({ value: values[value], suit: suits[suit] });
+            }
+        }
+        return deck;
+    }
+
+    // Method to deal a hand of blackjack.
+    async dealHand(deck) {
+        const hand = [];
+        for (let i = 0; i < 2; i++) {
+            const card = deck[Math.floor(Math.random() * deck.length)];
+            hand.push(card);
+            deck.splice(deck.indexOf(card), 1);
+        }
+        return hand;
+    }
+
+    // Method to deal a card from the deck
+    async dealCard(deck) {
+        const card = deck[Math.floor(Math.random() * deck.length)];
+        deck.splice(deck.indexOf(card), 1);
+        return card;
+    }
+
+    // Method to calculate the value of a hand of blackjack
+    async calculateHandValue(hand) {
+        let value = 0;
+        let aces = 0;
+        for (let card in hand) {
+            if (hand[card].value === 'A') {
+                if (value + 11 > 21) {
+                    value += 1;
+                } else {
+                    value += 11;
+                    aces++;
+                }
+            }
+            else if (hand[card].value === 'K' || hand[card].value === 'Q' || hand[card].value === 'J') {
+                value += 10;
+            }
+            else {
+                value += Number(hand[card].value);
+            }
+        }
+        while (value > 21 && aces > 0) {
+            value -= 10;
+            aces--;
+        }
+        return value;
+    }
+
+    // Method to deal a card from the deck
+    async dealCard(deck) {
+        const card = deck[Math.floor(Math.random() * deck.length)];
+        deck.splice(deck.indexOf(card), 1);
+        return card;
+    }
+
+    // Method to calculate the winner of a game of blackjack
+    async calculateWinner(playerValue, dealerValue) {
+        if (playerValue > 21) {
+            return 'dealer';
+        } else if (dealerValue > 21) {
+            return 'player';
+        } else if (playerValue === dealerValue) {
+            return 'push';
+        } else if (playerValue > dealerValue) {
+            return 'player';
+        } else {
+            return 'dealer';
+        }
+    }
+
+    // Method to check if a hand is a blackjack
+    async isBlackjack(hand) {
+        if (hand.length === 2) {
+            if (hand[0].value === 'A' && (hand[1].value === 'K' || hand[1].value === 'Q' || hand[1].value === 'J' || hand[1].value === '10')) {
+                return true;
+            } else if (hand[1].value === 'A' && (hand[0].value === 'K' || hand[0].value === 'Q' || hand[0].value === 'J' || hand[0].value === '10')) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Method to calculate the payout for a game of blackjack
+    async calculatePayout(bet, blackjack) {
+        if (blackjack) {
+            return bet * 2.5;
+        } else {
+            return bet * 2;
+        }
+    }
+
+    // Method to start a game of blackjack. Store the game data for each user in the cache. Once the game is over, remove the game data from the cache.
+    async startBlackjackGame(userId, bet) {
+        try {
+            const deck = await this.generateDeck();
+            const gameData = {
+                userId: userId,
+                bet: bet,
+                deck: deck,
+                playerHand: await this.dealHand(deck),
+                dealerHand: await this.dealHand(deck),
+                playerValue: 0,
+                dealerValue: 0,
+                winner: '',
+                playerBlackjack: false,
+                dealerBlackjack: false
+            }
+            gameData.playerValue = await this.calculateHandValue(gameData.playerHand);
+            gameData.dealerValue = await this.calculateHandValue(gameData.dealerHand);
+            gameData.playerBlackjack = await this.isBlackjack(gameData.playerHand);
+            gameData.dealerBlackjack = await this.isBlackjack(gameData.dealerHand);
+            return gameData;
+        }
+        catch (error) {
+            logger.error(`Error in startBlackjackGame: ${error}`);
         }
     }
 }

@@ -9,8 +9,11 @@ import { onFollow } from '../handlers/twitch/eventHandlers/followHandler.js';
 import { onGiftSubscription } from '../handlers/twitch/eventHandlers/giftSubscription.js';
 import { onSubscription } from '../handlers/twitch/eventHandlers/subHandler.js';
 import { cache } from '../config/initializers.js';
-import { eventListenerPort, hostName, environment, appSecret, streamerUserId } from '../config/environmentVars.js';
+import { eventListenerPort, hostName, environment, appSecret, streamerUserId, botId } from '../config/environmentVars.js';
 import { twitchApi } from '../config/initializers.js';
+import { onHypeTrainBegin, onHypeTrainEnd, onHypeTrainProgress } from '../handlers/twitch/eventHandlers/hypeTrainHandler.js';
+import { onShoutoutCreated } from '../handlers/twitch/eventHandlers/shoutoutHandler.js';
+
 
 // Event listener for Twitch events
 export async function initializerEventListener(apiClient) {
@@ -186,11 +189,48 @@ export async function initializerEventListener(apiClient) {
             }
         });
 
+        listener.onChannelHypeTrainBegin(userId, async (event) => {
+            try {
+                await onHypeTrainBegin(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelHypeTrainBegin: ${error}`);
+            }
+        });
+
+        listener.onChannelHypeTrainEnd(userId, async (event) => {
+            try {
+                await onHypeTrainEnd(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelHypeTrainEnd: ${error}`);
+            }
+        });
+
+        listener.onChannelHypeTrainProgress(userId, async (event) => {
+            try {
+                await onHypeTrainProgress(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelHypeTrainProgress: ${error}`);
+            }
+        });
+
+        listener.onChannelShoutoutCreate(userId, botId, async (event) => {
+            try {
+                await onShoutoutCreated(event);
+            }
+            catch (error) {
+                logger.error(`Error in onChannelShoutoutCreated: ${error}`);
+            }
+        });
+
         console.log('Event listener initialized');
     }
     catch (error) {
         console.log(`Error starting event listener: ${error}`);
         logger.error(`Error starting event listener: ${error}`);
+        throw new Error(`Error starting event listener: ${error}`);
     }
 }
 

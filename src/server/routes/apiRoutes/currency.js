@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { usersDB, currencyDB } from '../../config/initializers.js';
+import { usersDB, currencyDB, cache } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
 import { apiAuth } from '../../middleware/apiAuth.js';
 
@@ -31,7 +31,6 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', apiAuth, async (req, res) => {
     try {
-        console.log(req.body);
         const { currencyId, update, value } = req.body;
         const currendyData = await currencyDB.getCurrencyById(currencyId);
         // Try to convert the value to a number
@@ -156,6 +155,91 @@ router.post('/reset', apiAuth, async (req, res) => {
     catch (error) {
         console.log(error);
         logger.error(`Error creating currency: ${error}`);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+router.post('/user', apiAuth, async (req, res) => {
+    try {
+        const { currenyName, userId, update, value } = req.body;
+        // Try to convert the value to a number
+        const numberValue = Number(value);
+        // If the value is not a number, return an error
+        switch (update) {
+            case 'add':
+                await usersDB.increaseCurrency(userId, currenyName, numberValue);
+                res.status(200).json(`Added ${numberValue} ${currenyName} to user ${userId}`);
+                break;
+            case 'subtract':
+                await usersDB.decreaseCurrency(userId, currenyName, numberValue);
+                res.status(200).json(`Added ${numberValue} ${currenyName} to user ${userId}`);
+                break;
+            case 'set':
+                await usersDB.setCurrency(userId, currenyName, numberValue);
+                res.status(200).json(`Added ${numberValue} ${currenyName} to user ${userId}`);
+                break;
+        }
+    }
+    catch (error) {
+        logger.error(`Error giving currency to user: ${error}`);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+router.post('/users', apiAuth, async (req, res) => {
+    try {
+        const { currenyName, update, viewers, value } = req.body;
+        // Try to convert the value to a number
+        const numberValue = Number(value);
+        // If the value is not a number, return an error
+        switch (update) {
+            case 'add':
+                await usersDB.increaseCurrencyForUsers(viewers, currenyName, numberValue);
+                res.status(200).json(`Added ${numberValue} ${currenyName} to ${viewers.length} viewers`);
+                break;
+            case 'subtract':
+                await usersDB.decreaseCurrencyForUsers(viewers, currenyName, numberValue);
+                res.status(200).json(`Added ${numberValue} ${currenyName} to ${viewers.length} viewers`);
+                break;
+            case 'set':
+                await usersDB.setCurrencyByViewers(viewers, currenyName, numberValue);
+                res.status(200).json(`Added ${numberValue} ${currenyName} to ${viewers.length} viewers`);
+                break;
+        }
+    }
+    catch (error) {
+        logger.error(`Error giving currency to users: ${error}`);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+router.post('/viewers', apiAuth, async (req, res) => {
+    try {
+        const { currenyName, update, value } = req.body;
+        const viwers = cache.get('currentViewers');
+        // Try to convert the value to a number
+        const numberValue = Number(value);
+        // If the value is not a number, return an error
+        switch (update) {
+            case 'add':
+                await usersDB.increaseCurrencyForUsers(viwers, currenyName, numberValue);
+                res.status(200).json(`Added ${numberValue} ${currenyName} to ${viwers.length} viewers`);
+                break;
+            case 'subtract':
+                await usersDB.decreaseCurrencyForUsers(viwers, currenyName, numberValue);
+                res.status(200).json(`Added ${numberValue} ${currenyName} to ${viwers.length} viewers`);
+                break;
+            case 'set':
+                await usersDB.setCurrencyByViewers(viwers, currenyName, numberValue);
+                res.status(200).json(`Added ${numberValue} ${currenyName} to ${viwers.length} viewers`);
+                break;
+        }
+    }
+    catch (error) {
+        logger.error(`Error giving currency to viewers: ${error}`);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });

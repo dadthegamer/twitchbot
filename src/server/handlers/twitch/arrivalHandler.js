@@ -38,7 +38,6 @@ export async function arrivalHandler(context) {
             const userData = await usersDB.getUserByUserId(userId);
             // Check if the user has already arrived in the database
             if (!userData.arrived) {
-                usersDB.increaseStreamsWatched(userId);
                 sendColorCommand(color);
                 firstMessageHandler(context);
                 usersDB.setArrived(userId, true);

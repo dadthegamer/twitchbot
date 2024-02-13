@@ -10,7 +10,7 @@ export async function onMessageHandler(channel, user, message, msg) {
         const { isFirst, isHighlight, userInfo, id, isReply, isCheer, isReturningChatter } = msg;
         const { userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster } = userInfo;
         webSocket.twitchChatMessage({ service: 'twitch', message, displayName, color });
-        activeUsersCache.addUser(userId);
+        activeUsersCache.addUser(userId, displayName);
         const parts = message.split(' ');
         const prefix = '!';
         const command = parts[0];

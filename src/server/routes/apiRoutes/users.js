@@ -2,6 +2,8 @@ import { Router } from 'express';
 import { usersDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
 import { isStreamer, isUser, isUserOrStreamer } from '../../middleware/loggedin.js';
+import { apiAuth } from '../../middleware/apiAuth.js';
+
 
 const router = Router();
 

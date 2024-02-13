@@ -138,6 +138,17 @@ class CommandService {
         }
     }
 
+    // Method to remove a user from the user cooldown cache
+    async removeUserFromCooldownCache(userId, commandName) {
+        try {
+            const key = `${userId}-${commandName}`;
+            this.userCooldownCache.del(key);
+        }
+        catch (err) {
+            logger.error(`Error in removeUserFromCooldownCache: ${err}`);
+        }
+    }
+
     // Method to add a command to the database
     async createCommand(commandName, commandHandlers, commandDescription, commandPermissions, commandEnabled = true, userCooldown = 0, globalCooldown = 0, liveOnly = false) {
         try {

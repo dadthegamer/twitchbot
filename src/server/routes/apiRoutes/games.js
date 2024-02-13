@@ -1,7 +1,8 @@
 import { Router } from 'express';
-import { gameService } from '../../config/initializers.js';
+import { gameService, webSocket } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
-import isStreamer from '../../middleware/loggedin.js';
+import { isStreamer } from '../../middleware/loggedin.js';
+import { apiAuth } from '../../middleware/apiAuth.js';
 
 
 const router = Router();
@@ -42,6 +43,19 @@ router.put('/jackpot', isStreamer, async (req, res) => {
         logger.error(err);
     }
 });
+
+router.post('/game', apiAuth, async (req, res) => {
+    try {
+        const { status } = req.body;
+        if (status === 'start') {
+            webSocket.startMiniGame();
+        } else if (status === 'reset') {
+            webSocket.resetMiniGame();
+        }
+    } catch (err) {
+        logger.error(err);
+    }
+}); 
 
 
 export default router;
