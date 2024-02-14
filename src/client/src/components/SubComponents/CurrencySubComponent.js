@@ -33,8 +33,8 @@ function CurrencySubComponent({ props }) {
     const [payoutDonations, setPayoutDonations] = useState(payoutSettings.donations.amount);
     const [payoutDonationsMin, setPayoutDonationsMin] = useState(payoutSettings.donations.minimum);
     const [payoutRaids, setPayoutRaids] = useState(payoutSettings.raids);
-    const [payoutFollowers, setPayoutFollowers] = useState(payoutSettings.followers);
-    const [payoutArrival, setPayoutArrival] = useState(payoutSettings.arrival);
+    const [payoutFollowers, setPayoutFollowers] = useState(payoutSettings.follower);
+    const [payoutArrival, setPayoutArrival] = useState(payoutSettings.arrived);
     const [payoutFirst, setPayoutFirst] = useState(payoutSettings.first.first);
     const [payoutSecond, setPayoutSecond] = useState(payoutSettings.first.second);
     const [payoutThird, setPayoutThird] = useState(payoutSettings.first.third);

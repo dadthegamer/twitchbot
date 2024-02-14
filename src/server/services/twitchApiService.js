@@ -717,6 +717,26 @@ class TwitchApiClient {
             logger.error(`Error getting channel emotes: ${error}`);
         }
     }
+
+    // Method to get user data by user name
+    async getUserDataByUserName(userName) {
+        try {
+            console.log(`Getting user data by user name: ${userName}`)
+            const data = await this.apiClient.users.getUserByName(userName);
+            console.log(data);
+            const user = {
+                id: data.id,
+                name: data.name,
+                displayName: data.displayName,
+                profilePictureUrl: data.profilePictureUrl,
+            };
+            return user;
+        }
+        catch (error) {
+            console.log(error);
+            logger.error(`Error getting user data by user name: ${error}`);
+        }
+    }
 }
 
 

@@ -1,5 +1,5 @@
 import logger from "../utilities/logger.js";
-import { webSocket, chatClient, usersDB, cache } from "../config/initializers.js";
+import { webSocket, chatClient, usersDB, cache, activeUsersCache } from "../config/initializers.js";
 
 
 // Class to handle all stream related services
@@ -414,6 +414,22 @@ class GameService {
         }
         catch (error) {
             logger.error(`Error in startBlackjackGame: ${error}`);
+        }
+    }
+
+    // Reward the winner of a slap game. 
+    async rewardSlapWinner(winnerUserId) {
+        try {
+            // Get the game settings
+            const gameSettings = await this.getGameSetting('Slap');
+            const currency = gameSettings.currency;
+            const payout = gameSettings.payout;
+            // Increase the currency for the winner
+            usersDB.increaseCurrency(winnerUserId, currency, payout);
+            return gameSettings;
+        }
+        catch (error) {
+            logger.error(`Error in rewardSlapWinner: ${error}`);
         }
     }
 }

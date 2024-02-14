@@ -22,6 +22,8 @@ import { getRequest } from "./actionHandlers/requestsHandler.js";
 import { playSoundFromCommand } from "./actionHandlers/soundHandler.js";
 import { joinMiniGameHandler } from "./actionHandlers/joinMiniGame.js";
 import { handlBlackJackGame, handleBlackJackHit, handleBlackJackStay } from "./actionHandlers/blackJackHandler.js";
+import { slapHandler, blockHandler } from "./actionHandlers/slapHandler.js";
+
 
 // Method to evaluate the handler
 export async function actionEvalulate(handler, context = null) {
@@ -240,6 +242,28 @@ export async function actionEvalulate(handler, context = null) {
                         break;
                     default:
                         logger.error(`Blackjack action not found: ${action}`);
+                }
+                break;
+            case 'slap':
+                console.log('Slap Handler');
+                switch (action) {
+                    case 'slap':
+                        console.log('Slap Action');
+                        const slappedDisplayName = input.split('!slap')[1].trim();
+                        // If the slapped display name starts with an @ symbol, remove it
+                        if (slappedDisplayName.startsWith('@')) {
+                            console.log('Slapped display name starts with @ symbol');
+                            slappedDisplayName = slappedDisplayName.replace('@', '');
+                            console.log(`Slapped Display Name: ${slappedDisplayName}`);
+                        }
+                        console.log(`Slapped Display Name: ${slappedDisplayName}`);
+                        slapHandler(userId, displayName, slappedDisplayName);
+                        break;
+                    case 'block':
+                        blockHandler(userId, displayName);
+                        break;
+                    default:
+                        logger.error(`Slap action not found: ${action}`);
                 }
                 break;
             case 'joinMiniGame':

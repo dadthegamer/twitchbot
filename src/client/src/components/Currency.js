@@ -90,7 +90,7 @@ function Currency() {
                 setPayoutDonations(currency.payoutSettings.donations.amount);
                 setPayoutDonationsMin(currency.payoutSettings.donations.minimum);
                 setPayoutRaids(currency.payoutSettings.raids);
-                setPayoutFollowers(currency.payoutSettings.followers);
+                setPayoutFollowers(currency.payoutSettings.follower);
                 setPayoutArrival(currency.payoutSettings.arrived);
                 setPayoutFirst(currency.payoutSettings.first.first);
                 setPayoutSecond(currency.payoutSettings.first.second);
