@@ -55,7 +55,25 @@ router.post('/game', apiAuth, async (req, res) => {
     } catch (err) {
         logger.error(err);
     }
-}); 
+});
+
+router.get('/', async (req, res) => {
+    try {
+        const games = await gameService.getAllGames();
+        res.json(games);
+    } catch (err) {
+        logger.error(err);
+    }
+});
+
+router.get('/movie-quote', async (req, res) => {
+    try {
+        const movieQuote = await gameService.getMovieQuote();
+        res.json(movieQuote);
+    } catch (err) {
+        logger.error(err);
+    }
+});
 
 
 export default router;

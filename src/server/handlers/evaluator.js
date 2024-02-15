@@ -23,6 +23,8 @@ import { playSoundFromCommand } from "./actionHandlers/soundHandler.js";
 import { joinMiniGameHandler } from "./actionHandlers/joinMiniGame.js";
 import { handlBlackJackGame, handleBlackJackHit, handleBlackJackStay } from "./actionHandlers/blackJackHandler.js";
 import { slapHandler, blockHandler } from "./actionHandlers/slapHandler.js";
+import { startNumberGuessingGame, guessNumberHandler } from "./actionHandlers/guessNumberHandler.js";
+import { rockPaperScissorsHandler } from "./actionHandlers/rockPaperScissorsHandler.js";
 
 
 // Method to evaluate the handler
@@ -245,18 +247,13 @@ export async function actionEvalulate(handler, context = null) {
                 }
                 break;
             case 'slap':
-                console.log('Slap Handler');
                 switch (action) {
                     case 'slap':
-                        console.log('Slap Action');
-                        const slappedDisplayName = input.split('!slap')[1].trim();
+                        let slappedDisplayName = input.split('!slap')[1].trim();
                         // If the slapped display name starts with an @ symbol, remove it
                         if (slappedDisplayName.startsWith('@')) {
-                            console.log('Slapped display name starts with @ symbol');
                             slappedDisplayName = slappedDisplayName.replace('@', '');
-                            console.log(`Slapped Display Name: ${slappedDisplayName}`);
                         }
-                        console.log(`Slapped Display Name: ${slappedDisplayName}`);
                         slapHandler(userId, displayName, slappedDisplayName);
                         break;
                     case 'block':
@@ -264,6 +261,60 @@ export async function actionEvalulate(handler, context = null) {
                         break;
                     default:
                         logger.error(`Slap action not found: ${action}`);
+                }
+                break;
+            case 'guessNumber':
+                switch (action) {
+                    case 'start':
+                        startNumberGuessingGame();
+                        break;
+                    case 'guess':
+                        const guess = parseInt(input.split('!guess')[1].trim());
+                        if (!guess || guess === '') {
+                            chatMessageHandler(`@${displayName} please enter a valid guess. Example !guess 100`);
+                            break;
+                        } else {
+                            if (guess < 1 || guess > 1000) {
+                                chatMessageHandler(`@${displayName} please enter a valid guess between 1 and 1000.`);
+                                break;
+                            } else {
+                                guessNumberHandler(userId, displayName, guess, messageID);
+                                break;
+                            }
+                        }
+                    default:
+                        logger.error(`Guess number action not found: ${action}`);
+                }
+                break;
+            case 'rockPaperScissors':
+                // Get the command that was used. it will be the text after the !. Remove the ! and anything after the command
+                const command = input.split('!')[1].split(' ')[0];
+                // Get the amount to bet. It will be the text after the command.
+                if (command === 'rock') {
+                    const amount = parseInt(input.split('!rock')[1].trim());
+                    // Check if the amount is a valid number
+                    if (!amount || amount === '' || isNaN(amount)) {
+                        chatMessageHandler(`@${displayName} please enter a valid bet amount. Example !rock 100`);
+                        break;
+                    } else {
+                        rockPaperScissorsHandler(userId, amount, displayName, command, messageID);
+                    }
+                } else if (command === 'paper') {
+                    const amount = parseInt(input.split('!paper')[1].trim());
+                    if (!amount || amount === '' || isNaN(amount)) {
+                        chatMessageHandler(`@${displayName} please enter a valid bet amount. Example !paper 100`);
+                        break;
+                    } else {
+                        rockPaperScissorsHandler(userId, amount, displayName, command, messageID);
+                    }
+                } else if (command === 'scissors') {
+                    const amount = parseInt(input.split('!scissors')[1].trim());
+                    if (!amount || amount === '' || isNaN(amount)) {
+                        chatMessageHandler(`@${displayName} please enter a valid bet amount. Example !scissors 100`);
+                        break;
+                    } else {
+                        rockPaperScissorsHandler(userId, amount, displayName, command, messageID);
+                    }
                 }
                 break;
             case 'joinMiniGame':

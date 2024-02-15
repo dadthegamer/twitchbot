@@ -147,7 +147,7 @@ export class WebSocket {
 
     // Method to send a chat message from twitch chat
     twitchChatMessage(payload) {
-        this.broadcastMessage('chatMessage', payload);
+        this.broadcastMessage('twitchChatMessage', payload);
     }
 
     // Method to send a chat message from tiktok chat
@@ -157,7 +157,7 @@ export class WebSocket {
             username,
             service: 'tiktok',
         };
-        this.broadcastMessage('chatMessage', payload);
+        this.broadcastMessage('tiktokChatMessage', payload);
     }
 
     // Method to send a message to the display
@@ -241,5 +241,13 @@ export class WebSocket {
     // Method to reset a mini game
     async resetMiniGame() {
         this.broadcastMessage('resetGame', {});
+    }
+
+    // Method to data for the movie quote game
+    async movieQuote(data) {
+        const payload = {
+            data,
+        };
+        this.broadcastMessage('movieQuote', payload);
     }
 }

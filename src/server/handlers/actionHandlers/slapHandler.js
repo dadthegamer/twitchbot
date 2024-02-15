@@ -1,5 +1,5 @@
 import logger from '../../utilities/logger.js';
-import { chatClient, twitchApi } from '../../config/initializers.js';
+import { chatClient, twitchApi, gameService } from '../../config/initializers.js';
 
 
 let players = [];
@@ -12,10 +12,10 @@ export async function slapHandler(slapperUserId, slapperDisplayName, slappedDisp
         return `@${slapperDisplayName} stop slapping @${slappedDisplayName}. They have already taken a beating from you!`;
     }
     if (slapperDisplayName === slappedDisplayName) {
-        return `@${slapperDisplayName} stop hitting yourself`;
+        chatClient.say(`@${slapperDisplayName} stop hitting yourself!`);
     }
     if (slappedDisplayName === 'DadTheGam3r' || slappedDisplayName === 'TheDadb0t') {
-        return `@${slapperDisplayName} slap someone who can slap back!`;
+        chatClient.say(`@${slapperDisplayName} slap someone who can slap back!`);
     }
     // Get the user data for the slapped user. Convert the username to lowercase to match the API response
     const slappedUserData = await twitchApi.getUserDataByUserName(slappedDisplayName.toLowerCase());
@@ -36,6 +36,7 @@ export async function slapHandler(slapperUserId, slapperDisplayName, slappedDisp
         if (player) {
             players = players.filter(player => player.slappedUserId !== slappedUserId);
             chatClient.say(`@${slappedDisplayName} was slapped by @${slapperDisplayName} and did not block it!`);
+            gameService.rewardSlapWinner(slapperUserId);
         } else {
             return;
         }
@@ -50,11 +51,13 @@ export async function blockHandler(blockerUserId, blockerDisplayName) {
         if (multipleSlappers.length > 1) {
             chatClient.say(`@${blockerDisplayName} blocked all the slaps!`);
             players = players.filter(player => player.slappedUserId !== blockerUserId);
+            gameService.rewardSlapWinner(blockerUserId);
         } else {
             // Get the person who slapped the blocker
             const slapper = players.find(player => player.slappedUserId === blockerUserId);
             chatClient.say(`@${blockerDisplayName} blocked the slap from @${slapper.slapperDisplayName}!`);
             players = players.filter(player => player.slappedUserId !== blockerUserId);
+            gameService.rewardSlapWinner(blockerUserId);
         }
     } else {
         return;

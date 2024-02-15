@@ -9,12 +9,12 @@ export async function onMessageHandler(channel, user, message, msg) {
     try {
         const { isFirst, isHighlight, userInfo, id, isReply, isCheer, isReturningChatter } = msg;
         const { userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster } = userInfo;
-        webSocket.twitchChatMessage({ service: 'twitch', message, displayName, color });
+        webSocket.twitchChatMessage({ service: 'twitch', message, displayName, color, userId });
         activeUsersCache.addUser(userId, displayName);
         const parts = message.split(' ');
         const prefix = '!';
         const command = parts[0];
-        arrivalHandler({ userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster, id });
+        arrivalHandler({ userId, displayName, color, isVip, isSubscriber, isMod, isBroadcaster });
         if (command.startsWith(prefix)) {
             commandHandler.commandHandler(command, user, message, msg);
         }

@@ -432,6 +432,130 @@ class GameService {
             logger.error(`Error in rewardSlapWinner: ${error}`);
         }
     }
+
+    // Reward the winner of the number guessing game.
+    async rewardNumberGuessingGameWinner(winnerUserId) {
+        try {
+            const gameSettings = await this.getGameSetting('Number Guessing Game');
+            if (gameSettings) {
+                const currency = gameSettings.currency;
+                const payout = gameSettings.payout;
+                // Increase the currency for the winner
+                usersDB.increaseCurrency(winnerUserId, currency, payout);
+                return gameSettings;
+            } else {
+                return null;
+            }
+        }
+        catch (error) {
+            logger.error(`Error in rewardNumberGuessingGameWinner: ${error}`);
+        }
+    }
+
+    // Reward the winner of the movie quote game
+    async rewardMovieQuoteGameWinner(winnerUserId) {
+        try {
+            const gameSettings = await this.getGameSetting('Movie Quote Game');
+            if (gameSettings) {
+                const currency = gameSettings.currency;
+                const payout = gameSettings.payout;
+                // Increase the currency for the winner
+                usersDB.increaseCurrency(winnerUserId, currency, payout);
+                return gameSettings;
+            } else {
+                return null;
+            }
+        }
+        catch (error) {
+            logger.error(`Error in rewardMovieQuoteGameWinner: ${error}`);
+        }
+    }
+
+    // Reward a user for answering a movie quote correctly
+    async rewardMovieQuoteAnswerer(winnerUserId) {
+        try {
+            const gameSettings = await this.getGameSetting('Movie Quote Game');
+            if (gameSettings) {
+                const currency = gameSettings.currency;
+                const payout = gameSettings.perQuestion;
+                // Increase the currency for the winner
+                usersDB.increaseCurrency(winnerUserId, currency, payout);
+                return gameSettings;
+            } else {
+                return null;
+            }
+        }
+        catch (error) {
+            logger.error(`Error in rewardMovieQuoteAnswerer: ${error}`);
+        }
+    }
+
+    // Method to get a movie quote from the database as well as 3 other random movies. It is in the movieQuotes collection. Each quote has a movie and a quote. 
+    async getMovieQuote() {
+        try {
+            let movieQuotes = await this.cache.get('movieQuotes');
+            if (!movieQuotes) {
+                const quotes = await this.dbConnection.collection('movieQuotes').find({}).toArray();
+                this.cache.set('movieQuotes', quotes);
+                movieQuotes = quotes;
+            }
+            const data = {
+                quote: undefined,
+                answer: undefined,
+                answerLetter: undefined,
+                options: []
+            };
+            const options = [];
+            // Get a random movie quote
+            const quote = movieQuotes[Math.floor(Math.random() * movieQuotes.length)];
+            // Set the quote and answer
+            data.quote = quote.quote;
+            data.answer = quote.movie;
+            // Get 3 other random movies
+            for (let i = 0; i < 3; i++) {
+                let option = movieQuotes[Math.floor(Math.random() * movieQuotes.length)];
+                // Make sure the option is not the same as the answer or any of the other options
+                while (option.movie === quote.movie || options.includes(option.movie)) {
+                    option = movieQuotes[Math.floor(Math.random() * movieQuotes.length)];
+                }
+                options.push(option.movie);
+            }
+            // Add the answer to the options
+            options.push(quote.movie);
+            // Shuffle the options
+            options.sort(() => Math.random() - 0.5);
+            const letters = ['A', 'B', 'C', 'D'];
+            // Iterate through each option and make it an object with a letter and the option
+            options.forEach((option, index) => {
+                data.options.push({ letter: letters[index], option: option });
+            });
+            // Identify the answer letter
+            data.answerLetter = data.options.find(option => option.option === quote.movie).letter;
+            return data;
+        }
+        catch (error) {
+            logger.error(`Error in getMovieQuote: ${error}`);
+        }
+    }
+
+    // Reward the winner of the rock paper scissors game
+    async rewardRockPaperScissorsWinner(winnerUserId) {
+        try {
+            const gameSettings = await this.getGameSetting('Rock Paper Scissors');
+            if (gameSettings) {
+                const currency = gameSettings.currency;
+                const payout = gameSettings.payout;
+                // Increase the currency for the winner
+                usersDB.increaseCurrency(winnerUserId, currency, payout);
+                return gameSettings;
+            } else {
+                return null;
+            }
+        }
+        catch (error) {
+            logger.error(`Error in rewardRockPaperScissorsWinner: ${error}`);
+        }
+    }
 }
 
 export default GameService;
