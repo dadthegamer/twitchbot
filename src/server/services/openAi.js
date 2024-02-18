@@ -120,10 +120,10 @@ export async function rateForeheadJoke(message) {
         });
         const response = chatCompletion.choices[0].message.content;
         const responseJson = JSON.parse(response);
+        console.log(responseJson);
         return responseJson;
     }
     catch (error) {
-        console.log(error);
         logger.error(error);
     }
 }

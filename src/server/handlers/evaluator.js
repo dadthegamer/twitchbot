@@ -26,6 +26,7 @@ import { slapHandler, blockHandler } from "./actionHandlers/slapHandler.js";
 import { startNumberGuessingGame, guessNumberHandler } from "./actionHandlers/guessNumberHandler.js";
 import { rockPaperScissorsHandler } from "./actionHandlers/rockPaperScissorsHandler.js";
 import { changeRewardCost, enableReward, disableReward } from "./actionHandlers/channelPointHandler.js";
+import { rateForeheadJokeHandler } from "./actionHandlers/rateForeheadJoke.js";
 
 
 // Method to evaluate the handler
@@ -317,6 +318,9 @@ export async function actionEvalulate(handler, context = null) {
                         rockPaperScissorsHandler(userId, amount, displayName, command, messageID);
                     }
                 }
+                break;
+            case 'rateForeheadJoke':
+                rateForeheadJokeHandler(displayName, input);
                 break;
             case 'channelRewards':
                 switch (action) {
