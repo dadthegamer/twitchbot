@@ -29,6 +29,7 @@ import SocialMediaRotator from './components/overlayComponents/SocialMediaRotato
 import Sounds from './components/Sounds';
 import SoundsOverlay from './components/overlayComponents/Sounds';
 import QuarterMile from './components/MiniGames/DadsQuarterMile';
+import MovieQuote from './components/MiniGames/movieQuote';
 
 
 function App() {
@@ -64,6 +65,7 @@ function App() {
       {/* Mini Games Routes */}
       <Route path="/minigames" element={<MiniGamesLayout />}>
         <Route path="quarter-mile" element={<QuarterMile />} />
+        <Route path="movie-quote" element={<MovieQuote />} />
       </Route>
 
       {/* Main Routes */}

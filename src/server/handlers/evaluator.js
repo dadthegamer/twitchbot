@@ -25,6 +25,7 @@ import { handlBlackJackGame, handleBlackJackHit, handleBlackJackStay } from "./a
 import { slapHandler, blockHandler } from "./actionHandlers/slapHandler.js";
 import { startNumberGuessingGame, guessNumberHandler } from "./actionHandlers/guessNumberHandler.js";
 import { rockPaperScissorsHandler } from "./actionHandlers/rockPaperScissorsHandler.js";
+import { changeRewardCost, enableReward, disableReward } from "./actionHandlers/channelPointHandler.js";
 
 
 // Method to evaluate the handler
@@ -315,6 +316,25 @@ export async function actionEvalulate(handler, context = null) {
                     } else {
                         rockPaperScissorsHandler(userId, amount, displayName, command, messageID);
                     }
+                }
+                break;
+            case 'channelRewards':
+                switch (action) {
+                    case 'changeCost':
+                        const rewardId = input.split('!changeCost')[1].split(' ')[1];
+                        const cost = parseInt(input.split('!changeCost')[1].split(' ')[2]);
+                        changeRewardCost(rewardId, cost);
+                        break;
+                    case 'enable':
+                        const enableRewardId = input.split('!enable')[1].split(' ')[1];
+                        enableReward(enableRewardId);
+                        break;
+                    case 'disable':
+                        const disableRewardId = input.split('!disable')[1].split(' ')[1];
+                        disableReward(disableRewardId);
+                        break;
+                    default:
+                        logger.error(`Channel Point action not found: ${action}`);
                 }
                 break;
             case 'joinMiniGame':

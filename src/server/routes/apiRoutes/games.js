@@ -68,6 +68,7 @@ router.get('/', async (req, res) => {
 
 router.get('/movie-quote', async (req, res) => {
     try {
+        console.log('getting movie quote');
         const movieQuote = await gameService.getMovieQuote();
         res.json(movieQuote);
     } catch (err) {

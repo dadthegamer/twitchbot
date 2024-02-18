@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/miniGames/movieQuote.css';
 
 
@@ -10,10 +10,20 @@ function MovieQuote() {
     const [connected, setConnected] = useState(false);
     const [socket, setSocket] = useState(null);
     const [players, setPlayers] = useState([]);
-    const [showQuote, setShowQuote] = useState(false);
+    const [currentPlayers, setCurrentPlayers] = useState([]);
+    const [showQuote, setShowQuote] = useState(true);
     const [showAnswer, setShowAnswer] = useState(false);
     const [data, setData] = useState({});
     const [gameSettings, setGameSettings] = useState({});
+    const [revealAnswer, setRevealAnswer] = useState(false);
+    const [correctAnswerLetter, setCorrectAnswerLetter] = useState('');
+    const [isFetching, setIsFetching] = useState(false);
+
+    const dataRef = useRef({});
+    const gameRef = useRef({});
+    const currentPlayersRef = useRef(currentPlayers);
+    const timerRef = useRef(timer);
+    const timerIdRef = useRef(null);
 
     const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
 
@@ -29,17 +39,11 @@ function MovieQuote() {
 
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
+                console.log('Received:', data);
                 if (data.type === 'twitchChatMessage') {
-                    // Check if  the player is already in the list
-                    const player = players.find((p) => p.userId === data.userId);
-                    if (!player) {
-                        setPlayers((prev) => [...prev, { userId: data.userId, displayName: data.displayName, score: 0 }]);
-                    } else {
-                        // Check if the answer is correct
-                        checkAnswer(data.message, data.userId);
-                    }
+                    checkAnswer(data.payload.message, data.payload.userId, data.payload.displayName);
                 } else if (data.type === 'startGame') {
-                    setStartGame(true);
+                    console.log('Starting game');
                 }
             };
 
@@ -74,35 +78,47 @@ function MovieQuote() {
         };
     }, []);
 
+    useEffect(() => {
+        timerRef.current = timer;
+    }, [timer]);
+
+
     // UseEffect to get the game settings from the server
     useEffect(() => {
         const getGameSettings = async () => {
             const response = await fetch('/api/games');
-            const data = await response.json();
-            setGameSettings(data);
+            // Find the movie quote game
+            const game = (await response.json()).find((g) => g.game === 'Movie Quote Game');
+            console.log(game);
+            if (game) {
+                gameRef.current = game;
+            }
         }
         getGameSettings();
     }, []);
 
     useEffect(() => {
         // Get a new movie quote. Make sure it is a different quote than the previous one
-        if (showQuote) {
-            getMovieQuote().then((data) => {
-                setMovieQuote(data.quote);
-                setOptions(data.options);
-            });
-        }
+        getMovieQuote().then((data) => {
+            setMovieQuote(data.quote);
+            setOptions(data.options);
+        });
 
-    }, [showQuote]);
+    }, []);
+
+    useEffect(() => {
+        currentPlayersRef.current = currentPlayers;
+    }, [currentPlayers]);
 
     // Function to send a post request to the server to reward ta user with points
     const rewardUser = async (userId, value) => {
-        const response = await fetch('/api/points/reward', {
+        const response = await fetch('/api/currency/user', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'x-api-key': process.env.REACT_APP_API_KEY
             },
-            body: JSON.stringify({ userId, value, currencyName: gameSettings.currency, update: 'add' }),
+            body: JSON.stringify({ userId, value, currencyName: gameRef.current.currency, update: 'add' }),
         });
 
         const data = await response.json();
@@ -112,35 +128,124 @@ function MovieQuote() {
 
     // Function to get a random movie quote from the server
     const getMovieQuote = async () => {
-        const response = await fetch('/api/games/movie-quote');
-        const data = await response.json();
-        return data;
+        if (!isFetching) {
+            setIsFetching(true);
+            const response = await fetch('/api/games/movie-quote');
+            const data = await response.json();
+            setData(data);
+            dataRef.current = data;
+            setCorrectAnswerLetter(data.answerLetter);
+            setTimeout(() => {
+                startTimer();
+                setIsFetching(false);
+            }, 1000);
+            return data;
+        }
     };
 
     // Function to check if a users answer is correct. The answers will be a, b, c, or d
-    const checkAnswer = (answer, userId) => {
-        if (answer.toLowerCase() === data.answerLetter.toLowerCase()) {
-            console.log('Correct');
-            const player = players.find((p) => p.userId === userId);
-            if (player) {
-                player.score += gameSettings.perQuestion;
-                setPlayers([...players]);
-                rewardUser(userId, gameSettings.perQuestion);
+    const checkAnswer = (answer, userId, displayName) => {
+        const currentData = dataRef.current;
+        if (timerRef.current === 0) {
+            console.log('Time is up');
+            return;
+        } else {
+            // Check if the user has already submitted an answer for the current question
+            if (!currentPlayersRef.current.includes(userId)) {
+                if (currentData && currentData.answerLetter && answer.toLowerCase() === currentData.answerLetter.toLowerCase()) {
+                    console.log('Correct answer from user:', displayName);
+                    const amount = gameRef.current.perQuestion;
+                    rewardUser(userId, amount);
+
+                    setPlayers((prevPlayers) => {
+                        const playerIndex = prevPlayers.findIndex((player) => player.userId.toString() === userId.toString());
+
+                        if (playerIndex !== -1) {
+                            // Player exists, update their score
+                            return prevPlayers.map((player, index) => {
+                                if (index === playerIndex) {
+                                    return { ...player, score: player.score + amount };
+                                }
+                                return player;
+                            });
+                        } else {
+                            // Player doesn't exist, add them to the players array
+                            return [...prevPlayers, { userId, displayName, score: amount }];
+                        }
+                    });
+                }
+
+                // Regardless of the answer being correct or not, add the user to currentPlayers to prevent multiple answers
+                setCurrentPlayers((prevCurrentPlayers) => [...prevCurrentPlayers, userId]);
+            } else {
+                console.log('User has already submitted an answer for this question:', displayName);
             }
         }
     };
 
     // Function to start the timer
     const startTimer = () => {
+        if (timerIdRef.current) {
+            clearInterval(timerIdRef.current);
+        }
+        setShowQuote(true);
         let time = 10;
-        const intervalId = setInterval(() => {
+        setTimer(time);
+        timerIdRef.current = setInterval(() => {
             time--;
             setTimer(time);
             if (time === 0) {
-                clearInterval(intervalId);
+                clearInterval(timerIdRef.current);
+                setTimeout(() => {
+                    setRevealAnswer(true);
+                }, 500);
+                setTimeout(() => {
+                    setShowQuote(false);
+                    setRevealAnswer(false);
+                    getMovieQuote().then((data) => {
+                        setMovieQuote(data.quote);
+                        setOptions(data.options);
+                    });
+                    setCurrentPlayers([]);
+                }, 5000);
             }
         }, 1000);
     };
+
+    const sortedPlayers = [...players].sort((a, b) => b.score - a.score);
+
+    return (
+        <div className="movie-quote">
+            <img src={process.env.PUBLIC_URL + '/mini-games-logo.png'} alt="" className='mini-games-logo' />
+            <div className="movie-quote-container">
+                {showQuote && <span className='movie-quote-timer'>{timer}</span>}
+                {showQuote && <h2 id='movie-quote'>"{movieQuote}"</h2>}
+                {showQuote && <div className="movie-quote-options">
+                    {options.map((option, index) => (
+                        <div key={index} className={`movie-quote-option ${revealAnswer && option.letter === correctAnswerLetter ? 'correct-answer' : ''}`}>
+                            <div>
+                                <span>{option.letter}</span>
+                                <span>:</span>
+                            </div>
+                            <span>{option.option}</span>
+                        </div>
+                    ))}
+                </div>}
+            </div>
+            <div className="movie-quote-leaderboard">
+                <h2>LEADERBOARD</h2>
+                <div className='movie-quote-leaderboard-container'>
+                    {sortedPlayers.map((player, index) => (
+                        <div key={index} className="movie-quote-leaderboard-entry">
+                            <span className="player-display-name">{player.displayName}</span>
+                            <span className="player-score">{player.score}</span>
+                        </div>
+                    ))}
+                </div>
+                <span className='movie-quote-payout-info'>Earn {gameRef.current.perQuestion} {gameRef.current.currency} points per correct answer</span>
+            </div>
+        </div>
+    );
 }
 
 

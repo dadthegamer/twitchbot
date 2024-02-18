@@ -28,6 +28,7 @@ import { getChatCommands, sendCommand } from '../handlers/actionHandlers/lumiaSt
 import GoXLRClient from '../services/goXLRService.js';
 import { subscribeToDonationEvents } from '../services/streamElementsService.js';
 import TikTokService from '../services/tikTokService.js';
+import ActionListService from '../services/actionListService.js';
 
 
 // Cache initialization
@@ -110,6 +111,9 @@ const goXLRClient = new GoXLRClient();
 // TikTok Service initialization
 const tikTokService = new TikTokService(db.dbConnection);
 
+// Action List Service initialization
+const actionListService = new ActionListService(db.dbConnection, cache);
+
 // Start the alerts handler
 startAlertsHandler();
 
@@ -148,4 +152,5 @@ export {
     eventServices,
     goXLRClient,
     tikTokService,
+    actionListService
 };
