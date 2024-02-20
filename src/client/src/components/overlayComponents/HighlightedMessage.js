@@ -6,11 +6,12 @@ function HighlightedMessage() {
     const [message, setMessage] = useState("");
     const [showMessage, setShowMessage] = useState(false);
     const [profilePic, setProfilePic] = useState("");
-    const [displayName, setDisplayName] = useState("");
+    const [displayName, setDisplayName] = useState("cfireguy");
     const [timer, setTimer] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [connected, setConnected] = useState(false);
     const [socket, setSocket] = useState(null);
+    const [hideHighlightedContainer, setHideHighlightedContainer] = useState('');
 
     const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
 
@@ -71,18 +72,22 @@ function HighlightedMessage() {
                 ws.close(); // Close the WebSocket connection if it's open
             }
         };
-    }, [connected, wsurl]);
+    }, []);
 
     function showHideMessage(timer) {
         setShowMessage(true);
         setTimeout(() => {
-            setShowMessage(false);
+            setHideHighlightedContainer('slide-out');
+            setTimeout(() => {
+                setShowMessage(false);
+                setHideHighlightedContainer('');
+            }, 500);
         }, timer);
     }
 
     return (
         <div className="highlighted-message-container">
-            {showMessage && <div className="highlighted-message">
+            {showMessage && <div className={`highlighted-message ${hideHighlightedContainer}`}>
                 <img src={profilePic} alt="" className='user-profile-image'/>
                 <div className='message-details'>
                     <span>{displayName}</span>

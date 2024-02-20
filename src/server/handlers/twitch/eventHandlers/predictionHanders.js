@@ -1,5 +1,6 @@
 import { cache, webSocket } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";
+import { respondToPredictionTitle } from "../../../services/openAi.js";
 
 
 // Prediction events
@@ -44,8 +45,9 @@ export async function onPredictionStart(e) {
             totalUsers: totalUsers,
             totalChannelPoints: totalChannelPoints,
         });
-        console.log(cache.get('prediction'));
+        const response = await respondToPredictionTitle(title);
         webSocket.prediction(cache.get('prediction'));
+        webSocket.TTS(response);
         return;
     }
     catch (error) {

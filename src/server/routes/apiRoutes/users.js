@@ -14,7 +14,7 @@ router.get('/', isStreamer, async (req, res) => {
     }
     catch (err) {
         logger.error(`Error in getting all users: ${err}`);
-        res.status(500).send();
+        res.status(500).send('Error in getting user by user ID');
     }
 });
 
@@ -25,7 +25,7 @@ router.get('/:id', isUserOrStreamer, async (req, res) => {
     }
     catch (err) {
         logger.error(`Error in getting user by user ID: ${err}`);
-        res.status(500).send();
+        res.status(500).send('Error in getting user by user ID');
     }
 });
 
@@ -111,9 +111,8 @@ router.put('/:id', isStreamer, async (req, res) => {
         res.json({ message: `Success` });
     }
     catch (err) {
-        console.log(err);
         logger.error(`Error in updating user: ${err}`);
-        res.status(500).send();
+        res.status(500).send('Error in getting user by user ID');
     }
 });
 

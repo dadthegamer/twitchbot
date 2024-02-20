@@ -55,6 +55,7 @@ body {
     color: #FFFFFF;
     text-align: center;
     border-radius: 0 0 10px 10px;
+    border: 2px solid var(--background-color);
 }
 
 .hype-train-header {

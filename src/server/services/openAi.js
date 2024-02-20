@@ -76,7 +76,7 @@ export async function sarcasticResponse(message) {
         return response;
     }
     catch (error) {
-        logger.error(error);
+        logger.error(`Error in sarcasticResponse ${error}`)
     }
 }
 
@@ -92,7 +92,7 @@ export async function createPredictionAI(message) {
                 "role": "user",
                 "content": message
             }],
-            model: 'gpt-3.5-turbo',
+            model: 'gpt-4-0125-preview',
         });
         const response = chatCompletion.choices[0].message.content;
         // Parse the response into a json object
@@ -100,7 +100,7 @@ export async function createPredictionAI(message) {
         return responseJson;
     }
     catch (error) {
-        logger.error(error);
+        logger.error(`Error in createPredictionAI: ${error}`);
     }
 }
 
@@ -120,10 +120,31 @@ export async function rateForeheadJoke(message) {
         });
         const response = chatCompletion.choices[0].message.content;
         const responseJson = JSON.parse(response);
-        console.log(responseJson);
         return responseJson;
     }
     catch (error) {
-        logger.error(error);
+        logger.error(`Error in rateForeheadJoke: ${error}`);
+    }
+}
+
+// Function to respond to the prediction title
+export async function respondToPredictionTitle(message) {
+    try {
+        const chatCompletion = await openai.chat.completions.create({
+            messages: [{
+                "role": "system",
+                "content": "You will be provided a message from my Twitch chat that is a prediction title. Always start your response with announcing thereis a new prediction. Your response will be read to my twitch chat. Respond as sarcastic as you can be without being too corny or lame. Always talking trash about myself, dad the gamer trying to achieve whatever the prediction is. Try and keep it as short as possible."
+            },
+            {
+                "role": "user",
+                "content": message
+            }],
+            model: 'gpt-4-0125-preview',
+        });
+        const response = chatCompletion.choices[0].message.content;
+        return response;
+    }
+    catch (error) {
+        logger.error(`Error in respondToPredictionTitle: ${error}`);
     }
 }

@@ -45,24 +45,21 @@
     position: relative;
     border-radius: 5px;
     z-index: 99;
-    transition: all 0.25s ease-in-out;
-    background-color: transparent;
-    color: #111111;
-    background-color: var(--background-color);
+    background-color: #E5E5E5;
+    color: var(--background-color);
     padding: 20px;
-    border: 1px solid var(--primary-color);
+    border: 2px solid var(--background-color);
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+    box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+    animation: slideIn 0.5s ease-in-out;
 }
 
 .user-profile-image {
     width: 75px;
     height: 75px;
     border-radius: 50%;
-    background-color: var(--primary-color);
     border: 1px solid var(--primary-color);
-    position: absolute;
-    left: 50%;
-    top: -30%;
-    transform: translate(-50%, -50%);
     z-index: 999;
 }
 
@@ -77,12 +74,11 @@
     z-index: 99;
     transition: all 0.25s ease-in-out;
     background-color: transparent;
-    color: #111111;
+    color: var(--background-color);
 }
 
 .message-details span {
     font-size: 1.5rem;
-    color: #FFFFFF;
     width: 100%;
     text-align: left;
 }
@@ -90,7 +86,6 @@
 .message-details span:first-child {
     font-size: 1.5rem;
     font-weight: 900;
-    color: #FFFFFF;
     text-align: left;
     width: 100%;
     text-align: left;
@@ -101,20 +96,36 @@
 
 .message-details span:last-child {
     font-size: 1rem;
-    color: #FFFFFF;
     text-align: left;
     width: 100%;
     text-align: left;
+    font-weight: 100;
 }
 
-@keyframes popIn {
+.slide-out {
+    animation: slideOut 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
     0% {
-        transform: scale(0.5);
+        transform: translateX(100%);
         opacity: 0;
     }
 
     100% {
-        transform: scale(1);
+        transform: translateX(0%);
         opacity: 1;
-    }    
+    }
+}
+
+@keyframes slideOut {
+    0% {
+        transform: translateX(0%);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }

@@ -238,6 +238,7 @@ class OBSService {
     async getCurrentScene() {
         try {
             if (!this.connected) {
+                logger.error('Not connected to OBS');
                 return;
             } else {
                 if (this.cache.get('currentScene')) {
