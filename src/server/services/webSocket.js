@@ -20,6 +20,7 @@ export class WebSocket {
             };
             this.streamUpdate(cache.get('streamInfo'));
             connectedDevices++;
+
             this.notification({ 
                 notification: 'Connected to websocket',
                 classification: 'info',
@@ -51,6 +52,11 @@ export class WebSocket {
                 connectedDevices--;
             });
         });
+    }
+
+    // Method to generate a date object for expiry date. Generate the date 3 minutes from now. Make sure it is a date object
+    generateExpiryDate() {
+        return new Date(new Date().getTime() + 180000);
     }
 
     // Method to send a message to the client
@@ -249,5 +255,13 @@ export class WebSocket {
             data,
         };
         this.broadcastMessage('movieQuote', payload);
+    }
+
+    // Method to send hype train data
+    async hypeTrainUpdate(data) {
+        const payload = {
+            data,
+        };
+        this.broadcastMessage('hypeTrain', payload);
     }
 }

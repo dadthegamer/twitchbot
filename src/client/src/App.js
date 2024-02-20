@@ -30,6 +30,8 @@ import Sounds from './components/Sounds';
 import SoundsOverlay from './components/overlayComponents/Sounds';
 import QuarterMile from './components/MiniGames/DadsQuarterMile';
 import MovieQuote from './components/MiniGames/movieQuote';
+import HypeTrain from './components/overlayComponents/HypeTrain';
+
 
 
 function App() {
@@ -60,6 +62,7 @@ function App() {
         <Route path="highlightedmessage" element={<HighlightedMessage />} />
         <Route path="socialmediarotator" element={<SocialMediaRotator />} />
         <Route path="sounds" element={<SoundsOverlay />} />
+        <Route path="hypetrain" element={<HypeTrain />} />
       </Route>
 
       {/* Mini Games Routes */}

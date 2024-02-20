@@ -1,4 +1,4 @@
-import { cache, currencyDB, usersDB } from "../../../config/initializers.js";
+import { cache, currencyDB, usersDB, webSocket,twitchApi } from "../../../config/initializers.js";
 import logger from "../../../utilities/logger.js";
 
 
@@ -29,6 +29,14 @@ export async function onHypeTrainBegin(e) {
         });
         // Set the top contributor
         topContributor = topContributions[0];
+        // Get the top contributor from the Twitch API
+        const userData = await twitchApi.getUserById(topContributor.userId);
+        const { profilePictureUrl } = userData
+        // Set the top contributor
+        topContributor = { ...topContributor, profilePictureUrl };
+        // Add the top contributor to the event object
+        e.topContributor = topContributor;
+        webSocket.hypeTrainUpdate(e);
     }
     catch (err) {
         logger.error('error', `Error in onHypeTrainBegin: ${err}`);
@@ -51,6 +59,13 @@ export async function onHypeTrainProgress(e) {
         // Set the top contributor
         topContributor = topContributions[0];
         usersDB.increaseHypeTrainContributions(lastContribution.userId, lastContribution.total);
+        const userData = await twitchApi.getUserById(topContributor.userId);
+        const { profilePictureUrl } = userData
+        // Set the top contributor
+        topContributor = { ...topContributor, profilePictureUrl };
+        // Add the top contributor to the event object
+        e.topContributor = topContributor;
+        webSocket.hypeTrainUpdate(e);
     }
     catch (err) {
         logger.error('error', `Error in onHypeTrainProgress: ${err}`);
@@ -71,6 +86,7 @@ export async function onHypeTrainEnd(e) {
         currentLevel = 0;
         currentProgress = 0;
         partipatedUsers = [];
+        webSocket.hypeTrainUpdate(e);
     }
     catch (err) {
         logger.error('error', `Error in onHypeTrainEnd: ${err}`);
