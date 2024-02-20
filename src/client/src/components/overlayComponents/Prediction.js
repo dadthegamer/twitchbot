@@ -102,6 +102,16 @@ function Prediction() {
         }
     }
 
+    // Function to manually add 2 prediction outcomes for testing
+    function addPrediction() {
+        const newOutcomes = [
+            { id: 1, title: 'Option 1', percentage: 30, color: 'blue', channelPoints: 3000 },
+            { id: 2, title: 'Option 2', percentage: 70, color: 'pink', channelPoints: 5000 }
+        ];
+        setOutcomes(newOutcomes);
+    }
+
+
     function getColor(outcome) {
         if (outcome.color === 'blue') return '#387ae1';
         if (outcome.color === 'pink') return '#f5009b';
@@ -113,62 +123,43 @@ function Prediction() {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     }
 
+    function darkenColor(color) {
+        // Parse the color string into RGB components
+        const hex = color.replace(/^#/, '');
+        const [r, g, b] = hex.match(/.{2}/g).map(c => parseInt(c, 16));
+
+        // Calculate 25% darker RGB components
+        const darkerR = Math.max(0, Math.floor(r * 0.75));
+        const darkerG = Math.max(0, Math.floor(g * 0.75));
+        const darkerB = Math.max(0, Math.floor(b * 0.75));
+
+        // Convert the darker RGB components back to hexadecimal format
+        const darkerHex = `#${(1 << 24) + (darkerR << 16) + (darkerG << 8) + darkerB}`.slice(1);
+        console.log(`Darker color: ${darkerHex}`);
+
+        return darkerHex;
+    }
+
+
     return (
         <>
             {showPrediction && (
                 <div className="prediction-container" id="prediction-container">
-                    <span id="prediction-title">{predictionTitle}</span>
+                    <div className='prediction-title-container'>
+                        <span id="prediction-title">{predictionTitle}</span>
+                        <span id='prediction-timer'>{timer}</span>
+                    </div>
                     <div className="outcomes-container">
                         {outcomes.map(outcome => (
                             <div className="outcome" data-outcome-id={outcome.id} key={outcome.id}>
-                                <div className="inner-outcome" style={{ color: getColor(outcome) }}>
+                                <div className="inner-outcome" style={{ backgroundColor: getColor(outcome) }}>
                                     <span className="outcome-title">{outcome.title}</span>
-                                    <div className="pct-container">
-                                        <span className="pct" style={{ color: getColor(outcome) }}>{outcome.percentage}</span>
-                                        <span>%</span>
+                                    <span className="prediction-outcome-channel-points">{numberWithCommas(outcome.channelPoints)}</span>
+                                    <div className="progress-bar-container">
+                                        <div className="progress-bar" style={{
+                                            width: outcome.percentage + '%'
+                                        }}></div>
                                     </div>
-                                </div>
-                                <div className="progress-bar-container">
-                                    <div className="progress-bar" style={{
-                                        backgroundColor: getColor(outcome),
-                                        width: outcome.percentage + '%'
-                                    }}></div>
-                                </div>
-                            </div>
-                        ))}
-                        )
-                    </div>
-                    <div className="bottom-container">
-                        <div>
-                            <span className="label">Unique Votes:</span>
-                            <span id="total-votes">{totalUsers}</span>
-                        </div>
-                        <div>
-                            <span className="label">Total Points:</span>
-                            <span id="total-points">{totalPointsValue}</span>
-                        </div>
-                        <div className='prediction-timer-container'>
-                            <span className="label">Time Left:</span>
-                            <span id="prediction-timer">{timer}</span>
-                        </div>
-                    </div>
-                    <span className='top-predictors-title'>Top Predictors</span>
-                    <div className="top-predictors-container">
-                        {outcomes.map(outcome => (
-                            <div className="top-predictors" key={outcome.id}>
-                                <span className="top-predictors-title" style={{ color: getColor(outcome) }}>{outcome.title}</span>
-                                <div className="top-predictors-list">
-                                    {outcome.topPredictors.map(predictor => (
-                                        <div className="top-predictor" key={predictor.userId} style={
-                                            {
-                                                color: getColor(outcome),
-                                            }
-                                        
-                                        }>
-                                            <span className="predictor-name">{predictor.userDisplayName}</span>
-                                            <span className="predictor-points">{numberWithCommas(predictor.channelPointsUsed)}</span>
-                                        </div>
-                                    ))}
                                 </div>
                             </div>
                         ))}

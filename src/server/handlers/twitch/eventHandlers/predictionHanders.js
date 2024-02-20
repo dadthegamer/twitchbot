@@ -51,7 +51,6 @@ export async function onPredictionStart(e) {
         return;
     }
     catch (error) {
-        console.log(error);
         logger('error', `Error in onPredictionStart: ${error}`);
     }
 }

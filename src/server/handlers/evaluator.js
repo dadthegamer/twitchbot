@@ -14,7 +14,7 @@ import { delay } from "./actionHandlers/delayHandler.js";
 import { createCommand } from "./actionHandlers/createCommand.js";
 import { sarcasticResponseHandler } from "./actionHandlers/sarcasticResponse.js";
 import { createPredictionAI, rateForeheadJoke } from "../services/openAi.js";
-import { startPrediction } from "./actionHandlers/predictionHandler.js";
+import { startPrediction, endPrediction, cancelPrediction } from "./actionHandlers/predictionHandler.js";
 import { disableGoXLRInput, enableGoXLRInput } from "./actionHandlers/goXLRHandler.js";
 import { dropHandler } from "./actionHandlers/dropHandler.js";
 import { startRaffle, joinRaffle } from "./actionHandlers/raffleHandler.js";
@@ -176,15 +176,28 @@ export async function actionEvalulate(handler, context = null) {
                     break;
                 }
             case 'prediction':
-                const predictionInput = input.split('!prediction')[1].trim();
-                if (!predictionInput || predictionInput === '') {
-                    console.log('No message to respond to');
-                    break;
-                } else {
-                    const response = await createPredictionAI(predictionInput);
-                    startPrediction(response.title, response.outcomes);
-                    break;
-                };
+                switch (action) {
+                    case 'start':
+                        const predictionInput = input.split('!prediction')[1].trim();
+                        if (!predictionInput || predictionInput === '') {
+                            break;
+                        } else {
+                            const response = await createPredictionAI(predictionInput);
+                            startPrediction(response.title, response.outcomes);
+                            break;
+                        };
+                    case 'end':
+                        const outcome = input.split('!end')[1].trim();
+                        endPrediction(outcome);
+                        break;
+                    case 'cancel':
+                        console.log('Cancel prediction');
+                        cancelPrediction();
+                        break;
+                    default:
+                        logger.error(`Prediction action not found: ${action}`);
+                }
+                break;
             case 'goXLR':
                 switch (action) {
                     case 'disableInput':
