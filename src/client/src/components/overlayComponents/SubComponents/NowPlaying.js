@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import '../../../styles/overlay/bottomLeft.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faSpotify } from '@fortawesome/free-brands-svg-icons';
+import '../../../styles/overlay/bottomLeft.css';
 
 
 function NowPlaying() {
@@ -20,15 +23,17 @@ function NowPlaying() {
                 } else {
                     setArtist(data.item.artists[0].name);
                     setSong(data.item.name);
-                    setAlbumArtwork(data.albumArtwork);
+                    setAlbumArtwork(data.item.album.images[0].url);
                 }
             });
     }, []);
 
     return (
-        <div className='bottom-left-card' style={{ backgroundColor: '#FF0000' }}>
+        <div className='bottom-left-card'>
             {showCard && (
                 <>
+                    <img src={albumArtwork} className='bottom-left-bgt-image' alt="Album Artwork" />
+                    <FontAwesomeIcon className='bottom-left-spotify-icon' icon={faSpotify} />
                     <span className='bottom-left-label'>Currently Playing</span>
                     <div className='spotify-bottom-left-container'>
                         <span>{artist}</span>

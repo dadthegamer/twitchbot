@@ -6,11 +6,12 @@ import Twitter from './Twitter';
 import Youtube from './Youtube';
 import Command from './Command';
 import NowPlaying from './NowPlaying';
+import RandomQuote from './RandomQuote';
 
 
 function BottomLeft() {
     const [cards, setCards] = useState([]);
-    const [showCardDuration, setShowCardDuration] = useState(2); // In seconds
+    const [showCardDuration, setShowCardDuration] = useState(10); // In seconds
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -34,6 +35,9 @@ function BottomLeft() {
             },
             {
                 component: <NowPlaying />,
+            },
+            {
+                component: <RandomQuote />,
             },
         ];
 
