@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { goalDB } from '../../config/initializers.js';
 import logger from '../../utilities/logger.js';
-import isStreamer from '../../middleware/loggedin.js';
+import { isStreamer } from '../../middleware/loggedin.js';
 
 
 
