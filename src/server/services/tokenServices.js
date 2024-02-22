@@ -20,7 +20,7 @@ class TokenDB {
     }
 
     // Method to store user auth token in the database
-    async storeUserAuthToken(userId, token, refreshToken, expiresIn) {
+    async storeTwitchUserAuthToken(userId, token, refreshToken, expiresIn) {
         try {
             const collection = await this.dbConnection.collection("tokens");
             const filter = { userId: userId };
@@ -30,7 +30,8 @@ class TokenDB {
                     token,
                     refreshToken,
                     expiresIn,
-                    obtainmentTimestamp: 0
+                    obtainmentTimestamp: 0,
+                    type: 'twitch'
                 },
             };
             const options = { upsert: true };
@@ -41,8 +42,50 @@ class TokenDB {
         }
     }
 
+    // Method to store spotify user auth token in the database
+    async storeSpotifyUserAuthToken(token, refreshToken, expiresIn) {
+        try {
+            const collection = await this.dbConnection.collection("tokens");
+            const filter = { type: 'spotify' };
+            const update = {
+                $set: {
+                    token,
+                    refreshToken,
+                    expiresIn,
+                    obtainmentTimestamp: new Date().getTime(),
+                    type: 'spotify'
+                },
+            };
+            const options = { upsert: true };
+            await collection.updateOne(filter, update, options);
+        } catch (error) {
+            console.error(`Error storing user auth token: ${error}`);
+            logger.error(`Error storing user auth token: ${error}`);
+        }
+    }
+
+    // Method to update the spotify user auth token
+    async updateSpotifyUserAuthToken(token, expiresIn) {
+        try {
+            const collection = await this.dbConnection.collection("tokens");
+            const filter = { type: 'spotify' };
+            const update = {
+                $set: {
+                    token,
+                    expiresIn,
+                    obtainmentTimestamp: new Date().getTime()
+                },
+            };
+            const options = { upsert: true };
+            await collection.updateOne(filter, update, options);
+            logger.info(`User auth token updated for ${userId}.`);
+        } catch (error) {
+            logger.error(`Error updating user auth token: ${error}`);
+        }
+    }
+
     // Method to update a users auth token
-    async updateUserAuthToken(userId, token, refreshToken, expiresIn, obtainmentTimestamp) {
+    async updateTwitchUserAuthToken(userId, token, refreshToken, expiresIn, obtainmentTimestamp) {
         try {
             const collection = await this.dbConnection.collection("tokens");
             const filter = { userId: userId };
@@ -82,6 +125,28 @@ class TokenDB {
             return result;
         } catch (error) {
             logger.error(`Error getting all tokens: ${error}`);
+        }
+    }
+
+    // Method to get all tokens with a type of 'twitch'
+    async getTwitchTokens() {
+        try {
+            const collection = await this.dbConnection.collection(this.collectionName);
+            const result = await collection.find({ type: 'twitch' }).toArray();
+            return result;
+        } catch (error) {
+            logger.error(`Error getting twitch tokens: ${error}`);
+        }
+    }
+
+    // Method to get all tokens with a type of 'spotify'
+    async getSpotifyToken() {
+        try {
+            const collection = await this.dbConnection.collection(this.collectionName);
+            const result = await collection.find({ type: 'spotify' }).toArray();;
+            return result;
+        } catch (error) {
+            logger.error(`Error getting spotify tokens: ${error}`);
         }
     }
 }

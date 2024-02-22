@@ -31,7 +31,7 @@ import SoundsOverlay from './components/overlayComponents/Sounds';
 import QuarterMile from './components/MiniGames/DadsQuarterMile';
 import MovieQuote from './components/MiniGames/movieQuote';
 import HypeTrain from './components/overlayComponents/HypeTrain';
-
+import SpotifyNowPlaying from './components/overlayComponents/SpotifyNowPlaying';
 
 
 function App() {
@@ -63,6 +63,7 @@ function App() {
         <Route path="socialmediarotator" element={<SocialMediaRotator />} />
         <Route path="sounds" element={<SoundsOverlay />} />
         <Route path="hypetrain" element={<HypeTrain />} />
+        <Route path="spotify" element={<SpotifyNowPlaying />} />
       </Route>
 
       {/* Mini Games Routes */}

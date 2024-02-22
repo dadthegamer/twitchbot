@@ -148,3 +148,26 @@ export async function respondToPredictionTitle(message) {
         logger.error(`Error in respondToPredictionTitle: ${error}`);
     }
 }
+
+// Function to format a response to a track and artist
+export async function formatTrackAndArtistResponse(message) {
+    try {
+        const chatCompletion = await openai.chat.completions.create({
+            messages: [{
+                "role": "system",
+                "content": "You will be provided a message from my Twitch chat that is a track and artist. Format the response as a json object with a key of artist and a key of track. The value of the artist and track should be the artist and track from the message. Respond with the json formatted message."
+            },
+            {
+                "role": "user",
+                "content": `${message}`
+            }],
+            model: 'gpt-3.5-turbo',
+        });
+        const response = chatCompletion.choices[0].message.content;
+        const responseJson = JSON.parse(response);
+        return responseJson;
+    }
+    catch (error) {
+        logger.error(`Error in formatTrackAndArtistResponse: ${error}`);
+    }
+}

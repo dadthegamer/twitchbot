@@ -264,4 +264,12 @@ export class WebSocket {
         };
         this.broadcastMessage('hypeTrain', payload);
     }
+
+    // Method to send spotify data
+    async spotify(data) {
+        const payload = {
+            data,
+        };
+        this.broadcastMessage('spotify', payload);
+    }
 }

@@ -39,6 +39,7 @@
     "openai": "^4.4.0",
     "request-ip": "^3.3.0",
     "socket.io-client": "^4.7.2",
+    "spotify-web-api-node": "^5.0.2",
     "tiktok-live-connector": "^1.1.2",
     "winston": "^3.10.0",
     "winston-daily-rotate-file": "^4.7.1"

@@ -27,6 +27,7 @@ import { startNumberGuessingGame, guessNumberHandler } from "./actionHandlers/gu
 import { rockPaperScissorsHandler } from "./actionHandlers/rockPaperScissorsHandler.js";
 import { changeRewardCost, enableReward, disableReward } from "./actionHandlers/channelPointHandler.js";
 import { rateForeheadJokeHandler } from "./actionHandlers/rateForeheadJoke.js";
+import { addSongToQueue, getCurrentlyPlayingData } from "./actionHandlers/spotifyHandler.js";
 
 
 // Method to evaluate the handler
@@ -357,6 +358,19 @@ export async function actionEvalulate(handler, context = null) {
             case 'joinMiniGame':
                 joinMiniGameHandler(userId, displayName, color);
                 break;
+            case 'spotify':
+                switch (action) {
+                    case 'add':
+                        // Get the song and artist to add. It will be all the text after the command. Example: !addsong song artist. Get all the text after the !addsong command
+                        const songAndArtist = input.split('!addsong')[1].trim();
+                        addSongToQueue(songAndArtist, messageID);
+                        break;
+                    case 'get':
+                        getCurrentlyPlayingData(messageID);
+                        break;
+                    default:
+                        logger.error(`Spotify action not found: ${action}`);
+                }
             default:
                 logger.error(`Handler not found: ${handler}`);
         }

@@ -3,7 +3,6 @@ import { ApiClient } from '@twurple/api';
 import logger from "../utilities/logger.js";
 import { streamerUserId } from '../config/environmentVars.js';
 
-
 // Class for the Twitch API client
 class AuthProviderManager {
     constructor(tokenDBInstance) {
@@ -29,7 +28,7 @@ class AuthProviderManager {
                 }
             );
             this.authProvider.onRefresh(async (userId, tokenData) => {
-                await this.tokenDB.updateUserAuthToken(userId, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn, tokenData.obtainmentTimestamp);
+                await this.tokenDB.updateTwitchUserAuthToken(userId, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn, tokenData.obtainmentTimestamp);
             });
             this.authProvider.onRefreshFailure(async (userId, error) => {
                 logger.error(`Error refreshing token for user ${userId}: ${error}`);
@@ -46,7 +45,7 @@ class AuthProviderManager {
             throw new Error("Auth Provider has not been initialized. Call `initializeAuthProvider` first.");
         }
         try {
-            const tokenData = await this.tokenDB.getAllTokens();
+            const tokenData = await this.tokenDB.getTwitchTokens();
             if (tokenData === null) {
                 logger.error(`No token data found.`);
                 return;

@@ -29,6 +29,7 @@ import GoXLRClient from '../services/goXLRService.js';
 import { subscribeToDonationEvents } from '../services/streamElementsService.js';
 import TikTokService from '../services/tikTokService.js';
 import ActionListService from '../services/actionListService.js';
+import SpotifyService from '../services/spotifyService.js';
 
 
 // Cache initialization
@@ -114,6 +115,9 @@ const tikTokService = new TikTokService(db.dbConnection);
 // Action List Service initialization
 const actionListService = new ActionListService(db.dbConnection, cache);
 
+// Spotify Service initialization
+const spotifyService = new SpotifyService(db.dbConnection);
+
 // Start the alerts handler
 startAlertsHandler();
 
@@ -152,5 +156,6 @@ export {
     eventServices,
     goXLRClient,
     tikTokService,
-    actionListService
+    actionListService,
+    spotifyService
 };

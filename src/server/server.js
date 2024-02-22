@@ -8,9 +8,9 @@ import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
 import { schedulerService, usersDB, twitchApi } from './config/initializers.js';
 import logger from './utilities/logger.js';
-import { respondToPredictionTitle } from './services/openAi.js';
+import { formatTrackAndArtistResponse } from './services/openAi.js';
 
-respondToPredictionTitle('Will dad the gamer get over 5 kills');
+
 // setInterval(() => {
 //     const usedMemory = process.memoryUsage();
 //     console.log('Memory Usage (in MB):');
@@ -81,6 +81,10 @@ import twitchAdminAuthRouter from './routes/authRoutes/twitchAdminAuth.js';
 import discordAuthRouter from './routes/authRoutes/discordAuth.js';
 import discordCallbackRouter from './routes/authRoutes/discordCallback.js';
 
+//Spotfiy authentication
+import spotifyAuthRouter from './routes/authRoutes/spotifyAuth.js';
+import spotifyCallbackRouter from './routes/authRoutes/spotifyCallback.js';
+
 //API routes
 import statusRouter from './routes/apiRoutes/status.js';
 import commandsRouter from './routes/apiRoutes/commands.js';
@@ -106,6 +110,11 @@ app.use('/auth/twitch/admin', twitchAdminAuthRouter);
 // Discord authentication
 app.use('/auth/discord', discordAuthRouter);
 app.use('/auth/discord/callback', discordCallbackRouter);
+
+// Spotify authentication
+app.use('/auth/spotify', spotifyAuthRouter);
+app.use('/auth/spotify/callback', spotifyCallbackRouter);
+
 
 // API routes
 app.use('/api/status', statusRouter);

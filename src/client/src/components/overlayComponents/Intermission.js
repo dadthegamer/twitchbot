@@ -16,6 +16,10 @@ function Intermission() {
     const [subsCount, setSubsCount] = useState(0);
     const [gameImg, setGameImg] = useState('');
     const [gameTitle, setGameTitle] = useState('Call Of Duty Warzone');
+    const [showSpotify, setShowSpotify] = useState(true);
+    const [artist, setArtist] = useState('');
+    const [song, setSong] = useState('');
+    const [albumArtwork, setAlbumArtwork] = useState('');
 
     const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
     useEffect(() => {
@@ -46,6 +50,12 @@ function Intermission() {
                 } else if (data.type === 'streamUpdate') {
                     setGameImg(data.payload.streamInfo.thumbnailUrl);
                     setGameTitle(data.payload.streamInfo.gameName);
+                } else if (data.type === 'spotify') {
+                    console.log('Spotify data:', data.payload.data);
+                    setShowSpotify(true);
+                    setArtist(data.payload.data.item.artists[0].name);
+                    setSong(data.payload.data.item.name);
+                    setAlbumArtwork(data.payload.data.item.album.images[0].url);
                 }
             };
 
@@ -148,7 +158,7 @@ function Intermission() {
                 <span>{subsCount}</span>
             </div>
             <div className='intermission-left-container'>
-                { <Leaderboard /> }
+                {<Leaderboard />}
             </div>
             <div className='bottom-line-container'>
                 <BottomLeft />
@@ -173,6 +183,21 @@ function Intermission() {
                         </div>}
                 </div>
             </div>
+            {showSpotify &&
+                <div className='intermission-spotify-container'>
+                    <img src={albumArtwork} alt="Album Artwork" />
+                    <div className='background-layer' style={
+                        {
+                            backgroundImage: `url(${albumArtwork})`,
+                            filter: 'blur(10px)'
+                        }
+                    }>
+                    </div>
+                    <div className='intermission-spotify-info'>
+                        <span>{artist}</span>
+                        <span>{song}</span>
+                    </div>
+                </div>}
         </div>
     )
 }

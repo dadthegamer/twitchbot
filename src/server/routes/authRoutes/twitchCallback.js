@@ -38,7 +38,7 @@ router.get('/', async (req, res) => {
         await usersDB.newUser(userData.id, userData.email);
         if (userData.id === streamerUserId || userData.id === botId) {
             tokenData.userId = userData.id;
-            await tokenDB.storeUserAuthToken(userData.id, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn);
+            await tokenDB.storeTwitchUserAuthToken(userData.id, tokenData.accessToken, tokenData.refreshToken, tokenData.expiresIn);
             await authProvider.addUserToAuthProvider(tokenData);
         }
         res.redirect(`https://${hostName}/`);
