@@ -97,6 +97,7 @@ import soundsRouter from './routes/apiRoutes/sounds.js';
 import userRouter from './routes/apiRoutes/users.js';
 import gamesRouter from './routes/apiRoutes/games.js';
 import currencyRouter from './routes/apiRoutes/currency.js';
+import spotifyRouter from './routes/apiRoutes/spotify.js';
 
 
 // Auth routes
@@ -128,6 +129,7 @@ app.use('/api/sounds', soundsRouter);
 app.use('/api/users', userRouter);
 app.use('/api/games', gamesRouter);
 app.use('/api/currency', currencyRouter);
+app.use('/api/spotify', spotifyRouter);
 
 
 

@@ -136,6 +136,7 @@ class SpotifyService {
                             track: track
                         }
                         this.currentlyPlayData = data;
+                        cache.set('currentlyPlaying', currentlyPlaying);
                     };
                 }
             }, 3000);

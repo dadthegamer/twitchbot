@@ -183,21 +183,6 @@ function Intermission() {
                         </div>}
                 </div>
             </div>
-            {showSpotify &&
-                <div className='intermission-spotify-container'>
-                    <img src={albumArtwork} alt="Album Artwork" />
-                    <div className='background-layer' style={
-                        {
-                            backgroundImage: `url(${albumArtwork})`,
-                            filter: 'blur(10px)'
-                        }
-                    }>
-                    </div>
-                    <div className='intermission-spotify-info'>
-                        <span>{artist}</span>
-                        <span>{song}</span>
-                    </div>
-                </div>}
         </div>
     )
 }

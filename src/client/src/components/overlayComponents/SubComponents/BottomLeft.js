@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import '../../../styles/overlay/bottomLeft.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTwitter, faFacebook, faInstagram, faDiscord, faYoutube, faTwitch, faTiktok } from '@fortawesome/free-brands-svg-icons';
+import TikTok from './TikTok';
+import Discord from './Discord';
+import Twitter from './Twitter';
+import Youtube from './Youtube';
+import Command from './Command';
+import NowPlaying from './NowPlaying';
+
 
 function BottomLeft() {
     const [cards, setCards] = useState([]);
-    const [showCardDuration, setShowCardDuration] = useState(10); // In seconds
+    const [showCardDuration, setShowCardDuration] = useState(2); // In seconds
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isLoaded, setIsLoaded] = useState(false);
 
@@ -13,25 +18,23 @@ function BottomLeft() {
         // Initialize the cards here
         const initialCards = [
             {
-                name: "@Dad_The_Gam3r",
-                icon: faTwitter,
-                backgroundColor: "#1DA1F2",
+                component: <Twitter />,
             },
             {
-                name: "The Dad Squad",
-                icon: faDiscord,
-                backgroundColor: "#7289DA",
+                component: <Discord />,
             },
             {
-                name: "Dad The Gamer Games",
-                icon: faYoutube,
-                backgroundColor: "#FF0000",
+                component: <Youtube />,
             },
             {
-                name: "dad.the.gamer",
-                icon: faTiktok,
-                backgroundColor: "#ff0050",
-            }
+                component: <TikTok />,
+            },
+            {
+                component: <Command />,
+            },
+            {
+                component: <NowPlaying />,
+            },
         ];
 
         setCards(initialCards);
@@ -54,14 +57,9 @@ function BottomLeft() {
 
     return (
         isLoaded && (
-            <div className='bottom-left-card' style={
-                {
-                    backgroundColor: cards[currentIndex].backgroundColor
-                }
-            }>
-                <FontAwesomeIcon icon={cards[currentIndex].icon} size='2x' className='social-media-icon'/>
-                <span className='social-media-name'>{cards[currentIndex].name}</span>
-            </div>
+            <>
+                {cards[currentIndex].component}
+            </>
         )
     );
 }
