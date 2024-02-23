@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import logger from '../../utilities/logger.js';
+import { isStreamer } from '../../middleware/loggedin.js';
 
 
 const router = Router();
 
-router.get('/', (req, res) => {
+router.get('/', isStreamer, (req, res) => {
     try {
         const clientId = process.env.SPOTIFY_CLIENT_ID;
         const redirectUri = process.env.SPOTIFY_REDIRECT_URI;

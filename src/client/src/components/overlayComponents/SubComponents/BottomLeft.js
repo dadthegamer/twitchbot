@@ -7,7 +7,7 @@ import Youtube from './Youtube';
 import Command from './Command';
 import NowPlaying from './NowPlaying';
 import RandomQuote from './RandomQuote';
-
+import SubGoal from './DailySubGoal';
 
 function BottomLeft() {
     const [cards, setCards] = useState([]);
@@ -38,6 +38,9 @@ function BottomLeft() {
             },
             {
                 component: <RandomQuote />,
+            },
+            {
+                component: <SubGoal />,
             },
         ];
 

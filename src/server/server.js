@@ -99,6 +99,7 @@ import gamesRouter from './routes/apiRoutes/games.js';
 import currencyRouter from './routes/apiRoutes/currency.js';
 import spotifyRouter from './routes/apiRoutes/spotify.js';
 import goalsRouter from './routes/apiRoutes/goals.js';
+import channelPointsRouter from './routes/apiRoutes/channelPoints.js';
 
 
 // Auth routes
@@ -132,6 +133,7 @@ app.use('/api/games', gamesRouter);
 app.use('/api/currency', currencyRouter);
 app.use('/api/spotify', spotifyRouter);
 app.use('/api/goals', goalsRouter);
+app.use('/api/channelPoints', channelPointsRouter);
 
 
 
