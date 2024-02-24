@@ -19,6 +19,7 @@ class SpotifyService {
         this.checkCurrentlyPlaying();
         this.baseUrl = 'https://api.spotify.com/v1'
         this.currentlyPlayData = null;
+        this.resetAccessTokenInterval();
     }
 
     // Method to get the acceess token from the database and set it in the spotifyApi object
@@ -99,6 +100,17 @@ class SpotifyService {
             return null;
         }
     }
+
+    // Function to reset the access token between every 50 to 57 minutes
+    async resetAccessTokenInterval(time = 57) {
+        setTimeout(async () => {
+            await this.refreshAccessToken();
+            // Get a random time between 50 and 57 minutes
+            const time = Math.floor(Math.random() * (57 - 50 + 1) + 50);
+            this.resetAccessTokenInterval(time);
+        }, time * 60000);
+    }
+
 
     // Method to get the currently play track
     async getCurrentlyPlaying() {

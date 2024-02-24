@@ -4,6 +4,7 @@ import { actionEvalulate } from '../handlers/evaluator.js';
 import { sarcasticResponse } from '../services/openAi.js';
 import NodeCache from 'node-cache';
 import { numberWithCommas } from '../utilities/utils.js';
+import fs from 'fs/promises';
 
 
 // Class to to handle interactions with the database
@@ -20,6 +21,8 @@ class InteractionsDbService {
         this.getDropSettings();
         this.getBitsBoard();
         this.getAllGames();
+        this.getSoundsFromFolder();
+        this.getAllSounds();
     }
 
     // Method to get all the roasts from the database
@@ -422,6 +425,38 @@ class InteractionsDbService {
         }
         catch (err) {
             logger.error(`Error in createSound: ${err}`);
+        }
+    }
+
+    // Method to get all sounds from the public/audio folder and store them in the database if they don't already exist. Each sound is an mp3 file
+    async getSoundsFromFolder() {
+        try {
+            console.log('Getting sounds from folder');
+            const sounds = await this.dbConnection.collection('sounds').find({}).toArray();
+            const soundNames = sounds.map(sound => sound.soundName);
+            const files = await fs.readdir('./public/audio');
+            for (const file of files) {
+                // Check if the file is an mp3 file. If it is not then skip it.
+                if (!file.endsWith('.mp3')) {
+                    continue;
+                } else {
+                    console.log(`File: ${file}`)
+                    const soundName = file.split('.')[0];
+                    if (!soundNames.includes(soundName)) {
+                        const newSound = {
+                            soundName: soundName,
+                            location: `/audio/${file}`,
+                            createdAt: new Date(),
+                        }
+                        await this.dbConnection.collection('sounds').insertOne(newSound);
+                    }
+                }
+            }
+            await this.getAllSounds();
+        }
+        catch (err) {
+            console.log(`Error in getSoundsFromFolder: ${err}`);
+            logger.error(`Error in getSoundsFromFolder: ${err}`);
         }
     }
 

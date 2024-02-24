@@ -179,6 +179,7 @@ export async function actionEvalulate(handler, context = null) {
             case 'prediction':
                 switch (action) {
                     case 'start':
+                        console.log('Start prediction');
                         const predictionInput = input.split('!prediction')[1].trim();
                         if (!predictionInput || predictionInput === '') {
                             break;
@@ -363,7 +364,7 @@ export async function actionEvalulate(handler, context = null) {
                     case 'add':
                         // Get the song and artist to add. It will be all the text after the command. Example: !addsong song artist. Get all the text after the !addsong command
                         const songAndArtist = input.split('!addsong')[1].trim();
-                        addSongToQueue(songAndArtist, messageID);
+                        addSongToQueue(userId, songAndArtist, messageID);
                         break;
                     case 'get':
                         getCurrentlyPlayingData(messageID);

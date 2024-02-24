@@ -25,7 +25,6 @@ export async function endPrediction(outcome) {
     }
 }
 
-
 // Function to cancel a prediction
 export async function cancelPrediction() {
     try {
