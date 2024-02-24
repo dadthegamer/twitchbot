@@ -19,7 +19,7 @@ import { disableGoXLRInput, enableGoXLRInput } from "./actionHandlers/goXLRHandl
 import { dropHandler } from "./actionHandlers/dropHandler.js";
 import { startRaffle, joinRaffle } from "./actionHandlers/raffleHandler.js";
 import { getRequest } from "./actionHandlers/requestsHandler.js";
-import { playSoundFromCommand } from "./actionHandlers/soundHandler.js";
+import { playSoundFromCommand, playRandomSound } from "./actionHandlers/soundHandler.js";
 import { joinMiniGameHandler } from "./actionHandlers/joinMiniGame.js";
 import { handlBlackJackGame, handleBlackJackHit, handleBlackJackStay } from "./actionHandlers/blackJackHandler.js";
 import { slapHandler, blockHandler } from "./actionHandlers/slapHandler.js";
@@ -237,10 +237,17 @@ export async function actionEvalulate(handler, context = null) {
                         logger.error(`Raffle action not found: ${action}`);
                 }
                 break;
-            case 'soundCommand':
+            case 'sound':
                 // Get the sound to play. It will be the text after the command. Example: !sound testsound. Only get the testsound
                 const sound = input.split('!sound')[1].trim();
-                playSoundFromCommand(sound);
+                // If there is no sound, play a random sound
+                if (!sound || sound === '') {
+                    playRandomSound();
+                    break;
+                } else {
+                    playSoundFromCommand(sound);
+                    break;
+                }
                 break;
             case 'blackjack':
                 switch (action) {
