@@ -248,7 +248,6 @@ export async function actionEvalulate(handler, context = null) {
                     playSoundFromCommand(sound);
                     break;
                 }
-                break;
             case 'blackjack':
                 switch (action) {
                     case 'start':
