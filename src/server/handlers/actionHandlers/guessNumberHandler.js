@@ -14,8 +14,8 @@ export async function startNumberGuessingGame() {
         const { max, currency, payout } = res || 1000;
         maxNumber = parseInt(max);
         // Format the max number with commas
-        const formatMax = await numberWithCommas(max);
-        const formatPayout = await numberWithCommas(payout);
+        const formatMax = numberWithCommas(max);
+        const formatPayout = numberWithCommas(payout);
         if (currency === 'raffle') {
             chatClient.say(`I'm thinking of a number between 1 and ${formatMax}. The first person to guess it will win ${formatPayout} ${currency} raffle tickets! Type !guess followed by your guess to play!`);
         } else {
@@ -38,7 +38,7 @@ export async function guessNumberHandler(userId, displayName, guess, messageId) 
             if (guess === botguess) {
                 const res = await gameService.rewardNumberGuessingGameWinner(userId);
                 const { currency, payout } = res;
-                const formatPayout = await numberWithCommas(payout);
+                const formatPayout = numberWithCommas(payout);
                 if (currency === 'raffle') {
                     chatClient.replyToMessage(`Congratulations @${displayName}! You guessed the number correctly! You earned ${formatPayout} ${currency} raffle tickets`, messageId);
                 } else {

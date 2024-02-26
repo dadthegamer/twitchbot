@@ -26,7 +26,7 @@ export async function rockPaperScissorsHandler(userId, amount, displayName, sele
         // Check if the user has enough currency to play
         if (userData.currency[currencyName] < amount) {
             // Format the currency with commas
-            const formattedAmount = await numberWithCommas(userData.currency[currencyName]);
+            const formattedAmount = numberWithCommas(userData.currency[currencyName]);
             replyHandler(`@${displayName} You don't have enough ${currencyName} points to play. You currently have ${formattedAmount} ${currencyName} points.`, messageId);
             return;
         } else {

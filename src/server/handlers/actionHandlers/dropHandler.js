@@ -68,7 +68,7 @@ export async function userDropHandler(userDisplayName, userId, messageID = null)
         } else {
             console.log('User entered drop');
             const dropAmount = await calculateDrop();
-            const formatDrop = await numberWithCommas(dropAmount);
+            const formatDrop = numberWithCommas(dropAmount);
             await usersDB.increaseCurrency(userId, currency, dropAmount);
             dropUsers.push(userId);
             if (messageID !== null) {

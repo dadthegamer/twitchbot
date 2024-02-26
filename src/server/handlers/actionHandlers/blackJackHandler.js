@@ -29,7 +29,7 @@ export async function handlBlackJackGame(userId, displayName, bet) {
         const userData = await usersDB.getUserByUserId(userId);
         if (userData.currency[currency] < bet) {
             // Format the users points with commas
-            const formattedPoints = await numberWithCommas(userData.currency[currency]);
+            const formattedPoints = numberWithCommas(userData.currency[currency]);
             chatClient.say(`@${displayName}, you do not have enough points to place that bet. You currently have ${formattedPoints} ${currency} points.`);
             commandHandler.removeUserFromCooldownCache('blackjack', userId);
             return;
@@ -41,7 +41,7 @@ export async function handlBlackJackGame(userId, displayName, bet) {
                 const payout = await gameService.calculatePayout(bet, true);
                 gameService.handleGameWinNoMessage('Blackjack', userId, payout);
                 // Format the payout with commas
-                const formattedPayout = await numberWithCommas(payout);
+                const formattedPayout = numberWithCommas(payout);
                 chatClient.say(`@${displayName} hit blackjack and won ${formattedPayout} ${currency} points.`);
                 players = players.filter(player => player.userId !== userId);
             } else if (gameData.dealerBlackjack) {
@@ -78,7 +78,7 @@ export async function handleBlackJackHit(userId, displayName) {
                     const payout = await gameService.calculatePayout(player.gameData.bet, false);
                     gameService.handleGameWinNoMessage('Blackjack', userId, payout);
                     // Format the payout with commas
-                    const formattedPayout = await numberWithCommas(payout);
+                    const formattedPayout = numberWithCommas(payout);
                     chatClient.say(`@${displayName} has won ${formattedPayout} ${player.currency} points.`);
                     players = players.filter(player => player.userId !== userId);
                 } else {
@@ -107,7 +107,7 @@ export async function handleBlackJackStay(userId, displayName) {
                 const payout = await gameService.calculatePayout(player.gameData.bet, true);
                 gameService.handleGameWinNoMessage('Blackjack', userId, payout);
                 // Format the payout with commas
-                const formattedPayout = await numberWithCommas(payout);
+                const formattedPayout = numberWithCommas(payout);
                 chatClient.say(`@${displayName} the dealer busted. You have won ${formattedPayout} ${player.currency} points.`);
                 players = players.filter(player => player.userId !== userId);
             } else {
@@ -125,7 +125,7 @@ export async function handleBlackJackStay(userId, displayName) {
                     const payout = await gameService.calculatePayout(player.gameData.bet, false);
                     gameService.handleGameWinNoMessage('Blackjack', userId, payout);
                     // Format the payout with commas
-                    const formattedPayout = await numberWithCommas(payout);
+                    const formattedPayout = numberWithCommas(payout);
                     chatClient.say(`@${displayName} your hand is ${playerHandString}. The dealer's hand is ${dealerHandString}. You have won ${formattedPayout} ${player.currency} points.`);
                     players = players.filter(player => player.userId !== userId);
                 } else if (playerHandValue < dealerHandValue) {

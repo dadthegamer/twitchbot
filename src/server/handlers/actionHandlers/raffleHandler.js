@@ -18,7 +18,7 @@ export async function startRaffle(amount) {
             currency = raffleSettings.currency;
             raffleUsers = [];
             raffleStarted = true;
-            chatClient.say(`Raffle started! Type !join to enter the raffle. The winner will receive ${await numberWithCommas(amount)} ${currency} points.`);
+            chatClient.say(`Raffle started! Type !join to enter the raffle. The winner will receive ${numberWithCommas(amount)} ${currency} points.`);
             // Set 2 timeouts. 1 for 30 seconds and 1 for 60 seconds. After 30 seconds put in the chat that the raffle is ending in 30 seconds. After 60 seconds end the raffle.
             setTimeout(async () => {
                 chatClient.say('Raffle ending in 30 seconds. Type !join to enter the raffle.');
@@ -34,7 +34,7 @@ export async function startRaffle(amount) {
                     // Add the points to the winner
                     await usersDB.increaseCurrency(winner.userId, currency, amount);
                     // Put in chat who won
-                    chatClient.say(`${winner.displayName} has won the raffle and received ${await numberWithCommas(amount)} ${currency} points!`);
+                    chatClient.say(`${winner.displayName} has won the raffle and received ${numberWithCommas(amount)} ${currency} points!`);
                 }
             }, 30000);
         }

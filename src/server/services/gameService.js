@@ -1,5 +1,5 @@
 import logger from "../utilities/logger.js";
-import { webSocket, chatClient, usersDB, cache, activeUsersCache } from "../config/initializers.js";
+import { webSocket, chatClient, usersDB, cache, activeUsersCache, currencyDB } from "../config/initializers.js";
 
 
 // Class to handle all stream related services
@@ -171,7 +171,7 @@ class GameService {
                     usersDB.increaseCurrencyForUsers(userId, currency, payout);
                 }
                 // Format the payout with commas
-                const formattedPayout = await numberWithCommas(payout);
+                const formattedPayout = numberWithCommas(payout);
                 if (currency === 'raffle') {
                     chatClient.say(`Everyone has won ${formattedPayout} ${currency} raffle tickets!`);
                 } else {
@@ -197,7 +197,7 @@ class GameService {
                 const currency = game.currency;
                 usersDB.increaseCurrencyForUsers(userId, currency, payout);
                 // Format the payout with commas
-                const formattedPayout = await numberWithCommas(payout);
+                const formattedPayout = numberWithCommas(payout);
                 if (currency === 'raffle') {
                     chatClient.say(`@${displayName}, the community has won ${formattedPayout} ${currency} raffle tickets!`);
                 } else {
@@ -254,7 +254,7 @@ class GameService {
                     usersDB.increaseCurrency(userId, currency, payout);
                     usersDB.increaseMiniGamesWon(userId);
                     // Format the payout with commas
-                    const formattedPayout = await numberWithCommas(payout);
+                    const formattedPayout = numberWithCommas(payout);
                     if (currency === 'raffle') {
                         chatClient.say(`@${displayName}, you have won ${formattedPayout} ${currency} raffle tickets!`);
                     } else {
@@ -554,6 +554,49 @@ class GameService {
         }
         catch (error) {
             logger.error(`Error in rewardRockPaperScissorsWinner: ${error}`);
+        }
+    }
+
+    // Reward the winner of the bits war
+    async rewardBitsWarWinner(winnerUserId) {
+        try {
+            const gameSettings = await this.getGameSetting('Bits War');
+            if (gameSettings) {
+                const currency = gameSettings.currency;
+                const payout = gameSettings.payout;
+                // Increase the currency for the winner
+                usersDB.increaseCurrency(winnerUserId, currency, payout);
+                return gameSettings;
+            } else {
+                return null;
+            }
+        }
+        catch (error) {
+            logger.error(`Error in rewardBitsWarWinner: ${error}`);
+        }
+    }
+
+    // Reward currency for each time a user cheers bits
+    async rewardBitsCheer(userId, bits) {
+        try {
+            const gameSettings = await this.getGameSetting('Bits Cheer');
+            if (gameSettings) {
+                const currency = gameSettings.currency;
+                const multiplier = gameSettings.bitsMultiplier;
+                // Get the current payout settings for the currency
+                const currencySettings = await currencyDB.getCurrencyByName(currency);
+                if (currencySettings) {
+                    const currentPayout = currencySettings.payoutSettings.bits.amount;
+                    const payout = (bits * currentPayout) * multiplier;
+                    // Increase the currency for the user
+                    usersDB.increaseCurrency(userId, currency, payout);
+                }
+            } else {
+                return null;
+            }
+        }
+        catch (error) {
+            logger.error(`Error in rewardBitsCheer: ${error}`);
         }
     }
 }

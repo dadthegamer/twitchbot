@@ -272,4 +272,12 @@ export class WebSocket {
         };
         this.broadcastMessage('spotify', payload);
     }
+
+    // Method to send bits war data
+    async bitsWar(data) {
+        const payload = {
+            data,
+        };
+        this.broadcastMessage('bitsWar', payload);
+    }
 }

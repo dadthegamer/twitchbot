@@ -28,6 +28,7 @@ import { rockPaperScissorsHandler } from "./actionHandlers/rockPaperScissorsHand
 import { changeRewardCost, enableReward, disableReward } from "./actionHandlers/channelPointHandler.js";
 import { rateForeheadJokeHandler } from "./actionHandlers/rateForeheadJoke.js";
 import { addSongToQueue, getCurrentlyPlayingData } from "./actionHandlers/spotifyHandler.js";
+import { startBitsWar } from "./actionHandlers/bitsWar.js";
 
 
 // Method to evaluate the handler
@@ -378,6 +379,10 @@ export async function actionEvalulate(handler, context = null) {
                     default:
                         logger.error(`Spotify action not found: ${action}`);
                 }
+                break;
+            case 'bitsWar':
+                startBitsWar(displayName);
+                break;
             default:
                 logger.error(`Handler not found: ${handler}`);
         }

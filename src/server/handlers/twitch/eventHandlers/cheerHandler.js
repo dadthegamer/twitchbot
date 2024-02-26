@@ -1,6 +1,7 @@
 import { goalDB, usersDB, interactionsDB } from "../../../config/initializers.js";
 import { addAlert } from "../../../handlers/alertHandler.js";
 import logger from "../../../utilities/logger.js";
+import { addBitsToUser } from "../../actionHandlers/bitsWar.js";
 
 
 // Cheer events handler
@@ -16,7 +17,9 @@ export async function onBits(e) {
         await usersDB.increaseBits(userId, bits);
         await interactionsDB.handleBits(bits);
         logger.info(`Cheer event: ${userDisplayName} cheered ${bits} bits!`);
-        console.log(`Cheer event: ${userDisplayName} cheered ${bits} bits!`);
+        if (cache.get('bitsWar')) {
+            addBitsToUser(userId, userDisplayName, profileImage, bits);
+        };
     }
     catch (error) {
         logger.error(`Error in onBits: ${error}`);

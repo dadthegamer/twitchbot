@@ -737,6 +737,16 @@ class TwitchApiClient {
             logger.error(`Error getting user data by user name: ${error}`);
         }
     }
+
+    // Method to send an announcement to the channel
+    async sendChannelAnnouncement(message, color = 'purple') {
+        try {
+            await this.apiClient.chat.sendAnnouncement(this.userId, { message: message, color: color });
+        }
+        catch (error) {
+            logger.error(`Error sending channel announcement: ${error}`);
+        }
+    }
 }
 
 

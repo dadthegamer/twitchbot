@@ -78,7 +78,7 @@ class InteractionsDbService {
                     usersDB.increaseCurrency(userId, currency, payout);
                     usersDB.increaseMiniGamesWon(userId);
                     // Format the payout with commas
-                    const formattedPayout = await numberWithCommas(payout);
+                    const formattedPayout = numberWithCommas(payout);
                     if (currency === 'raffle') {
                         chatClient.say(`@${displayName}, you have won ${formattedPayout} ${currency} raffle tickets!`);
                     } else {
@@ -105,7 +105,7 @@ class InteractionsDbService {
                 const currency = game.currency;
                 usersDB.increaseCurrencyForUsers(userId, currency, payout);
                 // Format the payout with commas
-                const formattedPayout = await numberWithCommas(payout);
+                const formattedPayout = numberWithCommas(payout);
                 if (currency === 'raffle') {
                     chatClient.say(`@${displayName}, the community has won ${formattedPayout} ${currency} raffle tickets!`);
                 } else {
@@ -132,7 +132,7 @@ class InteractionsDbService {
                     usersDB.increaseCurrencyForUsers(userId, currency, payout);
                 }
                 // Format the payout with commas
-                const formattedPayout = await numberWithCommas(payout);
+                const formattedPayout = numberWithCommas(payout);
                 if (currency === 'raffle') {
                     chatClient.say(`Everyone has won ${formattedPayout} ${currency} raffle tickets!`);
                 } else {

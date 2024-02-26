@@ -8,7 +8,7 @@ export async function playSoundFromCommand(sound) {
         const soundData = await interactionsDB.getSound(sound);
         if (soundData.location) {
             webSocket.sound(soundData.location);
-            chatClient.say(`Playing sound: ${sound.soundName}`)
+            chatClient.say(`Playing sound: ${soundData.soundName}`)
         } else {
             logger.error(`Sound not found in soundHandler: ${sound}`);
         }

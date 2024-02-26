@@ -18,10 +18,6 @@ export default class TikTokService {
         try {
             const initialSettings = [
                 {
-                    id: 'tiktokUsername',
-                    username: null,
-                },
-                {
                     id: 'likes',
                     likes: 0,
                     goal: 0,
