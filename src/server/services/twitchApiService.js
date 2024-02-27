@@ -30,6 +30,7 @@ class TwitchApiClient {
         this.getAllEventSubSubscriptions();
         this.deleteAllSubscriptions();
         this.getChannelEmotes();
+        this.getStreamSchedule();
     }
 
     // Method to return the api client
@@ -666,12 +667,28 @@ class TwitchApiClient {
     // Method to get the stream schedule
     async getStreamSchedule() {
         try {
-            const data = await this.apiClient.schedule.getSchedule(this.userId);
-        }
-        catch (error) {
+            const paginator = await this.apiClient.schedule.getScheduleSegmentsPaginated(this.userId);
+            let schedule = [];
+            for await (const segment of paginator) {
+                schedule.push({
+                    cancelEndDate: segment.cancelEndDate,
+                    categoryId: segment.categoryId,
+                    categoryName: segment.categoryName,
+                    endDate: segment.endDate,
+                    id: segment.id,
+                    isRecurring: segment.isRecurring,
+                    startDate: segment.startDate,
+                    title: segment.title,
+                });
+            }
+            this.cache.set('streamSchedule', schedule);
+            return schedule;
+        } catch (error) {
+            console.log(error);
             logger.error(`Error getting stream schedule: ${error}`);
         }
     }
+    
 
     // Method to get the scheulde in iCal format
     async getScheduleICal() {

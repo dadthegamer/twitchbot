@@ -599,6 +599,25 @@ class GameService {
             logger.error(`Error in rewardBitsCheer: ${error}`);
         }
     }
+
+    // Method to reward a user when the stream is late
+    async rewardLateUser(userId) {
+        try {
+            const gameSettings = await this.getGameSetting('Late');
+            if (gameSettings) {
+                const currency = gameSettings.currency;
+                const payout = gameSettings.payout;
+                // Increase the currency for the user
+                usersDB.increaseCurrency(userId, currency, payout);
+                return gameSettings;
+            } else {
+                return null;
+            }
+        }
+        catch (error) {
+            logger.error(`Error in rewardLateUser: ${error}`);
+        }
+    }
 }
 
 export default GameService;

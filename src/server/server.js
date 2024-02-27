@@ -10,6 +10,8 @@ import { schedulerService, usersDB, twitchApi } from './config/initializers.js';
 import logger from './utilities/logger.js';
 import { formatTrackAndArtistResponse } from './services/openAi.js';
 
+const newDate = new Date();
+console.log(newDate);
 
 // setInterval(() => {
 //     const usedMemory = process.memoryUsage();
@@ -133,7 +135,7 @@ app.use('/api/games', gamesRouter);
 app.use('/api/currency', currencyRouter);
 app.use('/api/spotify', spotifyRouter);
 app.use('/api/goals', goalsRouter);
-app.use('/api/channelPoints', channelPointsRouter);
+app.use('/api/channelrewards', channelPointsRouter);
 
 
 

@@ -32,6 +32,8 @@ import QuarterMile from './components/MiniGames/DadsQuarterMile';
 import MovieQuote from './components/MiniGames/movieQuote';
 import HypeTrain from './components/overlayComponents/HypeTrain';
 import SpotifyNowPlaying from './components/overlayComponents/SpotifyNowPlaying';
+import Shoutout from './components/overlayComponents/Shoutout';
+
 
 
 function App() {
@@ -64,6 +66,7 @@ function App() {
         <Route path="sounds" element={<SoundsOverlay />} />
         <Route path="hypetrain" element={<HypeTrain />} />
         <Route path="spotify" element={<SpotifyNowPlaying />} />
+        <Route path="shoutout" element={<Shoutout />} />
       </Route>
 
       {/* Mini Games Routes */}

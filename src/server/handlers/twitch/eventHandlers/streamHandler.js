@@ -65,10 +65,36 @@ export async function onStreamOnline(e) {
         };
         cache.set('streamInfo', streamInfoData);
         webSocket.streamLive(streamInfoData);
-        logger.info('Stream online');
+        lateHandler(startDate);
+        cache.set('lateUsers', []);
+
     }
     catch (error) {
-        console.log(error);
         logger.error(`Error in onStreamOnline: ${error}`);
+    }
+}
+
+
+async function lateHandler(actualStartTime) {
+    const actualStartDateTime = new Date(actualStartTime);
+    const today = new Date(); // Today's date for comparison
+
+    const schedule = cache.get('streamSchedule');
+
+    const todaysStream = schedule.find(s => {
+        const scheduledStartDate = new Date(s.startDate);
+        return scheduledStartDate.toDateString() === today.toDateString();
+    });
+
+    if (todaysStream) {
+        const scheduledStartDateTime = new Date(todaysStream.startDate);
+        if (actualStartDateTime > scheduledStartDateTime) {
+            logger.info("The stream started late.");
+            cache.set('late', true);
+        } else {
+            logger.info("The stream started on time or early.");
+        }
+    } else {
+        logger.info("No stream scheduled for today.");
     }
 }

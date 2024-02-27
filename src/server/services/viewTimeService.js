@@ -46,7 +46,6 @@ class ViewTimeService {
                 } else {
                     viewers.forEach(async viewer => {
                         const { userId, userDisplayName } = viewer;
-                        console.log(`User: ${userDisplayName} - ${userId}`);
                     });
                 }
             } else {
@@ -77,8 +76,18 @@ class ViewTimeService {
                 }
             }
         } catch (err) {
-            console.log(err);
             logger.error(`Error in viewTimeHandler: ${err}`);
+        }
+    }
+
+    // Method to return a random viwer from the cache
+    async getRandomViewer() {
+        const viewers = cache.get('currentViewers');
+        if (!viewers || viewers.length === 0) {
+            return null;
+        } else {
+            const randomViewer = viewers[Math.floor(Math.random() * viewers.length)];
+            return randomViewer;
         }
     }
 }

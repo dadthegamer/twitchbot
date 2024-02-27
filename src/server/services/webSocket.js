@@ -27,6 +27,7 @@ export class WebSocket {
                 read: false,
                 createdAt: new Date()
                 });
+                this.shoutout('Dadthegam3r', 'https://static-cdn.jtvnw.net/jtv_user_pictures/074e7c92-b08a-4e6b-a1c2-4e28eade69c0-profile_image-70x70.png', 'Call of Duty: Warzone');
             ws.on('message', (message) => {
                 try {
                     const data = JSON.parse(message);
@@ -279,5 +280,16 @@ export class WebSocket {
             data,
         };
         this.broadcastMessage('bitsWar', payload);
+    }
+
+    // Method to send a shoutout
+    async shoutout(displayName, profilePic, lastSeen) {
+        const payload = {
+            displayName,
+            profilePic,
+            lastSeen,
+            shoutoutLength: 10,
+        };
+        this.broadcastMessage('shoutout', payload);
     }
 }

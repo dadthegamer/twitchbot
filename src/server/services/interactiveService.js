@@ -17,12 +17,10 @@ class InteractionsDbService {
         this.getAllQuotes();
         this.getTvMessage();
         this.getQueue();
-        this.getAllSounds();
         this.getDropSettings();
         this.getBitsBoard();
         this.getAllGames();
         this.getSoundsFromFolder();
-        this.getAllSounds();
     }
 
     // Method to get all the roasts from the database
@@ -431,7 +429,7 @@ class InteractionsDbService {
     // Method to get all sounds from the public/audio folder and store them in the database if they don't already exist. Each sound is an mp3 file
     async getSoundsFromFolder() {
         try {
-            console.log('Getting sounds from folder');
+            await this.removeAllSounds();
             const sounds = await this.dbConnection.collection('sounds').find({}).toArray();
             const soundNames = sounds.map(sound => sound.soundName);
             const files = await fs.readdir('./public/audio');
@@ -440,7 +438,6 @@ class InteractionsDbService {
                 if (!file.endsWith('.mp3')) {
                     continue;
                 } else {
-                    console.log(`File: ${file}`)
                     const soundName = file.split('.')[0];
                     if (!soundNames.includes(soundName)) {
                         const newSound = {
@@ -457,6 +454,17 @@ class InteractionsDbService {
         catch (err) {
             console.log(`Error in getSoundsFromFolder: ${err}`);
             logger.error(`Error in getSoundsFromFolder: ${err}`);
+        }
+    }
+
+    // Remove all the sounds from the database except for the sounds that are a type alert
+    async removeAllSounds() {
+        try {
+            const res = await this.dbConnection.collection('sounds').deleteMany({ type: { $ne: 'alert' } });
+            return res;
+        }
+        catch (err) {
+            logger.error(`Error in removeAllSounds: ${err}`);
         }
     }
 

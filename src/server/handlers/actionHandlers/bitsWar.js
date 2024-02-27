@@ -56,6 +56,7 @@ export async function endBitsWar() {
         if (users.length > 0) {
             firstPlace = users[0];
             chatClient.say(`The bits war has ended! ${firstPlace.displayName} is the top cheerer with ${numberWithCommas(firstPlace.bits)} bits!`);
+            twitchApi.shoutoutUser(firstPlace.userId);
         }
         users = [];
         webSocket.sendBitsWar(users);

@@ -174,7 +174,7 @@
 .daily-sub-goal-progress-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 80%;
     height: 40px;

@@ -20,6 +20,7 @@ export class SchedulerService {
             this.getAllVips();
             this.getChattersInterval();
             twitchApi.getChatters();
+            this.getStreamSchedule();
         }
         catch (error) {
             logger.error(`Error initializing SchedulerService: ${error}`);
@@ -112,6 +113,18 @@ export class SchedulerService {
         }
         catch (error) {
             logger.error(`Error getting moderators: ${error}`);
+        }
+    }
+
+    // Method to get the stream schedule for a channel every 5 minutes
+    async getStreamSchedule() {
+        try {
+            setInterval(async () => {
+                await twitchApi.getStreamSchedule();
+            }, 300000);
+        }
+        catch (error) {
+            logger.error(`Error getting stream schedule interval: ${error}`);
         }
     }
 

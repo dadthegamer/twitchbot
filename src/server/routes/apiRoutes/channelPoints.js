@@ -9,7 +9,7 @@ const router = Router();
 // Endpoint to get all channel points
 router.get('/', async (req, res) => {
     try {
-        const response = await channelPointsService.getChannelRewards();
+        const response = await channelPointService.getChannelRewards();
         res.json(response);
     }
     catch (err) {
@@ -21,7 +21,7 @@ router.get('/', async (req, res) => {
 // Endpoint to get a specific channel point
 router.get('/:id', async (req, res) => {
     try {
-        const response = await channelPointsService.getChannelRewardById(req.params.id);
+        const response = await channelPointService.getChannelRewardById(req.params.id);
         res.json(response);
     }
     catch (err) {
@@ -34,7 +34,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', apiAuth, async (req, res) => {
     try {
         const { title, prompt, cost, userInputRequired, backgroundColor, globalCooldown, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, handlers } = req.body;
-        const response = await channelPointsService.createCustomReward(title, prompt, cost, userInputRequired, backgroundColor, globalCooldown, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, handlers);
+        const response = await channelPointService.createCustomReward(title, prompt, cost, userInputRequired, backgroundColor, globalCooldown, maxRedemptionsPerStream, maxRedemptionsPerUserPerStream, handlers);
         res.json(response);
     }
     catch (err) {
@@ -46,7 +46,7 @@ router.post('/', apiAuth, async (req, res) => {
 // Endpoint to update a channel point
 router.put('/:id', apiAuth, async (req, res) => {
     try {
-        const response = await channelPointsService.updateChannelReward(req.params.id, req.body);
+        const response = await channelPointService.updateChannelReward(req.params.id, req.body);
         res.json(response);
     }
     catch (err) {
@@ -58,7 +58,7 @@ router.put('/:id', apiAuth, async (req, res) => {
 // Endpoint to delete a channel point
 router.delete('/:id', apiAuth, async (req, res) => {
     try {
-        const response = await channelPointsService.deleteChannelReward(req.params.id);
+        const response = await channelPointService.deleteChannelReward(req.params.id);
         res.json( { success: true });
     }
     catch (err) {
@@ -70,7 +70,7 @@ router.delete('/:id', apiAuth, async (req, res) => {
 // Endpoint to toggle a channel point
 router.put('/toggle/:id', apiAuth, async (req, res) => {
     try {
-        await channelPointsService.toggleChannelReward(req.params.id, req.body.isEnabled);
+        await channelPointService.toggleChannelReward(req.params.id, req.body.isEnabled);
         res.json({ success: true });
     }
     catch (err) {
