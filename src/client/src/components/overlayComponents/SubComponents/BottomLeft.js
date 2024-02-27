@@ -8,6 +8,8 @@ import Command from './Command';
 import NowPlaying from './NowPlaying';
 import RandomQuote from './RandomQuote';
 import SubGoal from './DailySubGoal';
+import RandomViewer from './RandomViewer';
+
 
 function BottomLeft() {
     const [cards, setCards] = useState([]);
@@ -41,6 +43,9 @@ function BottomLeft() {
             },
             {
                 component: <SubGoal />,
+            },
+            {
+                component: <RandomViewer />,
             },
         ];
 
