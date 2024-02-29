@@ -114,8 +114,8 @@ class SpotifyService {
 
     // Method to get the currently play track
     async getCurrentlyPlaying() {
-        // Check if the access token has been set
         try {
+            // Check if the access token has been set
             if (!this.accessTokenSet) {
                 await this.setAccessToken();
             }
@@ -123,10 +123,30 @@ class SpotifyService {
             return currentlyPlaying.body;
         }
         catch (error) {
+            // Log the original error
             logger.error(`Error getting currently playing track: ${error}`);
+            
+            // Check if the error is due to an expired access token
+            if (error.body && error.body.error && error.body.error.message === 'The access token expired') {
+                try {
+                    // Refresh the access token
+                    await this.refreshAccessToken();
+                    
+                    // Retry the API request after refreshing the token
+                    const currentlyPlaying = await this.spotifyApi.getMyCurrentPlayingTrack();
+                    return currentlyPlaying.body;
+                } catch (refreshError) {
+                    // Log any error that occurs during the token refresh or second attempt
+                    logger.error(`Error after refreshing access token: ${refreshError}`);
+                    return null;
+                }
+            }
+    
+            // Return null if the error is not due to an expired token
             return null;
         }
     }
+    
 
     // Method to check every 3 seconds to check what the current track is
     async checkCurrentlyPlaying() {

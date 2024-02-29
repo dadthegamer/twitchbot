@@ -85,11 +85,13 @@ async function lateHandler(actualStartTime) {
         const scheduledStartDate = new Date(s.startDate);
         return scheduledStartDate.toDateString() === today.toDateString();
     });
-
+    logger.info(`Today's stream: ${todaysStream}`);
     if (todaysStream) {
         const scheduledStartDateTime = new Date(todaysStream.startDate);
+        logger.info(`Scheduled start time: ${scheduledStartDateTime}`);
+        logger.info(`Actual start time: ${actualStartDateTime}`);
         if (actualStartDateTime > scheduledStartDateTime) {
-            logger.info("The stream started late.");
+            logger.info(`The stream started late.`);
             cache.set('late', true);
         } else {
             logger.info("The stream started on time or early.");

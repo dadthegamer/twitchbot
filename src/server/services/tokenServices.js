@@ -78,7 +78,6 @@ class TokenDB {
             };
             const options = { upsert: true };
             await collection.updateOne(filter, update, options);
-            logger.info(`User auth token updated for ${userId}.`);
         } catch (error) {
             logger.error(`Error updating user auth token: ${error}`);
         }

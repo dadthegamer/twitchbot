@@ -29,6 +29,7 @@ import { changeRewardCost, enableReward, disableReward } from "./actionHandlers/
 import { rateForeheadJokeHandler } from "./actionHandlers/rateForeheadJoke.js";
 import { addSongToQueue, getCurrentlyPlayingData } from "./actionHandlers/spotifyHandler.js";
 import { startBitsWar } from "./actionHandlers/bitsWar.js";
+import { lateHandler } from "./actionHandlers/lateHandler.js";
 
 
 // Method to evaluate the handler
@@ -382,6 +383,9 @@ export async function actionEvalulate(handler, context = null) {
                 break;
             case 'bitsWar':
                 startBitsWar(displayName);
+                break;
+            case 'late':
+                lateHandler(userId, displayName);
                 break;
             default:
                 logger.error(`Handler not found: ${handler}`);

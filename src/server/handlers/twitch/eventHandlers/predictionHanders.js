@@ -30,7 +30,7 @@ export async function onPredictionStart(e) {
         });
         // Calculate the percentage of users that voted for each outcome
         outcomeArray.forEach((outcome) => {
-            outcome.percentage = Math.round((outcome.users / totalUsers) * 100);
+            outcome.percentage = Math.round((outcome.channelPoints / totalChannelPoints) * 100);
             // If the percentage is NaN, set it to 0
             if (isNaN(outcome.percentage)) outcome.percentage = 0;
         });
@@ -90,7 +90,7 @@ export async function onPredictionProgress(e) {
         });
         // Calculate the percentage of users that voted for each outcome
         outcomeArray.forEach((outcome) => {
-            outcome.percentage = Math.round((outcome.users / totalUsers) * 100);
+            outcome.percentage = Math.round((outcome.channelPoints / totalChannelPoints) * 100);
         });
         cache.set('prediction', {
             active: true,
@@ -136,7 +136,7 @@ export async function onPredictionLock(e) {
         });
         // Calculate the percentage of users that voted for each outcome
         outcomeArray.forEach((outcome) => {
-            outcome.percentage = Math.round((outcome.users / totalUsers) * 100);
+            outcome.percentage = Math.round((outcome.channelPoints / totalChannelPoints) * 100);
         });
         cache.set('prediction', {
             active: false,

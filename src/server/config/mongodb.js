@@ -2,7 +2,7 @@
 import { MongoClient } from 'mongodb';
 import { config } from 'dotenv';
 import logger from '../utilities/logger.js';
-import { exec } from 'child_process';
+import fs from 'fs';
 
 config();
 
@@ -12,7 +12,7 @@ class MongoDBConnection {
         this.port = process.env.MONGO_INITDB_DATABASE_PORT;
         this.userName = process.env.MONGO_INITDB_DATABASE_USERNAME;
         this.password = process.env.MONGO_INITDB_DATABASE_PASSWORD;
-        this.uri = `mongodb://${this.host}:${this.port}`;
+        this.uri = `mongodb://${this.userName}:${this.password}@${this.host}:${this.port}/`;
         this.client = new MongoClient(this.uri);
         this.dbName = 'twitchBot';
         this.dbConnection = null;
@@ -21,10 +21,12 @@ class MongoDBConnection {
     // Method to connect to MongoDB
     async connect() {
         try {
+            console.log(`Connecting to MongoDB: ${this.uri}`)
             await this.client.connect();
             this.dbConnection = this.client.db(this.dbName);
             await this.createCollections();
             await this.createIndexes();
+            this.backupCollections();
         } catch (error) {
             logger.error(`Error connecting to MongoDB: ${error}`);
             throw error;
@@ -114,49 +116,24 @@ class MongoDBConnection {
         }
     }
 
-    // Method to backup the database
-    async backupDatabase() {
-        try {
-            const backupPath = '/backup';
-            const backupCommand = `mongodump --host ${this.host} --port ${this.port} --out ${backupPath}`;
-            exec(backupCommand, (error, stdout, stderr) => {
+    // Method to backup each collection
+    async backupCollections() {
+        // Get all collections
+        const collections = await this.dbConnection.listCollections().toArray();
+        // Loop through each collection
+        const backupPath = './backups';
+        for (const collection of collections) {
+            // Get the collection name
+            const collectionName = collection.name;
+            // Backup the collection using fs
+            const backupData = await this.dbConnection.collection(collectionName).find().toArray();
+            const backupFile = `${backupPath}/${collectionName}.json`;
+            // Write the backup data to a file even if it already exists or doesnt exist
+            fs.writeFile(backupFile, JSON.stringify(backupData), (error) => {
                 if (error) {
-                    console.log(error);
-                    logger.error(`Error backing up database: ${error}`);
-                    return;
+                    logger.error(`Error writing backup file: ${error}`);
                 }
-                if (stderr) {
-                    console.log(stderr);
-                    logger.error(`Error backing up database: ${stderr}`);
-                    return;
-                }
-                logger.info(`Database backed up successfully: ${stdout}`);
             });
-        }
-        catch (error) {
-            logger.error(`Error backing up database: ${error}`);
-        }
-    }
-
-    // Method to restore the database
-    async restoreDatabase() {
-        try {
-            const backupPath = '/backup';
-            const restoreCommand = `mongorestore --host ${this.host} --port ${this.port} ${backupPath}`;
-            exec(restoreCommand, (error, stdout, stderr) => {
-                if (error) {
-                    logger.error(`Error restoring database: ${error}`);
-                    return;
-                }
-                if (stderr) {
-                    logger.error(`Error restoring database: ${stderr}`);
-                    return;
-                }
-                logger.info(`Database restored successfully: ${stdout}`);
-            });
-        }
-        catch (error) {
-            logger.error(`Error restoring database: ${error}`);
         }
     }
 }

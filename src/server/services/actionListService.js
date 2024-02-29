@@ -12,8 +12,9 @@ class ActionListService {
     // Get all the action lists from the database and store them in the cache
     async getActions() {
         try {
-            const actions = await this.dbConnection.getCollection(this.collectionName).find().toArray();
-            this.cache.set('actions', actions);
+            const actions = await this.dbConnection.collection(this.collectionName);
+            const result = await actions.find({}).toArray();
+            this.cache.set('actions', result);
             return actions;
         }
         catch (err) {

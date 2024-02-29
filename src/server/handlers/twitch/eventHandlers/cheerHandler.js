@@ -1,4 +1,4 @@
-import { goalDB, usersDB, interactionsDB } from "../../../config/initializers.js";
+import { goalDB, usersDB, interactionsDB, cache } from "../../../config/initializers.js";
 import { addAlert } from "../../../handlers/alertHandler.js";
 import logger from "../../../utilities/logger.js";
 import { addBitsToUser } from "../../actionHandlers/bitsWar.js";
