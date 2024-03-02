@@ -14,7 +14,10 @@ export async function addSongToQueue(userId, input, messageID) {
             if (track) {
                 const added = await spotifyService.addTrackToQueue(track.uri);
                 if (added.statusCode === 204) {
-                    replyHandler('The song was added to the queue.', messageID);
+                    // Get the song name and artist name
+                    const trackName = track.name;
+                    const artistName = track.artists[0].name;
+                    replyHandler(`The song ${trackName} by ${artistName} was added to the queue.`, messageID);
                 } else {
                     commandHandler.removeUserFromCooldownCache(userId, 'addsong');
                     replyHandler('I could not add that song to the queue.', messageID);
@@ -26,9 +29,6 @@ export async function addSongToQueue(userId, input, messageID) {
                 const added = await spotifyService.addTrackToQueue(track.uri);
                 // If status code is 204, then the song was added to the queue
                 if (added.statusCode === 204) {
-                    // Get the song name and artist name
-                    const trackName = track.name;
-                    const artistName = track.artists[0].name;
                     replyHandler('The song was added to the queue.', messageID);
                 } else {
                     commandHandler.removeUserFromCooldownCache(userId, 'addsong');

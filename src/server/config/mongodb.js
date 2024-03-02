@@ -21,12 +21,11 @@ class MongoDBConnection {
     // Method to connect to MongoDB
     async connect() {
         try {
-            console.log(`Connecting to MongoDB: ${this.uri}`)
             await this.client.connect();
             this.dbConnection = this.client.db(this.dbName);
             await this.createCollections();
             await this.createIndexes();
-            this.backupCollections();
+            await this.backupCollections();
         } catch (error) {
             logger.error(`Error connecting to MongoDB: ${error}`);
             throw error;
