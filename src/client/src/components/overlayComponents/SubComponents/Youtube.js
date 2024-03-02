@@ -6,11 +6,7 @@ import '../../../styles/overlay/bottomLeft.css';
 
 function Youtube() {
     return (
-        <div className='bottom-left-card' style={
-            {
-                backgroundColor: '#FF0000',
-            }
-        }>
+        <div className='bottom-left-card'>
             <FontAwesomeIcon className='social-media-icon' icon={faYoutube} />
             <span className='social-media-name'>Dad The Gamer Games</span>
         </div>

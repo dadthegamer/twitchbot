@@ -25,7 +25,7 @@ function Command() {
     }, []);
 
     return (
-        <div className='bottom-left-card' style={{ backgroundColor: '#FF0000' }}>
+        <div className='bottom-left-card'>
             {showCard && (
                 <>
                     <span className='bottom-left-label'>Command Highlight</span>

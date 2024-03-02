@@ -6,11 +6,7 @@ import '../../../styles/overlay/bottomLeft.css';
 
 function Twitter() {
     return (
-        <div className='bottom-left-card' style={
-            {
-                backgroundColor: '#1DA1F2',
-            }
-        }>
+        <div className='bottom-left-card'>
             <FontAwesomeIcon className='social-media-icon' icon={faTwitter} />
             <span className='social-media-name'>@Dad_The_Gam3r</span>
         </div>

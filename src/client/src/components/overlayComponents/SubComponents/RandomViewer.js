@@ -18,7 +18,7 @@ function RandomViewer() {
     }, []);
 
     return (
-        <div className='bottom-left-card' style={{ backgroundColor: '#E5E5E5' }}>
+        <div className='bottom-left-card'>
             <div className='random-viewer-bottom-left-container'>
                 <span className='random-viewer'>Thank you {randomViewer} for supporting the stream!</span>
             </div>

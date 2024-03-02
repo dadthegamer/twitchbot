@@ -29,28 +29,16 @@ function RandomQuote() {
     }
 
     return (
-        <div className='bottom-left-card' style={{ backgroundColor: '#E5E5E5' }}>
+        <div className='bottom-left-card'>
             {showCard && (
                 <>
-                    <span className='bottom-left-label' style={
-                        {
-                            color: '#000000',
-                        }
-                    }>Random Quote</span>
+                    <span className='bottom-left-label'>Random Quote</span>
                     <div className='random-quote-bottom-left-container'>
                         <span>"{quote}"</span>
                         <span>-{creator}</span>
                     </div>
-                    <span className='bottom-left-quote-created' style={
-                        {
-                            color: '#000000',
-                        }
-                    }>{createdDate}</span>
-                    <span className='bottom-left-quote-id' style={
-                        {
-                            color: '#000000',
-                        }
-                    }>Quote: {quoteId}</span>
+                    <span className='bottom-left-quote-created'>{createdDate}</span>
+                    <span className='bottom-left-quote-id'>Quote: {quoteId}</span>
                 </>
             )}
         </div>

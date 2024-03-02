@@ -6,11 +6,7 @@ import '../../../styles/overlay/bottomLeft.css';
 
 function TikTok() {
     return (
-        <div className='bottom-left-card' style={
-            {
-                backgroundColor: '#ff0050',
-            }
-        }>
+        <div className='bottom-left-card'>
             <FontAwesomeIcon className='social-media-icon' icon={faTiktok} />
             <span className='social-media-name'>dad.the.gamer</span>
         </div>
