@@ -71,22 +71,24 @@ function Shoutout() {
 
     // Function to display the shoutout
     useEffect(() => {
-        setTimeout(() => {
+        if (showShoutout) {
             setTimeout(() => {
-                setWidth('800px')
                 setTimeout(() => {
-                    setWidth('180px');
+                    setWidth('800px')
                     setTimeout(() => {
-                        setAnimationClass('hide-shoutout');
+                        setWidth('180px');
                         setTimeout(() => {
-                            setAnimationClass('');
-                            setShowShoutout(false);
+                            setAnimationClass('hide-shoutout');
+                            setTimeout(() => {
+                                setAnimationClass('');
+                                setShowShoutout(false);
+                            }, 500);
                         }, 500);
-                    }, 500);
-                }, shoutoutLength * 1000 - 400);
-            }, 50);
-        }, 500);
-    }, [displayName]);
+                    }, shoutoutLength * 1000 - 400);
+                }, 50);
+            }, 500);
+        }
+    }, [showShoutout]);
 
     return (
         <div className={`shoutout-main-container ${animationClass}`}>
