@@ -4,7 +4,7 @@ import { replyHandler } from "./actionHandlers/replyHandler.js";
 import { variableHandler } from "./variablesHandler.js";
 import { displayHandler } from "./actionHandlers/displayHandler.js";
 import { spinHandler } from "./actionHandlers/spinHandler.js";
-import { addToQueue, removeFromQueue, getQueue, clearQueue } from "./actionHandlers/queue.js";
+import { addToQueue, removeFromQueue, getQueue, clearQueue, toggleQueue } from "./actionHandlers/queue.js";
 import { getQuoteById, getRandomQuote, createQuote } from "./actionHandlers/quote.js";
 import { createClip } from "./actionHandlers/clips.js";
 import { startRecording, stopRecording, startStreaming, toggleSource, stopStreaming, setCurrentScene, getCurrentScene, saveReplayBuffer } from "./actionHandlers/obsHandler.js";
@@ -76,6 +76,9 @@ export async function actionEvalulate(handler, context = null) {
                         break;
                     case 'clear':
                         clearQueue();
+                        break;
+                    case 'toggle':
+                        toggleQueue();
                         break;
                     default:
                         logger.error(`Queue action not found: ${action}`);

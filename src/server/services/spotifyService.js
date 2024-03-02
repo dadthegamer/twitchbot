@@ -123,9 +123,6 @@ class SpotifyService {
             return currentlyPlaying.body;
         }
         catch (error) {
-            // Log the original error
-            logger.error(`Error getting currently playing track: ${error}`);
-            
             // Check if the error is due to an expired access token
             if (error.body && error.body.error && error.body.error.message === 'The access token expired') {
                 try {

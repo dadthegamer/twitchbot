@@ -237,16 +237,11 @@ class OBSService {
     // Method to get the current scene
     async getCurrentScene() {
         try {
-            if (!this.connected) {
-                logger.error('Not connected to OBS');
-                return;
+            if (this.cache.get('currentScene')) {
+                return this.cache.get('currentScene');
             } else {
-                if (this.cache.get('currentScene')) {
-                    return this.cache.get('currentScene');
-                } else {
-                    const currentScene = await this.obs.call('GetCurrentProgramScene');
-                    return currentScene.name;
-                }
+                const currentScene = await this.obs.call('GetCurrentProgramScene');
+                return currentScene.name;
             }
         } catch (error) {
             logger.error(`Error getting current scene: ${error}`);
