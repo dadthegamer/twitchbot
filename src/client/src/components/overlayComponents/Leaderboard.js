@@ -135,8 +135,10 @@ function Leaderboard() {
                     </div>
                     <div className="leaderboard-users">
                         {leaderboardUsers.map((user, index) => {
+                            // Update class name here based on index
+                            const userClassName = index === 0 ? "leaderboard-user first" : "leaderboard-user";
                             return (
-                                <div className="leaderboard-user" key={index}>
+                                <div className={userClassName} key={index}>
                                     <div>
                                         <img src={user.profilePic} alt="" />
                                         <span className="leaderboard-user-name">{user.displayName}</span>
