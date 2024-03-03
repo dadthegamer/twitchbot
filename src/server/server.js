@@ -41,7 +41,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 const MongoDBStoreSession = MongoDBStore(session);
 const store = new MongoDBStoreSession({
-    uri: `mongodb://${process.env.MONGO_INITDB_DATABASE_HOST}:${process.env.MONGO_INITDB_DATABASE_PORT}/twitchBot`,
+    uri: `mongodb://${process.env.MONGO_INITDB_DATABASE_USERNAME}:${process.env.MONGO_INITDB_DATABASE_PASSWORD}@${process.env.MONGO_INITDB_DATABASE_HOST}:${process.env.MONGO_INITDB_DATABASE_PORT}/`,
+    databaseName: 'twitchBot',
     collection: 'sessions',
     ttl: 365 * 24 * 60 * 60,
 });
