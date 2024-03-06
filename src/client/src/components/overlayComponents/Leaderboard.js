@@ -76,6 +76,26 @@ function Leaderboard() {
         }
     }, [fetchedAllLeaderboards, leaderboards, duration, currentLeaderboardIndex]); // Include currentLeaderboardIndex as a dependency
 
+    // Function to change each user to display flex after the animation delay
+    useEffect(() => {
+        if (leaderboardUsers.length > 0) {
+            const users = document.querySelectorAll('.leaderboard-user');
+            users.forEach((user, index) => {
+                setTimeout(() => {
+                    user.style.display = "flex";
+                }, index * 100);
+                // Once the last user is displayed wait for 5 seconds and then hide all the users
+                if (index === leaderboardUsers.length - 1) {
+                    setTimeout(() => {
+                        users.forEach((user) => {
+                            user.style.display = "none";
+                        });
+                        setLeaderboardUsers([]);
+                    }, (duration - 1) * 1000);
+                }
+            });
+        }
+    }, [leaderboardUsers]);
 
     function formatMinutes(minutes) {
         const days = Math.floor(minutes / 1440); // 1440 mins per day
@@ -134,19 +154,31 @@ function Leaderboard() {
                         <span className="leaderboard-description">{leaderboardDescription}</span>
                     </div>
                     <div className="leaderboard-users">
-                        {leaderboardUsers.map((user, index) => {
-                            // Update class name here based on index
-                            const userClassName = index === 0 ? "leaderboard-user first" : "leaderboard-user";
-                            return (
-                                <div className={userClassName} key={index}>
-                                    <div>
-                                        <img src={user.profilePic} alt="" />
-                                        <span className="leaderboard-user-name">{user.displayName}</span>
-                                    </div>
-                                    <span className="leaderboard-user-amount">{formatAmount(user.amount, leaderboardTitle)}</span>
-                                </div>
-                            )
-                        })}
+                        {leaderboardUsers.length > 0 && (
+                            (() => {
+                                const delayedRenderedUsers = [];
+                                for (let i = 0; i < leaderboardUsers.length; i++) {
+                                    const user = leaderboardUsers[i];
+
+                                    const userClassName = i === 0 ? "leaderboard-user first" : "leaderboard-user";
+                                    delayedRenderedUsers.push(
+                                        <div className={userClassName} key={i} style={
+                                            {
+                                                display: "none",
+                                            }
+                                        }>
+                                            <div>
+                                                <img src={user.profilePic} alt="" />
+                                                <span className="leaderboard-user-name">{user.displayName}</span>
+                                            </div>
+                                            <span className="leaderboard-user-amount">{formatAmount(user.amount, leaderboardTitle)}</span>
+                                        </div>
+                                    );
+                                }
+                                return delayedRenderedUsers;
+                            }
+                            )()
+                        )}
                     </div>
                 </div>
             )}

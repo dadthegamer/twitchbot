@@ -30,6 +30,7 @@ import { subscribeToDonationEvents } from '../services/streamElementsService.js'
 import TikTokService from '../services/tikTokService.js';
 import ActionListService from '../services/actionListService.js';
 import SpotifyService from '../services/spotifyService.js';
+import LeaderboardDB from '../services/leaderboardService.js';
 
 
 // Cache initialization
@@ -118,6 +119,9 @@ const actionListService = new ActionListService(db.dbConnection, cache);
 // Spotify Service initialization
 const spotifyService = new SpotifyService(db.dbConnection);
 
+// LeaderboardDB initialization
+const leaderboardDB = new LeaderboardDB(db.dbConnection, cache);
+
 // Start the alerts handler
 startAlertsHandler();
 
@@ -157,5 +161,6 @@ export {
     goXLRClient,
     tikTokService,
     actionListService,
-    spotifyService
+    spotifyService,
+    leaderboardDB
 };

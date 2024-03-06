@@ -33,7 +33,7 @@ import MovieQuote from './components/MiniGames/movieQuote';
 import HypeTrain from './components/overlayComponents/HypeTrain';
 import SpotifyNowPlaying from './components/overlayComponents/SpotifyNowPlaying';
 import Shoutout from './components/overlayComponents/Shoutout';
-
+import CamWidget from './components/overlayComponents/camWidget';
 
 
 function App() {
@@ -67,6 +67,7 @@ function App() {
         <Route path="hypetrain" element={<HypeTrain />} />
         <Route path="spotify" element={<SpotifyNowPlaying />} />
         <Route path="shoutout" element={<Shoutout />} />
+        <Route path="camwidget" element={<CamWidget />} />
       </Route>
 
       {/* Mini Games Routes */}

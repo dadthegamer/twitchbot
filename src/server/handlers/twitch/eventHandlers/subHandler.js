@@ -1,4 +1,4 @@
-import { usersDB, goalDB,webSocket } from "../../../config/initializers.js";
+import { usersDB, goalDB,webSocket, streamDB } from "../../../config/initializers.js";
 import { addAlert } from "../../../handlers/alertHandler.js";
 import logger from "../../../utilities/logger.js";
 
@@ -16,9 +16,10 @@ export async function onSubscription(e) {
         addAlert(userId, userDisplayName, 'resub', `${userDisplayName} re-subscribed for ${cumulativeMonths} months!`, profileImage);
         if (cumulativeMonths === 1) {
             goalDB.increaseSubGoals(1);
+            streamDB.updateLatestSub({ displayName: userDisplayName, userId, profilePic: profileImage})
         }
         if (messageText) {
-            webSocket.TTS(messageText);
+            webSocket.TTS({ message: messageText, img: profileImage });
         }
         logger.info(`Subscription event: ${userDisplayName} re-subscribed at tier ${tier}!`);
     }

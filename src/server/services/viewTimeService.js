@@ -1,5 +1,5 @@
 import logger from "../utilities/logger.js";
-import { cache, usersDB } from '../config/initializers.js';
+import { cache, usersDB, leaderboardDB } from '../config/initializers.js';
 import NodeCache from 'node-cache';
 
 
@@ -15,7 +15,7 @@ class ViewTimeService {
     // Method to listen for expired keys. When a key expires add the view time to the database and remove the key from the cache.
     listenForExpiredKeys() {
         this.viewTimeCache.on('expired', (key, value) => {
-            usersDB.increaseViewTime(key, value);
+            leaderboardDB.increaseViewTimeForUser(key, value);
             this.viewTimeCache.del(key);
         });
     }

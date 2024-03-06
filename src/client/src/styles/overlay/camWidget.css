@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --background-color: #111111;
+    --primary-color: #1b1b1b;
+    --terrestrial-color: #1F1F1F;
+    --secondary-color: #005AFF;
+    --font-color: #FFFFFF;
+}
+
+.cam-widget-container {
+    position: absolute;
+    bottom: 0;
+    width: 90%;
+    height: 150px;
+    background-color: var(--background-color);
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Montserrat', sans-serif;
+    margin-bottom: 100px;
+    border-radius: 10px;
+    margin-left: 100px;
+    overflow: hidden;
+    transition: height 0.5s;
+}
+
+.latest-events-container {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.latest-events-icon-wrapper {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: red;
+    padding: 15px;
+}
+
+.latest-events-container .latest-events-icon {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.latest-events-container div:nth-child(2) {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    font-size: 1.5em;
+    color: var(--font-color);
+}
+
+.latest-events-container div span {
+    text-align: left;
+    width: 100%;
+}
+
+.latest-events-container div span:first-child {
+    font-size: 3rem;
+    opacity: 0.6;
+    color: red;
+}
+
+.latest-events-container div span:last-child {
+    font-size: 4rem;
+    opacity: 0.8;
+}
+
+.daily-sub-goal-main-container {
+    width: 100%;
+    height: 150px;
+}
+
+.hide {
+    animation: slideDown 0.5s ease-in-out;
+    animation-fill-mode: forwards;
+}
+
+.daily-sub-goal {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    gap: 10px;
+    color: var(--font-color);
+    padding: 20px;
+    font-size: 64px;
+    position: relative;
+}
+
+.daily-sub-goal-header {
+    z-index: 1;
+}
+
+.daily-sub-goal div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    z-index: 1;
+}
+
+.daily-sub-goal-progress-bar-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    z-index: 0;
+    position: absolute;
+    top: 0;
+}
+
+.cam-widget-daily-sub-goal-progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: #ff0000;
+    transition: all 2s ease-in-out;
+    border-radius: 10px;
+    opacity: 0.8;
+}
+
+@keyframes slideDown {
+    0% {
+        transform: translateY(0%);
+    }
+    100% {
+        transform: translateY(100%);
+    }    
+}

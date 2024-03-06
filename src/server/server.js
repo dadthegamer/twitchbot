@@ -6,12 +6,10 @@ import { fileURLToPath } from 'url';
 import bodyParser from 'body-parser';
 import MongoDBStore from 'connect-mongodb-session';
 import { config } from 'dotenv';
-import { schedulerService, usersDB, twitchApi } from './config/initializers.js';
+import { schedulerService, usersDB, leaderboardDB } from './config/initializers.js';
 import logger from './utilities/logger.js';
-import { formatTrackAndArtistResponse } from './services/openAi.js';
 
-const newDate = new Date();
-console.log(newDate);
+usersDB.resetStreamProperties();
 
 // setInterval(() => {
 //     const usedMemory = process.memoryUsage();

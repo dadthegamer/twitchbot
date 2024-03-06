@@ -12,6 +12,182 @@ class UsersDB {
         this.getAllUsers();
     }
 
+    // Method to return what a user object should look like
+    userTemplate() {
+        return {
+            id: null,
+            displayName: null,
+            userName: null,
+            profilePictureUrl: null,
+            broadcasterType: null,
+            followDate: null,
+            lastSeen: null,
+            arrived: false,
+            email: null,
+            viewTime: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            activeViewTime: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            roles: {
+                vip: false,
+                subscriber: false,
+                moderator: false,
+                custom: {},
+            },
+            subs: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            bits: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            donations: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            currency: {
+                points: 0,
+            },
+            channelPointsSpent: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            channelPointRedemptions: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            emotesUsed: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            clips: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            hypeTrainsParticipated: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+            },
+            topHypeTrainTopContributor: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+            },
+            hypeTrainContributions: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            bans: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            raids: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+            },
+            miniGameWins: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            chatMessages: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+                weekly: 0,
+                stream: 0
+            },
+            streamsWatched: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+            },
+            first: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+            },
+            second: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+            },
+            third: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+            },
+            firstFive: {
+                allTime: 0,
+                yearly: 0,
+                monthly: 0,
+            },
+            lastSeen: null,
+            metaData: []
+        }
+    };
+
+    // Method to ensure that a number is a number and not a string. Return the number if it is a number or return null if it is not a number
+    ensureNumber(number) {
+        if (typeof number !== 'number') {
+            try {
+                number = parseInt(number);
+                if (isNaN(number)) {
+                    logger.error(`Error in ensureNumber: Number is not a number`);
+                    return null;
+                }
+            }
+            catch (error) {
+                logger.error(`Error in ensureNumber: ${error}`);
+            }
+        }
+        return number;
+    }
+
+
     // Method to return all users
     async getAllUsers() {
         try {
@@ -325,7 +501,7 @@ class UsersDB {
     }
 
     // Method to add a user to the database and cache from t he stream directly
-    async newUser(userId, email = null) {
+    async newUser(userId, { followDate = new Date(), email = null }) {
         try {
             if (typeof userId !== 'string') {
                 userId = userId.toString();
@@ -339,276 +515,146 @@ class UsersDB {
                 } else {
                     return;
                 }
+            } else {
+                const userData = await twitchApi.getUserDataById(userId);
+                const query = { id: userId };
+                // Get the user template and set the user data
+                const userTemplate = this.userTemplate();
+                userTemplate.id = userId;
+                userTemplate.displayName = userData.displayName;
+                userTemplate.userName = userData.name;
+                userTemplate.profilePictureUrl = userData.profilePictureUrl;
+                userTemplate.broadcasterType = userData.broadcasterType;
+                userTemplate.followDate = followDate;
+                userTemplate.lastSeen = date;
+                userTemplate.arrived = true;
+                userTemplate.email = email;
+                const options = { upsert: true };
+                const res = await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, userTemplate, options);
+                this.cache.set(userId, userTemplate);
+                return res;
             }
-            const userData = await twitchApi.getUserDataById(userId);
-            const date = new Date();
-            const query = { id: userId };
-            const update = {
-                $set: {
-                    id: userId,
-                    displayName: userData.displayName,
-                    userName: userData.name,
-                    profilePictureUrl: userData.profilePictureUrl,
-                    broadcasterType: userData.broadcasterType,
-                    followDate: date,
-                    lastSeen: date,
-                    arrived: true,
-                    email: email,
-                    viewTime: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    activeViewTime: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    roles: {
-                        vip: false,
-                        subscriber: false,
-                        moderator: false,
-                        custom: {},
-                    },
-                    subs: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    bits: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    donations: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    currency: {
-                        reffle: 0,
-                    },
-                    channelPointsSpent: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    channelPointRedemptions: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    emotesUsed: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    clips: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    hypeTrainsParticipated: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                    },
-                    topHypeTrainTopContributor: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                    },
-                    hypeTrainContributions: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    bans: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    raids: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                    },
-                    miniGameWins: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    chatMessages: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    streamsWatched: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                    },
-                    first: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                    },
-                    second: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                    },
-                    third: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                    },
-                    firstFive: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                    },
-                    lastSeen: date,
-                    metaData: []
-                }
-            };
-            const options = { upsert: true };
-            const res = await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
-            this.cache.set(userId, update);
-            return res;
         }
         catch (error) {
-            logger.error(`Error in newFollower: ${error}`);
-        }
-    }
-
-    async addUserManually(userId, followDate) {
-        try {
-            if (typeof userId !== 'string') {
-                userId = userId.toString();
-            }
-            // Check if the user is already in the database. If they are then return
-            const user = await this.dbConnection.collection(this.collectionName).findOne({ id: userId });
-            if (user) {
-                return;
-            }
-            const userData = await twitchApi.getUserDataById(userId);
-            const date = new Date();
-            const query = { id: userId };
-            const update = {
-                $set: {
-                    id: userId,
-                    displayName: userData.displayName,
-                    userName: userData.name,
-                    profilePictureUrl: userData.profilePictureUrl,
-                    broadcasterType: userData.broadcasterType,
-                    followDate: followDate,
-                    arrived: false,
-                    viewTime: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    roles: {
-                        vip: false,
-                        subscriber: false,
-                        moderator: false,
-                        custom: {},
-                    },
-                    subs: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    bits: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    donations: {
-                        allTime: 0,
-                        yearly: 0,
-                        monthly: 0,
-                        weekly: 0,
-                        stream: 0
-                    },
-                    currency: {
-                        points: 0,
-                    },
-                    lastSeen: date,
-                    metaData: []
-                }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection(this.collectionName).findOneAndUpdate(query, update, options);
-            this.cache.set(userId, userData);
-        }
-        catch (error) {
-            logger.error(`Error in newFollower: ${error}`);
+            console.log(error);
+            logger.error(`Error in adding a new user: ${error}`);
         }
     }
 
     // Method to set a users value in the database and cache
     async setUserValue(userId, property, value) {
         try {
-            if (typeof userId !== 'string') {
-                userId = userId.toString();
+            // Set the property for the user in the cache
+            let user = this.cache.get(userId);
+            if (!user) {
+                user = await this.getUserByUserId(userId);
             }
-            if (environment === 'development') {
-                console.log(`setUserValue: ${userId} ${property} ${value}`);
-                return;
-            } else {
-                // Set the property for the user in the cache
-                let user = this.cache.get(userId);
-                if (!user) {
-                    user = await this.getUserByUserId(userId);
-                }
-                user[property] = value;
-                this.cache.set(userId, user);
-                // Set the property for the user in the database
-                await this.dbConnection.collection(this.collectionName).updateOne(
-                    { id: userId },
-                    { $set: { [property]: value } },
-                    { upsert: true }
-                );
-            }
+            user[property] = value;
+            this.cache.set(userId, user);
+            // Set the property for the user in the database
+            await this.dbConnection.collection(this.collectionName).updateOne(
+                { id: userId },
+                { $set: { [property]: value } },
+                { upsert: true }
+            );
         } catch (error) {
             logger.error(`Error in setUserValue: ${error}`);
         }
     }
+
+    // Method to increase a property for a user. The property is a user object with a properties of allTime, yearly, monthly, weekly, and stream
+    async increaseUserValue(userId, property, amount) {
+        try {
+            console.log(`increaseUserValue: ${userId} ${property} ${amount}`);
+            if (typeof userId !== 'string') {
+                userId = userId.toString();
+            }
+            amount = this.ensureNumber(amount);
+            if (amount === null) {
+                logger.error(`Error in increaseUserValue for property ${property}: Amount is not a number`);
+                return;
+            } else {
+                // Get the user template and see if the property exists in the user object
+                const userTemplate = this.userTemplate();
+                const propertyExists = property in userTemplate;
+                if (!propertyExists) {
+                    logger.error(`Error in increaseUserValue: Property ${property} does not exist`);
+                    return;
+                } else {
+                    let user = this.cache.get(userId);
+                    if (!user) {
+                        user = await this.getUserByUserId(userId);
+                    }
+                    user[property].allTime += amount;
+                    user[property].yearly += amount;
+                    user[property].monthly += amount;
+                    user[property].weekly += amount;
+                    user[property].stream += amount;
+                    this.cache.set(userId, user);
+                    // Increase the property for the user in the database
+                    await this.dbConnection.collection(this.collectionName).updateOne(
+                        { id: userId },
+                        // Increase the property name within the property object to the amount
+                        { $inc: { [`${property}.allTime`]: amount, [`${property}.yearly`]: amount, [`${property}.monthly`]: amount, [`${property}.weekly`]: amount, [`${property}.stream`]: amount } },
+                        { upsert: true }
+                    );
+                }
+            }
+        } catch (error) {
+            logger.error(`Error in increaseUserValue: ${error}`);
+        }
+    }
+
+    // Method to get a leaderboard of users by a property
+    async getLeaderboardByProperty(leaderboardProperty, limit = 10) {
+        try {
+            const userTemplate = this.userTemplate();
+            const propertyExists = leaderboardProperty in userTemplate;
+            if (!propertyExists) {
+                logger.error(`Error in getLeaderboardByProperty: Property ${leaderboardProperty} does not exist`);
+                return null;
+            } else {
+                const properties = Object.keys(userTemplate[leaderboardProperty]);
+                const leaderboardData = [];
+
+                await Promise.all(properties.map(async (property) => {
+                    const sortObj = {};
+                    sortObj[`${leaderboardProperty}.${property}`] = -1;
+
+                    const users = await this.dbConnection.collection(this.collectionName)
+                        .find({})
+                        .sort(sortObj)
+                        .limit(limit)
+                        .toArray();
+
+                    const leaderboard = users.map(user => ({
+                        id: user.id,
+                        displayName: user.displayName,
+                        amount: user[leaderboardProperty][property],
+                        profilePic: user.profilePictureUrl
+                    })).filter(user => user.amount !== 0);
+
+                    leaderboardData.push(
+                        {
+                            period: property,
+                            leaderboard
+                        }
+                    );
+                }));
+                const data = {
+                    leaderboardProperty,
+                    leaderboardData
+                }
+                return data;
+            }
+        } catch (error) {
+            console.log(error);
+            logger.error(`Error in getLeaderboardByProperty: ${error}`);
+            return null;
+        }
+    }
+
+
 
     // Method to increase a currency property for a user
     async increaseCurrency(userId, currency, amount) {
@@ -1031,34 +1077,6 @@ class UsersDB {
         }
     }
 
-    // Method to get the leaderboard for the top users in view time
-    async getLeaderboardByViewTime(leaderboardType, count = 10) {
-        try {
-            // Validate the leaderboard type
-            if (!['allTime', 'yearly', 'monthly', 'weekly', 'stream'].includes(leaderboardType)) {
-                logger.error(`Error in getLeaderboardByViewTime: Invalid leaderboard type`);
-                return null;
-            }
-
-            const collection = await this.dbConnection.collection(this.collectionName);
-
-            // Construct the sort object dynamically
-            const sortObj = {};
-            sortObj[`viewTime.${leaderboardType}`] = -1;
-
-            const result = await collection
-                .find({})
-                .sort(sortObj)
-                .limit(count)
-                .toArray();
-
-            return result;
-        } catch (error) {
-            logger.error(`Error in getLeaderboardByViewTime: ${error}`);
-            return null; // Handle the error gracefully
-        }
-    }
-
     // Method to get the leaderboard for the top users in cumulativeMonths
     async getLeaderboardByCumulativeMonths(count = 10) {
         try {
@@ -1071,64 +1089,6 @@ class UsersDB {
             return result;
         } catch (error) {
             logger.error(`Error in getLeaderboardByCumulativeMonths: ${error}`);
-            return null; // Handle the error gracefully
-        }
-    }
-
-
-
-    // Method to get the leaderboard for subs
-    async getLeaderboardBySubs(leaderboardType, count = 10) {
-        try {
-            // Validate the leaderboard type
-            if (!['allTime', 'yearly', 'monthly', 'weekly', 'stream'].includes(leaderboardType)) {
-                logger.error(`Error in getLeaderboardByViewTime: Invalid leaderboard type`);
-                return null;
-            }
-
-            const collection = await this.dbConnection.collection(this.collectionName);
-
-            // Construct the sort object dynamically
-            const sortObj = {};
-            sortObj[`subs.${leaderboardType}`] = -1;
-
-            const result = await collection
-                .find({})
-                .sort(sortObj)
-                .limit(count)
-                .toArray();
-
-            return result;
-        } catch (error) {
-            logger.error(`Error in getLeaderboardByViewTime: ${error}`);
-            return null; // Handle the error gracefully
-        }
-    }
-
-    // Method to get the leaderboard for bits
-    async getLeaderboardByBits(leaderboardType, count = 10) {
-        try {
-            // Validate the leaderboard type
-            if (!['allTime', 'yearly', 'monthly', 'weekly', 'stream'].includes(leaderboardType)) {
-                logger.error(`Error in getLeaderboardByBits: Invalid leaderboard type`);
-                return null;
-            }
-
-            const collection = await this.dbConnection.collection(this.collectionName);
-
-            // Construct the sort object dynamically
-            const sortObj = {};
-            sortObj[`bits.${leaderboardType}`] = -1;
-
-            const result = await collection
-                .find({})
-                .sort(sortObj)
-                .limit(count)
-                .toArray();
-
-            return result;
-        } catch (error) {
-            logger.error(`Error in getLeaderboardByBits: ${error}`);
             return null; // Handle the error gracefully
         }
     }
@@ -1178,44 +1138,59 @@ class UsersDB {
         }
     }
 
+    // TODO: Add a method to reset all properties for all users to 0
     // Method to reset all stream related properties for all users to 0
     async resetStreamProperties() {
         try {
-            await this.dbConnection.collection(this.collectionName).updateMany(
-                {},
-                {
-                    $set: {
-                        'viewTime.stream': 0,
-                        'subs.stream': 0,
-                        'bits.stream': 0,
-                        'donations.stream': 0
+            const update = {};
+            const userTemplate = this.userTemplate();
+            const properties = Object.keys(userTemplate);
+
+            properties.forEach(property => {
+                // Check if property is an object and not null
+                if (typeof userTemplate[property] === 'object' && userTemplate[property] !== null) {
+                    // Now check if there is a property in the object of stream
+                    if ('stream' in userTemplate[property]) {
+                        update[`${property}.stream`] = 0;
                     }
                 }
+            });
+            const result = await this.dbConnection.collection(this.collectionName).updateMany(
+                {},
+                { $set: update }
             );
             const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             this.cache.set('users', users);
+            return result;
         } catch (error) {
+            console.log(error);
             logger.error(`Error in resetStreamProperties: ${error}`);
         }
     }
 
-
     // Method to reset all weekly related properties for all users to 0
     async resetWeeklyProperties() {
         try {
-            await this.dbConnection.collection(this.collectionName).updateMany(
-                {},
-                {
-                    $set: {
-                        'viewTime.weekly': 0,
-                        'subs.weekly': 0,
-                        'bits.weekly': 0,
-                        'donations.weekly': 0
+            const update = {};
+            const userTemplate = this.userTemplate();
+            const properties = Object.keys(userTemplate);
+
+            properties.forEach(property => {
+                // Check if property is an object and not null
+                if (typeof userTemplate[property] === 'object' && userTemplate[property] !== null) {
+                    // Now check if there is a property in the object of weekly
+                    if ('weekly' in userTemplate[property]) {
+                        update[`${property}.weekly`] = 0;
                     }
                 }
+            });
+            const result = await this.dbConnection.collection(this.collectionName).updateMany(
+                {},
+                { $set: update }
             );
             const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             this.cache.set('users', users);
+            return result;
         } catch (error) {
             logger.error(`Error in resetWeeklyProperties: ${error}`);
         }
@@ -1224,19 +1199,26 @@ class UsersDB {
     // Method to reset all monthly properties for all users to 0
     async resetMonthlyProperties() {
         try {
-            await this.dbConnection.collection(this.collectionName).updateMany(
-                {},
-                {
-                    $set: {
-                        'viewTime.monthly': 0,
-                        'subs.monthly': 0,
-                        'bits.monthly': 0,
-                        'donations.monthly': 0
+            const update = {};
+            const userTemplate = this.userTemplate();
+            const properties = Object.keys(userTemplate);
+
+            properties.forEach(property => {
+                // Check if property is an object and not null
+                if (typeof userTemplate[property] === 'object' && userTemplate[property] !== null) {
+                    // Now check if there is a property in the object of monthly
+                    if ('monthly' in userTemplate[property]) {
+                        update[`${property}.monthly`] = 0;
                     }
                 }
+            });
+            const result = await this.dbConnection.collection(this.collectionName).updateMany(
+                {},
+                { $set: update }
             );
             const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             this.cache.set('users', users);
+            return result;
         } catch (error) {
             logger.error(`Error in resetMonthlyProperties: ${error}`);
         }
@@ -1245,19 +1227,26 @@ class UsersDB {
     // Method to reset all yearly properties for all users to 0
     async resetYearlyProperties() {
         try {
-            await this.dbConnection.collection(this.collectionName).updateMany(
-                {},
-                {
-                    $set: {
-                        'viewTime.yearly': 0,
-                        'subs.yearly': 0,
-                        'bits.yearly': 0,
-                        'donations.yearly': 0
+            const update = {};
+            const userTemplate = this.userTemplate();
+            const properties = Object.keys(userTemplate);
+
+            properties.forEach(property => {
+                // Check if property is an object and not null
+                if (typeof userTemplate[property] === 'object' && userTemplate[property] !== null) {
+                    // Now check if there is a property in the object of yearly
+                    if ('yearly' in userTemplate[property]) {
+                        update[`${property}.yearly`] = 0;
                     }
                 }
+            });
+            const result = await this.dbConnection.collection(this.collectionName).updateMany(
+                {},
+                { $set: update }
             );
             const users = await this.dbConnection.collection(this.collectionName).find({}).toArray();
             this.cache.set('users', users);
+            return result;
         } catch (error) {
             logger.error(`Error in resetYearlyProperties: ${error}`);
         }
@@ -1302,97 +1291,6 @@ class UsersDB {
             );
         } catch (error) {
             logger.error(`Error in setViewTime: ${error}`);
-        }
-    }
-
-
-
-    // Method to increase the viewTime for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of minutes as a number.
-    async increaseViewTime(userId, minutes) {
-        try {
-            if (minutes === undefined || minutes === null) {
-                logger.error(`Error in increaseViewTime: Minutes is undefined`);
-                return;
-            }
-            // Check if userId is a string
-            if (typeof userId !== 'string') {
-                userId = userId.toString();
-            }
-            // Check if minutes is a number
-            if (typeof minutes !== 'number') {
-                try {
-                    minutes = parseInt(minutes);
-                    if (isNaN(minutes)) {
-                        logger.error(`Error in increaseViewTime: Minutes is not a number`);
-                        return null;
-                    }
-                }
-                catch (error) {
-                    logger.error(`Error in increaseViewTime: ${error}`);
-                }
-            }
-            let user = this.cache.get(userId);
-            if (!user) {
-                return;
-            }
-            const date = new Date();
-            const lastSeen = date;
-
-            if (user.viewTime === undefined) {
-                user.viewTime = {
-                    allTime: 0,
-                    yearly: 0,
-                    monthly: 0,
-                    weekly: 0,
-                    stream: 0
-                }
-            }
-
-            if (user.viewTime.allTime === undefined) {
-                user.viewTime.allTime = 0;
-            };
-
-            if (user.viewTime.yearly === undefined || isNaN(user.viewTime.yearly)) {
-                user.viewTime.yearly = 0;
-            };
-
-            if (user.viewTime.monthly === undefined || isNaN(user.viewTime.monthly)) {
-                user.viewTime.monthly = 0;
-            };
-
-            if (user.viewTime.weekly === undefined || isNaN(user.viewTime.weekly)) {
-                user.viewTime.weekly = 0;
-            };
-
-            if (user.viewTime.stream === undefined || isNaN(user.viewTime.stream)) {
-                user.viewTime.stream = 0;
-            };
-            user.viewTime.allTime += minutes;
-            user.viewTime.yearly += minutes;
-            user.viewTime.monthly += minutes;
-            user.viewTime.weekly += minutes;
-            user.viewTime.stream += minutes;
-            // Increase the viewTime property for the user in the database
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                {
-                    $set: {
-                        viewTime: {
-                            allTime: user.viewTime.allTime,
-                            yearly: user.viewTime.yearly,
-                            monthly: user.viewTime.monthly,
-                            weekly: user.viewTime.weekly,
-                            stream: user.viewTime.stream
-                        },
-                        lastSeen: lastSeen
-                    }
-                },
-                { upsert: true }
-            );
-            this.cache.set(userId, user);
-            logger.info(`Increased view time for ${userId} by ${minutes} minutes`);
-        } catch (error) {
-            logger.error(`Error in increaseViewTime: ${error}`);
         }
     }
 
@@ -1494,86 +1392,6 @@ class UsersDB {
         }
     }
 
-    // Method to increase the bits for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of bits as a number.
-    async increaseBits(userId, bits) {
-        try {
-            // Check if userId is a string
-            if (typeof userId !== 'string') {
-                userId = userId.toString();
-            }
-            // Check if bits is a number
-            if (typeof bits !== 'number') {
-                try {
-                    bits = parseInt(bits);
-                    if (isNaN(bits)) {
-                        logger.error(`Error in increaseBits: Bits is not a number`);
-                        return null;
-                    }
-                }
-                catch (error) {
-                    logger.error(`Error in increaseBits: ${error}`);
-                }
-            }
-
-            // Check if the user exists in the database. If they do not then add them to the database
-            const userExists = this.getUserByUserId(userId);
-            if (!userExists) {
-                this.newUser(userId);
-            };
-            const date = new Date();
-            const lastSeen = date;
-            let user = this.cache.get(userId);
-            if (!user) {
-                user = await this.getUserByUserId(userId);
-            }
-            if (user.bits.allTime === undefined || isNaN(user.bits.allTime)) {
-                user.bits.allTime = 0;
-            };
-
-            if (user.bits.yearly === undefined || isNaN(user.bits.yearly)) {
-                user.bits.yearly = 0;
-            };
-
-            if (user.bits.monthly === undefined || isNaN(user.bits.monthly)) {
-                user.bits.monthly = 0;
-            };
-
-            if (user.bits.weekly === undefined || isNaN(user.bits.weekly)) {
-                user.bits.weekly = 0;
-            };
-
-            if (user.bits.stream === undefined || isNaN(user.bits.stream)) {
-                user.bits.stream = 0;
-            };
-
-            user.bits.allTime += bits;
-            user.bits.yearly += bits;
-            user.bits.monthly += bits;
-            user.bits.weekly += bits;
-            user.bits.stream += bits;
-            // Increase the bits property for the user in the database
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                {
-                    $set: {
-                        bits: {
-                            allTime: user.bits.allTime,
-                            yearly: user.bits.yearly,
-                            monthly: user.bits.monthly,
-                            weekly: user.bits.weekly,
-                            stream: user.bits.stream
-                        },
-                        lastSeen: lastSeen
-                    }
-                },
-                { upsert: true }
-            );
-            this.cache.set(userId, user);
-        } catch (error) {
-            logger.error(`Error in increaseBits: ${error}`);
-        }
-    }
-
     // Method to set the bits for allTime
     async setBitsManually(userId, bits) {
         try {
@@ -1622,145 +1440,6 @@ class UsersDB {
         } catch (error) {
             console.log(`Error in setBits: ${error}`);
             logger.error(`Error in setBits: ${error}`);
-        }
-    }
-
-    // Method to increase the subs for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of bits as a number.
-    async increaseSubs(userId, subs) {
-        try {
-            // Check if userId is a string
-            if (typeof userId !== 'string') {
-                userId = userId.toString();
-            }
-            // Check if subs is a number
-            if (typeof subs !== 'number') {
-                try {
-                    subs = parseInt(subs);
-                    if (isNaN(subs)) {
-                        logger.error(`Error in increaseSubs: Subs is not a number`);
-                        return null;
-                    }
-                }
-                catch (error) {
-                    logger.error(`Error in increaseSubs: ${error}`);
-                }
-            }
-            // Check if the user exists in the database. If they do not then add them to the database
-            const userExists = this.getUserByUserId(userId);
-            if (!userExists) {
-                this.newUser(userId);
-            };
-            const date = new Date();
-            const lastSeen = date;
-            let user = this.cache.get(userId);
-            if (!user) {
-                user = await this.getUserByUserId(userId);
-            }
-
-            if (user.subs.allTime === undefined || isNaN(user.subs.allTime)) {
-                user.subs.allTime = 0;
-            };
-
-            if (user.subs.yearly === undefined || isNaN(user.subs.yearly)) {
-                user.subs.yearly = 0;
-            };
-
-            if (user.subs.monthly === undefined || isNaN(user.subs.monthly)) {
-                user.subs.monthly = 0;
-            };
-
-            if (user.subs.weekly === undefined || isNaN(user.subs.weekly)) {
-                user.subs.weekly = 0;
-            };
-
-            if (user.subs.stream === undefined || isNaN(user.subs.stream)) {
-                user.subs.stream = 0;
-            };
-            
-            user.subs.allTime += subs;
-            user.subs.yearly += subs;
-            user.subs.monthly += subs;
-            user.subs.weekly += subs;
-            user.subs.stream += subs;
-            // Increase the subs property for the user in the database
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                {
-                    $set: {
-                        subs: {
-                            allTime: user.subs.allTime,
-                            yearly: user.subs.yearly,
-                            monthly: user.subs.monthly,
-                            weekly: user.subs.weekly,
-                            stream: user.subs.stream
-                        },
-                        lastSeen: lastSeen
-                    }
-                },
-                { upsert: true }
-            );
-            this.cache.set(userId, user);
-        } catch (error) {
-            logger.error(`Error in increaseSubs: ${error}`);
-        }
-    }
-
-    // Method to increase the donations for allTime, yearly, monthly, weekly, and stream for a user. If the property does not exist, it will be created. Take in the number of bits as a number.
-    async increaseDonations(userId, donations) {
-        try {
-            // Check if userId is a string
-            if (typeof userId !== 'string') {
-                userId = userId.toString();
-            }
-            // Check if donations is a number
-            if (typeof donations !== 'number') {
-                try {
-                    donations = parseInt(donations);
-                    if (isNaN(donations)) {
-                        logger.error(`Error in increaseDonations: Donations is not a number`);
-                        return null;
-                    }
-                }
-                catch (error) {
-                    logger.error(`Error in increaseDonations: ${error}`);
-                }
-            }
-            // Check if the user exists in the database. If they do not then add them to the database
-            const userExists = this.getUserByUserId(userId);
-            if (!userExists) {
-                this.newUser(userId);
-            };
-            const date = new Date();
-            const lastSeen = date;
-            let user = this.cache.get(userId);
-            if (!user) {
-                user = await this.getUserByUserId(userId);
-            }
-            user.donations.allTime += donations;
-            user.donations.yearly += donations;
-            user.donations.monthly += donations;
-            user.donations.weekly += donations;
-            user.donations.stream += donations;
-            // Increase the donations property for the user in the database
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                {
-                    $set: {
-                        donations: {
-                            allTime: user.donations.allTime,
-                            yearly: user.donations.yearly,
-                            monthly: user.donations.monthly,
-                            weekly: user.donations.weekly,
-                            stream: user.donations.stream
-                        },
-                        lastSeen: lastSeen
-                    }
-                },
-                { upsert: true }
-            );
-            this.cache.set(userId, user);
-        } catch (error) {
-            logger.error(`Error in increaseDonations: ${error}`);
         }
     }
 
@@ -2058,129 +1737,6 @@ class UsersDB {
             );
         } catch (error) {
             logger.error(`Error in setDiscordId: ${error}`);
-        }
-    }
-
-    // Method to increase the chat messages for a user
-    async increaseChatMessages(userId) {
-        try {
-            // Increase the chat messages for the user in the database and cache
-            let user = this.cache.get(userId);
-            if (!user) {
-                user = await this.getUserByUserId(userId);
-            }
-            if (user.chatMessages === undefined) {
-                user.chatMessages = {
-                    allTime: 0,
-                    yearly: 0,
-                    monthly: 0,
-                    weekly: 0,
-                    stream: 0
-                }
-            }
-            user.chatMessages.allTime++;
-            user.chatMessages.yearly++;
-            user.chatMessages.monthly++;
-            user.chatMessages.weekly++;
-            user.chatMessages.stream++;
-            this.cache.set(userId, user);
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                {
-                    $inc: {
-                        'chatMessages.allTime': 1,
-                        'chatMessages.yearly': 1,
-                        'chatMessages.monthly': 1,
-                        'chatMessages.weekly': 1,
-                        'chatMessages.stream': 1
-                    }
-                },
-                { upsert: true }
-            );
-        } catch (error) {
-            logger.error(`Error in increaseChatMessages: ${error}`);
-        }
-    }
-
-    // Method to increase the emotes used for a user
-    async increaseEmotesUsed(userId, emotesUsed) {
-        try {
-            // Increase the emotes used for the user in the database and cache
-            let user = this.cache.get(userId);
-            if (!user) {
-                user = await this.getUserByUserId(userId);
-            }
-            if (user.emotesUsed === undefined) {
-                user.emotesUsed = {
-                    allTime: 0,
-                    yearly: 0,
-                    monthly: 0,
-                    weekly: 0,
-                    stream: 0
-                }
-            }
-            user.emotesUsed.allTime += emotesUsed;
-            user.emotesUsed.yearly += emotesUsed;
-            user.emotesUsed.monthly += emotesUsed;
-            user.emotesUsed.weekly += emotesUsed;
-            user.emotesUsed.stream += emotesUsed;
-            this.cache.set(userId, user);
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                {
-                    $inc: {
-                        'emotesUsed.allTime': emotesUsed,
-                        'emotesUsed.yearly': emotesUsed,
-                        'emotesUsed.monthly': emotesUsed,
-                        'emotesUsed.weekly': emotesUsed,
-                        'emotesUsed.stream': emotesUsed
-                    }
-                },
-                { upsert: true }
-            );
-        } catch (error) {
-            logger.error(`Error in increaseEmotesUsed: ${error}`);
-        }
-    }
-
-    // Method to increase the commands used for a user
-    async increaseCommandsUsed(userId) {
-        try {
-            // Increase the commands used for the user in the database and cache
-            let user = this.cache.get(userId);
-            if (!user) {
-                user = await this.getUserByUserId(userId);
-            }
-            if (user.commandsUsed === undefined) {
-                user.commandsUsed = {
-                    allTime: 0,
-                    yearly: 0,
-                    monthly: 0,
-                    weekly: 0,
-                    stream: 0
-                }
-            }
-            user.commandsUsed.allTime++;
-            user.commandsUsed.yearly++;
-            user.commandsUsed.monthly++;
-            user.commandsUsed.weekly++;
-            user.commandsUsed.stream++;
-            this.cache.set(userId, user);
-            await this.dbConnection.collection(this.collectionName).updateOne(
-                { id: userId },
-                {
-                    $inc: {
-                        'commandsUsed.allTime': 1,
-                        'commandsUsed.yearly': 1,
-                        'commandsUsed.monthly': 1,
-                        'commandsUsed.weekly': 1,
-                        'commandsUsed.stream': 1
-                    }
-                },
-                { upsert: true }
-            );
-        } catch (error) {
-            logger.error(`Error in increaseCommandsUsed: ${error}`);
         }
     }
 

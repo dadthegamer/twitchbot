@@ -69,7 +69,7 @@ export class SchedulerService {
         try {
             const followers = await twitchApi.getFollowers();
             for (const follower of followers) {
-                await usersDB.addUserManually(follower.userId, follower.followDate);
+                await usersDB.newUser(follower.userId, { followDate: follower.followDate });
             }
         }
         catch (error) {

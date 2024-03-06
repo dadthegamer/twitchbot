@@ -36,6 +36,7 @@ export async function onHypeTrainBegin(e) {
         topContributor = { ...topContributor, profilePictureUrl };
         // Add the top contributor to the event object
         e.topContributor = topContributor;
+        e.active = true;
         webSocket.hypeTrainUpdate(e);
     }
     catch (err) {
@@ -65,6 +66,7 @@ export async function onHypeTrainProgress(e) {
         topContributor = { ...topContributor, profilePictureUrl };
         // Add the top contributor to the event object
         e.topContributor = topContributor;
+        e.active = true;
         webSocket.hypeTrainUpdate(e);
     }
     catch (err) {
@@ -86,6 +88,7 @@ export async function onHypeTrainEnd(e) {
         currentLevel = 0;
         currentProgress = 0;
         partipatedUsers = [];
+        e.active = false;
         webSocket.hypeTrainUpdate(e);
     }
     catch (err) {

@@ -9,402 +9,509 @@ class StreamDB {
         this.dbConnection = dbConnection;
         this.cache = cache;
         this.setInitialStreamData();
+        this.setInitialLatestEvents();
         this.getLatestEvents();
-        this.checkStream();
+        this.counter = 0;
     }
 
-    // Method to set the initial stream data in the database if there is not already a document in the streamData collection with a status of offline or online
+    // Stream Template
+    streamTemplate() {
+        return {
+            status: 'offline',
+            title: null,
+            streamId: null,
+            gameName: null,
+            tags: null,
+            streamId: null,
+            startDate: null,
+            endDate: null,
+            followers: [],
+            giftedSubs: [],
+            bits: [],
+            raids: [],
+            donations: [],
+            maxViewers: 0,
+            averageViewers: 0,
+            viewers: [],
+            tiktTokLive: false,
+            tikTokLikes: 0,
+            tikTokFollowers: 0,
+            tikTokGifts: 0,
+        }
+    }
+
+    // Latest Events Template
+    latestEventsTemplate() {
+        return {
+            type: null,
+            displayName: null,
+            userId: null,
+            profilePic: null,
+        }
+    }
+
+    // Latest Events Array
+    latestEventsArray() {
+        return [
+            'latestFollower',
+            'latestDonation',
+            'latestRaid',
+            'latestCheer',
+            'latestSub'
+        ]
+    }
+
+    // Method to insert the template into the database if it doesn't exist
     async setInitialStreamData() {
         try {
             const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
-            // Check if there is already a document in the streamData collection with a status of offline or online
             const streamData = await this.dbConnection.collection('streamData').findOne(query);
             if (streamData) {
                 return;
+            } else {
+                await this.dbConnection.collection('streamData').insertOne(this.streamTemplate());
             }
-            const update = {
-                $set: {
-                    status: 'offline',
-                    title: null,
-                    category: null,
-                    date: null,
-                    followers: [],
-                    subs: 0,
-                    bits: 0,
-                    raids: 0,
-                    donations: [],
-                    maxViewers: 0,
-                    averageViewers: 0,
-                    viewers: [],
-                    tiktTokLive: false,
-                    tikTokLikes: 0,
-                    tikTokFollowers: 0,
-                    tikTokGifts: 0,
-                    streamId: null,
-                }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            return true;
         }
         catch (error) {
             logger.error(`Error in setInitialStreamData: ${error}`);
-            return false;
+        }
+    }
+
+    // Method to set the initial latest events data
+    async setInitialLatestEvents() {
+        try {
+            const latestEventsArray = this.latestEventsArray();
+            latestEventsArray.forEach(async (event) => {
+                const query = { type: event };
+                const latestEvent = await this.dbConnection.collection('latestEvents').findOne(query);
+                if (latestEvent) {
+                    return;
+                } else {
+                    await this.dbConnection.collection('latestEvents').insertOne({
+                        type: event,
+                        displayName: null,
+                        userId: null,
+                        profilePic: null
+                    });
+                }
+            });
+        }
+        catch (error) {
+            logger.error(`Error in setInitialLatestEvents: ${error}`);
+        }
+    }
+
+    // Method to return the latest stream data from the database
+    async getStreamData() {
+        try {
+            const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+            const streamData = await this.dbConnection.collection('streamData').findOne(query);
+            this.cache.set('stream', streamData);
+            return streamData;
+        }
+        catch (error) {
+            logger.error(`Error in getStreamData in streamService: ${error}`);
+        }
+    }
+
+    // Get latest events from the database
+    async getLatestEvents() {
+        try {
+            let latestEvents = this.cache.get('latestEvents');
+            if (!latestEvents) {
+                // Get the latest events from the database from the entire collection
+                const latestEvents = await this.dbConnection.collection('latestEvents').find().toArray();
+                this.cache.set('latestEvents', latestEvents);
+                return latestEvents;
+            } else {
+                return latestEvents;
+            }
+        }
+        catch (error) {
+            logger.error(`Error in getLatestEvents in streamService: ${error}`);
         }
     }
 
     // Method to start a stream
-    async startStream(streamTitle, category) {
-        if (await this.checkStream() !== null) {
-            return;
-        } else {
-            try {
-                const date = new Date();
-                const query = { status: 'offline' };
-                const streamId = await chatLogService.createChatLogForStream();
-                const update = {
-                    $set: {
-                        status: 'online',
-                        title: streamTitle,
-                        category: category,
-                        date: date,
-                        followers: [],
-                        subs: 0,
-                        bits: 0,
-                        raids: 0,
-                        donations: [],
-                        maxViewers: 0,
-                        averageViewers: 0,
-                        viewers: [],
-                        tiktTokLive: false,
-                        tikTokLikes: 0,
-                        tikTokFollowers: 0,
-                        tikTokGifts: 0,
-                        streamId: streamId,
-                    }
-                };
-                const options = { upsert: true };
-                const res = await this.dbConnection.collection('streamData').updateOne(query, update, options);
-                this.cache.set('stream', update.$set);
-                this.cache.set('streamId', streamId)
-                return res;
-            }
-            catch (error) {
-                logger.error(`Error in startStream: ${error}`);
-                return;
-            }
+    async newStream(streamTitle, gameName, streamId, startDate, tags) {
+        try {
+            const streamData = this.streamTemplate();
+            streamData.status = 'online';
+            streamData.title = streamTitle;
+            streamData.gameName = gameName;
+            streamData.streamId = streamId;
+            streamData.startDate = startDate;
+            streamData.tags = tags;
+            this.cache.set('stream', streamData);
+            const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+            await this.dbConnection.collection('streamData').updateOne(query, {
+                $set: {
+                    status: 'online',
+                    title: streamTitle,
+                    gameName: gameName,
+                    streamId: streamId,
+                    startDate: startDate,
+                    tags: tags
+                }
+            });
+            return true;
+        }
+        catch (error) {
+            logger.error(`Error in creating newStream in streamService: ${error}`);
+            return false;
         }
     }
 
     // Method to end a stream and store the stream data in the streams collection
     async endStream() {
         try {
-            await this.insertNewStream();
-            const query = { status: 'online' };
-            const update = {
-                $set: {
-                    status: 'offline',
-                }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            this.cache.del('stream');
+            const streamData = this.cache.get('stream');
+            streamData.status = 'offline';
+            streamData.endDate = new Date();
+            await this.dbConnection.collection('streams').insertOne(streamData);
+            this.cache.set('stream', this.streamTemplate());
+            // Update the database with the new stream data template
+            await this.dbConnection.collection('streamData').updateOne({ status: 'online' }, {
+                $set: this.streamTemplate()
+            });
             return true;
         }
         catch (error) {
-            logger.error(`Error in endStream: ${error}`);
+            logger.error(`Error in endStream in streamService: ${error}`);
             return false;
         }
     }
 
-    // Check if a stream has been started within the last hour
-    async checkStream() {
-        try {
-            const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
-            // Check if a stream
-            if (streamData) {
-                this.cache.set('stream', streamData);
-                return streamData;
-            } else {
-                return null;
-            }
-        }
-        catch (error) {
-            logger.error(`Error in checkStream: ${error}`);
-            return null;
-        }
-    }
-
-    // Method to copy the stream data from the streamData collection to the streams collection. Remove the status field from the streamData collection and insert
-    // an uptime field that is calculated from the date field. Format the uptime field to be a string in the format of HH:MM:SS
-    async insertNewStream() {
-        try {
-            const date = new Date();
-            const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
-            const uptime = msToMinutes(date - streamData.date);
-            const stream = {
-                title: streamData.title,
-                category: streamData.category,
-                date: streamData.date,
-                followers: streamData.followers,
-                subs: streamData.subs,
-                bits: streamData.bits,
-                raids: streamData.raids,
-                donations: streamData.donations,
-                maxViewers: streamData.maxViewers,
-                averageViewers: streamData.averageViewers,
-                viewers: streamData.viewers,
-                duration: uptime,
-                tikTokLive: streamData.tikTokLive,
-                tikTokLikes: streamData.tikTokLikes,
-                tikTokFollowers: streamData.tikTokFollowers,
-                tikTokGifts: streamData.tikTokGifts,
-                streamId: streamData.streamId,
-            };
-            await this.dbConnection.collection('streams').insertOne(stream);
-        }
-        catch (error) {
-            logger.error(`Error in insertNewStream: ${error}`);
-        }
-    }
-
-    // Method to get the current stream data from the database and store it in the cache
-    async getStreamData() {
-        try {
-            const streamData = await this.dbConnection.collection('streamData').findOne({ status: 'online' });
-            this.cache.set('stream', streamData);
-            return streamData;
-        }
-        catch (error) {
-            logger.error(`Error in getStreamData: ${error}`);
-            return null;
-        }
-    }
-
-    // Method to increase a stream property
-    async increaseStreamProperty(property, value) {
-        if (typeof value !== 'number') {
-            try {
-                value = parseInt(value);
-                if (isNaN(value)) {
-                    logger.error(`Error in increaseStreamProperty: value is not a number`);
-                    return null;
-                }
-            }
-            catch (error) {
-                logger.error(`Error in increaseStreamProperty: ${error}`);
-                return null;
-            }
-        }
-        try {
-            const stream = this.cache.get('stream');
-            if (property in stream) {
-                stream[property] += value;
-            } else {
-                stream[property] = value;
-            }
-            await this.dbConnection.collection('streamData').updateOne(
-                { status: 'online' },
-                { $set: { [property]: stream[property] } }
-            );
-            this.cache.set('stream', stream);
-            return;
-        } catch (error) {
-            logger.error(`Error in increaseStreamProperty: ${error}`);
-        }
-    }
-
     // Method to add a follower to the stream data
-    async addFollower(displayName) {
+    async addFollower(follower) {
         try {
-            const stream = this.cache.get('stream');
-            if (!stream.followers.includes(displayName)) {
-                stream.followers.push(displayName);
-                await this.dbConnection.collection('streamData').updateOne(
-                    { status: 'online' },
-                    { $set: { followers: stream.followers } }
-                );
-                this.cache.set('stream', stream);
-            }
+            const streamData = this.getStreamData();
+            streamData.followers.push(follower);
+            const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+            await this.dbConnection.collection('streamData').updateOne(query, {
+                $set: {
+                    followers: streamData.followers
+                }
+            });
+            this.cache.set('stream', streamData);
+            return true;
         }
         catch (error) {
-            logger.error(`Error in addFollower: ${error}`);
+            logger.error(`Error in addFollower in streamService: ${error}`);
+            return false;
         }
     }
 
-    // Method to add a new sub to the stream data
-    async addNewSub(displayName) {
+    // Method to add a donation to the stream data
+    async addDonation({ userId, displayName, amount }) {
         try {
-            const stream = this.cache.get('stream');
-            if (!stream.new_subs.includes(displayName)) {
-                stream.new_subs.push(displayName);
-                await this.dbConnection.collection('streamData').updateOne(
-                    { status: 'online' },
-                    { $set: { new_subs: stream.new_subs } }
-                );
-                this.cache.set('stream', stream);
-            }
+            const streamData = this.getStreamData();
+            const donation = {
+                userId,
+                displayName,
+                amount
+            };
+            streamData.donations.push(donation);
+            const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+            await this.dbConnection.collection('streamData').updateOne(query, {
+                $set: {
+                    donations: streamData.donations
+                }
+            });
+            this.cache.set('stream', streamData);
+            return true;
         }
         catch (error) {
-            logger.error(`Error in addNewSub: ${error}`);
+            logger.error(`Error in addDonation in streamService: ${error}`);
+            return false;
+        }
+    }
+
+    // Method to add a raid to the stream data
+    async addRaid({ userId, displayName, viewerCount }) {
+        try {
+            const streamData = this.getStreamData();
+            const raid = {
+                userId,
+                displayName,
+                viewerCount
+            };
+            streamData.raids.push(raid);
+            const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+            await this.dbConnection.collection('streamData').updateOne(query, {
+                $set: {
+                    raids: streamData.raids
+                }
+            });
+            this.cache.set('stream', streamData);
+            return true;
+        }
+        catch (error) {
+            logger.error(`Error in addRaid in streamService: ${error}`);
+            return false;
+        }
+    }
+
+    // Method to add a sub to the stream data
+    async addGiftedSub({ userId, displayName, amount }) {
+        try {
+            const streamData = this.getStreamData();
+            const giftedSub = {
+                userId,
+                displayName,
+                amount
+            };
+            streamData.giftedSubs.push(giftedSub);
+            const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+            await this.dbConnection.collection('streamData').updateOne(query, {
+                $set: {
+                    giftedSubs: streamData.giftedSubs
+                }
+            });
+            this.cache.set('stream', streamData);
+            return true;
+        }
+        catch (error) {
+            logger.error(`Error in addGiftedSub in streamService: ${error}`);
+            return false;
+        }
+    }
+
+    // Method to add bits to the stream data
+    async addBits({ userId, displayName, amount }) {
+        try {
+            const streamData = this.getStreamData();
+            const bits = {
+                userId,
+                displayName,
+                amount
+            };
+            streamData.bits.push(bits);
+            const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+            await this.dbConnection.collection('streamData').updateOne(query, {
+                $set: {
+                    bits: streamData.bits
+                }
+            });
+            this.cache.set('stream', streamData);
+            return true;
+        }
+        catch (error) {
+            logger.error(`Error in addBits in streamService: ${error}`);
+            return false;
         }
     }
 
     // Method to add a viewer to the stream data
-    async addViewer(userId) {
+    async addViewer(viewer) {
         try {
-            const stream = this.cache.get('stream');
-            if (!stream.viewers.includes(userId)) {
-                stream.viewers.push(userId);
-                await this.dbConnection.collection('streamData').updateOne(
-                    { status: 'online' },
-                    { $set: { viewers: stream.viewers } }
-                );
-                this.cache.set('stream', stream);
+            const streamData = this.getStreamData();
+            streamData.viewers.push(viewer);
+            const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+            await this.dbConnection.collection('streamData').updateOne(query, {
+                $set: {
+                    viewers: streamData.viewers
+                }
+            });
+            this.cache.set('stream', streamData);
+            return true;
+        }
+        catch (error) {
+            logger.error(`Error in addViewer in streamService: ${error}`);
+            return false;
+        }
+    }
+
+    // Method to update the max viewers
+    async updateMaxViewers(viewerCount) {
+        try {
+            const streamData = this.getStreamData();
+            if (viewerCount > streamData.maxViewers) {
+                streamData.maxViewers = viewerCount;
+                const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+                await this.dbConnection.collection('streamData').updateOne(query, {
+                    $set: {
+                        maxViewers: viewerCount
+                    }
+                });
+                this.cache.set('stream', streamData);
+            }
+            return true;
+        }
+        catch (error) {
+            logger.error(`Error in updateViewers in streamService: ${error}`);
+            return false;
+        }
+    }
+
+    // Method to update the average viewers
+    async updateAverageViewers(viewerCount) {
+        try {
+            const streamData = this.getStreamData();
+            // Find the average viewers by getting the current average, multiplying it by the counter and adding the new viewer count, then dividing by the new counter
+            const averageViewers = (streamData.averageViewers * this.counter + viewerCount) / (this.counter + 1);
+            streamData.averageViewers = averageViewers;
+            this.counter++;
+            const query = { $or: [{ status: 'offline' }, { status: 'online' }] };
+            await this.dbConnection.collection('streamData').updateOne(query, {
+                $set: {
+                    averageViewers: averageViewers
+                }
+            });
+            return true;
+        }
+        catch (error) {
+            logger.error(`Error in updateViewers in streamService: ${error}`);
+            return false;
+        }
+    }
+
+    // Method to handle viewer count updates
+    async updateViewers(viewerCount) {
+        try {
+            await this.updateMaxViewers(viewerCount);
+            await this.updateAverageViewers(viewerCount);
+            return true;
+        }
+        catch (error) {
+            logger.error(`Error in updateViewers in streamService: ${error}`);
+            return false;
+        }
+    }
+
+    // Method to update the latest follower
+    async updateLatestFollower({ displayName, userId, profilePic }) {
+        try {
+            const latestEvents = this.getLatestEvents();
+            // Find the latest follower in the latestEvents array
+            const latestFollower = latestEvents.find(event => event.type === 'latestFollower');
+            if (latestFollower) {
+                latestFollower.displayName = displayName;
+                latestFollower.userId = userId;
+                latestFollower.profilePic = profilePic;
+                const query = { type: 'latestFollower' };
+                await this.dbConnection.collection('latestEvents').updateOne(query, {
+                    $set: {
+                        displayName: displayName,
+                        userId: userId,
+                        profilePic: profilePic
+                    }
+                });
+                this.cache.set('latestEvents', latestEvents);
+                return true;
             }
         }
         catch (error) {
-            logger.error(`Error in addViewer: ${error}`);
+            logger.error(`Error in updateLatestFollower in streamService: ${error}`);
+            return false;
         }
     }
 
-    // Method to set the latest event
-    async setLatestEvent(eventType, eventData) {
+    // Method to update the latest donation
+    async updateLatestDonation({ displayName, userId, profilePic }) {
         try {
-            const stream = this.cache.get('stream');
-            stream[eventType] = eventData;
-            const query = { eventType: eventType };
-            const update = {
-                $set: {
-                    [eventType]: eventData,
-                }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            this.getLatestEvents();
-            return;
+            const latestEvents = this.getLatestEvents();
+            const latestDonation = latestEvents.find(event => event.type === 'latestDonation');
+            if (latestDonation) {
+                latestDonation.displayName = displayName;
+                latestDonation.userId = userId;
+                latestDonation.profilePic = profilePic;
+                const query = { type: 'latestDonation' };
+                await this.dbConnection.collection('latestEvents').updateOne(query, {
+                    $set: {
+                        displayName: displayName,
+                        userId: userId,
+                        profilePic: profilePic
+                    }
+                });
+                this.cache.set('latestEvents', latestEvents);
+                return true;
+            }
         }
         catch (error) {
-            logger.error(`Error in setLatestEvent: ${error}`);
+            logger.error(`Error in updateLatestDonation in streamService: ${error}`);
+            return false;
         }
     }
 
-    // Methodt to set the latest follower
-    async setLatestFollower(userData) {
+    // Method to update the latest raid
+    async updateLatestRaid({ displayName, userId, profilePic }) {
         try {
-            const stream = this.cache.get('stream');
-            stream.latestFollower = userData;
-            const query = { eventType: 'latestFollower' };
-            const update = {
-                $set: {
-                    latestFollower: userData,
-                }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            this.getLatestEvents();
+            const latestEvents = this.getLatestEvents();
+            const latestRaid = latestEvents.find(event => event.type === 'latestRaid');
+            if (latestRaid) {
+                latestRaid.displayName = displayName;
+                latestRaid.userId = userId;
+                latestRaid.profilePic = profilePic;
+                const query = { type: 'latestRaid' };
+                await this.dbConnection.collection('latestEvents').updateOne(query, {
+                    $set: {
+                        displayName: displayName,
+                        userId: userId,
+                        profilePic: profilePic
+                    }
+                });
+                this.cache.set('latestEvents', latestEvents);
+                return true;
+            }
         }
         catch (error) {
-            logger.error(`Error in setLatestFollower: ${error}`);
+            logger.error(`Error in updateLatestRaid in streamService: ${error}`);
+            return false;
         }
     }
 
-    // Method to set the latest sub
-    async setLatestSub(userData) {
+    // Method to update the latest cheer
+    async updateLatestCheer({ displayName, userId, profilePic }) {
         try {
-            const stream = this.cache.get('stream');
-            stream.latestSub = userData;
-            const query = { eventType: 'latestSub' };
-            const update = {
-                $set: {
-                    latestSub: userData,
-                }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            this.getLatestEvents();
+            const latestEvents = this.getLatestEvents();
+            const latestCheer = latestEvents.find(event => event.type === 'latestCheer');
+            if (latestCheer) {
+                latestCheer.displayName = displayName;
+                latestCheer.userId = userId;
+                latestCheer.profilePic = profilePic;
+                const query = { type: 'latestCheer' };
+                await this.dbConnection.collection('latestEvents').updateOne(query, {
+                    $set: {
+                        displayName: displayName,
+                        userId: userId,
+                        profilePic: profilePic
+                    }
+                });
+                this.cache.set('latestEvents', latestEvents);
+                return true;
+            }
         }
         catch (error) {
-            logger.error(`Error in setLatestSub: ${error}`);
+            logger.error(`Error in updateLatestCheer in streamService: ${error}`);
+            return false;
         }
     }
 
-    // Method to set the latest cheer
-    async setLatestCheer(userData) {
+    // Method to update the latest sub
+    async updateLatestSub({ displayName, userId, profilePic }) {
         try {
-            const stream = this.cache.get('stream');
-            stream.latestCheer = userData;
-            const query = { eventType: 'latestCheer' };
-            const update = {
-                $set: {
-                    latestCheer: userData,
-                }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            this.getLatestEvents();
+            const latestEvents = this.getLatestEvents();
+            const latestSub = latestEvents.find(event => event.type === 'latestSub');
+            if (latestSub) {
+                latestSub.displayName = displayName;
+                latestSub.userId = userId;
+                latestSub.profilePic = profilePic;
+                const query = { type: 'latestSub' };
+                await this.dbConnection.collection('latestEvents').updateOne(query, {
+                    $set: {
+                        displayName: displayName,
+                        userId: userId,
+                        profilePic: profilePic
+                    }
+                });
+                this.cache.set('latestEvents', latestEvents);
+                return true;
+            }
         }
         catch (error) {
-            logger.error(`Error in setLatestCheer: ${error}`);
-        }
-    }
-
-    // Method to set the latest donation
-    async setLatestDonation(userData) {
-        try {
-            const stream = this.cache.get('stream');
-            stream.latestDonation = userData;
-            const query = { eventType: 'latestDonation' };
-            const update = {
-                $set: {
-                    latestDonation: userData,
-                }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            this.getLatestEvents();
-        }
-        catch (error) {
-            logger.error(`Error in setLatestDonation: ${error}`);
-        }
-    }
-
-    // Method to get the latest event from the database in one query
-    async getLatestEvents() {
-        try {
-            let events = [];
-            const latestFollower = await this.dbConnection.collection('streamData').findOne({ eventType: 'latestFollower' });
-            const latestSub = await this.dbConnection.collection('streamData').findOne({ eventType: 'latestSub' });
-            const latestCheer = await this.dbConnection.collection('streamData').findOne({ eventType: 'latestCheer' });
-            const latestDonation = await this.dbConnection.collection('streamData').findOne({ eventType: 'latestDonation' });
-            events.push(latestFollower);
-            events.push(latestSub);
-            events.push(latestCheer);
-            events.push(latestDonation);
-            this.cache.set('latestEvents', events);
-            return events;
-        }
-        catch (error) {
-            logger.error(`Error in getLatestEvents: ${error}`);
-            return null;
-        }
-    }
-
-    // Method to set the channel metadata
-    async setChannelMetadata(categoryId, categoryName, streamTitle) {
-        try {
-            const query = { status: 'online' };
-            const update = {
-                $set: {
-                    channelMetadata: metadata,
-                }
-            };
-            const options = { upsert: true };
-            await this.dbConnection.collection('streamData').updateOne(query, update, options);
-            return;
-        }
-        catch (error) {
-            logger.error(`Error in setChannelMetadata: ${error}`);
+            logger.error(`Error in updateLatestSub in streamService: ${error}`);
+            return false;
         }
     }
 }

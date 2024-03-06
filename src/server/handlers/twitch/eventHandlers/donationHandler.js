@@ -21,7 +21,6 @@ export async function onDonation(data) {
                 profilePictureUrl: profilePictureUrl,
                 amount: amount,
             };
-            await streamDB.setLatestEvent('latestDonation', newDonationData);
         } else {
             // Make the username all caps
             const userDisplayName = username.toUpperCase();
@@ -32,7 +31,6 @@ export async function onDonation(data) {
                 profilePictureUrl: null,
                 amount: amount,
             };
-            await streamDB.setLatestEvent('latestDonation', newDonationData);
         }
         currencyDB.addCurrencyForDonations(providerId, amount);
     }

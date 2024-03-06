@@ -58,5 +58,16 @@ router.get('/random-activeUser', async (req, res) => {
     }
 });
 
+// Endpoint to get the latest events
+router.get('/events', async (req, res) => {
+    try {
+        const events = await cache.get('latestEvents');
+        res.status(200).json(events);
+    }
+    catch (err) {
+        logger.error(`Error in events: ${err}`);
+    }
+});
+
 
 export default router;

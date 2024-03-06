@@ -23,7 +23,7 @@
     height: 100%;
     min-height: calc(1080px - 200px);
     color: #111111;
-    border-radius: 5px;
+    overflow: hidden;
 }
 
 .leaderboard-users {
@@ -37,7 +37,7 @@
 }
 
 .leaderboard-user {
-    display: flex;
+    display: none;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
@@ -48,6 +48,8 @@
     padding: 10px;
     font-size: 16px;
     font-weight: 600;
+    animation: popin 0.5s ease;
+    animation-delay: 0ms;
 }
 
 .leaderboard-user img {
@@ -124,4 +126,16 @@
     -webkit-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
     -moz-box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
     box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.75);
+}
+
+@keyframes popin {
+    0% {
+        transform: scale(0);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }    
 }

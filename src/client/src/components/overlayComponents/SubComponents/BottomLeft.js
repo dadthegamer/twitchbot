@@ -9,6 +9,7 @@ import NowPlaying from './NowPlaying';
 import RandomQuote from './RandomQuote';
 import SubGoal from './DailySubGoal';
 import RandomViewer from './RandomViewer';
+import UpTime from './UpTime';
 
 
 function BottomLeft() {
@@ -46,6 +47,9 @@ function BottomLeft() {
             },
             {
                 component: <RandomViewer />,
+            },
+            {
+                component: <UpTime />,
             },
         ];
 

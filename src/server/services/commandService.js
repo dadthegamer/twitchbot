@@ -1,6 +1,6 @@
 import NodeCache from 'node-cache';
 import logger from '../utilities/logger.js';
-import { chatClient, usersDB } from '../config/initializers.js';
+import { chatClient, usersDB, leaderboardDB } from '../config/initializers.js';
 import { actionEvalulate } from '../handlers/evaluator.js';
 import { formatTimeFromMilliseconds } from '../utilities/utils.js';
 
@@ -270,7 +270,7 @@ class CommandService {
                 if (liveOnly && !cache.get('live')) {
                     return;
                 }
-                usersDB.increaseCommandsUsed(userId)
+                leaderboardDB.increaseCommandsUsedForUser(userId)
                 const userCooldownStatus = await this.userCooldownHandler(userId, commandName, userCooldown);
                 const globalCooldownStatus = await this.globalCooldownHandler(commandName, globalCooldown);
                 if (permissions.includes('everyone' || permissions === 'everyone')) {
