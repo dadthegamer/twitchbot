@@ -45,9 +45,9 @@ class LeaderboardDB {
     }
 
     // Method to increase chat messages for a user
-    async increaseChatMessagesForUser(userId, chatMessages) {
+    async increaseChatMessagesForUser(userId) {
         try {
-            usersDB.increaseUserValue(userId, 'chatMessages', chatMessages);
+            usersDB.increaseUserValue(userId, 'chatMessages', 1);
         }
         catch (err) {
             logger.error(`Error in increaseChatMessagesForUser in LeaderboardDB: ${err}`);

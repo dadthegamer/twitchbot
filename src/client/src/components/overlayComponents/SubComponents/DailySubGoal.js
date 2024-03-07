@@ -28,19 +28,11 @@ function DailySubGoal() {
         <div className='bottom-left-card'>
             {showCard && (
                 <>
-                    <p style={
-                        {
-                            color: 'white',
-                        }
-                    }>Daily Sub Goal</p>
+                    <p>Daily Sub Goal</p>
                     <div className="daily-sub-goal-progress-container">
                         <div className="daily-sub-goal-progress-bar" style={{ width: `${pct}%` }}></div>
                     </div>
-                    <span style={
-                        {
-                            color: 'white',
-                        }
-                    } className='bottom-left-card-daily-sub-info'>{dailySubs}/{dailySubGoal}</span>
+                    <span className='bottom-left-card-daily-sub-info'>{dailySubs}/{dailySubGoal}</span>
                 </>
             )}
         </div>

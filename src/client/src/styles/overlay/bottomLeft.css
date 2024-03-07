@@ -19,7 +19,7 @@
     min-width: 100%;
     height: 100%;
     min-height: 100%;
-    background-color: var(--background-color);
+    background-color: #E5E5E5;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -28,6 +28,7 @@
     overflow: hidden;
     position: relative;
     font-family: 'Montserrat', sans-serif;
+    color: var(--background-color);
 }
 
 .bottom-left-card .social-media-icon {
@@ -39,14 +40,12 @@
     font-family: 'Montserrat', sans-serif;
     font-size: 1.5rem;
     font-weight: 900;
-    color: var(--font-color);
     margin-bottom: 1rem;
 }
 
 .bottom-left-label {
     font-family: 'Montserrat', sans-serif;
     font-size: 18px;
-    color: var(--font-color);
     text-align: left;
     position: absolute;
     top: 0;
@@ -126,12 +125,10 @@
     min-height: 100%;
     min-width: 100%;
     padding: 1rem;
-    color: var(--font-color);
 }
 
 .bottom-left-quote-created {
     font-size: 14px;
-    color: var(--font-color);
     margin-top: 1rem;
     position: absolute;
     bottom: 0;
@@ -141,34 +138,11 @@
 
 .bottom-left-quote-id {
     font-size: 14px;
-    color: var(--font-color);
     margin-top: 1rem;
     position: absolute;
     bottom: 0;
     left: 0;
     margin: 5px;
-}
-
-.command-highlight-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    min-height: 100%;
-    min-width: 100%;
-    text-align: center;
-}
-
-.command-highlight-container span:nth-child(1) {
-    font-size: 18px;
-    color: var(--font-color);
-}
-
-.command-highlight-container span:nth-child(2) {
-    font-size: 14px;
-    color: var(--font-color);
 }
 
 .daily-sub-goal-progress-container {
@@ -195,7 +169,6 @@
 
 .bottom-left-card-daily-sub-info {
     font-size: 20px;
-    color: var(--font-color);
     margin-top: 1rem;
     position: absolute;
     bottom: 53px;
@@ -204,28 +177,20 @@
 }
 
 .random-viewer-bottom-left-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     width: 100%;
     height: 100%;
-    min-height: 100%;
-    min-width: 100%;
     padding: 1rem;
-    color: var(--font-color);
     text-align: center;
 }
 
 .random-viewer {
     font-size: 18px;
-    color: var(--font-color);
     text-align: center;
+    width: 100%;
 }
 
 .bottom-left-uptime {
     font-size: 18px;
-    color: var(--font-color);
 }
 
 @keyframes slideInFromLeft {

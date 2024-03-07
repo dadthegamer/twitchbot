@@ -30,8 +30,8 @@ function Command() {
                 <>
                     <span className='bottom-left-label'>Command Highlight</span>
                     <div className='command-highlight-container'>
-                        <span className='command-name'>!{command}</span>
-                        <span className='command-description'>{description}</span>
+                        <span>!{command}</span>
+                        <span>{description}</span>
                     </div>
                 </>
             )}

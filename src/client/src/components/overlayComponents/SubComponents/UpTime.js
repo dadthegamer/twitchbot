@@ -44,16 +44,8 @@ function UpTime() {
 
     return (
         <div className='bottom-left-card'>
-            <span className='bottom-left-label' style={
-                {
-                    color: '#000000',
-                }
-            }>Uptime</span>
-            <span className='bottom-left-uptime' style={
-                {
-                    color: '#000000',
-                }
-            }>{stringTime}</span>
+            <span className='bottom-left-label'>Uptime</span>
+            <span className='bottom-left-uptime'>{stringTime}</span>
         </div>
     );
 }

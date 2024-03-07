@@ -20,7 +20,7 @@
 .intermission-left-container {
     width: var(--left-width);
     height: calc(1080px - var(--bottom-line-height));
-    background-color: #E5E5E5;
+    background-color: #9146FF;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;

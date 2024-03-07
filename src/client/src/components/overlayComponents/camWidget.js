@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import '../../styles/overlay/camWidget.css';
 import DailySubGoal from './camWidgetSubComponents/dailySubGoal';
+import LatestEvents from './camWidgetSubComponents/latestEvents';
 
 
 function CamWidget() {
@@ -13,6 +14,11 @@ function CamWidget() {
     const [subGoal, setSubGoal] = useState(20);
     const [currentSubs, setCurrentSubs] = useState(4);
     const [hideClass, setHideClass] = useState('');
+    const [latestEventsCurrentIndex, setLatestEventsCurrentIndex] = useState(0);
+    const [latestEventsOpacity, setLatestEventsOpacity] = useState('1');
+    const [latestEventsHideClass, setLatestEventsHideClass] = useState('');
+    const [latestEventInterval, setLatestEventInterval] = useState(5); // In Seconds
+    const [showInterval, setShowInterval] = useState(1); // In Minutes
 
     const wsurl = process.env.REACT_APP_WEBSOCKET_URL || 'ws://localhost:8080';
 
@@ -29,8 +35,10 @@ function CamWidget() {
             ws.onmessage = (event) => {
                 const data = JSON.parse(event.data);
                 console.log(data);
-                if (data.type === 'hypeTrain') {
-                    console.log(data.payload);
+                if (data.type === 'subsUpdate') {
+                    const { streamSubGoal, streamSubs } = data.payload;
+                    setSubGoal(streamSubGoal);
+                    setCurrentSubs(streamSubs);
                 };
             };
 
@@ -66,10 +74,67 @@ function CamWidget() {
     }, []);
 
     useEffect(() => {
+        let currentIndex = 0;
+        if (currentIndex >= latestEvents.length) {
+            currentIndex = 0;
+        }
+    
+        const processEvents = async () => {
+            if (currentIndex < latestEvents.length) {
+                console.log(`Processing event ${currentIndex} of ${latestEvents.length}`);
+                setLatestEventsCurrentIndex(currentIndex);
+                setLatestEventsOpacity('1'); // Show the event immediately
+                currentIndex++;
+                await new Promise(resolve => setTimeout(resolve, (latestEventInterval * 1000)));
+    
+                // Hide the event immediately before waiting for the next one
+                setLatestEventsOpacity('0');
+    
+                // Wait for the specified interval before processing the next event
+                await new Promise(resolve => setTimeout(resolve, 500));
+    
+                // Recursive call to process the next event
+                processEvents();
+            } else {
+                console.log('No more events to process');
+                setLatestEventsOpacity('0');
+                setHideClass('')
+                setShowLatestEvents(false);
+                setShowSubGoal(true);
+            }
+        };
+    
+        processEvents();
+    }, [latestEvents]);
+    
+
+    useEffect(() => {
         if (!showSubGoal) {
+            console.log('Setting showLatestEvents to true');
             setHideClass('hide');
+            getLatestEvents();
+            setTimeout(() => {
+                setShowLatestEvents(true);
+            }, 750);
         }
     }, [showSubGoal]);
+
+
+    setInterval(() => {
+        console.log('Setting showSubGoal to true');
+        setShowSubGoal(false);
+    }, (showInterval * 60000));
+
+    const getLatestEvents = async () => {
+        try {
+            const response = await fetch('/api/stream/events');
+            const data = await response.json();
+            console.log(data);
+            setLatestEvents(data);
+        } catch (error) {
+            console.error('Error fetching latest events:', error);
+        }
+    };
 
     return (
         <div className='cam-widget-container' style={
@@ -78,6 +143,7 @@ function CamWidget() {
             }
         }>
             <DailySubGoal currentSubs={currentSubs} goalSubs={subGoal} hideClass={hideClass} />
+            {showLatestEvents && <LatestEvents event={latestEvents[latestEventsCurrentIndex].type} displayName={latestEvents[latestEventsCurrentIndex].displayName} hideClass={latestEventsHideClass} opacity={latestEventsOpacity}/>}
         </div>
     )
 }

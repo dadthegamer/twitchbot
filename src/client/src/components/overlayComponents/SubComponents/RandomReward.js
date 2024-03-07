@@ -18,20 +18,12 @@ function RandomReward() {
 
     return (
         <div className='bottom-left-card' style={{ backgroundColor: '#E5E5E5' }}>
-            <span className='bottom-left-label' style={
-                {
-                    color: '#000000',
-                }
-            }>Random Reward</span>
+            <span className='bottom-left-label'>Random Reward</span>
             <div className='random-reward-bottom-left-container'>
                 <span>{reward.title}</span>
                 <span>Cost: {reward.cost}</span>
             </div>
-            <span className='bottom-left-reward-id' style={
-                {
-                    color: '#000000',
-                }
-            }>Reward: {reward.id}</span>
+            <span>Reward: {reward.id}</span>
         </div>
     );
 }

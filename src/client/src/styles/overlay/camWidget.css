@@ -40,6 +40,8 @@
     align-items: center;
     flex-direction: row;
     gap: 20px;
+    animation: slideUp 0.5s ease-in-out;
+    transition: opacity 0.5s ease-in-out;
 }
 
 .latest-events-icon-wrapper {
@@ -49,6 +51,7 @@
     align-items: center;
     background-color: red;
     padding: 15px;
+    min-width: 10%;
 }
 
 .latest-events-container .latest-events-icon {
@@ -145,8 +148,21 @@
 @keyframes slideDown {
     0% {
         transform: translateY(0%);
+        display: flex;
+        opacity: 1;
     }
     100% {
         transform: translateY(100%);
+        display: none;
+        opacity: 0;
+    }    
+}
+
+@keyframes slideUp {
+    0% {
+        transform: translateY(100%);
+    }
+    100% {
+        transform: translateY(0%);
     }    
 }

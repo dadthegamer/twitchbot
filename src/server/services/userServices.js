@@ -565,7 +565,6 @@ class UsersDB {
     // Method to increase a property for a user. The property is a user object with a properties of allTime, yearly, monthly, weekly, and stream
     async increaseUserValue(userId, property, amount) {
         try {
-            console.log(`increaseUserValue: ${userId} ${property} ${amount}`);
             if (typeof userId !== 'string') {
                 userId = userId.toString();
             }
